@@ -5,6 +5,9 @@ import { Dropdown } from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Banners from '../components/Slider';
 
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../../App';
 const local_data = [
   {
     value: '1',
@@ -19,6 +22,7 @@ const local_data = [
 ];
 
 const Dashboard: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
   const banners = [
@@ -26,6 +30,10 @@ const Dashboard: React.FC = () => {
     require('../../assets/images/slide1.png'),
     require('../../assets/images/slide1.png'),
   ];
+
+  const navigateTo = (path: keyof MainStackParamList) => {
+    navigation.navigate(path);
+};
 
   const [activeindex, setActiveindex] = useState(0);
   const w = Dimensions.get('window').width;
@@ -123,35 +131,41 @@ const Dashboard: React.FC = () => {
 
 
           <View style={styles.quickActions}>
-            <View style={styles.actionItem}>
+        
+            <TouchableOpacity style={styles.actionItem}  onPress={() => navigateTo('Specialities')}>
               <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}>Book Physical Consultation</Text>
-            </View>
+            </TouchableOpacity>
 
-            <View style={styles.actionItem}>
+            <TouchableOpacity style={styles.actionItem}>
               <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> Book Video Consultation</Text>
-            </View>
+            </TouchableOpacity>
 
-            <View style={styles.activeActionItem}>
+            <TouchableOpacity style={styles.actionItem}>
+              <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
+              <Text style={styles.activeActionText}> Book Vaccination</Text>
+            </TouchableOpacity>
+
+            {/* <TouchableOpacity style={styles.activeActionItem}>
               <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.activeIconAction} />
               <Text style={styles.activeActionText}> Book Vaccination</Text>
-            </View>
+            </TouchableOpacity> */}
 
 
           </View>
 
 
           <View style={[styles.quickActions, { justifyContent: 'center', marginTop: 5 }]}>
-            <View style={[styles.actionItem, { marginRight: '5.5%' }]}>
+            <TouchableOpacity style={[styles.actionItem, { marginRight: '5.5%' }]}>
               <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> Book Scan</Text>
-            </View>
+            </TouchableOpacity>
 
-            <View style={styles.actionItem}>
+            <TouchableOpacity style={styles.actionItem}>
               <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> View Report </Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
