@@ -1,21 +1,35 @@
 import { Dimensions, Image, ScrollView, StyleSheet,TouchableOpacity, View, } from 'react-native'
 import React, { useState } from 'react';
-import {Card, Searchbar , TextInput, Icon, Text } from 'react-native-paper';
+import {Card, Searchbar , TextInput, Icon, Text, Banner,  Modal, Portal, } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
+import Banners from '../components/Slider';
 
 
 
 const AppointmentConfirmed: React.FC = () => {
-    const [search, setSearch] = useState('');
-    const [country, setCountry] = useState('1');
+  const [activeindex, setActiveindex] = useState(0);
+  const w = Dimensions.get('window').width;
+  const h = Dimensions.get('window').height;
+  
+  const [visible, setVisible] = React.useState(false);
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+
+    const banners = [
+      require('../../assets/images/slide1.png'),
+      require('../../assets/images/slide1.png'),
+      require('../../assets/images/slide1.png'),
+    ];
+
   return (
     <View style={styles.mainContainer}>
     <ScrollView contentContainerStyle={styles.scrollContent}>
     <Header showLocation title={undefined} />
     <View style={styles.container}>
       <Text style={styles.acTitle}>Appointment Confirmed</Text>
-      <Text style={styles.acSubTitle}>Thank you for booking your appointment. W e appreciate your trust and look forward to serving you.</Text>
+      <Text style={styles.acSubTitle}>Thank you for booking your appointment. We appreciate your trust and look forward to serving you.</Text>
     
   <View style={styles.imgTextGroup}>
       <View style={styles.imgTextBox}>
@@ -27,18 +41,60 @@ const AppointmentConfirmed: React.FC = () => {
   </View>
 
   <View>
-    <TouchableOpacity style={styles.subscribeBlock}>         
+    <TouchableOpacity style={styles.subscribeBlock} onPress={() => showModal()}>         
         <Image source={require('../../assets/images/subscribe.png')} style={styles.subscribeImg} />
     </TouchableOpacity>
   </View>
   
+<View style={styles.sliderBlock}>
 
-
+  <>
+          <Banners
+            images={banners}
+            activeindex={activeindex}
+            setActiveindex={setActiveindex}
+            height={h * 0.2}
+            resizeMode="cover"
+            width={w * 0.95}
+            marginVertical={w * 0.01}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignSelf: 'center',
+              marginTop: h * 0.02,
+            }}>
+            {banners?.map((banner, index) => (
+              <View
+                style={{
+                  height: 8,
+                  width: 8,
+                  borderRadius: 5,
+                  backgroundColor: index == activeindex ? '#00B3AE' : 'grey',
+                  marginHorizontal: w * 0.01,
+                }}
+                key={index}
+              />
+            ))}
+          </View>
+        </>
      
-
+</View>
 
 </View> 
 </ScrollView>
+
+<Footer />
+
+<Portal>
+  <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalImageWrapp}>
+    <TouchableOpacity style={styles.closeModal} onPress={() => hideModal()}>
+      <Image source={require('../../assets/images/close-icon.png')} style={styles.closeModalIcon} />
+    </TouchableOpacity>
+   <Image source={require('../../assets/images/rewards-points.png')} style={styles.modalImage} />
+  </Modal>
+</Portal>
+
 </View>
    
 
@@ -138,9 +194,56 @@ margin:'auto',
   fontSize:20,
   fontWeight:'bold',
   color:'#000',
+  textAlign:'center',
+  marginTop:'10%',
+  marginBottom:'10%',
  },
  acSubTitle:{
-  fontSize:16,
+  fontSize:13,
   color:'#000',
+  textAlign:'center',
+  marginTop:0,
+  marginBottom:'10%',
+  width:'80%',
+  margin:'auto',
  },
-})
+
+ sliderBlock:{
+  marginTop:'10%',
+ },
+ modalImageWrapp:{
+  width:'90%',
+  padding:10,
+  backgroundColor: '#00B3AE',
+  marginHorizontal: 0,
+  borderRadius: 20,
+  position: 'absolute',
+  left: '5%',
+  right: '5%',
+
+
+ },
+
+ modalImage:{
+  resizeMode:'contain',
+  width:'100%',
+  height:Dimensions.get('window').height * 0.63,
+ },
+
+ closeModal:{
+  position:'absolute',
+  top:20,
+  right:20,
+  zIndex:1,
+  backgroundColor:'#fff',
+  borderRadius:50,
+  padding:5,
+ },
+ closeModalIcon:{
+  width:17,
+  height:17,
+  resizeMode:'contain',
+ },
+
+
+})    

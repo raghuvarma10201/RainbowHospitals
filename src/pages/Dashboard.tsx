@@ -142,7 +142,7 @@ const Dashboard: React.FC = () => {
               <Text style={styles.actionText}> Book Video Consultation</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionItem}>
+            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('BookVaccination')}>
               <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> Book Vaccination</Text>
             </TouchableOpacity>
@@ -157,7 +157,7 @@ const Dashboard: React.FC = () => {
 
 
           <View style={[styles.quickActions, { justifyContent: 'center', marginTop: 5 }]}>
-            <TouchableOpacity style={[styles.actionItem, { marginRight: '5.5%' }]}>
+            <TouchableOpacity style={[styles.actionItem, { marginRight: '5.5%' }]} onPress={() => navigateTo('BookScan')}>
               <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> Book Scan</Text>
             </TouchableOpacity>

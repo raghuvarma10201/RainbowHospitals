@@ -20,6 +20,10 @@ import Otp from './src/authentication/Otp';
 import Dashboard from './src/pages/Dashboard';
 import Specialities from './src/pages/Specialities';
 import AppointmentConfirmed from './src/pages/AppointmentConfirmed';
+import BookVaccination from './src/pages/BookVaccination';
+import VaccinesAdult from './src/pages/VaccinesAdult';
+import BookScan from './src/pages/BookScan';
+import VaccinesPediatric from './src/pages/VaccinesPediatric';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -51,6 +55,10 @@ type MainStackParamList = {
   Dashboard: undefined;
   Specialities: undefined;
   AppointmentConfirmed: undefined;
+  BookVaccination: undefined;
+  VaccinesAdult: undefined;
+  BookScan: undefined;
+  VaccinesPediatric: undefined;
 };
 
 export type { AuthStackParamList, MainStackParamList };
@@ -72,6 +80,10 @@ export const MainStack = React.memo(() => (
     <MainStackNav.Screen name="Dashboard" component={Dashboard} />
     <MainStackNav.Screen name="Specialities" component={Specialities} />
     <MainStackNav.Screen name="AppointmentConfirmed" component={AppointmentConfirmed} />
+    <MainStackNav.Screen name="BookVaccination" component={BookVaccination} />
+    <MainStackNav.Screen name="VaccinesAdult" component={VaccinesAdult} />
+    <MainStackNav.Screen name="VaccinesPediatric" component={VaccinesPediatric} />
+    <MainStackNav.Screen name="BookScan" component={BookScan} />
   </MainStackNav.Navigator>
 ));
 
