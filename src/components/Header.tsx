@@ -149,10 +149,10 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
                 {showLocation && (
                     <TouchableOpacity style={styles.dropdownIcon} onPress={() => setLocationModalVisible(true)}>
                         <View style={{ marginLeft: 6 }}>
-                            <Text style={{ fontSize: 14, color: '#fff', fontFamily: 'ProximaNovaA-Regular', }}> {branch?.name || 'Fetching location...'}</Text>
+                            <Text style={{ fontSize: 12, color: '#fff', fontFamily: 'ProximaNovaA-Regular', }}> {branch?.name || 'Fetching location...'}</Text>
                             <View style={{ flexDirection: 'row', justifyContent:"flex-start" }}>
-                                <Image source={require('../../assets/images/map-icon.png')} style={{ width: 12, height: 12, marginRight: 3, marginTop: 0, }} />
-                                <Text style={{ fontSize: 11, color: '#fff', fontWeight: 'normal', marginTop: -2, fontFamily: 'ProximaNovaA-Regular' }}>
+                                <Image source={require('../../assets/images/map-icon.png')} style={{ width: 12, height: 12, marginRight: 3, marginTop: 3, }} />
+                                <Text style={{ fontSize: 10, color: '#fff', fontWeight: 'normal', marginTop: 0, fontFamily: 'ProximaNovaA-Regular' }}>
                                     {region?.name ?? ''}</Text>
                             </View>
                         </View>
@@ -163,9 +163,9 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
                 )}
             </View>
             <View style={styles.headerRight}>
-                <Image source={require('../../assets/images/services-icon.png')} style={{ width: 30, height: 30, marginRight: 10, }} resizeMode="contain" />
-                <Image source={require('../../assets/images/wallet-icon.png')} style={{ width: 30, height: 30, marginRight: 10, }} resizeMode="contain" />
-                <Image source={require('../../assets/images/filter-icon.png')} style={{ width: 30, height: 30, }} resizeMode="contain" />
+                <Image source={require('../../assets/images/services-icon.png')} style={{ width:26, height:26, marginRight: 10, }} resizeMode="contain" />
+                <Image source={require('../../assets/images/wallet-icon.png')} style={{ width: 26, height: 26, marginRight: 10, }} resizeMode="contain" />
+                <Image source={require('../../assets/images/filter-icon.png')} style={{ width: 22, height: 22, }} resizeMode="contain" />
             </View>
             {/* Location Modal */}
             <Modal
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     },
     locationText: {},
     dropdownIcon: {
-        marginLeft: 8,
+        marginLeft: 0,
         padding: 4,
     },
     modalOverlay: {

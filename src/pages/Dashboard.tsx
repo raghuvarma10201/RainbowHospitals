@@ -137,7 +137,7 @@ const Dashboard: React.FC = () => {
               <Text style={styles.actionText}>Book Physical Consultation</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionItem}>
+            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('AppointmentConfirmed')}>
               <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> Book Video Consultation</Text>
             </TouchableOpacity>

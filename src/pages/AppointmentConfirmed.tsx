@@ -116,6 +116,7 @@ imgTextBox:{
   position:'relative',
   zIndex:1,
 padding:10,
+paddingBottom:0,
 margin:'auto',
 
  },
