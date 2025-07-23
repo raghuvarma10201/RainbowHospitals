@@ -144,7 +144,7 @@ const Dashboard: React.FC = () => {
 
             <TouchableOpacity style={styles.actionItem}>
               <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
-              <Text style={styles.activeActionText}> Book Vaccination</Text>
+              <Text style={styles.actionText}> Book Vaccination</Text>
             </TouchableOpacity>
 
             {/* <TouchableOpacity style={styles.activeActionItem}>
