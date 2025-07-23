@@ -2,6 +2,7 @@ import { Dimensions, Image, ScrollView, StyleSheet,TouchableOpacity, View, } fro
 import React, { useState } from 'react';
 import {Card, Searchbar , TextInput, Icon, Text } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
+import Header from '../components/Header';
 
 
 
@@ -11,6 +12,7 @@ const AppointmentConfirmed: React.FC = () => {
   return (
     <View style={styles.mainContainer}>
     <ScrollView contentContainerStyle={styles.scrollContent}>
+    <Header showLocation title={undefined} />
     <View style={styles.container}>
       <Text style={styles.acTitle}>Appointment Confirmed</Text>
       <Text style={styles.acSubTitle}>Thank you for booking your appointment. W e appreciate your trust and look forward to serving you.</Text>

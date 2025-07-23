@@ -2,6 +2,7 @@ import { Dimensions, Image, ScrollView, StyleSheet,TouchableOpacity, View, } fro
 import React, { useState } from 'react';
 import {Card, Searchbar , TextInput, Icon, Text } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
+import Header from '../components/Header';
 
 const local_data = [
     {
@@ -23,7 +24,7 @@ const Specialities: React.FC = () => {
     <View style={styles.mainContainer}>
     <ScrollView contentContainerStyle={styles.scrollContent}>
       
-    <View style={styles.header}>
+    {/* <View style={styles.header}>
         <View style={{ flexDirection:'row', alignItems:'center',}}>
             <View style={styles.profileIconBlock}>
           
@@ -43,8 +44,9 @@ const Specialities: React.FC = () => {
             <Image source={require('../../assets/images/wallet-icon.png')} style={{width:30,height:30,marginRight:10,}} resizeMode="contain" />
             <Image source={require('../../assets/images/filter-icon.png')} style={{width:30,height:30,}} resizeMode="contain" />
         </View>
-    </View>
+    </View> */}
 
+<Header showLocation title={undefined} />
     <View style={styles.container}>
 
                 <View style={styles.helloCard}>
