@@ -159,6 +159,7 @@ export default Specialities
 
 const styles = StyleSheet.create({
     mainContainer:{
+      backgroundColor:'#fff',
         flex: 1,
 
     },

@@ -48,6 +48,7 @@ export default AppointmentConfirmed
 const styles = StyleSheet.create({
    
   mainContainer:{
+    backgroundColor:'#fff',
     flex: 1,
 
 },

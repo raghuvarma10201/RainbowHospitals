@@ -221,6 +221,7 @@ export default Dashboard
 
 const styles = StyleSheet.create({
   mainContainer: {
+    backgroundColor:'#fff',
     flex: 1,
 
   },
