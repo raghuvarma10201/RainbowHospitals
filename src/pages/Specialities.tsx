@@ -305,6 +305,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     marginTop: 30,
+    maxWidth: Dimensions.get('window').width * 0.8,
+    alignSelf: 'center',
   },
 
   actionItem: {
@@ -331,6 +333,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     textAlign: 'center',
     marginTop: 4,
+    width: '50%',
   },
 
   activeActionItem: {
