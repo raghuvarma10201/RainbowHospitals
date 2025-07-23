@@ -1,0 +1,81 @@
+{
+  "login": {
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "title":"Login With Account",
+    "email_is_required":"Email is Required",
+    "password_is_required":"Password is Required",
+    "remember_me": "Remember me",
+    "forgot_password":"Forgot Password",
+    "enter_captcha":"Enter Captcha"
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "available_balance":"Available Balance",
+    "top_up": "Topup",
+    "vehicles":"Vehicles",
+    "trips":"Trips",
+    "violations":"Violations",
+    "cases":"Cases",
+    "statements":"Statements",
+    "dashboard":"Dashboard",
+    "transaction_history":"Transaction History",
+    "todays_trips":"Today's Trips",
+    "no_trip_found":"No Trips Found"
+  },
+  "vehicles":{
+    "vehicles":"Vehicles",
+    "add_vehicles":"Add Vehicle",
+    "vehicle_filters":"Vehicle Filters"
+  },
+  "trips": {
+    "trips":"Trips",
+    "trip_filters":"Trip Filters",
+    "licence_plate_number":"Licence Plate Number",
+    "paid":"Paid"
+  },
+  "statements":{
+    "statements":"Statements",
+    "statements_filters":"Statement Filters",
+    "year":"Year"
+  },
+  "transaction":{
+    "transaction_history":"Transaction History",
+    "transaction_filters":"Transaction Filters",
+    "transaction_id":"Transaction ID"
+  },
+  "violation":{
+    "violations":"Violations",
+    "violtion_filters":"Violation Filters",
+    "transaction_id":"Transaction ID"
+  },
+  "profile": {
+    "profile":"Profile",
+    "accounts":"Accounts",
+    "customer_id":"Customer ID",
+    "settings":"Settings",
+    "change_password":"Change Password",
+    "enter_old_password":"Enter Old Password",
+    "enter_new_password":"Enter New Password",
+    "confirm_new_password":"Confirm New Password",
+    "account_details":"Account Details",
+    "set_as_primary":"Set as Primary",
+    "get_help":"Get Help",
+    "language":"Language",
+    "select_language":"Select Language",
+    "logout":"Logout",
+    "english":"English",
+    "arabic":"Arabic"
+  },
+  "common":{
+    "from_date":"From Date",
+    "to_date":"To Date",
+    "close":"Close",
+    "apply":"Apply",
+    "search":"Search",
+    "loading_more":"Loading more...",
+    "no_more_data_to_load":"No more data to load",
+    "clear_filter":"Clear Filter"
+  }
+}

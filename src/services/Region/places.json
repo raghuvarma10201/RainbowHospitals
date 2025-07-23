@@ -1,0 +1,133 @@
+{
+  "hospitals": [
+   {
+  "city": "Hyderabad",
+  "locations": [
+    {
+      "name": "Banjara Hills",
+      "address": "8-2-19, Rd No. 2, Near Annapurna Studios, Banjara Hills, Hyderabad, Telangana 500034",
+      "contact": "+91 40 2233 4455",
+      "latitude": 17.414,
+      "longitude": 78.448
+    },
+    {
+      "name": "Kondapur",
+      "address": "Survey No. 40, Kothaguda X Road, Kondapur, Hyderabad, Telangana 500084",
+      "contact": "+91 40 2233 4466",
+      "latitude": 17.472,
+      "longitude": 78.372
+    },
+    {
+      "name": "LB Nagar",
+      "address": "Plot No. 68, NH-65, LB Nagar, Hyderabad, Telangana 500074",
+      "contact": "+91 40 2233 4477",
+      "latitude": 17.355,
+      "longitude": 78.559
+    },
+    {
+      "name": "Hydernagar",
+      "address": "Survey No. 64, Nizampet Rd, Hydernagar, Hyderabad, Telangana 500072",
+      "contact": "+91 40 2233 4488",
+      "latitude": 17.501,
+      "longitude": 78.394
+    },
+    {
+      "name": "Financial District (Nanakramguda)",
+      "address": "Sy No. 15/1, Financial District, Nanakramguda, Hyderabad, Telangana 500032",
+      "contact": "+91 40 2233 4499",
+      "latitude": 17.405,
+      "longitude": 78.341
+    },
+    {
+      "name": "Secunderabad",
+      "address": "West Marredpally, Secunderabad, Hyderabad, Telangana 500026",
+      "contact": "+91 40 2233 4400",
+      "latitude": 17.444,
+      "longitude": 78.498
+    },
+    {
+      "name": "Vikrampuri",
+      "address": "Vikrampuri Colony, Karkhana, Secunderabad, Telangana 500009",
+      "contact": "+91 40 2233 4411",
+      "latitude": 17.454,
+      "longitude": 78.507
+    },
+    {
+      "name": "BirthRight by Rainbow (Banjara Hills Extension)",
+      "address": "Adjacent to Rainbow Children's Hospital, Banjara Hills, Hyderabad, Telangana 500034",
+      "contact": "+91 40 2233 4422",
+      "latitude": 17.414,
+      "longitude": 78.446
+    }
+  ]
+},
+
+    {
+      "city": "Bangalore",
+      "locations": [
+        {
+          "name": "Marathahalli",
+          "address": "Outer Ring Road, Marathahalli, Bangalore, Karnataka 560037",
+          "contact": "+91 80 2233 1122",
+          "latitude": 12.956,
+          "longitude": 77.701
+        },
+        {
+          "name": "Hebbal",
+          "address": "Survey No. 31, Bellary Rd, Hebbal, Bangalore, Karnataka 560024",
+          "contact": "+91 80 2233 1133",
+          "latitude": 13.045,
+          "longitude": 77.592
+        }
+      ]
+    },
+    {
+      "city": "Chennai",
+      "locations": [
+        {
+          "name": "Guindy",
+          "address": "No.199, Velachery Main Road, Guindy, Chennai, Tamil Nadu 600032",
+          "contact": "+91 44 2233 1199",
+          "latitude": 13.010,
+          "longitude": 80.220
+        }
+      ]
+    },
+    {
+      "city": "Vijayawada",
+      "locations": [
+        {
+          "name": "Currency Nagar",
+          "address": "NH-9, Currency Nagar, Vijayawada, Andhra Pradesh 520008",
+          "contact": "+91 866 2233 7788",
+          "latitude": 16.518,
+          "longitude": 80.671
+        }
+      ]
+    },
+    {
+      "city": "Visakhapatnam",
+      "locations": [
+        {
+          "name": "Health City",
+          "address": "Plot No.1, Chinagadili, Arilova, Visakhapatnam, Andhra Pradesh 530040",
+          "contact": "+91 891 2233 8899",
+          "latitude": 17.763,
+          "longitude": 83.350
+        }
+      ]
+    },
+    {
+      "city": "Delhi",
+      "locations": [
+        {
+          "name": "Malviya Nagar",
+          "address": "Saket Rd, Near Select City Walk, Malviya Nagar, New Delhi, Delhi 110017",
+          "contact": "+91 11 2233 1100",
+          "latitude": 28.528,
+          "longitude": 77.213
+        }
+      ]
+    }
+  ]
+}

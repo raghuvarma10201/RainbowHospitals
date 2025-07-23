@@ -1,0 +1,77 @@
+{
+  "login": {
+    "email": "البريد الالكتروني",
+    "password": "كلمة المرور",
+    "submit": "تسجيل الدخول",
+    "title":"الدخول بحساب",
+    "email_is_required":"الرجاء إدخال عنوان البريد الإلكتروني",
+    "password_is_required":"الرجاء إدخال كلمة المرور",
+    "remember_me":"تذكرني",
+    "forgot_password":"نسيت كلمة المرور؟",
+    "enter_captcha":"أدخل كلمة التحقق"
+  },
+  "dashboard": {
+    "welcome": "مرحبا",
+    "available_balance":"الرصيد المتوفر",
+    "top_up":"إعادة شحن",
+    "vehicles":"المركبات",
+    "trips":"الرحلات",
+    "violations":"المخالفات",
+    "cases":"الشكاوى",
+    "statements":"الكشوفات",
+    "dashboard":"لوحة التحكم",
+    "transaction_history":"تاريخ المعاملات",
+    "todays_trips":"رحلات اليوم",
+    "no_trip_found":"لم يتم العثور على رحلات"
+  },
+  "vehicles":{
+    "vehicles":"المركبات",
+    "add_vehicles":"إضافة مركبة",
+    "vehicle_filters":"مرشحات المركبات"
+  },
+  "trips": {
+    "trips":"رحلات",
+    "trip_filters":"مرشحات الرحلة",
+    "licence_plate_number":"رقم لوحة الترخيص",
+    "paid":"مدفوع"
+  },
+  "transaction":{
+    "transaction_history":"تاريخ المعاملات",
+    "transaction_filters":"مرشحات المعاملات",
+    "transaction_id":"معرف المعاملة"
+  },
+  "violation":{
+    "violations":"المخالفات",
+    "violtion_filters":"مرشحات الانتهاكات",
+    "transaction_id":"معرف المعاملة"
+  },
+  "common":{
+    "from_date":"من تاريخ",
+    "to_date":"حتى الآن",
+    "close":"يغلق",
+    "apply":"يتقدم",
+    "search":"يبحث",
+    "loading_more":"جارٍ تحميل المزيد...",
+    "no_more_data_to_load":"لا مزيد من البيانات لتحميلها",
+    "clear_filter":"مسح التصفية"
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "profile":"حساب تعريفي",
+    "accounts":"الحسابات",
+    "customer_id":"معرف العميل",
+    "settings":"إعدادات",
+    "change_password":"تغيير كلمة المرور",
+    "enter_old_password":"أدخل كلمة المرور القديمة",
+    "enter_new_password":"أدخل كلمة المرور الجديدة",
+    "confirm_new_password":"تأكيد كلمة المرور الجديدة",
+    "account_details":"تفاصيل الحساب",
+    "set_as_primary":"تعيين كأساسي",
+    "get_help":"احصل على المساعدة",
+    "language":"لغة",
+    "select_language":"اختر اللغة",
+    "logout":"تسجيل الخروج",
+    "english":"إنجليزي",
+    "arabic":"عربي"
+  }
+}
