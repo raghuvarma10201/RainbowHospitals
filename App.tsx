@@ -18,6 +18,8 @@ import { I18nManager } from 'react-native';
 import Splash from './src/pages/Splash';
 import Otp from './src/authentication/Otp';
 import Dashboard from './src/pages/Dashboard';
+import Specialities from './src/pages/Specialities';
+import AppointmentConfirmed from './src/pages/AppointmentConfirmed';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -47,6 +49,8 @@ type AuthStackParamList = {
 type MainStackParamList = {
   Splash: undefined;
   Dashboard: undefined;
+  Specialities: undefined;
+  AppointmentConfirmed: undefined;
 };
 
 export type { AuthStackParamList, MainStackParamList };
@@ -66,7 +70,8 @@ export const AuthStack = React.memo(() => (
 export const MainStack = React.memo(() => (
   <MainStackNav.Navigator screenOptions={screenOptions}>
     <MainStackNav.Screen name="Dashboard" component={Dashboard} />
-    
+    <MainStackNav.Screen name="Specialities" component={Specialities} />
+    <MainStackNav.Screen name="AppointmentConfirmed" component={AppointmentConfirmed} />
   </MainStackNav.Navigator>
 ));
 

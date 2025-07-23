@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Card, Searchbar, TextInput, Icon, Text } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import Header from '../components/Header';
+import Banners from '../components/Slider';
 
 const local_data = [
   {
@@ -20,6 +21,16 @@ const local_data = [
 const Dashboard: React.FC = () => {
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
+  const banners = [
+    require('../../assets/images/slide1.png'),
+    require('../../assets/images/slide1.png'),
+    require('../../assets/images/slide1.png'),
+  ];
+
+  const [activeindex, setActiveindex] = useState(0);
+  const w = Dimensions.get('window').width;
+  const h = Dimensions.get('window').height;
+  
   return (
     <View style={styles.mainContainer}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -63,9 +74,9 @@ const Dashboard: React.FC = () => {
             </View>
 
             <View style={styles.textHelloCard}>
-              <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 18, color: '#fff', }}>Hello,</Text>
-              <Text style={{ fontFamily: 'ProximaNovaA-Black', fontSize: 21, color: '#fff', }}>Amberwati</Text>
-              <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 13, color: '#fff', }}>We are here to help! </Text>
+              <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 16, color: '#fff', }}>Hello,</Text>
+              <Text style={{ fontFamily: 'ProximaNovaA-Black', fontSize:20, color: '#fff', }}>Amberwati</Text>
+              <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 11, color: '#fff', }}>We are here to help! </Text>
             </View>
           </View>
 
@@ -144,6 +155,36 @@ const Dashboard: React.FC = () => {
           </View>
         </View>
 
+        <>
+          <Banners
+            images={banners}
+            activeindex={activeindex}
+            setActiveindex={setActiveindex}
+            height={h * 0.2}
+            resizeMode="cover"
+            width={w * 0.95}
+            marginVertical={w * 0.01}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignSelf: 'center',
+              marginTop: h * 0.02,
+            }}>
+            {banners?.map((banner, index) => (
+              <View
+                style={{
+                  height: 8,
+                  width: 8,
+                  borderRadius: 5,
+                  backgroundColor: index == activeindex ? '#00B3AE' : 'grey',
+                  marginHorizontal: w * 0.01,
+                }}
+                key={index}
+              />
+            ))}
+          </View>
+        </>
 
       </ScrollView>
 
