@@ -11,6 +11,11 @@ import {Card, Searchbar, TextInput, Icon, Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Banners from '../components/Slider';
+import Highlight from '../components/HighlightingSlider';
+import SpecialtyTabs from '../components/SpecialitySlider';
+import SpecialtySlider from '../components/SpecialitySlider';
+import {doctorData} from '../Constants/data';
 
 const local_data = [
   {
@@ -26,31 +31,35 @@ const local_data = [
 const Specialities: React.FC = () => {
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
+
+  const specialties = Object.keys(doctorData);
+
+  const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1); // Default: Neurology
+  const [activeDocIndex, setActiveDocIndex] = useState(0);
+
+  const currentSpecialty = specialties[activeSpecialtyIndex];
+  const currentDoctors = doctorData[currentSpecialty];
+
+  const handleLeft = () => {
+    setActiveSpecialtyIndex(prev =>
+      prev === 0 ? specialties.length - 1 : prev - 1,
+    );
+    setActiveDocIndex(0);
+  };
+
+  const handleRight = () => {
+    setActiveSpecialtyIndex(prev =>
+      prev === specialties.length - 1 ? 0 : prev + 1,
+    );
+    setActiveDocIndex(0);
+  };
+
+  const [activeindex, setActiveindex] = useState(0);
+  const w = Dimensions.get('window').width;
+  const h = Dimensions.get('window').height;
   return (
     <View style={styles.mainContainer}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* <View style={styles.header}>
-        <View style={{ flexDirection:'row', alignItems:'center',}}>
-            <View style={styles.profileIconBlock}>
-          
-            <Image source={require('../../assets/images/profile-icon.png')} style={{width:30, height:30,}} resizeMode="contain" />
-            </View>
-                <View style={{marginLeft:6}}>
-                    <Text style={{fontSize:14,color:'#fff', fontFamily:'ProximaNovaA-Regular',}}> Amberwati</Text>
-                       <View style={{flexDirection:'row',alignItems:'center', justifyContent:'center', }}>
-                        <Image source={require('../../assets/images/map-icon.png')} style={{width:12,height:12,marginRight:3,  marginTop:0, }} />
-                        <Text style={{fontSize:11,color:'#fff',fontWeight:'normal', marginTop:-2, fontFamily:'ProximaNovaA-Regular'}}>
-                        Hyderabad</Text>
-                    </View>
-                </View>
-        </View> 
-        <View style={styles.headerRight}>
-            <Image source={require('../../assets/images/services-icon.png')} style={{width:30,height:30,marginRight:10,}} resizeMode="contain" />
-            <Image source={require('../../assets/images/wallet-icon.png')} style={{width:30,height:30,marginRight:10,}} resizeMode="contain" />
-            <Image source={require('../../assets/images/filter-icon.png')} style={{width:30,height:30,}} resizeMode="contain" />
-        </View>
-    </View> */}
-
         <Header showLocation title={undefined} />
         <View style={styles.container}>
           <View style={styles.helloCard}>
@@ -155,6 +164,26 @@ const Specialities: React.FC = () => {
             </View>
           </View>
         </View>
+
+        <>
+          <SpecialtySlider
+            specialties={specialties}
+            activeIndex={activeSpecialtyIndex}
+            onLeftPress={handleLeft}
+            onRightPress={handleRight}
+            onTabPress={index => {
+              setActiveSpecialtyIndex(index);
+              setActiveDocIndex(0);
+            }}
+          />
+          <Highlight
+            images={currentDoctors}
+            activeindex={activeDocIndex}
+            setActiveindex={setActiveDocIndex}
+            height={h * 0.175}
+            autoScrollEnabled={false}
+          />
+        </>
       </ScrollView>
 
       <Footer />
