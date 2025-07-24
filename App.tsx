@@ -60,7 +60,7 @@ export const useAuth = () => {
 type AuthStackParamList = {
   Login: undefined;
   Otp: undefined;
-  Home: undefined;
+ 
 };
 
 type MainStackParamList = {
@@ -87,8 +87,7 @@ const MainStackNav = createNativeStackNavigator<MainStackParamList>();
 const screenOptions: NativeStackNavigationOptions = {headerShown: false};
 
 export const AuthStack = React.memo(() => (
-  <AuthStackNav.Navigator screenOptions={screenOptions}>
-       <AuthStackNav.Screen name="Home" component={Home} />
+  <AuthStackNav.Navigator screenOptions={screenOptions}> 
     <AuthStackNav.Screen name="Login" component={Login} />
     <AuthStackNav.Screen name="Otp" component={Otp} />
   </AuthStackNav.Navigator>
