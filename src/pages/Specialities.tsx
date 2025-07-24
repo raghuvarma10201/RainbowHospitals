@@ -16,6 +16,9 @@ import Highlight from '../components/HighlightingSlider';
 import SpecialtyTabs from '../components/SpecialitySlider';
 import SpecialtySlider from '../components/SpecialitySlider';
 import {doctorData} from '../Constants/data';
+import {MainStackParamList} from '../../App';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const local_data = [
   {
@@ -29,6 +32,8 @@ const local_data = [
 ];
 
 const Specialities: React.FC = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
 
@@ -39,6 +44,10 @@ const Specialities: React.FC = () => {
 
   const currentSpecialty = specialties[activeSpecialtyIndex];
   const currentDoctors = doctorData[currentSpecialty];
+
+  const navigateTo = (path: keyof MainStackParamList, params: any) => {
+    navigation.navigate(path, params);
+  };
 
   const handleLeft = () => {
     setActiveSpecialtyIndex(prev =>
@@ -182,6 +191,7 @@ const Specialities: React.FC = () => {
             setActiveindex={setActiveDocIndex}
             height={h * 0.175}
             autoScrollEnabled={false}
+            nav={navigateTo}
           />
         </>
       </ScrollView>

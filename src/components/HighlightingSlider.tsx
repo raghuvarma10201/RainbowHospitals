@@ -8,6 +8,7 @@ import {
   Dimensions,
   ViewStyle,
   Text,
+  TouchableOpacity,
 } from 'react-native';
 
 const {width: screenWidth} = Dimensions.get('window');
@@ -21,12 +22,14 @@ const Highlight = ({
   setActiveindex,
   height,
   autoScrollEnabled = true,
+  nav,
 }: {
   images: any[];
   activeindex: number;
   setActiveindex: (index: number) => void;
   height: number;
   autoScrollEnabled?: boolean;
+  nav: any;
 }) => {
   const flatListRef = useRef<FlatList>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -78,22 +81,25 @@ const Highlight = ({
     });
 
     return (
-      <Animated.View
-        style={[styles.itemContainer, {transform: [{scale}], opacity}]}>
-        <Image
-          source={item?.image}
-          style={[styles.banner, {height, width: ITEM_WIDTH}]}
-          resizeMode="cover"
-        />
-        <View style={styles.doctorDetails}>
-          <Text style={styles.docName}>{item?.name}</Text>
-          <Text style={[styles.docName, {fontSize: 12}]}>
-            {item?.designation}
-          </Text>
-          <Text style={[styles.docName, {fontSize: 12}]}>
-            {item?.speciality}
-          </Text>
-        </View>
+      <Animated.View style={[{transform: [{scale}], opacity}]}>
+        <TouchableOpacity
+          onPress={() => nav('DoctorSlots', item)}
+          style={styles.itemContainer}>
+          <Image
+            source={item?.image}
+            style={[styles.banner, {height, width: ITEM_WIDTH}]}
+            resizeMode="cover"
+          />
+          <View style={styles.doctorDetails}>
+            <Text style={styles.docName}>{item?.name}</Text>
+            <Text style={[styles.docName, {fontSize: 12}]}>
+              {item?.designation}
+            </Text>
+            <Text style={[styles.docName, {fontSize: 12}]}>
+              {item?.speciality}
+            </Text>
+          </View>
+        </TouchableOpacity>
       </Animated.View>
     );
   };

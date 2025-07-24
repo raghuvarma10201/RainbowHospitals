@@ -1,25 +1,35 @@
 // App.tsx
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
-import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationOptions,
+} from '@react-navigation/native-stack';
+import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import dayjs from 'dayjs';
 
-import { navigationRef } from './src/navigation/RootNavigation';
+import {navigationRef} from './src/navigation/RootNavigation';
 
 // ------- Screens -------
 import Login from './src/authentication/Login';
-import { AppProvider } from './src/context/AppContext';
+import {AppProvider} from './src/context/AppContext';
 import Toast from 'react-native-toast-message';
 import './src/i18n';
-import { I18nManager } from 'react-native';
+import {I18nManager} from 'react-native';
 import Splash from './src/pages/Splash';
 import Otp from './src/authentication/Otp';
 import Dashboard from './src/pages/Dashboard';
 import Specialities from './src/pages/Specialities';
 import AppointmentConfirmed from './src/pages/AppointmentConfirmed';
+import DoctorSlots from './src/pages/DoctorSlots';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -43,7 +53,6 @@ export const useAuth = () => {
 type AuthStackParamList = {
   Login: undefined;
   Otp: undefined;
-
 };
 
 type MainStackParamList = {
@@ -51,14 +60,15 @@ type MainStackParamList = {
   Dashboard: undefined;
   Specialities: undefined;
   AppointmentConfirmed: undefined;
+  DoctorSlots: undefined;
 };
 
-export type { AuthStackParamList, MainStackParamList };
+export type {AuthStackParamList, MainStackParamList};
 
 // ------- Navigator instances -------
 const AuthStackNav = createNativeStackNavigator<AuthStackParamList>();
 const MainStackNav = createNativeStackNavigator<MainStackParamList>();
-const screenOptions: NativeStackNavigationOptions = { headerShown: false };
+const screenOptions: NativeStackNavigationOptions = {headerShown: false};
 
 export const AuthStack = React.memo(() => (
   <AuthStackNav.Navigator screenOptions={screenOptions}>
@@ -71,7 +81,11 @@ export const MainStack = React.memo(() => (
   <MainStackNav.Navigator screenOptions={screenOptions}>
     <MainStackNav.Screen name="Dashboard" component={Dashboard} />
     <MainStackNav.Screen name="Specialities" component={Specialities} />
-    <MainStackNav.Screen name="AppointmentConfirmed" component={AppointmentConfirmed} />
+    <MainStackNav.Screen
+      name="AppointmentConfirmed"
+      component={AppointmentConfirmed}
+    />
+    <MainStackNav.Screen name="DoctorSlots" component={DoctorSlots} />
   </MainStackNav.Navigator>
 ));
 
@@ -113,7 +127,7 @@ const App: React.FC = () => {
   }, []);
 
   // Stable value to avoid re‑renders of consumers
-  const authCtx = useMemo(() => ({ isLoggedIn, setLoggedIn }), [isLoggedIn]);
+  const authCtx = useMemo(() => ({isLoggedIn, setLoggedIn}), [isLoggedIn]);
 
   // Splash while booting
   if (booting) {
@@ -128,16 +142,19 @@ const App: React.FC = () => {
     <AuthContext.Provider value={authCtx}>
       <PaperProvider theme={theme}>
         <NavigationContainer ref={navigationRef}>
-          {isLoggedIn ? <AppProvider>
-            <MainStack />
-          </AppProvider> : <AppProvider>
-            <AuthStack />
-          </AppProvider>}
+          {isLoggedIn ? (
+            <AppProvider>
+              <MainStack />
+            </AppProvider>
+          ) : (
+            <AppProvider>
+              <AuthStack />
+            </AppProvider>
+          )}
         </NavigationContainer>
       </PaperProvider>
       <Toast />
     </AuthContext.Provider>
-
   );
 };
 
