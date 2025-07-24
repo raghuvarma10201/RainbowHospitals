@@ -18,14 +18,14 @@ const SpecialtySlider = ({
   onRightPress,
   onTabPress,
 }: {
-  specialties: string[];
+  specialties: any;
   activeIndex: number;
   onLeftPress: () => void;
   onRightPress: () => void;
   onTabPress: (index: number) => void;
 }) => {
   const flatListRef = useRef<FlatList>(null);
-
+  console.log(specialties);
   useEffect(() => {
     if (flatListRef.current) {
       flatListRef.current.scrollToIndex({
@@ -36,11 +36,11 @@ const SpecialtySlider = ({
     }
   }, [activeIndex]);
 
-  const renderItem = ({item, index}: {item: string; index: number}) => (
+  const renderItem = ({item, index}: {item: any; index: number}) => (
     <TouchableOpacity onPress={() => onTabPress(index)}>
       <Text
         style={[styles.tabText, index === activeIndex && styles.activeTabText]}>
-        {item}
+        {item.name}
       </Text>
     </TouchableOpacity>
   );

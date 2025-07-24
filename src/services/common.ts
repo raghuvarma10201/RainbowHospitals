@@ -33,6 +33,23 @@ export const getSpecialities = async () => {
     throw error;
   }
 };
+export const getDoctors = async (name :string, speciality_id : any,branch_id : any, category_id : any, appointment_type : number,page : number,pageSize : number) => {
+  const params = {
+    name : name,
+    speciality_id : speciality_id,
+    branch_id : branch_id,
+    category_id : category_id,
+    appointment_type : appointment_type,
+    page : page,
+    pageSize : pageSize
+  }
+  try {
+    const response = await api.get('/getDoctors', {params});
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 
 

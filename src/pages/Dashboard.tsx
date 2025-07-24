@@ -32,7 +32,7 @@ const Dashboard: React.FC = () => {
   ];
 
   const navigateTo = (path: keyof MainStackParamList) => {
-    navigation.navigate(path);
+    navigation.navigate(path as any, undefined);
 };
 
   const [activeindex, setActiveindex] = useState(0);

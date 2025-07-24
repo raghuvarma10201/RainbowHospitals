@@ -56,7 +56,7 @@ const Otp: React.FC = () => {
     value,
     setValue,
   });
-
+  
   useEffect(() => {
     const fetchPhoneNumber = async () => {
       const storedNumber = await AsyncStorage.getItem('mobileNumber');

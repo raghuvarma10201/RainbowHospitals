@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   Searchbar,
@@ -17,12 +17,15 @@ import {
   Modal,
   Portal,
 } from 'react-native-paper';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../App';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../../App';
+import { getDoctors, getSpecialities } from '../services/common';
+import { ToastService } from '../utils/ToastService';
+import { IMG_BASE_URL } from '../utils/environment';
 
 const local_data = [
   {
@@ -56,9 +59,9 @@ const doctors = [
   },
 ];
 
-const DoctorsList: React.FC = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+const DoctorsList: React.FC<any> = ({ route }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const { specialityId, appointmentType } = route.params;
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
   const banners = [
@@ -66,9 +69,33 @@ const DoctorsList: React.FC = () => {
     require('../../assets/images/slide1.png'),
     require('../../assets/images/slide1.png'),
   ];
+  const [doctors, setDoctors] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    loadDoctors();
+  }, []);
 
-  const navigateTo = (path: keyof MainStackParamList) => {
-    navigation.navigate(path);
+  const navigateTo = (path: keyof MainStackParamList, params: any) => {
+    navigation.navigate(path, params);
+  };
+
+  const loadDoctors = async () => {
+    try {
+      setLoading(true);
+      const response = await getDoctors('', specialityId, '', '', appointmentType, 1, 10);
+      if (response && response.status == 200) {
+        setLoading(false);
+        setDoctors(response.data.doctors);
+      } else {
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to load Doctors:', error);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <View style={styles.mainContainer}>
@@ -83,7 +110,7 @@ const DoctorsList: React.FC = () => {
             <View style={styles.searchBlock}>
               <TextInput
                 mode="flat"
-                style={[styles.searchFormInput, {color: 'white'}]}
+                style={[styles.searchFormInput, { color: 'white' }]}
                 placeholder="search"
                 value={search}
                 onChangeText={setSearch}
@@ -127,23 +154,26 @@ const DoctorsList: React.FC = () => {
           <View style={styles.doctorsListContainer}>
             {doctors.map((doctor, index) => (
               <View key={index} style={styles.doctorContainer}>
-                <Image source={doctor?.image} style={styles.doctorImg} />
+                <Image source={doctor.small_image
+                  ? { uri: `${IMG_BASE_URL}${doctor.small_image}` }
+                  : { uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png' }} style={styles.doctorImg} />
                 <View>
-                  <Text style={[styles.docName, {color: '#4CC2BF'}]}>
+                  <Text style={[styles.docName, { color: '#4CC2BF' }]}>
                     {doctor?.name}
                   </Text>
-                  <Text style={[styles.docName, {fontSize: 12}]}>
+                  <Text style={[styles.docName, { fontSize: 12 }]}>
                     {doctor?.designation}
                   </Text>
-                  <Text style={[styles.docName, {fontSize: 12}]}>
-                    {doctor?.speciality}
+                  <Text style={[styles.docName, { fontSize: 12 }]} numberOfLines={2}
+  ellipsizeMode="tail">
+                    {doctor?.doctor_specialities[0].speciality.name}
                   </Text>
                   <Text
-                    style={[styles.docName, {fontSize: 14, color: '#4CC2BF'}]}>
+                    style={[styles.docName, { fontSize: 14, color: '#4CC2BF' }]}>
                     {`Experience 15 Years`}
                   </Text>
                   <TouchableOpacity
-                    style={[styles.payBtn, {backgroundColor: '#3C2871'}]}>
+                    style={[styles.payBtn, { backgroundColor: '#3C2871' }]}>
                     <Text style={styles.payBtnTxt}>Book Appointment</Text>
                   </TouchableOpacity>
                 </View>
