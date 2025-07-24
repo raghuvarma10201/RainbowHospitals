@@ -29,7 +29,6 @@ import Otp from './src/authentication/Otp';
 import Dashboard from './src/pages/Dashboard';
 import Specialities from './src/pages/Specialities';
 import AppointmentConfirmed from './src/pages/AppointmentConfirmed';
-import DoctorSlots from './src/pages/DoctorSlots';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -60,7 +59,6 @@ type MainStackParamList = {
   Dashboard: undefined;
   Specialities: undefined;
   AppointmentConfirmed: undefined;
-  DoctorSlots: undefined;
 };
 
 export type {AuthStackParamList, MainStackParamList};
@@ -85,7 +83,6 @@ export const MainStack = React.memo(() => (
       name="AppointmentConfirmed"
       component={AppointmentConfirmed}
     />
-    <MainStackNav.Screen name="DoctorSlots" component={DoctorSlots} />
   </MainStackNav.Navigator>
 ));
 

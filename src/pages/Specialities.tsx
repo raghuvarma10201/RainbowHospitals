@@ -154,7 +154,7 @@ const Specialities: React.FC = () => {
                 />
               </View>
               <Text style={styles.actionText}>
-                {' '}
+             
                 Pediatric Cardiology & Cardiothoracic Surgery
               </Text>
             </View>
