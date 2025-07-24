@@ -134,14 +134,17 @@ export default Highlight;
 
 const styles = StyleSheet.create({
   itemContainer: {
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#3C2871',
     borderRadius: 10,
+    marginTop:10,
+   
   },
   banner: {
-    borderRadius: 12,
+  
   },
   doctorDetails: {
     padding: 8,
