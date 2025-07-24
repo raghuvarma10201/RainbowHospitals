@@ -6,23 +6,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {Card, Searchbar, TextInput, Icon, Text} from 'react-native-paper';
-import {Dropdown} from 'react-native-element-dropdown';
+import React, { useEffect, useState } from 'react';
+import { Card, Searchbar, TextInput, Icon, Text } from 'react-native-paper';
+import { Dropdown } from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Banners from '../components/Slider';
 import Highlight from '../components/HighlightingSlider';
 import SpecialtyTabs from '../components/SpecialitySlider';
 import SpecialtySlider from '../components/SpecialitySlider';
-import {doctorData} from '../Constants/data';
-import {MainStackParamList, useAuth} from '../../App';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { doctorData } from '../Constants/data';
+import { MainStackParamList, useAuth } from '../../App';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import PaginatedGrid from '../components/GridComponent';
-import {ToastService} from '../utils/ToastService';
-import {useApp} from '../context/AppContext';
-import {getSpecialities} from '../services/common';
+import { ToastService } from '../utils/ToastService';
+import { useApp } from '../context/AppContext';
+import { getSpecialities } from '../services/common';
+import Loader from '../components/Loader';
 
 const local_data = [
   {
@@ -43,14 +44,15 @@ const Specialities: React.FC = () => {
   const navigation = useNavigation<AppNavigationProp>();
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
+  const [specialities, setSpecialities] = useState<any>([]);
   const specialties = Object.keys(doctorData) as Array<keyof typeof doctorData>;
   const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1); // Default: Neurology
   const [activeDocIndex, setActiveDocIndex] = useState(0);
   const currentSpecialty = specialties[activeSpecialtyIndex];
   const currentDoctors = doctorData[currentSpecialty];
   const [loading, setLoading] = useState(false);
-  const {updateBranch, updateAllBranch, updateRegion} = useApp();
-  const {setLoggedIn} = useAuth();
+  const { updateBranch, updateAllBranch, updateRegion } = useApp();
+  const { setLoggedIn } = useAuth();
 
   useEffect(() => {
     loadSpecialities();
@@ -64,9 +66,9 @@ const Specialities: React.FC = () => {
     try {
       setLoading(true);
       const response = await getSpecialities();
-      console.log('response', response);
       if (response && response.status == 200) {
         setLoading(false);
+        setSpecialities(response.data);
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -95,6 +97,13 @@ const Specialities: React.FC = () => {
   const [activeindex, setActiveindex] = useState(0);
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
+
+  if (loading) {
+    return (
+      <Loader />
+    );
+  }
+
   return (
     <View style={styles.mainContainer}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -105,7 +114,7 @@ const Specialities: React.FC = () => {
               <View style={styles.searchBlock}>
                 <TextInput
                   mode="flat"
-                  style={[styles.searchFormInput, {color: 'white'}]}
+                  style={[styles.searchFormInput, { color: 'white' }]}
                   placeholder="search"
                   value={search}
                   onChangeText={setSearch}
@@ -150,80 +159,32 @@ const Specialities: React.FC = () => {
           </View>
 
           <View style={styles.quickActions}>
-            <PaginatedGrid />
-            {/* <View style={styles.actionItem}>
-              <View style={styles.actionItemIcon}>
-                <Image
-                  source={require('../../assets/images/neonatal-intensive-care-unit-icon.png')}
-                  style={styles.iconAction}
-                />
-              </View>
-              <Text style={styles.actionText}>
-                {' '}
-                Neonatal Intensive Care Unit
-              </Text>
-            </View>
-
-            <View style={styles.actionItem}>
-              <View style={styles.actionItemIcon}>
-                <Image
-                  source={require('../../assets/images/neonatal-intensive-care-unit-icon.png')}
-                  style={styles.iconAction}
-                />
-              </View>
-              <Text style={styles.actionText}>
-                Pediatric Intensive Care Unit
-              </Text>
-            </View>
-
-            <View style={styles.actionItem}>
-              <View style={styles.actionItemIcon}>
-                <Image
-                  source={require('../../assets/images/neonatal-intensive-care-unit-icon.png')}
-                  style={styles.iconAction}
-                />
-              </View>
-              <Text style={styles.actionText}>
-
-                Pediatric Cardiology & Cardiothoracic Surgery
-              </Text>
-            </View>
-
-            <View style={styles.actionItem}>
-              <View style={styles.actionItemIcon}>
-                <Image
-                  source={require('../../assets/images/neonatal-intensive-care-unit-icon.png')}
-                  style={styles.iconAction}
-                />
-              </View>
-              <Text style={styles.actionText}>
-                {' '}
-                Pediatric Gastroenterology{' '}
-              </Text>
-            </View> */}
+            <PaginatedGrid items={specialities} />
           </View>
         </View>
 
-        <>
-          <SpecialtySlider
-            specialties={specialties}
-            activeIndex={activeSpecialtyIndex}
-            onLeftPress={handleLeft}
-            onRightPress={handleRight}
-            onTabPress={index => {
-              setActiveSpecialtyIndex(index);
-              setActiveDocIndex(0);
-            }}
-          />
-          <Highlight
-            images={currentDoctors}
-            activeindex={activeDocIndex}
-            setActiveindex={setActiveDocIndex}
-            height={h * 0.175}
-            autoScrollEnabled={false}
-            nav={navigateTo}
-          />
-        </>
+        {specialities?.length > 0 && (
+          <>
+            <SpecialtySlider
+              specialties={specialities}
+              activeIndex={activeSpecialtyIndex}
+              onLeftPress={handleLeft}
+              onRightPress={handleRight}
+              onTabPress={index => {
+                setActiveSpecialtyIndex(index);
+                setActiveDocIndex(0);
+              }}
+            />
+            <Highlight
+              images={currentDoctors}
+              activeindex={activeDocIndex}
+              setActiveindex={setActiveDocIndex}
+              height={h * 0.175}
+              autoScrollEnabled={false}
+              nav={navigateTo}
+            />
+          </>
+        )}
       </ScrollView>
 
       <Footer />

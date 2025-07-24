@@ -7,30 +7,41 @@ import {
   Dimensions,
   Image,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import {gridData} from '../Constants/data';
+import { IMG_BASE_URL } from '../utils/environment';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../../App';
 
 const {width} = Dimensions.get('window');
 const ITEMS_PER_PAGE = 9;
 
-// const data = Array.from({ length: 27 }, (_, i) => ({
-//   id: `${i}`,
-//   title: `Pediatric ${i + 1}`,
-//   // Placeholder icon, replace with actual icons or require('...') paths
-//   icon: 'https://via.placeholder.com/50x50.png?text=Icon',
-//   isSpecial: i === 4 // Just for demo (the teal-colored one in your screenshot)
-// }));
-
 const data = gridData;
 
-const PaginatedGrid = () => {
+interface ItemsProps {
+  items: [];
+}
+const PaginatedGrid: React.FC<ItemsProps> = ({
+
+  items
+}) => {
+  
+  type AppNavigationProp = NativeStackNavigationProp<MainStackParamList, 'DoctorsList'>;
+  const navigation = useNavigation<AppNavigationProp>();
+
   const scrollRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(0);
 
   const pages = [];
-  for (let i = 0; i < data.length; i += ITEMS_PER_PAGE) {
-    pages.push(data.slice(i, i + ITEMS_PER_PAGE));
+  for (let i = 0; i < items.length; i += ITEMS_PER_PAGE) {
+    pages.push(items.slice(i, i + ITEMS_PER_PAGE));
   }
+
+  const navigateToDoctors = async (specialityId : number) => {
+    navigation.navigate("DoctorsList", {specialityId : specialityId, appointmentType : "video"})
+  };
 
   const handleScroll = (event: any) => {
     const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -40,12 +51,16 @@ const PaginatedGrid = () => {
   const renderPage = (page: any, pageIndex: any) => (
     <View key={pageIndex} style={styles.page}>
       {page.map((item: any) => (
+        <TouchableOpacity onPress={() => navigateToDoctors(item.id)}>
         <View key={item.id} style={styles.itemContainer}>
           <View style={[styles.iconBox, item.isSpecial && styles.specialItem]}>
-            <Image source={item.img} style={styles.icon} />
+            <Image source={item.icon_image
+                        ? { uri: `${IMG_BASE_URL}${item.icon_image}` }
+                        : { uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png' }} style={styles.icon} />
           </View>
           <Text style={styles.itemText}>{item.name}</Text>
         </View>
+        </TouchableOpacity>
       ))}
     </View>
   );
@@ -81,12 +96,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
   itemContainer: {
     width: width / 4,
     alignItems: 'center',
-    marginVertical: 12,
+    marginVertical: 10,
   },
   iconBox: {
     width: 60,
@@ -100,8 +115,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#00bcd4',
   },
   icon: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
     tintColor: 'white',
   },
   itemText: {
@@ -109,7 +124,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12,
     color: '#333',
-    width: '50%',
+    width: '90%',
   },
   paginationContainer: {
     flexDirection: 'row',
