@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Card, Searchbar, TextInput, Icon, Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../components/Header';
@@ -19,7 +19,6 @@ import {doctorData} from '../Constants/data';
 import {MainStackParamList} from '../../App';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import PaginatedGrid from '../components/GridComponent';
 
 const local_data = [
   {
@@ -33,23 +32,44 @@ const local_data = [
 ];
 
 const Specialities: React.FC = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  type AppNavigationProp = NativeStackNavigationProp<
+    MainStackParamList,
+    'Dashboard'
+  >;
+  const navigation = useNavigation<AppNavigationProp>();
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
-
-  const specialties = Object.keys(doctorData);
-
+  const specialties = Object.keys(doctorData) as Array<keyof typeof doctorData>;
   const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1); // Default: Neurology
   const [activeDocIndex, setActiveDocIndex] = useState(0);
-
   const currentSpecialty = specialties[activeSpecialtyIndex];
   const currentDoctors = doctorData[currentSpecialty];
+  const [loading, setLoading] = useState(false);
+  const {updateBranch, updateAllBranch, updateRegion} = useApp();
+  const {setLoggedIn} = useAuth();
 
-  const navigateTo = (path: keyof MainStackParamList, params: any) => {
-    navigation.navigate(path, params);
+  useEffect(() => {
+    loadSpecialities();
+  }, []);
+
+  const loadSpecialities = async () => {
+    try {
+      setLoading(true);
+      const response = await getSpecialities();
+      console.log('response', response);
+      if (response && response.status == 200) {
+        setLoading(false);
+      } else {
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to load regions:', error);
+    } finally {
+      setLoading(false);
+    }
   };
-
   const handleLeft = () => {
     setActiveSpecialtyIndex(prev =>
       prev === 0 ? specialties.length - 1 : prev - 1,
@@ -156,7 +176,7 @@ const Specialities: React.FC = () => {
                 />
               </View>
               <Text style={styles.actionText}>
-             
+
                 Pediatric Cardiology & Cardiothoracic Surgery
               </Text>
             </View>
@@ -258,7 +278,7 @@ const styles = StyleSheet.create({
   //Header End
 
   helloCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'transparent',
     borderRadius: 10,
     paddingVertical: 0,
     paddingHorizontal: 0,
@@ -346,13 +366,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     marginTop: 30,
-    maxWidth: Dimensions.get('window').width * 0.8,
     alignSelf: 'center',
   },
 
   actionItem: {
     alignItems: 'center',
-    width: '30%',
+    width: '33%',
     marginBottom: 5,
   },
   actionItemIcon: {
@@ -374,7 +393,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     textAlign: 'center',
     marginTop: 4,
-    width: '50%',
   },
 
   activeActionItem: {

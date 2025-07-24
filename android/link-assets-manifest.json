@@ -1,0 +1,25 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/BelmeinRounded-Regular.otf",
+      "sha1": "91e6955d3fdacff3fb9eb881b7f45e6a2d70f092"
+    },
+    {
+      "path": "assets/fonts/ProximaNovaA-Black.ttf",
+      "sha1": "b5abf9befbc2ff40f4cd7fb2c0320bd3f0ab126a"
+    },
+    {
+      "path": "assets/fonts/ProximaNovaA-Bold.ttf",
+      "sha1": "83500e3a56946074337bd18842ef9146016e7b34"
+    },
+    {
+      "path": "assets/fonts/ProximaNovaA-Regular.ttf",
+      "sha1": "ef6ddbfb2e60b75c363016d29ff58e2fc0cf67d1"
+    },
+    {
+      "path": "assets/fonts/ProximaNovaA-Semibold.ttf",
+      "sha1": "44eb20741ab3b8099daeeb2aec990fb8a9698ee3"
+    }
+  ]
+}

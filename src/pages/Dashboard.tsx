@@ -60,8 +60,6 @@ const Dashboard: React.FC = () => {
                 />
                 <Image source={require('../../assets/images/search-icon.png')} style={styles.formInputIcon} />
               </View>
-
-
               <View style={styles.searchBlock}>
                 <Dropdown
                   style={styles.dropdownSelect}
@@ -83,7 +81,7 @@ const Dashboard: React.FC = () => {
 
             <View style={styles.textHelloCard}>
               <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 16, color: '#fff', }}>Hello,</Text>
-              <Text style={{ fontFamily: 'ProximaNovaA-Black', fontSize:20, color: '#fff', }}>Amberwati</Text>
+              <Text style={{ fontFamily: 'ProximaNovaA-Semibold', fontSize:20, color: '#fff', }}>Amberwati</Text>
               <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 11, color: '#fff', }}>We are here to help! </Text>
             </View>
           </View>

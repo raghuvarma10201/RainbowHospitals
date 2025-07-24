@@ -78,14 +78,24 @@ const Otp: React.FC = () => {
 
   const handleResend = async () => {
     if (resendDisabled) return;
+    setLoading(true);
     try {
       setTimer(30);
       setResendDisabled(true);
-      const response = await login({number: phoneNumber});
-      ToastService.success('OTP resent successfully');
+      const response = await login({ number: phoneNumber });
+      if (response.status == 200 && response.success == true) {
+        setLoading(false);
+        ToastService.success('Success', 'Otp sent successfully');
+      }else{
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
     } catch (error) {
+      setLoading(false);
       console.error('Resend error:', error);
       ToastService.error('Failed to resend OTP.');
+    } finally{
+      setLoading(false);
     }
   };
 
@@ -121,12 +131,9 @@ const Otp: React.FC = () => {
         }
         await loadDetails(token);
         if (response && response.status === 200) {
-          ToastService.error(
-            'Success',
-            response.data.message || 'OTP verified successfully',
-          );
-          const authResponse = await authenticateUser({MobileNo: phoneNumber});
-          console.log('authResponse', authResponse);
+          ToastService.error('Success', response.data.message || 'OTP verified successfully');
+          const authResponse = await authenticateUser({ MobileNo: phoneNumber });
+          console.log("authResponse", authResponse);
           if (authResponse && authResponse.status == 200) {
             setLoading(false);
             updateMrn(authResponse.data.LoginName);
@@ -156,6 +163,7 @@ const Otp: React.FC = () => {
               // }
             }
           } else if (authResponse.status == 500) {
+            setLoading(false);
             ToastService.error('Error', authResponse.message);
           } else {
             setLoading(false);
@@ -163,12 +171,11 @@ const Otp: React.FC = () => {
             ToastService.error('Error', authResponse?.error);
           }
         } else {
-          ToastService.error(
-            'Error',
-            response?.data.message || 'Error verifying OTP',
-          );
+          setLoading(false);
+          ToastService.error('Error', response?.data.message || 'Error verifying OTP');
         }
       } catch (error) {
+        setLoading(false);
         console.error('Verification failed:', error);
         ToastService.error('Error', 'Failed to verify OTP');
       } finally {
@@ -205,7 +212,11 @@ const Otp: React.FC = () => {
       setLoading(false);
     }
   };
-
+ if (loading) {
+    return (
+      <Loader />
+    );
+  }
   return (
     <ScrollView style={styles.container}>
       <ImageBackground

@@ -4,11 +4,31 @@ import {Card, Searchbar , TextInput, Icon, Text, Banner,  Modal, Portal, } from 
 import { Dropdown } from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Banners from '../components/Slider';
+import {MainStackParamList} from '../../App';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-
+const local_data = [
+  {
+    value: '1',
+    lable: 'location',
+  },
+  {
+    value: '2',
+    lable: 'location2',
+  },
+];
 
 const MedicalRecord: React.FC = () => {
+
+  const [search, setSearch] = useState('');
+  const [country, setCountry] = useState('1');
+
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const navigateTo = (path: keyof MainStackParamList, params: any) => {
+    navigation.navigate(path, params);
+  };
+
 
   return (
 <View style={styles.mainContainer}>
@@ -16,9 +36,67 @@ const MedicalRecord: React.FC = () => {
 <Header showLocation title={undefined} />
 <View style={styles.container}>
 
-      <Text style={styles.acTitle}>Medical Record</Text>
-   
-    
+<View style={styles.searchLocationWrapp}>
+            <View style={styles.searchLocationBlock}>
+              <View style={styles.searchBlock}>
+                <TextInput
+                  mode="flat"
+                  style={[styles.searchFormInput, {color: 'white'}]}
+                  placeholder=" Speciality  "
+                  value={search}
+                  onChangeText={setSearch}
+                  placeholderTextColor="#fff"
+                  underlineColor="transparent"
+                  activeUnderlineColor="transparent"
+                  theme={{
+                    colors: {
+                      text: 'white',
+                      placeholder: 'white',
+                      background: 'transparent',
+                    },
+                  }}
+                />
+                <Image
+                  source={require('../../assets/images/search-icon.png')}
+                  style={styles.formInputIcon}
+                />
+              </View>
+
+              <View style={styles.searchBlock}>
+                <Dropdown
+                  style={styles.dropdownSelect}
+                  selectedTextStyle={styles.selectedTextContry}
+                  placeholderStyle={styles.placeholderCountry}
+                  maxHeight={200}
+                  value={country}
+                  data={local_data}
+                  valueField="value"
+                  labelField="lable"
+                  placeholder="Select Location"
+                  containerStyle={styles.dropdownList}
+                  activeColor="#fff"
+                  onChange={e => setCountry(e.value)}
+                />
+                <Image
+                  source={require('../../assets/images/map-icon.png')}
+                  style={styles.formInputIcon}
+                />
+              </View>
+            </View>
+</View>
+
+   <View style={styles.titleFlex}>
+   <Image source={require('../../assets/images/view-report.png')}
+    style={styles.titleIcon} />
+    <Text style={styles.title}>Medical Records</Text>
+   </View>
+
+   <View style={styles.medicalRecordWrapp}>
+    <View style={styles.medicalRecordItem}>
+      <Text>Medical Record 1</Text>
+    </View>
+   </View>
+
 </View> 
 </ScrollView>
 <Footer />
@@ -51,126 +129,119 @@ container:{
   },
 
   // imgTextGroup
-  
-imgTextGroup:{ 
-  paddingHorizontal:10,  
-  position:'relative',
-  zIndex:1,
-  
- },
+ 
+  searchLocationWrapp: {
+    backgroundColor: 'transparent',
+    borderRadius: 10,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    marginTop: 20,
+  },
 
-imgTextBox:{
- width:'99%',
- marginTop:5,
- paddingTop:15,
- paddingBottom:40,
- paddingLeft:20,
- paddingRight:25,
- backgroundColor:'#3C2871',
- borderRadius:30,
+  searchLocationBlock: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  searchBlock: {
+    height: 44,
+    backgroundColor: '#4CC2BF',
+    borderRadius: 100,
+    paddingRight: 10,
+    marginTop: 0,
+    fontSize: 15,
+    fontWeight: 400,
+    color: '#fff',
+    fontFamily: 'ProximaNovaA-Regular',
+  },
 
- },
- textbeforeDot:{position:'relative'},
- imgTextTitle:{
-   fontSize:12,
-   lineHeight:18,
-   fontWeight:'normal',
-   color:'#fff',
-   textAlign:'center', 
- },
+  searchFormInput: {
+    height: 44,
+    borderWidth: 0,
+    borderRadius: 100,
+    paddingRight: 20,
+    paddingLeft: 15,
+    marginTop: 0,
+    fontSize: 13,
+    fontWeight: 400,
+    color: '#fff',
+    backgroundColor: 'transparent',
+    fontFamily: 'ProximaNovaA-Regular',
+    width: Dimensions.get('window').width * 0.43,
+  },
 
- beforeDot: {
-   position:'absolute',
-   top:'27%',   
-   right:-38,
-   width: 30,
-   height:30,
-   backgroundColor: '#00B3AE',
-   borderRadius: 50,
-   borderWidth:7,
-   borderColor:'#fff',
- },
+  formInputIcon: {
+    width: 16,
+    height: 16,
+    position: 'absolute',
+    top: 14,
+    left: 10,
+    tintColor: '#fff',
+  },
+// ---
 
- subscribeBlock:{
-  width:250,
-  display:'flex',
-  justifyContent:'space-evenly',
-  alignItems:'center',
-  backgroundColor:'#fff',
-  borderRadius:10,
-  marginTop:-20,
-  position:'relative',
-  zIndex:1,
-padding:10,
-paddingBottom:0,
-margin:'auto',
+dropdownSelect: {
+  height: 30,
+  paddingHorizontal: 10,
+  paddingLeft: 30,
+  marginTop: 5,
+  color: '#fff',
+  width: Dimensions.get('window').width * 0.43,
+},
 
- },
- subscribeImg:{
-  backgroundColor:'transparent',
-  width:'100%',
-  height:85,
-  resizeMode:'contain',
+placeholderCountry: {
+  fontFamily: 'ProximaNovaA-Regular',
+  fontSize: 13,
+  color: '#fff',
+},
+selectedTextContry: {
+  fontSize: 13,
+  color: '#fff',
+},
 
+dropdownList: {
+  fontFamily: 'ProximaNovaA-Regular',
+  fontSize: 13,
+  marginLeft: 0,
+  marginRight: 5,
+  padding: 0,
+  textAlign: 'left',
+},
+//---
+titleFlex: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: 20,
+  justifyContent: 'center',
+  alignSelf: 'center',
+  width: '100%',
+},
+titleIcon: {
+  width: 25,
+  height: 25,
+  marginRight: 10,
+},
+title: {
+  fontSize: 18,
+  fontFamily: 'ProximaNovaA-Bold',
+  color: '#000',
+  fontWeight: 'bold',
+},
 
+    //---
 
+    medicalRecordWrapp: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
 
- },
-
- acTitle:{
-  fontSize:20,
-  fontWeight:'bold',
-  color:'#000',
-  textAlign:'center',
-  marginTop:'10%',
-  marginBottom:'10%',
- },
- acSubTitle:{
-  fontSize:13,
-  color:'#000',
-  textAlign:'center',
-  marginTop:0,
-  marginBottom:'10%',
-  width:'80%',
-  margin:'auto',
- },
-
- sliderBlock:{
-  marginTop:'10%',
- },
- modalImageWrapp:{
-  width:'90%',
-  padding:10,
-  backgroundColor: '#00B3AE',
-  marginHorizontal: 0,
-  borderRadius: 20,
-  position: 'absolute',
-  left: '5%',
-  right: '5%',
-
-
- },
-
- modalImage:{
-  resizeMode:'contain',
-  width:'100%',
-  height:Dimensions.get('window').height * 0.63,
- },
-
- closeModal:{
-  position:'absolute',
-  top:20,
-  right:20,
-  zIndex:1,
-  backgroundColor:'#fff',
-  borderRadius:50,
-  padding:5,
- },
- closeModalIcon:{
-  width:17,
-  height:17,
-  resizeMode:'contain',
- },
-
-
+    medicalRecordItem: {
+      width: '48%',
+      height: 100,
+      backgroundColor: '#f0f0f0',
+      borderRadius: 10,
+      marginBottom: 10,
+    },
 })    
