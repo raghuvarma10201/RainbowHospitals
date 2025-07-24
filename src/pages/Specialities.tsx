@@ -335,9 +335,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginTop: 30,
+    marginTop: 20,
     alignSelf: 'center',
-    width: '85%',
+    width: '100%',
   },
 
   actionItem: {

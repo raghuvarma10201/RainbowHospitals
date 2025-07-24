@@ -82,20 +82,21 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   listContent: {
-    paddingHorizontal: 10,
+
   },
   arrow: {
-    fontSize: 20,
+    fontSize:15,
     color: '#00A2A2',
     fontWeight: 'bold',
     paddingHorizontal: 10,
   },
   tabText: {
-    width: ITEM_WIDTH,
+    width: 'auto',
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 13,
     color: '#999',
     fontWeight: 'normal',
+    marginHorizontal: 10,
   },
   activeTabText: {
     color: '#00A2A2',
