@@ -19,6 +19,7 @@ import {doctorData} from '../Constants/data';
 import {MainStackParamList} from '../../App';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import PaginatedGrid from '../components/GridComponent';
 
 const local_data = [
   {
@@ -121,7 +122,8 @@ const Specialities: React.FC = () => {
           </View>
 
           <View style={styles.quickActions}>
-            <View style={styles.actionItem}>
+            <PaginatedGrid />
+            {/* <View style={styles.actionItem}>
               <View style={styles.actionItemIcon}>
                 <Image
                   source={require('../../assets/images/neonatal-intensive-care-unit-icon.png')}
@@ -170,7 +172,7 @@ const Specialities: React.FC = () => {
                 {' '}
                 Pediatric Gastroenterology{' '}
               </Text>
-            </View>
+            </View> */}
           </View>
         </View>
 

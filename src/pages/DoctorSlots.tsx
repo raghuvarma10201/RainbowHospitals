@@ -1,5 +1,6 @@
 import {
   Dimensions,
+  FlatList,
   Image,
   ScrollView,
   StyleSheet,
@@ -15,6 +16,7 @@ import DynamicWeekWithMonth from '../components/WeeklyCalender';
 
 const DoctorSlots: React.FC = ({route}: any) => {
   const doctor = route?.params;
+  const availabletimings = ['10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM'];
   console.log(doctor);
   return (
     <View style={styles.mainContainer}>
@@ -47,11 +49,21 @@ const DoctorSlots: React.FC = ({route}: any) => {
               <TouchableOpacity style={styles.consultBtn}>
                 <Text
                   style={styles.consultBtnTxt}>{`Physical Consultation`}</Text>
-                <View style={styles.iconContainer}></View>
+                <View style={styles.iconContainer}>
+                  <Image
+                    source={require('../../assets/images/physical-consultation-icon.png')}
+                    style={styles.consultBtnImg}
+                  />
+                </View>
               </TouchableOpacity>
               <TouchableOpacity style={styles.consultBtn}>
                 <Text style={styles.consultBtnTxt}>{`Video Consultation`}</Text>
-                <View style={styles.iconContainer}></View>
+                <View style={styles.iconContainer}>
+                  <Image
+                    source={require('../../assets/images/video-consultation-icon.png')}
+                    style={styles.consultBtnImg}
+                  />
+                </View>
               </TouchableOpacity>
             </View>
             <View style={styles.divider} />
@@ -69,7 +81,34 @@ const DoctorSlots: React.FC = ({route}: any) => {
         </View>
         <View style={styles.calenderContainer}>
           <DynamicWeekWithMonth />
+          <View>
+            <Text style={styles.centeredTxt}>Available Time</Text>
+            <FlatList
+              data={availabletimings}
+              numColumns={4}
+              contentContainerStyle={styles.timeList}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={({item, index}) => (
+                <Text style={styles.timeTxt}>{item}</Text>
+              )}
+            />
+            <TouchableOpacity>
+              <Text
+                style={[
+                  styles.centeredTxt,
+                  {
+                    marginTop: h * 0.02,
+                  },
+                ]}>
+                View More
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
+
+        <TouchableOpacity style={styles.formButton}>
+          <Text style={styles.formButtonText}>Proceed To Confirm</Text>
+        </TouchableOpacity>
 
         <Footer />
       </ScrollView>
@@ -141,12 +180,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CC2BF',
   },
   calenderContainer: {
-    height: h * 0.2,
     backgroundColor: '#ac9fcfff',
     width: w * 0.8,
     alignSelf: 'center',
     borderBottomLeftRadius: w * 0.1,
     borderBottomRightRadius: w * 0.1,
+    paddingBottom: h * 0.03,
   },
   doctorDetails: {
     padding: 8,
@@ -181,10 +220,49 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: '#4CC2BF',
     left: w * 0.01,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  consultBtnImg: {
+    height: '80%',
+    width: '80%',
+    resizeMode: 'contain',
+    tintColor: 'white',
   },
   divider: {
     height: 1,
     width: '100%',
     backgroundColor: '#b6e7e6ff',
+  },
+  timeTxt: {
+    color: '#000',
+    fontSize: 12,
+    marginHorizontal: w * 0.02,
+  },
+  centeredTxt: {
+    color: '#3C2871',
+    textAlign: 'center',
+    fontSize: 18,
+  },
+  timeList: {
+    alignItems: 'center',
+    marginVertical: h * 0.01,
+  },
+  formButton: {
+    backgroundColor: '#3C2871',
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 10,
+    width: '90%',
+    alignSelf: 'center',
+  },
+  formButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 14,
+    fontFamily: 'ProximaNovaA-Bold',
+    fontWeight: 'bold',
+    padding: 5,
+    borderRadius: 10,
   },
 });
