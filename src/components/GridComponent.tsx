@@ -32,14 +32,14 @@ const PaginatedGrid = () => {
     pages.push(data.slice(i, i + ITEMS_PER_PAGE));
   }
 
-  const handleScroll = event => {
+  const handleScroll = (event: any) => {
     const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
     setCurrentPage(pageIndex);
   };
 
-  const renderPage = (page, pageIndex) => (
+  const renderPage = (page: any, pageIndex: any) => (
     <View key={pageIndex} style={styles.page}>
-      {page.map(item => (
+      {page.map((item: any) => (
         <View key={item.id} style={styles.itemContainer}>
           <View style={[styles.iconBox, item.isSpecial && styles.specialItem]}>
             <Image source={item.img} style={styles.icon} />

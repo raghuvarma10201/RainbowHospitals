@@ -16,9 +16,13 @@ import Highlight from '../components/HighlightingSlider';
 import SpecialtyTabs from '../components/SpecialitySlider';
 import SpecialtySlider from '../components/SpecialitySlider';
 import {doctorData} from '../Constants/data';
-import {MainStackParamList} from '../../App';
+import {MainStackParamList, useAuth} from '../../App';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import PaginatedGrid from '../components/GridComponent';
+import {ToastService} from '../utils/ToastService';
+import {useApp} from '../context/AppContext';
+import {getSpecialities} from '../services/common';
 
 const local_data = [
   {
@@ -51,6 +55,10 @@ const Specialities: React.FC = () => {
   useEffect(() => {
     loadSpecialities();
   }, []);
+
+  const navigateTo = (path: keyof MainStackParamList) => {
+    navigation.navigate(path);
+  };
 
   const loadSpecialities = async () => {
     try {
@@ -367,6 +375,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 30,
     alignSelf: 'center',
+    width: '85%',
   },
 
   actionItem: {
