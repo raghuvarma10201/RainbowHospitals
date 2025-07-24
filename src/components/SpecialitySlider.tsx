@@ -91,11 +91,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   tabText: {
-    width: ITEM_WIDTH,
+    width: 'auto',
     textAlign: 'center',
     fontSize: 16,
     color: '#999',
     fontWeight: 'normal',
+    marginHorizontal: 10,
   },
   activeTabText: {
     color: '#00A2A2',
