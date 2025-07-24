@@ -178,10 +178,11 @@ const styles = StyleSheet.create({
   },
   formInput: {
     height: 32,
-    fontSize: 14,
+    fontSize: 16,
     paddingHorizontal: 10,
     paddingVertical: 0,
     marginTop: 10,
+    fontFamily:'ProximaNovaA-Regular',
   },
   primaryBt: {
     borderRadius: 40,
@@ -190,6 +191,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: 200,
     alignSelf: 'center',
+    marginTop:10,
   },
   primaryBtText: {
     color: '#fff',
@@ -205,16 +207,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRightWidth: 2,
     borderRightColor: '#6D6F71',
-    width: 70,
+    width: 80,
   },
 
   placeholderCountry: {
     fontSize: 16,
     color: '#000',
+    fontFamily:'ProximaNovaA-Regular',
   },
   selectedTextContry: {
     fontSize: 16,
     color: '#000',
+    fontFamily:'ProximaNovaA-Regular',
   },
 
   dropdownList: {
@@ -222,6 +226,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     padding: 0,
     textAlign: 'left',
+    fontFamily:'ProximaNovaA-Regular',
   },
 
   imgTextGroup: {
