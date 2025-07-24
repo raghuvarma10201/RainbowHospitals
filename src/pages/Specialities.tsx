@@ -56,8 +56,8 @@ const Specialities: React.FC = () => {
     loadSpecialities();
   }, []);
 
-  const navigateTo = (path: keyof MainStackParamList) => {
-    navigation.navigate(path);
+  const navigateTo = (path: keyof MainStackParamList, params: any) => {
+    navigation.navigate(path, params);
   };
 
   const loadSpecialities = async () => {
