@@ -6,16 +6,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
-import {Card, Searchbar, TextInput, Icon, Text} from 'react-native-paper';
-import {Dropdown} from 'react-native-element-dropdown';
+import React, { useEffect, useState } from 'react';
+import { Card, Searchbar, TextInput, Icon, Text } from 'react-native-paper';
+import { Dropdown } from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Banners from '../components/Slider';
 import Highlight from '../components/HighlightingSlider';
 import SpecialtyTabs from '../components/SpecialitySlider';
 import SpecialtySlider from '../components/SpecialitySlider';
-import {doctorData} from '../Constants/data';
+import { doctorData } from '../Constants/data';
+import { getSpecialities } from '../services/common';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList, useAuth } from '../../App';
+import { useApp } from '../context/AppContext';
+import { ToastService } from '../utils/ToastService';
 
 const local_data = [
   {
@@ -29,17 +35,42 @@ const local_data = [
 ];
 
 const Specialities: React.FC = () => {
+  type AppNavigationProp = NativeStackNavigationProp<MainStackParamList, 'Dashboard'>;
+  const navigation = useNavigation<AppNavigationProp>();
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
-
-  const specialties = Object.keys(doctorData);
-
+  const specialties = Object.keys(doctorData) as Array<keyof typeof doctorData>;
   const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1); // Default: Neurology
   const [activeDocIndex, setActiveDocIndex] = useState(0);
-
   const currentSpecialty = specialties[activeSpecialtyIndex];
   const currentDoctors = doctorData[currentSpecialty];
+  const [loading, setLoading] = useState(false);
+  const { updateBranch, updateAllBranch, updateRegion } = useApp();
+  const { setLoggedIn } = useAuth();
 
+  useEffect(() => {
+    loadSpecialities();
+  }, []);
+
+  const loadSpecialities = async () => {
+    try {
+      setLoading(true);
+      const response = await getSpecialities(); 
+      console.log("response",response);
+      if (response && response.status == 200) {
+        setLoading(false);
+
+      } else {
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to load regions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleLeft = () => {
     setActiveSpecialtyIndex(prev =>
       prev === 0 ? specialties.length - 1 : prev - 1,
@@ -67,7 +98,7 @@ const Specialities: React.FC = () => {
               <View style={styles.searchBlock}>
                 <TextInput
                   mode="flat"
-                  style={[styles.searchFormInput, {color: 'white'}]}
+                  style={[styles.searchFormInput, { color: 'white' }]}
                   placeholder="search"
                   value={search}
                   onChangeText={setSearch}
@@ -145,7 +176,7 @@ const Specialities: React.FC = () => {
                 />
               </View>
               <Text style={styles.actionText}>
-             
+
                 Pediatric Cardiology & Cardiothoracic Surgery
               </Text>
             </View>
@@ -166,7 +197,7 @@ const Specialities: React.FC = () => {
         </View>
 
         <>
-          <SpecialtySlider
+          <SpecialtySlider 
             specialties={specialties}
             activeIndex={activeSpecialtyIndex}
             onLeftPress={handleLeft}

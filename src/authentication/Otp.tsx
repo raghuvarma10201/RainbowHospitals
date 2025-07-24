@@ -59,14 +59,24 @@ const Otp: React.FC = () => {
 
   const handleResend = async () => {
     if (resendDisabled) return;
+    setLoading(true);
     try {
       setTimer(30);
       setResendDisabled(true);
       const response = await login({ number: phoneNumber });
-      ToastService.success('OTP resent successfully');
+      if (response.status == 200 && response.success == true) {
+        setLoading(false);
+        ToastService.success('Success', 'Otp sent successfully');
+      }else{
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
     } catch (error) {
+      setLoading(false);
       console.error('Resend error:', error);
       ToastService.error('Failed to resend OTP.');
+    } finally{
+      setLoading(false);
     }
   };
 
@@ -101,7 +111,7 @@ const Otp: React.FC = () => {
           throw new Error('Token not found in response');
         }
         await loadDetails(token);
-        if (response && response.status === 422) {
+        if (response && response.status === 200) {
           ToastService.error('Success', response.data.message || 'OTP verified successfully');
           const authResponse = await authenticateUser({ MobileNo: phoneNumber });
           console.log("authResponse", authResponse);
@@ -132,6 +142,7 @@ const Otp: React.FC = () => {
               // }
             }
           } else if (authResponse.status == 500) {
+            setLoading(false);
             ToastService.error('Error', authResponse.message);
           } else {
             setLoading(false);
@@ -139,9 +150,11 @@ const Otp: React.FC = () => {
             ToastService.error('Error', authResponse?.error);
           }
         } else {
+          setLoading(false);
           ToastService.error('Error', response?.data.message || 'Error verifying OTP');
         }
       } catch (error) {
+        setLoading(false);
         console.error('Verification failed:', error);
         ToastService.error('Error', 'Failed to verify OTP');
       } finally {
@@ -178,7 +191,11 @@ const Otp: React.FC = () => {
       setLoading(false);
     }
   };
-
+ if (loading) {
+    return (
+      <Loader />
+    );
+  }
   return (
     <ScrollView style={styles.container}>
       <ImageBackground source={require('../../assets/images/logo.png')} style={styles.logoImage} resizeMode="contain" />

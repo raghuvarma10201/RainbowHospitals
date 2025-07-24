@@ -60,8 +60,6 @@ const Dashboard: React.FC = () => {
                 />
                 <Image source={require('../../assets/images/search-icon.png')} style={styles.formInputIcon} />
               </View>
-
-
               <View style={styles.searchBlock}>
                 <Dropdown
                   style={styles.dropdownSelect}
