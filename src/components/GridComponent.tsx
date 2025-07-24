@@ -104,11 +104,10 @@ const PaginatedGrid: React.FC<ItemsProps> = ({items}) => {
 
 const styles = StyleSheet.create({
   page: {
-    width: width * 0.8,
+    width: width * 0.95,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
+    justifyContent: 'space-around', 
   },
   itemContainer: {
     width: width / 4,
@@ -136,12 +135,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12,
     color: '#333',
-    width: '90%',
+    width: '100%',
   },
   paginationContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop:5,
+    marginBottom: 20,
   },
   dot: {
     width: 8,
