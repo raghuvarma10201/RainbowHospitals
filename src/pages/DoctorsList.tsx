@@ -1,176 +1,286 @@
-import { Dimensions, Image, ScrollView, StyleSheet,TouchableOpacity, View, } from 'react-native'
-import React, { useState } from 'react';
-import {Card, Searchbar , TextInput, Icon, Text, Banner,  Modal, Portal, } from 'react-native-paper';
-import { Dropdown } from 'react-native-element-dropdown';
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Card,
+  Searchbar,
+  TextInput,
+  Icon,
+  Text,
+  Banner,
+  Modal,
+  Portal,
+} from 'react-native-paper';
+import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {MainStackParamList} from '../../App';
 
+const local_data = [
+  {
+    value: '1',
+    lable: 'location',
+  },
+  {
+    value: '2',
+    lable: 'location2',
+  },
+];
 
-
+const doctors = [
+  {
+    name: 'Dr. Ramesh K',
+    designation: 'Senior Consultant',
+    speciality: 'Neurology',
+    image: require('../../assets/images/doc-img.png'),
+  },
+  {
+    name: 'Dr. Sirisha R',
+    designation: 'Senior Consultant',
+    speciality: 'Cardiology',
+    image: require('../../assets/images/doc-img-2.jpg'),
+  },
+  {
+    name: 'Dr. Prashant B',
+    designation: 'Senior Consultant',
+    speciality: 'Pulmonology',
+    image: require('../../assets/images/doc-img-3.jpg'),
+  },
+];
 
 const DoctorsList: React.FC = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const [search, setSearch] = useState('');
+  const [country, setCountry] = useState('1');
+  const banners = [
+    require('../../assets/images/slide1.png'),
+    require('../../assets/images/slide1.png'),
+    require('../../assets/images/slide1.png'),
+  ];
 
+  const navigateTo = (path: keyof MainStackParamList) => {
+    navigation.navigate(path);
+  };
   return (
-<View style={styles.mainContainer}>
-<ScrollView contentContainerStyle={styles.scrollContent}>
-<Header showLocation title={undefined} />
-<View style={styles.container}>
-
-      <Text style={styles.acTitle}>Doctors List</Text>
-   
-    
-</View> 
-</ScrollView>
-<Footer />
-</View>
-   
-
+    <View style={styles.mainContainer}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Header showLocation title={undefined} />
+        <View style={styles.container}>
+          <Image
+            source={require('../../assets/images/doctors-list-img.png')}
+            style={styles.banner}
+          />
+          <View style={styles.searchLocationBlock}>
+            <View style={styles.searchBlock}>
+              <TextInput
+                mode="flat"
+                style={[styles.searchFormInput, {color: 'white'}]}
+                placeholder="search"
+                value={search}
+                onChangeText={setSearch}
+                placeholderTextColor="#fff"
+                underlineColor="transparent"
+                activeUnderlineColor="transparent"
+                theme={{
+                  colors: {
+                    text: 'white',
+                    placeholder: 'white',
+                    background: 'transparent',
+                  },
+                }}
+              />
+              <Image
+                source={require('../../assets/images/search-icon.png')}
+                style={styles.formInputIcon}
+              />
+            </View>
+            <View style={styles.searchBlock}>
+              <Dropdown
+                style={styles.dropdownSelect}
+                selectedTextStyle={styles.selectedTextContry}
+                placeholderStyle={styles.placeholderCountry}
+                maxHeight={200}
+                value={country}
+                data={local_data}
+                valueField="value"
+                labelField="lable"
+                placeholder="Select Location"
+                containerStyle={styles.dropdownList}
+                activeColor="#fff"
+                onChange={e => setCountry(e.value)}
+              />
+              <Image
+                source={require('../../assets/images/map-icon.png')}
+                style={styles.formInputIcon}
+              />
+            </View>
+          </View>
+          <View style={styles.doctorsListContainer}>
+            {doctors.map((doctor, index) => (
+              <View key={index} style={styles.doctorContainer}>
+                <Image source={doctor?.image} style={styles.doctorImg} />
+                <View>
+                  <Text style={[styles.docName, {color: '#4CC2BF'}]}>
+                    {doctor?.name}
+                  </Text>
+                  <Text style={[styles.docName, {fontSize: 12}]}>
+                    {doctor?.designation}
+                  </Text>
+                  <Text style={[styles.docName, {fontSize: 12}]}>
+                    {doctor?.speciality}
+                  </Text>
+                  <Text
+                    style={[styles.docName, {fontSize: 14, color: '#4CC2BF'}]}>
+                    {`Experience 15 Years`}
+                  </Text>
+                  <TouchableOpacity
+                    style={[styles.payBtn, {backgroundColor: '#3C2871'}]}>
+                    <Text style={styles.payBtnTxt}>Book Appointment</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+      <Footer />
+    </View>
   );
-}
+};
 
-export default DoctorsList
+export default DoctorsList;
 
+const h = Dimensions.get('window').height;
+const w = Dimensions.get('window').width;
 const styles = StyleSheet.create({
-   
-  mainContainer:{
-    backgroundColor:'#fff',
+  mainContainer: {
+    backgroundColor: '#fff',
     flex: 1,
-
-},
-
-scrollContent: {
-    padding:0,
-    paddingBottom: 100, 
   },
 
-container:{
-    flex:1,
-    paddingBottom:10,
-    paddingTop:0,
-    paddingHorizontal:10,
+  scrollContent: {
+    padding: 0,
+    paddingBottom: 100,
   },
 
-  // imgTextGroup
-  
-imgTextGroup:{ 
-  paddingHorizontal:10,  
-  position:'relative',
-  zIndex:1,
-  
- },
+  container: {
+    flex: 1,
+    paddingBottom: 10,
+    paddingTop: 0,
+  },
+  banner: {
+    height: h * 0.29,
+    width: '100%',
+    resizeMode: 'contain',
+  },
+  searchLocationBlock: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'absolute',
+    width: '90%',
+    alignSelf: 'center',
+    top: h * 0.2,
+  },
+  searchBlock: {
+    height: 44,
+    backgroundColor: '#4CC2BF',
+    borderRadius: 100,
+    paddingRight: 10,
+    marginTop: 0,
+    fontSize: 15,
+    fontWeight: 400,
+    color: '#fff',
+    fontFamily: 'ProximaNovaA-Regular',
+  },
 
-imgTextBox:{
- width:'99%',
- marginTop:5,
- paddingTop:15,
- paddingBottom:40,
- paddingLeft:20,
- paddingRight:25,
- backgroundColor:'#3C2871',
- borderRadius:30,
+  searchFormInput: {
+    height: 44,
+    borderWidth: 0,
+    borderRadius: 100,
+    paddingRight: 20,
+    paddingLeft: 15,
+    marginTop: 0,
+    fontSize: 13,
+    fontWeight: 400,
+    color: '#fff',
+    backgroundColor: 'transparent',
+    fontFamily: 'ProximaNovaA-Regular',
+    width: Dimensions.get('window').width * 0.4,
+  },
 
- },
- textbeforeDot:{position:'relative'},
- imgTextTitle:{
-   fontSize:12,
-   lineHeight:18,
-   fontWeight:'normal',
-   color:'#fff',
-   textAlign:'center', 
- },
+  formInputIcon: {
+    width: 16,
+    height: 16,
+    position: 'absolute',
+    top: 14,
+    left: 10,
+    tintColor: '#fff',
+  },
+  dropdownSelect: {
+    height: 30,
+    paddingHorizontal: 10,
+    paddingLeft: 30,
+    marginTop: 5,
+    color: '#fff',
+    width: Dimensions.get('window').width * 0.4,
+  },
+  placeholderCountry: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: 13,
+    color: '#fff',
+  },
+  selectedTextContry: {
+    fontSize: 13,
+    color: '#fff',
+  },
 
- beforeDot: {
-   position:'absolute',
-   top:'27%',   
-   right:-38,
-   width: 30,
-   height:30,
-   backgroundColor: '#00B3AE',
-   borderRadius: 50,
-   borderWidth:7,
-   borderColor:'#fff',
- },
-
- subscribeBlock:{
-  width:250,
-  display:'flex',
-  justifyContent:'space-evenly',
-  alignItems:'center',
-  backgroundColor:'#fff',
-  borderRadius:10,
-  marginTop:-20,
-  position:'relative',
-  zIndex:1,
-padding:10,
-paddingBottom:0,
-margin:'auto',
-
- },
- subscribeImg:{
-  backgroundColor:'transparent',
-  width:'100%',
-  height:85,
-  resizeMode:'contain',
-
-
-
-
- },
-
- acTitle:{
-  fontSize:20,
-  fontWeight:'bold',
-  color:'#000',
-  textAlign:'center',
-  marginTop:'10%',
-  marginBottom:'10%',
- },
- acSubTitle:{
-  fontSize:13,
-  color:'#000',
-  textAlign:'center',
-  marginTop:0,
-  marginBottom:'10%',
-  width:'80%',
-  margin:'auto',
- },
-
- sliderBlock:{
-  marginTop:'10%',
- },
- modalImageWrapp:{
-  width:'90%',
-  padding:10,
-  backgroundColor: '#00B3AE',
-  marginHorizontal: 0,
-  borderRadius: 20,
-  position: 'absolute',
-  left: '5%',
-  right: '5%',
-
-
- },
-
- modalImage:{
-  resizeMode:'contain',
-  width:'100%',
-  height:Dimensions.get('window').height * 0.63,
- },
-
- closeModal:{
-  position:'absolute',
-  top:20,
-  right:20,
-  zIndex:1,
-  backgroundColor:'#fff',
-  borderRadius:50,
-  padding:5,
- },
- closeModalIcon:{
-  width:17,
-  height:17,
-  resizeMode:'contain',
- },
-
-
-})    
+  dropdownList: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: 13,
+    marginLeft: 0,
+    marginRight: 5,
+    padding: 0,
+    textAlign: 'left',
+  },
+  doctorsListContainer: {
+    paddingHorizontal: w * 0.1,
+  },
+  doctorContainer: {
+    width: '100%',
+    paddingVertical: h * 0.01,
+    marginTop: h * 0.01,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: w * 0.05,
+  },
+  doctorImg: {
+    height: h * 0.12,
+    width: h * 0.12,
+    resizeMode: 'cover',
+    borderRadius: w,
+  },
+  docName: {
+    fontSize: 14,
+    color: '#000',
+  },
+  payBtn: {
+    padding: w * 0.01,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: w * 0.04,
+  },
+  payBtnTxt: {
+    fontSize: 12,
+    color: '#fff',
+  },
+});
