@@ -15,8 +15,9 @@ const SlotConfirmation: React.FC = ({route}: any) => {
   const doctor = route?.params;
   return (
     <View style={styles.mainContainer}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
         <CommonHeader showLocation title={undefined} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+      
         <View style={styles.doctorDetailsContainer}>
           <View style={styles.doctorImgContainer}>
             <Image

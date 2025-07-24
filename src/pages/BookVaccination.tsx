@@ -12,14 +12,15 @@ import { MainStackParamList } from '../../App';
 const BookVaccination: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const navigateTo = (path: keyof MainStackParamList) => {
-    navigation.navigate(path);
-};
+  const navigateTo = (path: keyof MainStackParamList, params: any) => {
+    navigation.navigate(path, params);
+  };
 
   return (
   <View style={styles.mainContainer}>
+        <Header showLocation title={undefined} />
     <ScrollView contentContainerStyle={styles.scrollContent}>
-    <Header showLocation title={undefined} />
+
     <View style={styles.container}>
   
 <View>
@@ -27,7 +28,7 @@ const BookVaccination: React.FC = () => {
 </View>
   
 <View style={styles.vaccinationActions}>
-          <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('VaccinesAdult')}>
+          <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('VaccinesAdult', undefined)}>
               <View style={styles.activeActionItemIcon}>
                 <Image
                   source={require('../../assets/images/adult-vaccination-icon.png')}
@@ -37,7 +38,7 @@ const BookVaccination: React.FC = () => {
               <Text style={styles.actionText}> Adult Vaccination</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('VaccinesPediatric')}>
+            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('VaccinesPediatric', undefined)}>
               <View style={styles.actionItemIcon}>
                 <Image
                   source={require('../../assets/images/pediatric-vaccination-icon.png')}

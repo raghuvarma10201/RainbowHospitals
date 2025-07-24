@@ -8,8 +8,9 @@ import Footer from '../components/Footer';
 const BookScan: React.FC = () => {
   return (
   <View style={styles.mainContainer}>
+        <Header showLocation title={undefined} />
     <ScrollView contentContainerStyle={styles.scrollContent}>
-    <Header showLocation title={undefined} />
+
     <View style={styles.container}>
   
 <View>

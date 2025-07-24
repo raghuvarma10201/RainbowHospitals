@@ -25,8 +25,9 @@ const AppointmentConfirmed: React.FC = () => {
 
   return (
     <View style={styles.mainContainer}>
+         <Header showLocation title={undefined} />
     <ScrollView contentContainerStyle={styles.scrollContent}>
-    <Header showLocation title={undefined} />
+ 
     <View style={styles.container}>
       <Text style={styles.acTitle}>Appointment Confirmed</Text>
       <Text style={styles.acSubTitle}>Thank you for booking your appointment. We appreciate your trust and look forward to serving you.</Text>
