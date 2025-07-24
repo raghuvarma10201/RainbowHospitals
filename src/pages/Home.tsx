@@ -230,8 +230,8 @@ container:{
 
 
   rightArrow:{
-    width:18,
-    height:18,
+    width:16,
+    height:16,
     resizeMode:'contain',
   },
 
