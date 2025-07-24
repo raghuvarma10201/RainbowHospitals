@@ -25,6 +25,14 @@ export const getBranches = async (regionId : number) => {
     throw error;
   }
 };
+export const getSpecialities = async () => {
+  try {
+    const response = await api.get('/getSpecialities/6');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 
 

@@ -1,79 +1,169 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image,
+    TouchableOpacity
+} from 'react-native';
+import { MainStackParamList } from '../../App';
 
-const Footer = () => {
-  return (
-    <View style={styles.footer}>
-      <View style={styles.footerButtonContainer}>
-        <TouchableOpacity style={styles.footerButton}>
-          <Image
-            source={require('../../assets/images/footer-home-icon.png')}
-            style={styles.footerButtonIcon}
-          />
-        </TouchableOpacity>
+interface FooterProps {
+    activeIcon?: string;
+}
 
-        <TouchableOpacity style={styles.footerButton}>
-          <Image
-            source={require('../../assets/images/footer-calendar-icon.png')}
-            style={styles.activeFooterButtonIcon}
-          />
-        </TouchableOpacity>
+const Footer: React.FC<FooterProps> = ({ activeIcon }) => {
+    type AppNavigationProp = NativeStackNavigationProp<MainStackParamList, 'Dashboard'>;
+    const navigation = useNavigation<AppNavigationProp>();
 
-        <TouchableOpacity style={styles.footerButton}>
-          <Image
-            source={require('../../assets/images/footer-call-icon.png')}
-            style={styles.footerButtonIcon}
-          />
-        </TouchableOpacity>
+    const getIconStyle = (iconName: string) => {
+        return activeIcon === iconName ? styles.activeFooterButtonIcon : styles.footerButtonIcon;
+    };
 
-        <TouchableOpacity style={styles.footerButton}>
-          <Image
-            source={require('../../assets/images/footer-reports-icon.png')}
-            style={styles.footerButtonIcon}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+    const getTintColor = (iconName: string) => {
+        return activeIcon === iconName ? '#3C2871' : '#fff'; // optional: adjust if active has a different color
+    };
+
+    return (
+        <View style={styles.footer}>
+            <View style={styles.footerButtonContainer}>
+                <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Dashboard')}>
+                    <Image
+                        source={require('../../assets/images/footer-home-icon.png')}
+                        style={[getIconStyle('home'), { tintColor: getTintColor('home') }]}
+                    />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Specialities')}>
+                    <Image
+                        source={require('../../assets/images/footer-calendar-icon.png')}
+                        style={[getIconStyle('calendar'), { tintColor: getTintColor('calendar') }]}
+                    />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.footerButton}>
+                    <Image
+                        source={require('../../assets/images/footer-call-icon.png')}
+                        style={[getIconStyle('call'), { tintColor: getTintColor('call') }]}
+                    />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.footerButton}>
+                    <Image
+                        source={require('../../assets/images/footer-reports-icon.png')}
+                        style={[getIconStyle('reports'), { tintColor: getTintColor('reports') }]}
+                    />
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 };
 
-export default Footer;
-
 const styles = StyleSheet.create({
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    quickActions: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        marginTop: 30,
 
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
+    },
 
-  footerButtonContainer: {
-    paddingVertical: 10,
-    backgroundColor: '#00B3AE',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    width: '78%',
-    paddingHorizontal: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-  },
-  footerButton: {
-    alignItems: 'center',
-  },
+    actionItem: {
+        alignItems: 'center',
+        width: '30%',
+        marginBottom: 5,
 
-  footerButtonIcon: {
-    width: 28,
-    height: 28,
-    tintColor: '#fff',
-  },
+    },
+    actionItemIcon: {
+        backgroundColor: '#3C2871',
+        borderRadius: 10,
+        padding: 15,
+        paddingTop: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 0,
+    },
 
-  activeFooterButtonIcon: {
-    alignItems: 'center',
-    width: 28,
-    height: 28,
-  },
+
+
+
+    iconAction: {
+        width: 35,
+        height: 35,
+    },
+
+
+    actionText: {
+        fontSize: 11,
+        textAlign: 'center',
+        marginTop: 4,
+    },
+
+    activeActionItem: {
+        backgroundColor: '#3C2871',
+        borderRadius: 10,
+        padding: 10,
+        paddingTop: 15,
+        alignItems: 'center',
+        width: '30%',
+        marginVertical: 10,
+    },
+
+    activeActionText: {
+        color: '#fff',
+        fontSize: 11,
+        textAlign: 'center',
+        marginTop: 4,
+    },
+    activeIconAction: {
+        width: 40,
+        height: 40,
+        tintColor: '#fff',
+    },
+
+    //   footer
+    footer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+
+
+
+    },
+
+    footerButtonContainer: {
+        paddingVertical: 10,
+        backgroundColor: '#00B3AE',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        width: '78%',
+        paddingHorizontal: 10,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+    },
+
+    footerButton: {
+        alignItems: 'center',
+    },
+
+    footerButtonIcon: {
+        width: 28,
+        height: 28,
+        tintColor: '#fff',
+    },
+
+    activeFooterButtonIcon: {
+        alignItems: 'center',
+        width: 28,
+        height: 28,
+    },
 });
+
+export default Footer;

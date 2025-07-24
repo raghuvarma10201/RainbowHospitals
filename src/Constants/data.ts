@@ -101,4 +101,115 @@ const doctorData = {
   ],
 };
 
-export {doctorData};
+const gridData = [
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+  {
+    name: 'Neonatal Intensive Care Unit',
+    img: require('../../assets/images/neonatal-intensive-care-unit-icon.png'),
+  },
+];
+
+export {doctorData, gridData};

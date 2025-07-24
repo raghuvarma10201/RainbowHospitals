@@ -1,6 +1,5 @@
 import {
   Dimensions,
-  FlatList,
   Image,
   ScrollView,
   StyleSheet,
@@ -10,21 +9,10 @@ import {
 } from 'react-native';
 import React from 'react';
 import CommonHeader from '../components/Header';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Footer from '../components/Footer';
-import DynamicWeekWithMonth from '../components/WeeklyCalender';
-import {useNavigation} from '@react-navigation/native';
-import {MainStackParamList} from '../../App';
 
-const DoctorSlots: React.FC = ({route}: any) => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const navigateTo = (path: keyof MainStackParamList, params: any) => {
-    navigation.navigate(path, params);
-  };
+const SlotConfirmation: React.FC = ({route}: any) => {
   const doctor = route?.params;
-  const availabletimings = ['10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM'];
-  console.log(doctor);
   return (
     <View style={styles.mainContainer}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -73,63 +61,70 @@ const DoctorSlots: React.FC = ({route}: any) => {
                 </View>
               </TouchableOpacity>
             </View>
-            <View style={styles.divider} />
-            <Text
-              style={[
-                styles.docName,
-                {fontSize: 16, color: '#4CC2BF'},
-              ]}>{`About`}</Text>
-            <Text
-              style={[
-                styles.docName,
-                {fontSize: 12},
-              ]}>{`${doctor?.name} is a top specialist in ${doctor?.speciality} in Secunderabad, Hyderabad. He has graduated MBBS from the...Read More`}</Text>
           </View>
         </View>
         <View style={styles.calenderContainer}>
-          <DynamicWeekWithMonth />
-          <View>
-            <Text style={styles.centeredTxt}>Available Time</Text>
-            <FlatList
-              data={availabletimings}
-              numColumns={4}
-              contentContainerStyle={styles.timeList}
-              keyExtractor={(_, index) => index.toString()}
-              renderItem={({item, index}) => (
-                <Text style={styles.timeTxt}>{item}</Text>
-              )}
+          <View style={styles.flex}>
+            <Image
+              source={require('../../assets/images/map-icon.png')}
+              style={styles.flexImg}
             />
-            <TouchableOpacity>
-              <Text
-                style={[
-                  styles.centeredTxt,
-                  {
-                    marginTop: h * 0.02,
-                  },
-                ]}>
-                View More
+            <View>
+              <Text style={styles.flexHead}>Location</Text>
+              <Text style={[styles.flexHead, {fontSize: 12}]}>
+                Road No. 2, Banjara Hills
               </Text>
+            </View>
+          </View>
+          <View style={styles.flex}>
+            <Image
+              source={require('../../assets/images/booked-for-icon.png')}
+              style={styles.flexImg}
+            />
+            <View>
+              <Text style={styles.flexHead}>Booked for</Text>
+              <Text style={styles.flexSub}>Ambervati ▼</Text>
+            </View>
+          </View>
+          <View>
+            <View style={[styles.paymentBlock, {backgroundColor: '#4CC2BF'}]}>
+              <Text style={[styles.paymentTxt, {color: '#fff'}]}>
+                Total Charges
+              </Text>
+            </View>
+            <View style={[styles.paymentBlock, {backgroundColor: '#b1e2e1ff'}]}>
+              <Text style={[styles.paymentTxt, {color: '#000'}]}>
+                Consultation Fee
+              </Text>
+              <Text style={[styles.paymentTxt, {color: '#000'}]}>₹ 900</Text>
+            </View>
+          </View>
+          <View style={styles.payBtnsContainer}>
+            <TouchableOpacity
+              style={[styles.payBtn, {backgroundColor: '#3C2871'}]}>
+              <Text style={styles.payBtnTxt}>Pay Now</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.payBtn, {backgroundColor: 'grey'}]}>
+              <Text style={styles.payBtnTxt}>Pay At Hospital</Text>
             </TouchableOpacity>
           </View>
+          <Text style={[styles.flexHead, {fontSize: 12}]}>
+            Disclaimer: Please note that waiting times may vary depending on the
+            doctor's schedule and unforeseen circumstances. We appreciate your
+            patience and understanding
+          </Text>
         </View>
-
-        <TouchableOpacity
-          onPress={() => navigateTo('SlotConfirmation', doctor)}
-          style={styles.formButton}>
-          <Text style={styles.formButtonText}>Proceed To Confirm</Text>
-        </TouchableOpacity>
-
         <Footer />
       </ScrollView>
     </View>
   );
 };
 
-export default DoctorSlots;
+export default SlotConfirmation;
 
 const h = Dimensions.get('window').height;
 const w = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: '#fff',
@@ -188,14 +183,6 @@ const styles = StyleSheet.create({
     borderRadius: w * 0.1,
     backgroundColor: '#4CC2BF',
   },
-  calenderContainer: {
-    backgroundColor: '#e6e4ef',
-    width: w * 0.8,
-    alignSelf: 'center',
-    borderBottomLeftRadius: w * 0.1,
-    borderBottomRightRadius: w * 0.1,
-    paddingBottom: h * 0.03,
-  },
   doctorDetails: {
     padding: 8,
     backgroundColor: '#3C2871',
@@ -243,35 +230,61 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#b6e7e6ff',
   },
-  timeTxt: {
-    color: '#000',
-    fontSize: 12,
-    marginHorizontal: w * 0.02,
-  },
-  centeredTxt: {
-    color: '#3C2871',
-    textAlign: 'center',
-    fontSize: 18,
-  },
-  timeList: {
-    alignItems: 'center',
-    marginVertical: h * 0.01,
-  },
-  formButton: {
-    backgroundColor: '#3C2871',
-    borderRadius: 10,
-    padding: 10,
-    marginTop: 10,
-    width: '90%',
+  calenderContainer: {
+    backgroundColor: '#fff',
+    width: w * 0.8,
     alignSelf: 'center',
+    paddingBottom: h * 0.03,
   },
-  formButtonText: {
-    color: '#fff',
-    textAlign: 'center',
+  flex: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: w * 0.02,
+    marginVertical: h * 0.01,
+    paddingHorizontal: w * 0.02,
+  },
+  flexImg: {
+    height: h * 0.05,
+    width: w * 0.1,
+    resizeMode: 'contain',
+  },
+  flexHead: {
     fontSize: 14,
-    fontFamily: 'ProximaNovaA-Bold',
-    fontWeight: 'bold',
-    padding: 5,
-    borderRadius: 10,
+    color: '#000',
+  },
+  flexSub: {
+    fontSize: 14,
+    color: '#000',
+    backgroundColor: '#4CC2BF',
+    paddingHorizontal: w * 0.01,
+  },
+  paymentBlock: {
+    paddingVertical: h * 0.01,
+    paddingStart: w * 0.1,
+    paddingEnd: w * 0.05,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  paymentTxt: {
+    fontSize: 14,
+  },
+  payBtnsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: w * 0.05,
+    marginVertical: h * 0.02,
+  },
+  payBtn: {
+    padding: w * 0.03,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '45%',
+    borderRadius: w * 0.04,
+  },
+  payBtnTxt: {
+    fontSize: 12,
+    color: '#fff',
   },
 });

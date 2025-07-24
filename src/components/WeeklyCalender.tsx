@@ -103,7 +103,6 @@ export default function DynamicWeekWithMonth() {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 16,
-    backgroundColor: '#E6DFF0',
     borderRadius: 10,
     margin: 16,
   },
