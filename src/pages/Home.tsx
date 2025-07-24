@@ -12,14 +12,34 @@ const Home: React.FC = () => {
 
   return (
 <View style={styles.mainContainer}>
-<ScrollView contentContainerStyle={styles.scrollContent}>
 <Header showLocation title={undefined} />
+<ScrollView contentContainerStyle={styles.scrollContent}>
+
 <View style={styles.container}>
+
+
+
     <View style={styles.homeBlock}>
+
+    <View style={styles.hProw}>
+        <View style={styles.leftHProfile}>
+          <View style={styles.iconHPLeft}>
+             <Image source={require('../../assets/images/profile-icon.png')} style={styles.homeHpIcon} />
+            </View>
+
+            <View>
+              <Text style={styles.homeHpTitle}>Amberwati</Text>
+              <Text style={styles.homeHpsubTitle}> UID-MBDTMP17052</Text>
+          </View>
+        </View>
+      </View>
+
+
+
       <TouchableOpacity style={styles.row}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
-             <Image source={require('../../assets/images/call-icon.png')} style={styles.homeBlockIcon} />
+             <Image source={require('../../assets/images/home-appointments.png')} style={styles.homeBlockIcon} />
             </View>
           <Text style={styles.homeBlockTitle}>My Appointments</Text>
         </View>
@@ -29,7 +49,7 @@ const Home: React.FC = () => {
       <TouchableOpacity style={styles.row}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
-             <Image source={require('../../assets/images/call-icon.png')} style={styles.homeBlockIcon} />
+             <Image source={require('../../assets/images/home-medical-record.png')} style={styles.homeBlockIcon} />
             </View>
           <Text style={styles.homeBlockTitle}>My Medical Record</Text>
         </View>
@@ -40,7 +60,7 @@ const Home: React.FC = () => {
       <TouchableOpacity style={styles.row}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
-             <Image source={require('../../assets/images/call-icon.png')} style={styles.homeBlockIcon} />
+             <Image source={require('../../assets/images/home-family.png')} style={styles.homeBlockIcon} />
             </View>
           <Text style={styles.homeBlockTitle}>My Family</Text>
         </View>
@@ -50,7 +70,7 @@ const Home: React.FC = () => {
       <TouchableOpacity style={styles.row}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
-             <Image source={require('../../assets/images/call-icon.png')} style={styles.homeBlockIcon} />
+             <Image source={require('../../assets/images/home-pregnancy.png')} style={styles.homeBlockIcon} />
             </View>
           <Text style={styles.homeBlockTitle}>My Pregnancy Journey</Text>
         </View>
@@ -60,7 +80,7 @@ const Home: React.FC = () => {
       <TouchableOpacity style={styles.row}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
-             <Image source={require('../../assets/images/call-icon.png')} style={styles.homeBlockIcon} />
+             <Image source={require('../../assets/images/home-baby.png')} style={styles.homeBlockIcon} />
             </View>
           <Text style={styles.homeBlockTitle}>My Baby Journey </Text>
         </View>
@@ -70,7 +90,7 @@ const Home: React.FC = () => {
       <TouchableOpacity style={styles.row}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
-             <Image source={require('../../assets/images/call-icon.png')} style={styles.homeBlockIcon} />
+             <Image source={require('../../assets/images/home-calculator.png')} style={styles.homeBlockIcon} />
             </View>
           <Text style={styles.homeBlockTitle}>Calculator </Text>
         </View>
@@ -80,7 +100,7 @@ const Home: React.FC = () => {
       <TouchableOpacity style={styles.row}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
-             <Image source={require('../../assets/images/call-icon.png')} style={styles.homeBlockIcon} />
+             <Image source={require('../../assets/images/home-products.png')} style={styles.homeBlockIcon} />
             </View>
           <Text style={styles.homeBlockTitle}>Mom & Baby Products </Text>
         </View>
@@ -90,7 +110,7 @@ const Home: React.FC = () => {
       <TouchableOpacity style={styles.row}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
-             <Image source={require('../../assets/images/call-icon.png')} style={styles.homeBlockIcon} />
+             <Image source={require('../../assets/images/home-notification.png')} style={styles.homeBlockIcon} />
             </View>
           <Text style={styles.homeBlockTitle}>Notification </Text>
         </View>
@@ -100,7 +120,7 @@ const Home: React.FC = () => {
       <TouchableOpacity style={styles.row}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
-             <Image source={require('../../assets/images/call-icon.png')} style={styles.homeBlockIcon} />
+             <Image source={require('../../assets/images/home-terms.png')} style={styles.homeBlockIcon} />
             </View>
           <Text style={styles.homeBlockTitle}>Terms & Conditions</Text>
         </View>
@@ -110,7 +130,7 @@ const Home: React.FC = () => {
       <TouchableOpacity style={styles.row}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
-             <Image source={require('../../assets/images/call-icon.png')} style={styles.homeBlockIcon} />
+             <Image source={require('../../assets/images/home-help.png')} style={styles.homeBlockIcon} />
             </View>
           <Text style={styles.homeBlockTitle}>Help</Text>
         </View>
@@ -120,7 +140,7 @@ const Home: React.FC = () => {
       <TouchableOpacity style={styles.row}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
-             <Image source={require('../../assets/images/call-icon.png')} style={styles.homeBlockIcon} />
+             <Image source={require('../../assets/images/home-logout.png')} style={styles.homeBlockIcon} />
             </View>
           <Text style={styles.homeBlockTitle}>Logout </Text>
         </View>
@@ -169,6 +189,7 @@ container:{
     padding:20,
     marginBottom:10,
     borderRadius:30,
+    marginTop:20,
     
   },
   row:{
@@ -177,7 +198,7 @@ container:{
     alignItems:'center',
     borderBottomWidth:1,
     borderBottomColor:'#fff',
-  paddingVertical:15,
+  paddingVertical:10,
    
     paddingHorizontal:10,
 
@@ -190,28 +211,71 @@ container:{
   iconLeft:{
     backgroundColor:'#00B3AE',  
     borderRadius:50,
-    width:35,
-    height:35,
+    width:30,
+    height:30,
     marginRight:10,
     flexDirection:'row',
     alignItems:'center',
-    justifyContent:'center',
-  
- 
+    justifyContent:'center', 
   },
   homeBlockIcon:{
-    width:18,
-    height:18,
-  
-
+    width:15,
+    height:15,
   },
   homeBlockTitle:{
     fontSize:14,
-    fontWeight:'bold',
+    fontFamily:'ProximaNovaA-Semibold',
   },
+
+
+
   rightArrow:{
-    width:20,
-    height:20,
+    width:18,
+    height:18,
     resizeMode:'contain',
   },
+
+  //--
+
+  hProw:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+  paddingVertical:10,   
+    paddingHorizontal:10,
+
+  },
+
+  leftHProfile:{
+    flexDirection:'row',
+    alignItems:'center',
+    marginBottom:10,
+  },
+
+  iconHPLeft:{
+    backgroundColor:'#fff',  
+    borderRadius:50,
+    width:50,
+    height:50,
+    marginRight:10,
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'center', 
+  },
+
+  homeHpIcon:{
+    width:35,
+    height:35,
+  },
+
+  homeHpTitle:{
+    fontSize:16,
+    fontFamily:'ProximaNovaA-Bold',
+    marginBottom:2,
+  },
+
+  homeHpsubTitle:{
+    fontSize:12,
+    fontFamily:'ProximaNovaA-Regular',
+  }
 })    

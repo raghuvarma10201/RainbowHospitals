@@ -32,8 +32,9 @@ const MedicalRecord: React.FC = () => {
 
   return (
 <View style={styles.mainContainer}>
-<ScrollView contentContainerStyle={styles.scrollContent}>
 <Header showLocation title={undefined} />
+<ScrollView contentContainerStyle={styles.scrollContent}>
+
 <View style={styles.container}>
 
 <View style={styles.searchLocationWrapp}>

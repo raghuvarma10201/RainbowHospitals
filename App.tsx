@@ -36,6 +36,7 @@ import VaccinesPediatric from './src/pages/VaccinesPediatric';
 import BookScan from './src/pages/BookScan';
 import MedicalRecord from './src/pages/MedicalRecord';
 import SlotConfirmation from './src/pages/SlotConfirmation';
+import Home from './src/pages/Home';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -59,6 +60,7 @@ export const useAuth = () => {
 type AuthStackParamList = {
   Login: undefined;
   Otp: undefined;
+  Home: undefined;
 };
 
 type MainStackParamList = {
@@ -73,6 +75,8 @@ type MainStackParamList = {
   BookScan: undefined;
   MedicalRecord: undefined;
   SlotConfirmation: undefined;
+  Home:undefined;
+
 };
 
 export type {AuthStackParamList, MainStackParamList};
@@ -84,6 +88,7 @@ const screenOptions: NativeStackNavigationOptions = {headerShown: false};
 
 export const AuthStack = React.memo(() => (
   <AuthStackNav.Navigator screenOptions={screenOptions}>
+       <AuthStackNav.Screen name="Home" component={Home} />
     <AuthStackNav.Screen name="Login" component={Login} />
     <AuthStackNav.Screen name="Otp" component={Otp} />
   </AuthStackNav.Navigator>
@@ -99,6 +104,7 @@ export const MainStack = React.memo(() => (
     <MainStackNav.Screen name="BookScan" component={BookScan} />
     <MainStackNav.Screen name="MedicalRecord" component={MedicalRecord} />
     <MainStackNav.Screen name="SlotConfirmation" component={SlotConfirmation} />
+    <MainStackNav.Screen name="Home" component={Home} />
     <MainStackNav.Screen
       name="VaccinesPediatric"
       component={VaccinesPediatric}
