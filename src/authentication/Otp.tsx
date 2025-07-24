@@ -120,7 +120,7 @@ const Otp: React.FC = () => {
           throw new Error('Token not found in response');
         }
         await loadDetails(token);
-        if (response && response.status === 422) {
+        if (response && response.status === 200) {
           ToastService.error(
             'Success',
             response.data.message || 'OTP verified successfully',
