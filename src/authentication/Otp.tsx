@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: 'normal',
     color: '#000',
-    marginBottom: 10,
+    marginBottom: 5,
     fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'center',
   },
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     backgroundColor: '#818385',
     marginTop: 10,
-    marginBottom: 10,
+    marginBottom: 20,
     padding: 10,
   },
   primaryBtText: {
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   codeFieldRoot: {
-    marginTop: 20,
+    marginTop: 10,
     width: '100%',
     //paddingHorizontal: 20,
     flexDirection: 'row',
@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
   },
 
   cell: {
-    width: 45,
+    width:'13.75%',
     height: 55,
     borderWidth: 1,
     borderColor: '#8a3ab9',
