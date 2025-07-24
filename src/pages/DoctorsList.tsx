@@ -175,20 +175,20 @@ const DoctorsList: React.FC<any> = ({route}) => {
                   style={styles.doctorImg}
                 />
                 <View>
-                  <Text style={[styles.docName, {color: '#4CC2BF'}]}>
+                  <Text style={[styles.docName, {color: '#4CC2BF', fontFamily:'ProximaNovaA-Semibold', marginBottom:2}]}>
                     {doctor?.name}
                   </Text>
-                  <Text style={[styles.docName, {fontSize: 12}]}>
+                  <Text style={[styles.docName, {fontSize: 11, fontFamily:'ProximaNovaA-Regular',}]}>
                     {doctor?.designation}
                   </Text>
                   <Text
-                    style={[styles.docName, {fontSize: 12}]}
+                    style={[styles.docName, {fontSize: 11, fontFamily:'ProximaNovaA-Regular',}]}
                     numberOfLines={2}
                     ellipsizeMode="tail">
                     {doctor?.doctor_specialities[0].speciality.name}
                   </Text>
                   <Text
-                    style={[styles.docName, {fontSize: 14, color: '#4CC2BF'}]}>
+                    style={[styles.docName, {fontSize: 12, fontFamily:'ProximaNovaA-Regular', color: '#4CC2BF', marginTop:2}]}>
                     {`Experience 15 Years`}
                   </Text>
                   <TouchableOpacity
@@ -302,10 +302,10 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   doctorsListContainer: {
-    paddingHorizontal: w * 0.1,
+   paddingHorizontal:15,
   },
   doctorContainer: {
-    width: '50%',
+    width: '70%',
     paddingVertical: h * 0.01,
     marginTop: h * 0.01,
     flexDirection: 'row',
@@ -317,20 +317,26 @@ const styles = StyleSheet.create({
     width: h * 0.12,
     resizeMode: 'cover',
     borderRadius: w,
+   borderWidth:1,
+   borderColor:'#E2EDEC',
   },
   docName: {
-    fontSize: 14,
+    fontSize: 11,
     color: '#000',
+
   },
   payBtn: {
-    padding: w * 0.01,
+  paddingVertical:5,
+  paddingHorizontal:10,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: w * 0.04,
-    maxWidth: w * 0.3,
+    borderRadius:50,
+    maxWidth: w * 0.4,
+    marginTop:10,
   },
   payBtnTxt: {
-    fontSize: 12,
+    fontSize: 12, 
     color: '#fff',
+    fontFamily:'ProximaNovaA-Regular',
   },
 });
