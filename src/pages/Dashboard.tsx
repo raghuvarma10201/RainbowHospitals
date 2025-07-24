@@ -33,15 +33,15 @@ const Dashboard: React.FC = () => {
 
   const navigateTo = (path: keyof MainStackParamList) => {
     navigation.navigate(path as any, undefined);
-};
+  };
 
   const [activeindex, setActiveindex] = useState(0);
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
-  
+
   return (
     <View style={styles.mainContainer}>
-              <Header showLocation title={undefined}        />
+      <Header showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
 
         <View style={styles.container}>
@@ -82,7 +82,7 @@ const Dashboard: React.FC = () => {
 
             <View style={styles.textHelloCard}>
               <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 16, color: '#fff', }}>Hello,</Text>
-              <Text style={{ fontFamily: 'ProximaNovaA-Semibold', fontSize:20, color: '#fff', }}>Amberwati</Text>
+              <Text style={{ fontFamily: 'ProximaNovaA-Semibold', fontSize: 20, color: '#fff', }}>Amberwati</Text>
               <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 11, color: '#fff', }}>We are here to help! </Text>
             </View>
           </View>
@@ -104,17 +104,15 @@ const Dashboard: React.FC = () => {
                 <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 8, color: '#3C2469', }}>Senior Consultant - Pediatric Neurologist</Text>
                 <Text style={styles.upcomingTime}>THU 10 JUL, 04:27 PM</Text>
                 <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginLeft: 2, }}>
-
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginRight: 15, }}>
                     <Image source={require('../../assets/images/user-icon.png')} style={{ width: 11, height: 11, marginRight: 1, }} />
                     <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 11, color: '#3C2469', }}> In Person</Text>
                   </View>
-
                   <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 11, color: '#3C2469', }}> #1023456</Text>
                 </View>
 
                 <View style={styles.bottomUABlock}>
-                  <TouchableOpacity  >
+                  <TouchableOpacity onPress={() => navigation.navigate('DoctorSlots', { doctorId: 1, appointmentType: 'video' })}>
                     <Text style={[styles.rescheduleBt, { fontFamily: 'ProximaNovaA-Regular', fontSize: 11, color: '#fff', }]}>Reschedule</Text>
                   </TouchableOpacity>
 
@@ -130,8 +128,8 @@ const Dashboard: React.FC = () => {
 
 
           <View style={styles.quickActions}>
-        
-            <TouchableOpacity style={styles.actionItem}  onPress={() => navigateTo('Specialities')}>
+
+            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('Specialities')}>
               <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}>Book Physical Consultation</Text>
             </TouchableOpacity>
@@ -203,12 +201,12 @@ const Dashboard: React.FC = () => {
 
       <View style={styles.footerCall}>
         <TouchableOpacity style={styles.footerCallButton}>
-            <View style={styles.footerCallButtonIcon}>
-                <Image source={require('../../assets/images/call-icon.png')} style={styles.footerCallButtonIconImage} />
-            </View>        
+          <View style={styles.footerCallButtonIcon}>
+            <Image source={require('../../assets/images/call-icon.png')} style={styles.footerCallButtonIconImage} />
+          </View>
           <Text style={styles.footerCallButtonText}>Call</Text>
         </TouchableOpacity>
-       
+
       </View>
     </View>
 
@@ -220,7 +218,7 @@ export default Dashboard
 
 const styles = StyleSheet.create({
   mainContainer: {
-    backgroundColor:'#fff',
+    backgroundColor: '#fff',
     flex: 1,
 
   },
@@ -527,62 +525,62 @@ const styles = StyleSheet.create({
     height: 40,
     tintColor: '#fff',
   },
-//   footer
-footerCall: {
+  //   footer
+  footerCall: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-   
+
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical:0,
+    paddingVertical: 0,
   },
   footerCallButton: {
-    position:'relative',
-    color:'#fff',
+    position: 'relative',
+    color: '#fff',
     alignItems: 'center',
-paddingVertical:10,
-    width:100,
-    height:45,
+    paddingVertical: 10,
+    width: 100,
+    height: 45,
     backgroundColor: '#00B3AE',
-   
-   borderTopEndRadius:10,
-   borderTopStartRadius:10,
-    textAlign:'center',
-    fontSize:12,
-    fontFamily:'ProximaNovaA-Regular',
-    fontWeight:'bold',
+
+    borderTopEndRadius: 10,
+    borderTopStartRadius: 10,
+    textAlign: 'center',
+    fontSize: 12,
+    fontFamily: 'ProximaNovaA-Regular',
+    fontWeight: 'bold',
 
 
   },
-  footerCallButtonText:{
-    color:'#fff',
-    fontSize:13,
-    fontFamily:'ProximaNovaA-Regular',
-    fontWeight:'bold',
-    textTransform:'uppercase',
-    paddingTop:8,
+  footerCallButtonText: {
+    color: '#fff',
+    fontSize: 13,
+    fontFamily: 'ProximaNovaA-Regular',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    paddingTop: 8,
   },
 
-  footerCallButtonIcon:{
-    backgroundColor:'#3C2871',
-    borderRadius:100,
-    borderWidth:1,
-    borderColor:'#fff',
-    width:30,
-    height:30,
-    position:'absolute',
-    top:-15,
-    left:35,
+  footerCallButtonIcon: {
+    backgroundColor: '#3C2871',
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: '#fff',
+    width: 30,
+    height: 30,
+    position: 'absolute',
+    top: -15,
+    left: 35,
 
-  
-    justifyContent:'center',
-    alignItems:'center',
+
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  footerCallButtonIconImage:{
-    width:15,
-    height:15,
+  footerCallButtonIconImage: {
+    width: 15,
+    height: 15,
   },
 
 })

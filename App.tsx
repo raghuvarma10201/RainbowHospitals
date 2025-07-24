@@ -69,7 +69,7 @@ type MainStackParamList = {
   Dashboard: undefined;
   Specialities: undefined;
   AppointmentConfirmed: undefined;
-  DoctorSlots: undefined;
+  DoctorSlots: {doctorId : number, appointmentType : string};
   DoctorsList: {specialityId : number, appointmentType : string};
   BookVaccination: undefined;
   VaccinesAdult: undefined;
