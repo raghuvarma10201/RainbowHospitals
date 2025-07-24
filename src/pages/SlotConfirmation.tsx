@@ -11,7 +11,7 @@ import React from 'react';
 import CommonHeader from '../components/Header';
 import Footer from '../components/Footer';
 
-const SlotConfirmation = ({route}: any) => {
+const SlotConfirmation: React.FC = ({route}: any) => {
   const doctor = route?.params;
   return (
     <View style={styles.mainContainer}>
