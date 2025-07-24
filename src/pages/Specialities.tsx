@@ -213,6 +213,7 @@ const Specialities: React.FC = () => {
             setActiveindex={setActiveDocIndex}
             height={h * 0.175}
             autoScrollEnabled={false}
+            nav={navigateTo}
           />
         </>
       </ScrollView>
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
   //Header End
 
   helloCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'transparent',
     borderRadius: 10,
     paddingVertical: 0,
     paddingHorizontal: 0,
@@ -364,14 +365,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginTop: 30,
-    maxWidth: Dimensions.get('window').width * 0.8,
+    marginTop: 30,   
     alignSelf: 'center',
   },
 
   actionItem: {
     alignItems: 'center',
-    width: '30%',
+    width: '33%',
     marginBottom: 5,
   },
   actionItemIcon: {
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     textAlign: 'center',
     marginTop: 4,
-    width: '50%',
+   
   },
 
   activeActionItem: {

@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
 
             <View style={styles.textHelloCard}>
               <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 16, color: '#fff', }}>Hello,</Text>
-              <Text style={{ fontFamily: 'ProximaNovaA-Black', fontSize:20, color: '#fff', }}>Amberwati</Text>
+              <Text style={{ fontFamily: 'ProximaNovaA-Semibold', fontSize:20, color: '#fff', }}>Amberwati</Text>
               <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 11, color: '#fff', }}>We are here to help! </Text>
             </View>
           </View>
@@ -136,12 +136,12 @@ const Dashboard: React.FC = () => {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('AppointmentConfirmed')}>
-              <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
+              <Image source={require('../../assets/images/video-consultation-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> Book Video Consultation</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('BookVaccination')}>
-              <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
+              <Image source={require('../../assets/images/vaccine-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> Book Vaccination</Text>
             </TouchableOpacity>
 
@@ -156,12 +156,12 @@ const Dashboard: React.FC = () => {
 
           <View style={[styles.quickActions, { justifyContent: 'center', marginTop: 5 }]}>
             <TouchableOpacity style={[styles.actionItem, { marginRight: '5.5%' }]} onPress={() => navigateTo('BookScan')}>
-              <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
+              <Image source={require('../../assets/images/book-scan.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> Book Scan</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionItem}>
-              <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
+            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('MedicalRecord')}>
+              <Image source={require('../../assets/images/view-report.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> View Report </Text>
             </TouchableOpacity>
           </View>

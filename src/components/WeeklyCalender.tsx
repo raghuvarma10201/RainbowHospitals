@@ -1,0 +1,149 @@
+import React, {useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, FlatList} from 'react-native';
+
+function getCurrentWeek(baseDate = new Date()) {
+  const today = new Date(baseDate);
+  const currentDay = today.getDay(); // 0 (Sun) - 6 (Sat)
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - currentDay);
+
+  const week = [];
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(startOfWeek);
+    date.setDate(startOfWeek.getDate() + i);
+    week.push({
+      day: date.toLocaleDateString('en-US', {weekday: 'short'}),
+      date: date.getDate(),
+      fullDate: date.toISOString().split('T')[0],
+      month: date.toLocaleDateString('en-US', {month: 'long'}),
+      monthShort: date.toLocaleDateString('en-US', {month: 'short'}),
+      year: date.getFullYear(),
+    });
+  }
+  return week;
+}
+
+function getMonthDisplay(week) {
+  const months = [...new Set(week.map(d => d.monthShort))];
+  const years = [...new Set(week.map(d => d.year))];
+
+  if (months.length === 1 && years.length === 1) {
+    return `${months[0]} ${years[0]}`;
+  } else if (years.length === 1) {
+    return `${months[0]} - ${months[1]} ${years[0]}`;
+  } else {
+    return `${months[0]} ${years[0]} - ${months[1]} ${years[1]}`;
+  }
+}
+
+export default function DynamicWeekWithMonth() {
+  const [week, setWeek] = useState(getCurrentWeek());
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split('T')[0],
+  );
+
+  const handlePrevWeek = () => {
+    const newBase = new Date(week[0].fullDate);
+    newBase.setDate(newBase.getDate() - 7);
+    const prevWeek = getCurrentWeek(newBase);
+    setWeek(prevWeek);
+    setSelectedDate(prevWeek[0].fullDate);
+  };
+
+  const handleNextWeek = () => {
+    const newBase = new Date(week[6].fullDate);
+    newBase.setDate(newBase.getDate() + 1);
+    const nextWeek = getCurrentWeek(newBase);
+    setWeek(nextWeek);
+    setSelectedDate(nextWeek[0].fullDate);
+  };
+
+  const renderItem = ({item}) => {
+    const isSelected = item.fullDate === selectedDate;
+    return (
+      <TouchableOpacity
+        onPress={() => setSelectedDate(item.fullDate)}
+        style={styles.dayContainer}>
+        <Text style={[styles.dayText, isSelected && styles.selectedDayText]}>
+          {item.day}
+        </Text>
+        <Text style={[styles.dateText, isSelected && styles.selectedDateText]}>
+          {item.date}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      {/* Month Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handlePrevWeek}>
+          <Text style={styles.arrow}>{'<'}</Text>
+        </TouchableOpacity>
+        <Text style={styles.month}>{getMonthDisplay(week)}</Text>
+        <TouchableOpacity onPress={handleNextWeek}>
+          <Text style={styles.arrow}>{'>'}</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Week Scroll */}
+      <FlatList
+        horizontal
+        data={week}
+        renderItem={renderItem}
+        keyExtractor={item => item.fullDate}
+        contentContainerStyle={styles.list}
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 16,
+    backgroundColor: '#E6DFF0',
+    borderRadius: 10,
+    margin: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  arrow: {
+    fontSize: 20,
+    marginHorizontal: 20,
+    color: '#4B3E75',
+  },
+  month: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4B3E75',
+  },
+  list: {
+    justifyContent: 'space-around',
+    paddingHorizontal: 10,
+  },
+  dayContainer: {
+    alignItems: 'center',
+    marginHorizontal: 10,
+  },
+  dayText: {
+    color: '#4B3E75',
+    fontSize: 14,
+  },
+  dateText: {
+    color: '#4B3E75',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  selectedDayText: {
+    color: '#00BCD4',
+  },
+  selectedDateText: {
+    color: '#00BCD4',
+  },
+});
