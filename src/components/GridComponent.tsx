@@ -10,10 +10,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {gridData} from '../Constants/data';
-import { IMG_BASE_URL } from '../utils/environment';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../../App';
+import {IMG_BASE_URL} from '../utils/environment';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {MainStackParamList} from '../../App';
 
 const {width} = Dimensions.get('window');
 const ITEMS_PER_PAGE = 9;
@@ -23,12 +23,11 @@ const data = gridData;
 interface ItemsProps {
   items: [];
 }
-const PaginatedGrid: React.FC<ItemsProps> = ({
-
-  items
-}) => {
-  
-  type AppNavigationProp = NativeStackNavigationProp<MainStackParamList, 'DoctorsList'>;
+const PaginatedGrid: React.FC<ItemsProps> = ({items}) => {
+  type AppNavigationProp = NativeStackNavigationProp<
+    MainStackParamList,
+    'DoctorsList'
+  >;
   const navigation = useNavigation<AppNavigationProp>();
 
   const scrollRef = useRef(null);
@@ -39,12 +38,17 @@ const PaginatedGrid: React.FC<ItemsProps> = ({
     pages.push(items.slice(i, i + ITEMS_PER_PAGE));
   }
 
-  const navigateToDoctors = async (specialityId : number) => {
-    navigation.navigate("DoctorsList", {specialityId : specialityId, appointmentType : "video"})
+  const navigateToDoctors = async (specialityId: number) => {
+    navigation.navigate('DoctorsList', {
+      specialityId: specialityId,
+      appointmentType: 'video',
+    });
   };
 
   const handleScroll = (event: any) => {
-    const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
+    const pageIndex = Math.round(
+      event.nativeEvent.contentOffset.x / (width * 0.8),
+    );
     setCurrentPage(pageIndex);
   };
 
@@ -52,14 +56,22 @@ const PaginatedGrid: React.FC<ItemsProps> = ({
     <View key={pageIndex} style={styles.page}>
       {page.map((item: any) => (
         <TouchableOpacity onPress={() => navigateToDoctors(item.id)}>
-        <View key={item.id} style={styles.itemContainer}>
-          <View style={[styles.iconBox, item.isSpecial && styles.specialItem]}>
-            <Image source={item.icon_image
-                        ? { uri: `${IMG_BASE_URL}${item.icon_image}` }
-                        : { uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png' }} style={styles.icon} />
+          <View key={item.id} style={styles.itemContainer}>
+            <View
+              style={[styles.iconBox, item.isSpecial && styles.specialItem]}>
+              <Image
+                source={
+                  item.icon_image
+                    ? {uri: `${IMG_BASE_URL}${item.icon_image}`}
+                    : {
+                        uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                      }
+                }
+                style={styles.icon}
+              />
+            </View>
+            <Text style={styles.itemText}>{item.name}</Text>
           </View>
-          <Text style={styles.itemText}>{item.name}</Text>
-        </View>
         </TouchableOpacity>
       ))}
     </View>
