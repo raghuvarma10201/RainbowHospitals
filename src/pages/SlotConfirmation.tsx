@@ -256,6 +256,7 @@ const styles = StyleSheet.create({
   flexHead: {
     fontSize: 14,
     color: '#000',
+    fontFamily: 'ProximaNovaA-Regular',
   },
   flexSub: {
     fontSize: 12,
@@ -276,12 +277,13 @@ const styles = StyleSheet.create({
   },
   paymentTxt: {
     fontSize: 14,
+    fontFamily: 'ProximaNovaA-Regular',
   },
   payBtnsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: w * 0.05,
+    paddingHorizontal: 0,
     marginVertical: h * 0.02,
   },
   payBtn: {
@@ -290,9 +292,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '45%',
     borderRadius: w * 0.04,
+    fontFamily: 'ProximaNovaA-Regular',
   },
   payBtnTxt: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#fff',
+    fontFamily: 'ProximaNovaA-Semibold',
   },
 });
