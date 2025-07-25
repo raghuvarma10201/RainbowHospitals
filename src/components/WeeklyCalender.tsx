@@ -1,6 +1,15 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, FlatList} from 'react-native';
 
+  type WeekDay = {
+    day: string;
+    date: number;
+    fullDate: string;
+    month: string;
+    monthShort: string;
+    year: number;
+  };
+  
 function getCurrentWeek(baseDate = new Date()) {
   const today = new Date(baseDate);
   const currentDay = today.getDay(); // 0 (Sun) - 6 (Sat)
@@ -23,7 +32,7 @@ function getCurrentWeek(baseDate = new Date()) {
   return week;
 }
 
-function getMonthDisplay(week) {
+function getMonthDisplay(week: Array<{ day: string; date: number; fullDate: string; month: string; monthShort: string; year: number }>) {
   const months = [...new Set(week.map(d => d.monthShort))];
   const years = [...new Set(week.map(d => d.year))];
 
@@ -58,7 +67,7 @@ export default function DynamicWeekWithMonth() {
     setSelectedDate(nextWeek[0].fullDate);
   };
 
-  const renderItem = ({item}) => {
+  const renderItem = ({item}: {item: WeekDay}) => {
     const isSelected = item.fullDate === selectedDate;
     return (
       <TouchableOpacity

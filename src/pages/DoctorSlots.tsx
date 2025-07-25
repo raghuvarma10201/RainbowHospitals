@@ -10,23 +10,27 @@ import {
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import CommonHeader from '../components/Header';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Footer from '../components/Footer';
 import DynamicWeekWithMonth from '../components/WeeklyCalender';
-import {useNavigation} from '@react-navigation/native';
-import {MainStackParamList} from '../../App';
-import { getDoctorDetail, getDoctors } from '../services/common';
+import { useNavigation } from '@react-navigation/native';
+import { MainStackParamList } from '../../App';
+import { getDoctorDetail, getDoctors, getDoctorSessions } from '../services/common';
 import { ToastService } from '../utils/ToastService';
 import { IMG_BASE_URL } from '../utils/environment';
+import { useApp } from '../context/AppContext';
 
-const DoctorSlots: React.FC<any> = ({route}) => {
+const DoctorSlots: React.FC<any> = ({ route }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {doctorId, appointmentType} = route.params;
-
-  const [doctorDetail, setDoctorDetail] = useState<any>([]);
+  const { doctorId, appointmentType } = route.params;
+  const { branch } = useApp();
+  const [doctorDetail, setDoctorDetail] = useState<any>({});
+  const [doctorSessions, setDoctorSessions] = useState<any>({});
+  const [doctorSpecialitites, setDoctorSpecialitites] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log("Branch --------------------------------",branch);
     loadDoctors();
   }, []);
 
@@ -38,10 +42,17 @@ const DoctorSlots: React.FC<any> = ({route}) => {
     try {
       setLoading(true);
       const response = await getDoctorDetail(doctorId);
-      console.log(response.data);
+      //console.log(response.data);
       if (response && response.status == 200) {
         setLoading(false);
         setDoctorDetail(response.data);
+        getSessions(response.data);
+        //console.log(doctor);
+        const specialityNames = response.data.doctor_specialities
+          .map((item: any) => item.speciality?.name)
+          .filter(Boolean) // optional: removes undefined/null
+          .join(', ');
+        setDoctorSpecialitites(specialityNames);
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -53,27 +64,47 @@ const DoctorSlots: React.FC<any> = ({route}) => {
       setLoading(false);
     }
   };
+    const getSessions = async (docData : any) => {
+    try {
+      setLoading(true);
+      const payload = {
+          CareproviderCode: docData.new_doctor_UID,
+          OrganisationUID: branch?.organisation.organisationid,
+          AppointmentType: "Physical",
+          noofdays: "30"
+      }
+      const response = await getDoctorSessions(payload);
+     
+      if (response && response.status == 200) {
+        setLoading(false);
+        setDoctorSessions(response.data);
+      } else {
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to load Sessions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const doctor = route?.params;
   const availabletimings = ['10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM'];
-  console.log(doctor);
-
-
-
-
 
   return (
     <View style={styles.mainContainer}>
-        <CommonHeader showLocation title={undefined} />
+      <CommonHeader showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-      
+
         <View style={styles.doctorDetailsContainer}>
           <View style={styles.doctorImgContainer}>
             <Image
               source={doctorDetail.small_image
-                                  ? {uri: `${IMG_BASE_URL}${doctorDetail.small_image}`}
-                                  : {
-                                      uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
-                                    }}
+                ? { uri: `${IMG_BASE_URL}${doctorDetail.small_image}` }
+                : {
+                  uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                }}
               style={styles.docImg}
             />
             <View style={styles.dotContainer}>
@@ -81,16 +112,16 @@ const DoctorSlots: React.FC<any> = ({route}) => {
             </View>
           </View>
           <View style={styles.doctorDetails}>
-            <Text style={[styles.docName, {fontSize: 16, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Semibold'}]}>
-              {doctor?.name}
+            <Text style={[styles.docName, { fontSize: 16, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Semibold' }]}>
+              {doctorDetail?.name}
             </Text>
-            <Text style={[styles.docName, {fontSize: 12, marginTop: 3,}]}>
-              {doctor?.designation}
+            <Text style={[styles.docName, { fontSize: 12, marginTop: 3, }]}>
+              {doctorDetail?.designation}
             </Text>
-            <Text style={[styles.docName, {fontSize: 12, }]}>
-              {doctor?.speciality}
+            <Text style={[styles.docName, { fontSize: 10, }]}>
+              {doctorSpecialitites}
             </Text>
-            <Text style={[styles.docName, {fontSize: 13, color: '#4CC2BF', marginTop: 3, marginBottom: 5}]}>
+            <Text style={[styles.docName, { fontSize: 13, color: '#4CC2BF', marginTop: 3, marginBottom: 5 }]}>
               {`Experience ${doctorDetail?.experience ?? '0'} Years`}
             </Text>
             <View style={styles.consultBtnsContainer}>
@@ -118,13 +149,13 @@ const DoctorSlots: React.FC<any> = ({route}) => {
             <Text
               style={[
                 styles.docName,
-                {fontSize: 16, color: '#4CC2BF', marginBottom: 5},
+                { fontSize: 16, color: '#4CC2BF', marginBottom: 5 },
               ]}>{`About`}</Text>
             <Text
               style={[
                 styles.docName,
-                {fontSize: 12},
-              ]}>{`${doctor?.name} is a top specialist in ${doctor?.speciality} in Secunderabad, Hyderabad. He has graduated MBBS from the...Read More`}</Text>
+                { fontSize: 12 },
+              ]}>{doctorDetail?.short_info}</Text>
           </View>
         </View>
         <View style={styles.calenderContainer}>
@@ -136,7 +167,7 @@ const DoctorSlots: React.FC<any> = ({route}) => {
               numColumns={4}
               contentContainerStyle={styles.timeList}
               keyExtractor={(_, index) => index.toString()}
-              renderItem={({item, index}) => (
+              renderItem={({ item, index }) => (
                 <Text style={styles.timeTxt}>{item}</Text>
               )}
             />
@@ -194,7 +225,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3C2871',
     paddingTop: h * 0.1,
     paddingHorizontal: w * 0.02,
-    width:'90%',
+    width: '90%',
     alignSelf: 'center',
     marginTop: h * 0.12,
     borderTopLeftRadius: w * 0.1,
@@ -239,7 +270,7 @@ const styles = StyleSheet.create({
   },
   calenderContainer: {
     backgroundColor: '#e6e4ef',
-    width:'90%',
+    width: '90%',
     alignSelf: 'center',
     borderBottomLeftRadius: w * 0.1,
     borderBottomRightRadius: w * 0.1,
@@ -259,8 +290,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical:10,
-    
+    marginVertical: 10,
+
   },
   consultBtn: {
     paddingVertical: w * 0.03,
@@ -277,7 +308,7 @@ const styles = StyleSheet.create({
     paddingLeft: 32,
   },
   iconContainer: {
-    height:Dimensions.get('window').height * 0.08,
+    height: Dimensions.get('window').height * 0.08,
     width: 30,
     position: 'absolute',
     backgroundColor: '#4CC2BF',
@@ -321,7 +352,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: '90%',
     alignSelf: 'center',
-    
+
   },
   formButtonText: {
     color: '#fff',

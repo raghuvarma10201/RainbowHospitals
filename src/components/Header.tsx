@@ -24,6 +24,8 @@ import {
     getRegions,
 } from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { findNearestRegion, findNearestBranch } from '../services/Region/location';
+import { getCurrentCoordinates } from '../utils/LocationService';
 
 interface CommonHeaderProps {
     title?: string;
@@ -54,11 +56,18 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
     const [branchesForRegion, setBranchesForRegion] = useState<Branch[]>([]);
     const [loadingRegions, setLoadingRegions] = useState(true);
 
-    const { branch, region, allbranch, updateBranch, updateRegion } = useApp();
+    const { branch, region, updateAllBranch, updateBranch, updateRegion } = useApp();
     const [expandedRegionId, setExpandedRegionId] = useState<string | null>(null);
     const [branchHeights, setBranchHeights] = useState<{
         [key: string]: Animated.Value;
     }>({});
+
+
+    useEffect(() => {
+        loadDetails();
+    }, []);
+
+
 
     useEffect(() => {
         setCurrentLocation(branch?.name || null);
@@ -66,6 +75,34 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
         setSelectedRegion(region || null);
     }, [branch, region]);
 
+    const loadDetails = async () => {
+    try {
+      const regions = await getRegions();
+      const location = await getCurrentCoordinates();
+      if (!location) throw new Error('Location unavailable');
+      const nearestRegion = findNearestRegion(
+        regions,
+        location.latitude,
+        location.longitude,
+      );
+      if (!nearestRegion) throw new Error('No region found nearby');
+      updateRegion(nearestRegion);
+      const allBranches = await getBranches(nearestRegion.region_id);
+      if (!allBranches.length) throw new Error('No branch data found');
+      updateAllBranch(allBranches);
+      const nearestBranch = findNearestBranch(
+        allBranches,
+        location.latitude,
+        location.longitude,
+      );
+      if (!nearestBranch) throw new Error('No nearby branch found');
+      updateBranch(nearestBranch);
+    } catch (err: any) {
+      console.log(err);
+    } finally {
+      
+    }
+  };
     useEffect(() => {
         const loadRegions = async () => {
             try {

@@ -23,6 +23,7 @@ export type Branch = {
   walk_through: string;
   UID:string
   branch_id:number
+  organisation : any
   
 };
 
