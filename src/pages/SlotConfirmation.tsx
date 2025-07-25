@@ -162,8 +162,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   docImg: {
-    height: h * 0.19,
-    width: h * 0.19,
+    height: h * 0.17,
+    width: h * 0.17,
     borderRadius: h * 0.1,
     resizeMode: 'cover',
   },

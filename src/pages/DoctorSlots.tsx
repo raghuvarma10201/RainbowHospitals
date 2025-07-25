@@ -81,16 +81,16 @@ const DoctorSlots: React.FC<any> = ({route}) => {
             </View>
           </View>
           <View style={styles.doctorDetails}>
-            <Text style={[styles.docName, {color: '#4CC2BF'}]}>
+            <Text style={[styles.docName, {fontSize: 16, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Semibold'}]}>
               {doctor?.name}
             </Text>
-            <Text style={[styles.docName, {fontSize: 12}]}>
+            <Text style={[styles.docName, {fontSize: 12, marginTop: 3,}]}>
               {doctor?.designation}
             </Text>
-            <Text style={[styles.docName, {fontSize: 12}]}>
+            <Text style={[styles.docName, {fontSize: 12, }]}>
               {doctor?.speciality}
             </Text>
-            <Text style={[styles.docName, {fontSize: 14, color: '#4CC2BF'}]}>
+            <Text style={[styles.docName, {fontSize: 13, color: '#4CC2BF', marginTop: 3, marginBottom: 5}]}>
               {`Experience ${doctorDetail?.experience ?? '0'} Years`}
             </Text>
             <View style={styles.consultBtnsContainer}>
@@ -118,7 +118,7 @@ const DoctorSlots: React.FC<any> = ({route}) => {
             <Text
               style={[
                 styles.docName,
-                {fontSize: 16, color: '#4CC2BF'},
+                {fontSize: 16, color: '#4CC2BF', marginBottom: 5},
               ]}>{`About`}</Text>
             <Text
               style={[
@@ -146,6 +146,14 @@ const DoctorSlots: React.FC<any> = ({route}) => {
                   styles.centeredTxt,
                   {
                     marginTop: h * 0.02,
+                    fontFamily: 'ProximaNovaA-Regular',
+                    fontSize: 14,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#fff',
+                    width: 90,
+                    paddingBottom: 5,
+                    textAlign: 'center',
+                    marginHorizontal: 'auto',
                   },
                 ]}>
                 View More
@@ -186,7 +194,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3C2871',
     paddingTop: h * 0.1,
     paddingHorizontal: w * 0.02,
-    width: w * 0.8,
+    width:'90%',
     alignSelf: 'center',
     marginTop: h * 0.12,
     borderTopLeftRadius: w * 0.1,
@@ -231,7 +239,7 @@ const styles = StyleSheet.create({
   },
   calenderContainer: {
     backgroundColor: '#e6e4ef',
-    width: w * 0.8,
+    width:'90%',
     alignSelf: 'center',
     borderBottomLeftRadius: w * 0.1,
     borderBottomRightRadius: w * 0.1,
@@ -245,12 +253,14 @@ const styles = StyleSheet.create({
   docName: {
     fontSize: 20,
     color: '#fff',
+    fontFamily: 'ProximaNovaA-Regular',
   },
   consultBtnsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: h * 0.01,
+    marginVertical:10,
+    
   },
   consultBtn: {
     paddingVertical: w * 0.03,
@@ -260,16 +270,18 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   consultBtnTxt: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#000',
-    textAlign: 'right',
+    textAlign: 'left',
+    fontFamily: 'ProximaNovaA-Regular',
+    paddingLeft: 32,
   },
   iconContainer: {
-    height: '300%',
-    width: '30%',
+    height:Dimensions.get('window').height * 0.08,
+    width: 30,
     position: 'absolute',
     backgroundColor: '#4CC2BF',
-    left: w * 0.01,
+    left: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -283,20 +295,24 @@ const styles = StyleSheet.create({
     height: 1,
     width: '100%',
     backgroundColor: '#b6e7e6ff',
+    marginVertical: 10,
   },
   timeTxt: {
     color: '#000',
     fontSize: 12,
+    fontFamily: 'ProximaNovaA-Regular',
     marginHorizontal: w * 0.02,
   },
   centeredTxt: {
     color: '#3C2871',
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 15,
+    fontFamily: 'ProximaNovaA-Semibold',
   },
   timeList: {
     alignItems: 'center',
     marginVertical: h * 0.01,
+    fontFamily: 'ProximaNovaA-Semibold',
   },
   formButton: {
     backgroundColor: '#3C2871',
@@ -305,6 +321,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: '90%',
     alignSelf: 'center',
+    
   },
   formButtonText: {
     color: '#fff',
