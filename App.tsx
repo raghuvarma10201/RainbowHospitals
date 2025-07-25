@@ -38,6 +38,7 @@ import MedicalRecord from './src/pages/MedicalRecord';
 import SlotConfirmation from './src/pages/SlotConfirmation';
 import Home from './src/pages/Home';
 import DoctorsList from './src/pages/DoctorsList';
+import MyAppointments from './src/pages/MyAppointments';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -78,7 +79,7 @@ type MainStackParamList = {
   MedicalRecord: undefined;
   SlotConfirmation: undefined;
   Home:undefined;
-
+  MyAppointments:undefined;
 };
 
 export type {AuthStackParamList, MainStackParamList};
@@ -107,6 +108,7 @@ export const MainStack = React.memo(() => (
     <MainStackNav.Screen name="MedicalRecord" component={MedicalRecord} />
     <MainStackNav.Screen name="SlotConfirmation" component={SlotConfirmation} />
     <MainStackNav.Screen name="Home" component={Home} />
+    <MainStackNav.Screen name="MyAppointments" component={MyAppointments} />
     <MainStackNav.Screen
       name="VaccinesPediatric"
       component={VaccinesPediatric}
