@@ -55,6 +55,10 @@ const MyAppointments: React.FC = () => {
                   Senior Consultant - Pediatric Neurologist
                   </Text>
 
+                  <Text style={[styles.consultationText, { fontFamily:'ProximaNovaA-Semibold', }]}>
+                  Physical Consultation
+                  </Text>
+
                  <View style={styles.row}>
                   <Text style={[styles.docName, {color: '#000', fontSize:12, fontFamily:'ProximaNovaA-Semibold',  marginBottom:2}]}>
                   2025-08-01 at 10:00 AM
@@ -82,6 +86,11 @@ const MyAppointments: React.FC = () => {
                   <Text style={[styles.docName, {fontSize:11, color: '#000', fontFamily:'ProximaNovaA-Regular', marginBottom:5}]}>
                   Senior Consultant - Pediatric Neurologist
                   </Text>
+
+                  <Text style={[styles.consultationText, { fontFamily:'ProximaNovaA-Semibold', }]}>
+                  Physical Consultation
+                  </Text>
+                
 
                  <View style={styles.row}>
                   <Text style={[styles.docName, {color: '#000', fontSize:12, fontFamily:'ProximaNovaA-Semibold',  marginBottom:2}]}>
@@ -186,4 +195,15 @@ const styles = StyleSheet.create({
     height:14,
     resizeMode:'contain',
   },
+
+  consultationText:{
+    backgroundColor:'#E2EDEC',
+    paddingVertical:5,
+    paddingHorizontal:10,
+    borderRadius:3,
+    fontSize:12,
+    color:'#000',
+    fontFamily:'ProximaNovaA-Regular',
+    marginBottom:5,
+  }
 }); 
