@@ -46,7 +46,7 @@ const Highlight = ({
     if (!autoScrollEnabled || images.length === 0) return;
 
     const autoScroll = setInterval(() => {
-      scrollIndex.current = (scrollIndex.current + 1) % images.length;
+      scrollIndex.current = (scrollIndex.current + 2) % images.length;
       flatListRef.current?.scrollToOffset({
         offset: (scrollIndex.current + 1) * ITEM_WIDTH,
         animated: true,

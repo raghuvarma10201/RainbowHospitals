@@ -47,7 +47,7 @@ const Specialities: React.FC = () => {
   const [specialities, setSpecialities] = useState<any>([]);
   const specialties = Object.keys(doctorData) as Array<keyof typeof doctorData>;
   const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1); // Default: Neurology
-  const [activeDocIndex, setActiveDocIndex] = useState(0);
+  const [activeDocIndex, setActiveDocIndex] = useState(2);
   const currentSpecialty = specialties[activeSpecialtyIndex];
   const currentDoctors = doctorData[currentSpecialty];
   const [loading, setLoading] = useState(false);
