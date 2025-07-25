@@ -1,4 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
+
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../../App';
+
 import {
     View,
     Text,
@@ -41,12 +46,18 @@ interface CommonHeaderProps {
 }
 
 const CommonHeader: React.FC<CommonHeaderProps> = ({
+    
     title,
     showLocation = true,
     onNotificationPress,
     onChatPress,
     home,
 }) => {
+    const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+    const navigateTo = (path: keyof MainStackParamList, params: any) => {
+      navigation.navigate(path, params);
+    };
+
     const [menuVisible, setMenuVisible] = useState(false);
     const [locationModalVisible, setLocationModalVisible] = useState(false);
     const [currentLocation, setCurrentLocation] = useState<string | null>(null);
@@ -180,9 +191,13 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
     return (
         <View style={styles.header}>
             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <View style={styles.profileIconBlock}>
-                    <Image source={require('../../assets/images/profile-icon.png')} style={{ width: 30, height: 30, }} resizeMode="contain" />
+                 <View style={styles.backArrowBlock}>
+                    <Image source={require('../../assets/images/back-arrow.png')} style={{ width:18, height:18, }} resizeMode="contain" />
                 </View>
+
+                {/* <View style={styles.profileIconBlock}>
+                    <Image source={require('../../assets/images/profile-icon.png')} style={{ width: 30, height: 30, }} resizeMode="contain" />
+                </View> */}
                 {showLocation && (
                     <TouchableOpacity style={styles.dropdownIcon} onPress={() => setLocationModalVisible(true)}>
                         <View style={{ marginLeft: 6 }}>
@@ -200,9 +215,17 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
                 )}
             </View>
             <View style={styles.headerRight}>
+               <TouchableOpacity>
                 <Image source={require('../../assets/images/services-icon.png')} style={{ width:26, height:26, marginRight: 10, }} resizeMode="contain" />
-                <Image source={require('../../assets/images/wallet-icon.png')} style={{ width: 26, height: 26, marginRight: 10, }} resizeMode="contain" />
-                <Image source={require('../../assets/images/filter-icon.png')} style={{ width: 22, height: 22, }} resizeMode="contain" />
+                </TouchableOpacity>
+
+                <TouchableOpacity>
+                    <Image source={require('../../assets/images/wallet-icon.png')} style={{ width: 26, height: 26, marginRight: 10, }} resizeMode="contain" />
+                </TouchableOpacity>
+               
+                <TouchableOpacity onPress={() => navigateTo('Home')}>
+                    <Image source={require('../../assets/images/filter-icon.png')} style={{ width: 22, height: 22, }} resizeMode="contain" />
+                </TouchableOpacity>
             </View>
             {/* Location Modal */}
             <Modal
@@ -334,6 +357,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
 
+    },
+
+    backArrowBlock:{
+        width:30,
+        height:30,
+        backgroundColor: '#fff',
+        borderRadius: 100,
+        borderWidth: 3,
+        borderColor: '#fff',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center', 
+        padding: 10,
     },
 
     headerText: {

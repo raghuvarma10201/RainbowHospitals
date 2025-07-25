@@ -29,16 +29,16 @@ const SlotConfirmation: React.FC = ({route}: any) => {
             </View>
           </View>
           <View style={styles.doctorDetails}>
-            <Text style={[styles.docName, {color: '#4CC2BF'}]}>
+            <Text style={[styles.docName, {fontSize: 16, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Semibold'}]}>
               {doctor?.name}
             </Text>
-            <Text style={[styles.docName, {fontSize: 12}]}>
+            <Text style={[styles.docName, {fontSize: 12, marginTop: 3,}]}>
               {doctor?.designation}
             </Text>
             <Text style={[styles.docName, {fontSize: 12}]}>
               {doctor?.speciality}
             </Text>
-            <Text style={[styles.docName, {fontSize: 14, color: '#4CC2BF'}]}>
+            <Text style={[styles.docName, {fontSize: 13, color: '#4CC2BF', marginTop: 3, marginBottom: 10}]}>
               {`Experience 15 Years`}
             </Text>
             <View style={styles.consultBtnsContainer}>
@@ -71,8 +71,8 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               style={styles.flexImg}
             />
             <View>
-              <Text style={styles.flexHead}>Location</Text>
-              <Text style={[styles.flexHead, {fontSize: 12}]}>
+              <Text style={[styles.flexHead, {fontFamily: 'ProximaNovaA-Semibold'}]}>Location</Text>
+              <Text style={[styles.flexHead, {fontSize: 13}]}>
                 Road No. 2, Banjara Hills
               </Text>
             </View>
@@ -83,7 +83,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               style={styles.flexImg}
             />
             <View>
-              <Text style={styles.flexHead}>Booked for</Text>
+              <Text style={[styles.flexHead, {fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2}]}>Booked for</Text>
               <Text style={styles.flexSub}>Ambervati ▼</Text>
             </View>
           </View>
@@ -94,10 +94,10 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               </Text>
             </View>
             <View style={[styles.paymentBlock, {backgroundColor: '#b1e2e1ff'}]}>
-              <Text style={[styles.paymentTxt, {color: '#000'}]}>
+              <Text style={[styles.paymentTxt, {color: '#000', fontFamily: 'ProximaNovaA-Semibold'}]}>
                 Consultation Fee
               </Text>
-              <Text style={[styles.paymentTxt, {color: '#000'}]}>₹ 900</Text>
+              <Text style={[styles.paymentTxt, {color: '#000', fontFamily: 'ProximaNovaA-Semibold'}]}>₹ 900</Text>
             </View>
           </View>
           <View style={styles.payBtnsContainer}>
@@ -116,8 +116,9 @@ const SlotConfirmation: React.FC = ({route}: any) => {
             patience and understanding
           </Text>
         </View>
-        <Footer />
+    
       </ScrollView>
+      <Footer />
     </View>
   );
 };
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3C2871',
     paddingTop: h * 0.1,
     paddingHorizontal: w * 0.02,
-    width: w * 0.8,
+    width:'90%',
     alignSelf: 'center',
     marginTop: h * 0.12,
     borderTopLeftRadius: w * 0.1,
@@ -192,12 +193,14 @@ const styles = StyleSheet.create({
   docName: {
     fontSize: 20,
     color: '#fff',
+    fontFamily: 'ProximaNovaA-Regular',
   },
   consultBtnsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: h * 0.01,
+    marginBottom: 15,
   },
   consultBtn: {
     paddingVertical: w * 0.03,
@@ -207,16 +210,18 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   consultBtnTxt: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#000',
-    textAlign: 'right',
+    textAlign: 'left',
+    fontFamily: 'ProximaNovaA-Regular',
+    paddingLeft: 32,
   },
   iconContainer: {
-    height: '300%',
-    width: '30%',
+    height:Dimensions.get('window').height * 0.08,
+    width: 30,
     position: 'absolute',
     backgroundColor: '#4CC2BF',
-    left: w * 0.01,
+    left: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -233,7 +238,7 @@ const styles = StyleSheet.create({
   },
   calenderContainer: {
     backgroundColor: '#fff',
-    width: w * 0.8,
+    width:'90%',
     alignSelf: 'center',
     paddingBottom: h * 0.03,
   },
@@ -252,12 +257,16 @@ const styles = StyleSheet.create({
   flexHead: {
     fontSize: 14,
     color: '#000',
+    fontFamily: 'ProximaNovaA-Regular',
   },
   flexSub: {
-    fontSize: 14,
+    fontSize: 12,
+    paddingHorizontal: 10,
     color: '#000',
-    backgroundColor: '#4CC2BF',
-    paddingHorizontal: w * 0.01,
+    backgroundColor: '#b1e2e1ff',
+    paddingVertical: 5,
+    borderRadius:3,
+    marginBottom: 5,
   },
   paymentBlock: {
     paddingVertical: h * 0.01,
@@ -269,12 +278,13 @@ const styles = StyleSheet.create({
   },
   paymentTxt: {
     fontSize: 14,
+    fontFamily: 'ProximaNovaA-Regular',
   },
   payBtnsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: w * 0.05,
+    paddingHorizontal: 0,
     marginVertical: h * 0.02,
   },
   payBtn: {
@@ -283,9 +293,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '45%',
     borderRadius: w * 0.04,
+    fontFamily: 'ProximaNovaA-Regular',
   },
   payBtnTxt: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#fff',
+    fontFamily: 'ProximaNovaA-Semibold',
   },
 });
