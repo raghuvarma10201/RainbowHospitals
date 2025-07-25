@@ -1,44 +1,18 @@
-import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Dimensions,  Image,  ScrollView,  StyleSheet,  View,} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {
-  Card,
-  Searchbar,
-  TextInput,
-  Icon,
-  Text,
-  Banner,
-  Modal,
-  Portal,
-} from 'react-native-paper';
+import {  Text,} from 'react-native-paper';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-
 const MyAppointments: React.FC = () => {
-  const [activeindex, setActiveindex] = useState(0);
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
-  
-  const [visible, setVisible] = React.useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-
 
   return (
     <View style={styles.mainContainer}>
          <Header showLocation title={undefined} />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-     
-        <View style={styles.container}>
-      
-     
+      <ScrollView contentContainerStyle={styles.scrollContent}>     
+        <View style={styles.container}>   
           <View style={styles.doctorsListContainer}>      
               <View style={styles.doctorContainer}>
                 <Image source={require('../../assets/images/doc-img-2.png')}
