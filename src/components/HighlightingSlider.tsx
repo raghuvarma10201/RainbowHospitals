@@ -40,7 +40,7 @@ const Highlight = ({
 
   useEffect(() => {
     // Add spacers to both ends
-    console.log(doctors);
+    //console.log(doctors);
     setData([{ key: 'left-spacer' }, ...doctors, { key: 'right-spacer' }]);
   }, [doctors]);
 

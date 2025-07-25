@@ -109,7 +109,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
       if (!nearestBranch) throw new Error('No nearby branch found');
       updateBranch(nearestBranch);
     } catch (err: any) {
-      console.log(err);
+      //console.log(err);
     } finally {
       
     }
@@ -182,7 +182,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
         if (selectedBranch && selectedRegion) {
             updateBranch(selectedBranch);
             updateRegion(selectedRegion);
-            console.log(selectedBranch)
+            //console.log(selectedBranch)
             setCurrentLocation(`${selectedBranch.name}, ${selectedRegion.name}`);
             setLocationModalVisible(false);
         }
@@ -223,7 +223,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
                     <Image source={require('../../assets/images/wallet-icon.png')} style={{ width: 26, height: 26, marginRight: 10, }} resizeMode="contain" />
                 </TouchableOpacity>
                
-                <TouchableOpacity onPress={() => navigateTo('Home')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
                     <Image source={require('../../assets/images/filter-icon.png')} style={{ width: 22, height: 22, }} resizeMode="contain" />
                 </TouchableOpacity>
             </View>

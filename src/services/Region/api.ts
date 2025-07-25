@@ -43,7 +43,7 @@ export const fetchRegions = async (token: string): Promise<Region[]> => {
   }
 
   const data = await response.json();
- // console.log('Fetched region data:', data);
+ // //console.log('Fetched region data:', data);
   return data.data;
 };
 
@@ -59,7 +59,7 @@ export const fetchBranchesByRegionId = async (
     },
   });
   const data = await response.json();
- // console.log(data);
+ // //console.log(data);
 
   return data.data || [];
 };

@@ -21,7 +21,7 @@ const downloadApiLog = async (msg: string) => {
       else {
       await RNFS.appendFile(filePath, logText, 'utf8');
     }
-    console.log('Log written to:', filePath);
+    //console.log('Log written to:', filePath);
   } catch (e) {
     console.warn('Failed to download log:', e);
   }
@@ -50,7 +50,7 @@ const refreshToken = async () => {
 
     return data.AccessToken;
   } catch (err: any) {
-    console.log('[TOKEN REFRESH FAILED]', err?.response?.data);
+    //console.log('[TOKEN REFRESH FAILED]', err?.response?.data);
     await AsyncStorage.clear();
     return null;
   }
@@ -64,7 +64,7 @@ api.interceptors.request.use(async config => {
 
   /* 🔄 Expired? Try refresh right before the request */
   if (expiry && dayjs().isAfter(dayjs(expiry))) {
-    console.log('[🔁] AccessToken expired → refreshing');
+    //console.log('[🔁] AccessToken expired → refreshing');
     accessToken = await refreshToken();
   }
 

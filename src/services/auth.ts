@@ -7,7 +7,7 @@ export const login = async (payload: any) => {
 };
 export const VerifyOTP = async (payload: any) => {
   const { data } = await api.post('/verifyOTP', payload);
-  console.log(data);
+  //console.log(data);
   return data;
 };
 export const authenticateUser = async (payload: any) => {

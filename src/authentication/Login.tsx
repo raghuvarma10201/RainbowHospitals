@@ -47,7 +47,6 @@ const Login: React.FC = () => {
         const response = await login({
           number: values.mobileNumber
         });
-        console.log('login response', response);
         if (response.status == 200 && response.success == true) {
           await AsyncStorage.multiSet([['mobileNumber', values.mobileNumber]]);
           ToastService.success('Success', 'Otp sent successfully');

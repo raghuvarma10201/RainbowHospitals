@@ -30,7 +30,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("Branch --------------------------------",branch);
+    //console.log("Branch --------------------------------",branch);
     loadDoctors();
   }, []);
 
@@ -42,12 +42,12 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
     try {
       setLoading(true);
       const response = await getDoctorDetail(doctorId);
-      //console.log(response.data);
+      ////console.log(response.data);
       if (response && response.status == 200) {
         setLoading(false);
         setDoctorDetail(response.data);
         getSessions(response.data);
-        //console.log(doctor);
+        ////console.log(doctor);
         const specialityNames = response.data.doctor_specialities
           .map((item: any) => item.speciality?.name)
           .filter(Boolean) // optional: removes undefined/null
@@ -74,7 +74,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
           noofdays: "30"
       }
       const response = await getDoctorSessions(payload);
-     
+      console.log(response);
       if (response && response.status == 200) {
         setLoading(false);
         setDoctorSessions(response.data);

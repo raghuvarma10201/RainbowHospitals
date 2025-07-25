@@ -8,10 +8,10 @@ export const requestUserPermission = async () => {
     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    console.log('✅ Notification permission granted.');
+    //console.log('✅ Notification permission granted.');
     const token = await messaging().getToken();
 
-    console.log('📲 FCM Token:', token);
+    //console.log('📲 FCM Token:', token);
     // Send token to backend if needed
   }
 };
@@ -19,7 +19,7 @@ export const requestUserPermission = async () => {
 export const setupNotificationListeners = () => {
   // Triggered when the app is in background and user taps notification
   messaging().onNotificationOpenedApp(remoteMessage => {
-    console.log('📬 Opened from background state:', remoteMessage);
+    //console.log('📬 Opened from background state:', remoteMessage);
     // Alert.alert(remoteMessage.notification?.title || '', remoteMessage.notification?.body || '');
   });
 
@@ -28,14 +28,14 @@ export const setupNotificationListeners = () => {
     .getInitialNotification()
     .then(remoteMessage => {
       if (remoteMessage) {
-        console.log('🚀 Opened from quit state:', remoteMessage);
+        //console.log('🚀 Opened from quit state:', remoteMessage);
         // Alert.alert(remoteMessage.notification?.title || '', remoteMessage.notification?.body || '');
       }
     });
 
   // Triggered when app is in foreground
   messaging().onMessage(async remoteMessage => {
-    console.log('📥 Foreground notification:', remoteMessage);
+    //console.log('📥 Foreground notification:', remoteMessage);
     Alert.alert(remoteMessage.notification?.title || '', remoteMessage.notification?.body || '');
     const type = "appointment";
 
@@ -53,7 +53,7 @@ export const setupNotificationListeners = () => {
     });
   });
   messaging().setBackgroundMessageHandler(async remoteMessage => {
-    console.log('📥 Foreground notification:', remoteMessage);
+    //console.log('📥 Foreground notification:', remoteMessage);
     // Alert.alert(remoteMessage.notification?.title || '', remoteMessage.notification?.body || '');
   });
 

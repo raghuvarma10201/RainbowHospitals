@@ -122,14 +122,12 @@ const Otp: React.FC = () => {
           fcmToken: (await AsyncStorage.getItem('FcmTtoken')) || 'adsdsad',
         };
         const response = await VerifyOTP(payload);
-        console.log('Verify Response', response);
         const token = response?.data?.token;
         await AsyncStorage.multiSet([
           ['accessToken',  token],
           ['refreshToken', token],
           ['tokenExpiry',  response.data.expiryTime],   // in UTC ISO string
         ]);
-        console.log('OTP verify response:', response);
         if (!token) {
           throw new Error('Token not found in response');
         }
@@ -137,7 +135,6 @@ const Otp: React.FC = () => {
         if (response && response.status === 200) {
           ToastService.error('Success', response.data.message || 'OTP verified successfully');
           const authResponse = await authenticateUser({ MobileNo: phoneNumber });
-          console.log("authResponse", authResponse);
           if (authResponse && authResponse.status == 200) {
             setLoading(false);
             updateMrn(authResponse.data.LoginName);
@@ -145,7 +142,6 @@ const Otp: React.FC = () => {
             const data = await getPatientProfile({
               mrn: authResponse.data.LoginName,
             });
-            console.log(data);
             if (data.data[0] && data.data[0].PatientID) {
               setLoggedIn(true);
               updateProfile(data.data[0]);
@@ -160,7 +156,6 @@ const Otp: React.FC = () => {
               //       ? `Welcome back ${data.PatientName}!`
               //       : `${authResponse.message}`,
               //   );
-              //   console.log(data);
               //   setProfile(data.data[0]);
               // } else {
               //   navigation.replace('Biometric');
@@ -211,7 +206,7 @@ const Otp: React.FC = () => {
       if (!nearestBranch) throw new Error('No nearby branch found');
       updateBranch(nearestBranch);
     } catch (err: any) {
-      console.log(err);
+      //console.log(err);
     } finally {
       setLoading(false);
     }

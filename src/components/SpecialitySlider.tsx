@@ -25,7 +25,7 @@ const SpecialtySlider = ({
   onTabPress: (index: number,specialityId : number) => void;
 }) => {
   const flatListRef = useRef<FlatList>(null);
-  console.log(specialties);
+  //console.log(specialties);
   useEffect(() => {
     if (flatListRef.current) {
       flatListRef.current.scrollToIndex({

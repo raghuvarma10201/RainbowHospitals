@@ -61,7 +61,7 @@ export const getDoctorDetail = async (doctorId :number) => {
 
 export const getDoctorSessions = async (payload : any) => {
   try {
-    const response = await api.post('/getDoctor/', payload);
+    const response = await api.post('/getSessionsByDoctor', payload);
     return response.data;
   } catch (error) {
     throw error;
