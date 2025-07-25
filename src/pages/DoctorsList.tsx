@@ -60,8 +60,7 @@ const doctors = [
 ];
 
 const DoctorsList: React.FC<any> = ({route}) => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {specialityId, appointmentType} = route.params;
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');

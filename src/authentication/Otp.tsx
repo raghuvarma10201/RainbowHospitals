@@ -124,7 +124,11 @@ const Otp: React.FC = () => {
         const response = await VerifyOTP(payload);
         console.log('Verify Response', response);
         const token = response?.data?.token;
-        await AsyncStorage.setItem('accessToken', token);
+        await AsyncStorage.multiSet([
+          ['accessToken',  token],
+          ['refreshToken', token],
+          ['tokenExpiry',  response.data.expiryTime],   // in UTC ISO string
+        ]);
         console.log('OTP verify response:', response);
         if (!token) {
           throw new Error('Token not found in response');

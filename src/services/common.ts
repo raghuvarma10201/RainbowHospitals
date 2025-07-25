@@ -50,7 +50,14 @@ export const getDoctors = async (name :string, speciality_id : any,branch_id : a
     throw error;
   }
 };
-
+export const getDoctorDetail = async (doctorId :number) => {
+  try {
+    const response = await api.get('/getDoctor/'+doctorId);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 
 

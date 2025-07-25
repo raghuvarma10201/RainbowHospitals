@@ -8,23 +8,59 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CommonHeader from '../components/Header';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Footer from '../components/Footer';
 import DynamicWeekWithMonth from '../components/WeeklyCalender';
 import {useNavigation} from '@react-navigation/native';
 import {MainStackParamList} from '../../App';
+import { getDoctorDetail, getDoctors } from '../services/common';
+import { ToastService } from '../utils/ToastService';
+import { IMG_BASE_URL } from '../utils/environment';
 
-const DoctorSlots: React.FC = ({route}: any) => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+const DoctorSlots: React.FC<any> = ({route}) => {
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const {doctorId, appointmentType} = route.params;
+
+  const [doctorDetail, setDoctorDetail] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadDoctors();
+  }, []);
+
   const navigateTo = (path: keyof MainStackParamList, params: any) => {
     navigation.navigate(path, params);
+  };
+
+  const loadDoctors = async () => {
+    try {
+      setLoading(true);
+      const response = await getDoctorDetail(doctorId);
+      console.log(response.data);
+      if (response && response.status == 200) {
+        setLoading(false);
+        setDoctorDetail(response.data);
+      } else {
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to load Doctors:', error);
+    } finally {
+      setLoading(false);
+    }
   };
   const doctor = route?.params;
   const availabletimings = ['10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM'];
   console.log(doctor);
+
+
+
+
+
   return (
     <View style={styles.mainContainer}>
         <CommonHeader showLocation title={undefined} />
@@ -33,7 +69,11 @@ const DoctorSlots: React.FC = ({route}: any) => {
         <View style={styles.doctorDetailsContainer}>
           <View style={styles.doctorImgContainer}>
             <Image
-              source={require('../../assets/images/doc-img.png')}
+              source={doctorDetail.small_image
+                                  ? {uri: `${IMG_BASE_URL}${doctorDetail.small_image}`}
+                                  : {
+                                      uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                                    }}
               style={styles.docImg}
             />
             <View style={styles.dotContainer}>
@@ -51,7 +91,7 @@ const DoctorSlots: React.FC = ({route}: any) => {
               {doctor?.speciality}
             </Text>
             <Text style={[styles.docName, {fontSize: 14, color: '#4CC2BF'}]}>
-              {`Experience 15 Years`}
+              {`Experience ${doctorDetail?.experience ?? '0'} Years`}
             </Text>
             <View style={styles.consultBtnsContainer}>
               <TouchableOpacity style={styles.consultBtn}>
