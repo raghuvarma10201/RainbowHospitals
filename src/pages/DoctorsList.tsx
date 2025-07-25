@@ -308,9 +308,10 @@ const styles = StyleSheet.create({
     paddingVertical: h * 0.01,
     marginTop: h * 0.01,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: w * 0.05,
   },
+ 
   doctorImg: {
     height: h * 0.12,
     width: h * 0.12,
