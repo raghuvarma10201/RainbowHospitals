@@ -22,7 +22,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import PaginatedGrid from '../components/GridComponent';
 import { ToastService } from '../utils/ToastService';
 import { useApp } from '../context/AppContext';
-import { getSpecialities } from '../services/common';
+import { getDoctors, getSpecialities } from '../services/common';
 import Loader from '../components/Loader';
 
 const local_data = [
@@ -50,6 +50,7 @@ const Specialities: React.FC = () => {
   const [activeDocIndex, setActiveDocIndex] = useState(2);
   const currentSpecialty = specialties[activeSpecialtyIndex];
   const currentDoctors = doctorData[currentSpecialty];
+  const [doctors, setDoctors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const { updateBranch, updateAllBranch, updateRegion } = useApp();
   const { setLoggedIn } = useAuth();
@@ -69,6 +70,7 @@ const Specialities: React.FC = () => {
       if (response && response.status == 200) {
         setLoading(false);
         setSpecialities(response.data);
+        loadDoctors('','video');
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -80,6 +82,32 @@ const Specialities: React.FC = () => {
       setLoading(false);
     }
   };
+    const loadDoctors = async (specialityId : any, appointmentType : any) => {
+      try {
+        setLoading(true);
+        const response = await getDoctors(
+          '',
+          specialityId,
+          '',
+          '',
+          appointmentType,
+          1,
+          10,
+        );
+        if (response && response.status == 200) {
+          setLoading(false);
+          setDoctors(response.data.doctors);
+        } else {
+          setLoading(false);
+          ToastService.error('Error', response.message);
+        }
+      } catch (error) {
+        setLoading(false);
+        console.error('Failed to load Doctors:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
   const handleLeft = () => {
     setActiveSpecialtyIndex(prev =>
       prev === 0 ? specialties.length - 1 : prev - 1,
@@ -171,13 +199,15 @@ const Specialities: React.FC = () => {
               activeIndex={activeSpecialtyIndex}
               onLeftPress={handleLeft}
               onRightPress={handleRight}
-              onTabPress={index => {
+              onTabPress={(index,specialityId) => {
                 setActiveSpecialtyIndex(index);
                 setActiveDocIndex(0);
+                loadDoctors(specialityId,"video");
+
               }}
             />
             <Highlight
-              images={currentDoctors}
+              doctors={doctors}
               activeindex={activeDocIndex}
               setActiveindex={setActiveDocIndex}
               height={h * 0.175}

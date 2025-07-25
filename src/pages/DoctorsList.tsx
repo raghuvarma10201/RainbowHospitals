@@ -311,6 +311,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: w * 0.05,
   },
+ 
   doctorImg: {
     height: h * 0.12,
     width: h * 0.12,

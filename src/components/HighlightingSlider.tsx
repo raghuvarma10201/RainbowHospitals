@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -10,21 +10,22 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+import { IMG_BASE_URL } from '../utils/environment';
 
-const {width: screenWidth} = Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get('window');
 const ITEM_WIDTH = screenWidth * 0.4;
 const SPACER_WIDTH = (screenWidth - ITEM_WIDTH) / 2;
 const AUTO_SCROLL_INTERVAL = 3000;
 
 const Highlight = ({
-  images,
+  doctors,
   activeindex,
   setActiveindex,
   height,
   autoScrollEnabled = true,
   nav,
 }: {
-  images: any[];
+  doctors: any;
   activeindex: number;
   setActiveindex: (index: number) => void;
   height: number;
@@ -35,18 +36,19 @@ const Highlight = ({
   const scrollX = useRef(new Animated.Value(0)).current;
   const scrollIndex = useRef(activeindex);
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<any>([]);
 
   useEffect(() => {
     // Add spacers to both ends
-    setData([{key: 'left-spacer'}, ...images, {key: 'right-spacer'}]);
-  }, [images]);
+    console.log(doctors);
+    setData([{ key: 'left-spacer' }, ...doctors, { key: 'right-spacer' }]);
+  }, [doctors]);
 
   useEffect(() => {
-    if (!autoScrollEnabled || images.length === 0) return;
+    if (!autoScrollEnabled || doctors.length === 0) return;
 
     const autoScroll = setInterval(() => {
-      scrollIndex.current = (scrollIndex.current + 2) % images.length;
+      scrollIndex.current = (scrollIndex.current + 1) % doctors.length;
       flatListRef.current?.scrollToOffset({
         offset: (scrollIndex.current + 1) * ITEM_WIDTH,
         animated: true,
@@ -55,11 +57,11 @@ const Highlight = ({
     }, AUTO_SCROLL_INTERVAL);
 
     return () => clearInterval(autoScroll);
-  }, [images, autoScrollEnabled]);
+  }, [doctors, autoScrollEnabled]);
 
-  const renderItem = ({item, index}: {item: any; index: number}) => {
+  const renderItem = ({ item, index }: { item: any; index: number }) => {
     if (!item || item.key === 'left-spacer' || item.key === 'right-spacer') {
-      return <View style={{width: SPACER_WIDTH}} />;
+      return <View style={{ width: SPACER_WIDTH }} />;
     }
 
     const inputRange = [
@@ -81,21 +83,27 @@ const Highlight = ({
     });
 
     return (
-      <Animated.View style={[{transform: [{scale}], opacity}]}>
+      <Animated.View style={[{ transform: [{ scale }], opacity }]}>
         <TouchableOpacity
-          onPress={() => nav('DoctorSlots', item)}
+          onPress={() => nav('DoctorSlots', {doctorId : item.id, appointmentType : "video"})}
           style={styles.itemContainer}>
           <Image
-            source={item?.image}
-            style={[styles.banner, {height, width: ITEM_WIDTH}]}
+            source={
+              item?.small_image
+                ? {uri: `${IMG_BASE_URL}${item?.small_image}`}
+                : {
+                    uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                  }
+            }
+            style={[styles.banner, { height, width: ITEM_WIDTH }]}
             resizeMode="cover"
           />
           <View style={styles.doctorDetails}>
             <Text style={styles.docName}>{item?.name}</Text>
-            <Text style={[styles.docName, {fontSize: 12}]}>
+            <Text style={[styles.docName, { fontSize: 12 }]}>
               {item?.designation}
             </Text>
-            <Text style={[styles.docName, {fontSize: 12}]}>
+            <Text style={[styles.docName, { fontSize: 10, fontFamily:'ProximaNovaA-Regular', }]}>
               {item?.speciality}
             </Text>
           </View>
@@ -115,7 +123,7 @@ const Highlight = ({
       snapToInterval={ITEM_WIDTH}
       decelerationRate="fast"
       bounces={false}
-      onScroll={Animated.event([{nativeEvent: {contentOffset: {x: scrollX}}}], {
+      onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
         useNativeDriver: true,
       })}
       onMomentumScrollEnd={event => {
@@ -140,20 +148,21 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#3C2871',
     borderRadius: 10,
-    marginTop:10,
-   
+    marginTop: 10,
+
   },
   banner: {
-  
+
   },
   doctorDetails: {
     padding: 8,
     backgroundColor: '#3C2871',
-    width: '100%',
+     width: ITEM_WIDTH
   },
   docName: {
     fontSize: 14,
-    fontWeight: 'bold',
     color: '#fff',
+    fontFamily:'ProximaNovaA-Semibold'
   },
+
 });
