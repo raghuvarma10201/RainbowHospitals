@@ -102,7 +102,7 @@ export default function DynamicWeekWithMonth() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
+    paddingVertical: 5,
     borderRadius: 10,
     margin: 16,
   },
@@ -118,9 +118,9 @@ const styles = StyleSheet.create({
     color: '#4B3E75',
   },
   month: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 16, 
     color: '#4B3E75',
+    fontFamily: 'ProximaNovaA-Bold',
   },
   list: {
     justifyContent: 'space-around',
@@ -132,12 +132,13 @@ const styles = StyleSheet.create({
   },
   dayText: {
     color: '#4B3E75',
-    fontSize: 14,
+    fontSize: 13,
+    fontFamily: 'ProximaNovaA-Bold',
   },
   dateText: {
     color: '#4B3E75',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontFamily: 'ProximaNovaA-Bold',
   },
   selectedDayText: {
     color: '#00BCD4',

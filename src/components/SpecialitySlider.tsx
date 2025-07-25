@@ -50,6 +50,7 @@ const SpecialtySlider = ({
       <TouchableOpacity onPress={onLeftPress}>
         <Text style={styles.arrow}>{'<<'}</Text>
       </TouchableOpacity>
+      
 
       <FlatList
         ref={flatListRef}
