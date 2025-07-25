@@ -71,8 +71,8 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               style={styles.flexImg}
             />
             <View>
-              <Text style={styles.flexHead}>Location</Text>
-              <Text style={[styles.flexHead, {fontSize: 12}]}>
+              <Text style={[styles.flexHead, {fontFamily: 'ProximaNovaA-Semibold'}]}>Location</Text>
+              <Text style={[styles.flexHead, {fontSize: 13}]}>
                 Road No. 2, Banjara Hills
               </Text>
             </View>
@@ -83,7 +83,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               style={styles.flexImg}
             />
             <View>
-              <Text style={styles.flexHead}>Booked for</Text>
+              <Text style={[styles.flexHead, {fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2}]}>Booked for</Text>
               <Text style={styles.flexSub}>Ambervati ▼</Text>
             </View>
           </View>
@@ -94,10 +94,10 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               </Text>
             </View>
             <View style={[styles.paymentBlock, {backgroundColor: '#b1e2e1ff'}]}>
-              <Text style={[styles.paymentTxt, {color: '#000'}]}>
+              <Text style={[styles.paymentTxt, {color: '#000', fontFamily: 'ProximaNovaA-Semibold'}]}>
                 Consultation Fee
               </Text>
-              <Text style={[styles.paymentTxt, {color: '#000'}]}>₹ 900</Text>
+              <Text style={[styles.paymentTxt, {color: '#000', fontFamily: 'ProximaNovaA-Semibold'}]}>₹ 900</Text>
             </View>
           </View>
           <View style={styles.payBtnsContainer}>
@@ -116,8 +116,9 @@ const SlotConfirmation: React.FC = ({route}: any) => {
             patience and understanding
           </Text>
         </View>
-        <Footer />
+    
       </ScrollView>
+      <Footer />
     </View>
   );
 };

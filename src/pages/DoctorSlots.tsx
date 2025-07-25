@@ -168,8 +168,9 @@ const DoctorSlots: React.FC<any> = ({route}) => {
           <Text style={styles.formButtonText}>Proceed To Confirm</Text>
         </TouchableOpacity>
 
-        <Footer />
+     
       </ScrollView>
+      <Footer />
     </View>
   );
 };
