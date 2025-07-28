@@ -5,10 +5,17 @@ import {Text,  } from 'react-native-paper';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../../App';
 
 
 
 const Home: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const navigateTo = (path: keyof MainStackParamList, params: any) => {
+    navigation.navigate(path, params);
+  };
 
   return (
 <View style={styles.mainContainer}>
@@ -36,7 +43,7 @@ const Home: React.FC = () => {
 
 
 
-      <TouchableOpacity style={styles.row}>
+      <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('MyAppointments')}>
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
              <Image source={require('../../assets/images/home-appointments.png')} style={styles.homeBlockIcon} />
