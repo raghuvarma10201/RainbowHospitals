@@ -1366,6 +1366,27 @@ PODS:
     - React
   - react-native-safe-area-context (5.5.2):
     - React-Core
+  - react-native-webview (13.15.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - React-nativeconfig (0.75.5)
   - React-NativeModulesApple (0.75.5):
     - glog
@@ -1645,6 +1666,8 @@ PODS:
     - RNNotifee/NotifeeCore (= 9.1.8)
   - RNNotifee/NotifeeCore (9.1.8):
     - React-Core
+  - RNPermissions (5.4.2):
+    - React-Core
   - RNScreens (4.13.1):
     - DoubleConversion
     - glog
@@ -1735,6 +1758,7 @@ DEPENDENCIES:
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-webview (from `../node_modules/react-native-webview`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1767,6 +1791,7 @@ DEPENDENCIES:
   - RNFS (from `../node_modules/react-native-fs`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -1864,6 +1889,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-geolocation-service"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-webview:
+    :path: "../node_modules/react-native-webview"
   React-nativeconfig:
     :path: "../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -1928,6 +1955,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-localize"
   RNNotifee:
     :path: "../node_modules/@notifee/react-native"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNVectorIcons:
@@ -1986,6 +2015,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 9856dcf1c3d981843197b1b75253a079d961795d
   react-native-geolocation-service: 32b2c2a3b91e70ce2a8d0c684801aaeb0a07e0ec
   react-native-safe-area-context: 0f7bf11598f9a61b7ceac8dc3f59ef98697e99e1
+  react-native-webview: 2804ffc295cd86df10ee450fc8b674aa69ff9c57
   React-nativeconfig: 237c862aab56a7426301fcbbb8dd6988745231e0
   React-NativeModulesApple: 5b3c2bcfa3a53b22da441b35189e902ede27513d
   React-perflogger: 46ce3b295add69087b7c5ff325b55a6c7af204fc
@@ -2018,11 +2048,12 @@ SPEC CHECKSUMS:
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
   RNLocalize: 60ebbb668e46d3b9f276aaf2db8ae5353b84e514
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
+  RNPermissions: 49f0772119ccc8276aa4e87cae7daa351bd1b668
   RNScreens: dcce72b51698c54490a24155cfa1a14166587ed4
   RNVectorIcons: 182892e7d1a2f27b52d3c627eca5d2665a22ee28
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 1dd9dabb9df8fe08f12cd522eae04a2da0e252eb
 
-PODFILE CHECKSUM: be633bea079314afbee271a6d96e7efe0838b535
+PODFILE CHECKSUM: 4ce905422efd209613e44b912aa376be7d8e91a5
 
 COCOAPODS: 1.16.2
