@@ -1,207 +1,172 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 
-type WeekDay = {
-  day: string;
-  date: number;
-  fullDate: string;
-  month: string;
-  monthShort: string;
-  year: number;
+type Session = {
+  SessionDate: string;
+  SessionDefinitionUID1: string;
+  [key: string]: any;
 };
 
-function getCurrentWeek(baseDate = new Date()) {
-  const today = new Date(baseDate);
-  const currentDay = today.getDay(); // 0 (Sun) - 6 (Sat)
-  const startOfWeek = new Date(today);
-  startOfWeek.setDate(today.getDate() - currentDay);
+type SessionDay = {
+  fullDate: string;
+  day: string;
+  date: number;
+  dateObj: Date;
+  session: Session;
+};
 
-  const week = [];
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(startOfWeek);
-    date.setDate(startOfWeek.getDate() + i);
-    week.push({
-      day: date.toLocaleDateString('en-US', { weekday: 'short' }),
-      date: date.getDate(),
-      fullDate: date.toISOString().split('T')[0],
-      month: date.toLocaleDateString('en-US', { month: 'long' }),
-      monthShort: date.toLocaleDateString('en-US', { month: 'short' }),
-      year: date.getFullYear(),
-    });
-  }
-  return week;
-}
-
-function getMonthDisplay(
-  week: Array<{ day: string; date: number; fullDate: string; month: string; monthShort: string; year: number }>
-) {
-  const months = [...new Set(week.map(d => d.monthShort))];
-  const years = [...new Set(week.map(d => d.year))];
-
-  if (months.length === 1 && years.length === 1) {
-    return `${months[0]} ${years[0]}`;
-  } else if (years.length === 1) {
-    return `${months[0]} - ${months[1]} ${years[0]}`;
-  } else {
-    return `${months[0]} ${years[0]} - ${months[1]} ${years[1]}`;
-  }
-}
-
-interface DynamicWeekWithMonthProps {
-  sessions: Array<{
-    SessionDate: string;
-    SessionDefinitionUID1: string;
-    [key: string]: any;
-  }>;
+interface Props {
+  sessions: Session[];
   onDateClick?: (sessionDate: string, sessionDefinitionUID1: string) => void;
 }
 
-export const DynamicWeekWithMonth: React.FC<DynamicWeekWithMonthProps> = ({ sessions, onDateClick }) => {
-  const [week, setWeek] = useState(getCurrentWeek());
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+function getMonthDisplayForChunk(chunk: SessionDay[]): string {
+  if (chunk.length === 0) return '';
 
-  const handlePrevWeek = () => {
-    const newBase = new Date(week[0].fullDate);
-    newBase.setDate(newBase.getDate() - 7);
-    const prevWeek = getCurrentWeek(newBase);
-    setWeek(prevWeek);
-    setSelectedDate(prevWeek[0].fullDate);
+  const start = chunk[0].dateObj;
+  const end = chunk[chunk.length - 1].dateObj;
+
+  const startMonth = start.toLocaleDateString('en-US', { month: 'short' });
+  const endMonth = end.toLocaleDateString('en-US', { month: 'short' });
+
+  const startYear = start.getFullYear();
+  const endYear = end.getFullYear();
+
+  if (startMonth === endMonth && startYear === endYear) {
+    return `${startMonth} ${startYear}`;
+  } else if (startYear === endYear) {
+    return `${startMonth} - ${endMonth} ${startYear}`;
+  } else {
+    return `${startMonth} ${startYear} - ${endMonth} ${endYear}`;
+  }
+}
+
+
+export const DynamicWeekWithMonth: React.FC<Props> = ({ sessions, onDateClick }) => {
+  const sortedSessions = useMemo(() => {
+    return [...sessions]
+      .sort((a, b) => new Date(a.SessionDate).getTime() - new Date(b.SessionDate).getTime())
+      .map(s => {
+        const date = new Date(s.SessionDate);
+        return {
+          fullDate: date.toISOString().split('T')[0],
+          day: date.toLocaleDateString('en-US', { weekday: 'short' }),
+          date: date.getDate(),
+          dateObj: date,
+          session: s,
+        };
+      });
+  }, [sessions]);
+
+  const chunkedSessions: SessionDay[][] = useMemo(() => {
+    const chunks: SessionDay[][] = [];
+    for (let i = 0; i < sortedSessions.length; i += 7) {
+      chunks.push(sortedSessions.slice(i, i + 7));
+    }
+    return chunks;
+  }, [sortedSessions]);
+
+  const [pageIndex, setPageIndex] = useState(0);
+  const currentChunk = chunkedSessions[pageIndex] || [];
+
+  const handlePrev = () => {
+    if (pageIndex > 0) setPageIndex(p => p - 1);
   };
 
-  const handleNextWeek = () => {
-    const newBase = new Date(week[6].fullDate);
-    newBase.setDate(newBase.getDate() + 1);
-    const nextWeek = getCurrentWeek(newBase);
-    setWeek(nextWeek);
-    setSelectedDate(nextWeek[0].fullDate);
+  const handleNext = () => {
+    if (pageIndex < chunkedSessions.length - 1) setPageIndex(p => p + 1);
   };
 
-  const isDateAvailable = (date: string) => {
-    return Array.isArray(sessions) && sessions.some(
-      (s) => new Date(s.SessionDate).toISOString().split('T')[0] === date
-    );
-  };
-
-  const renderItem = ({ item }: { item: WeekDay }) => {
-    const isSelected = item.fullDate === selectedDate;
-    const available = isDateAvailable(item.fullDate);
-
-    return (
-      <TouchableOpacity
-        disabled={!available}
-        onPress={() => {
-          if (!available) return;
-          const session = sessions.find(
-            (s) => new Date(s.SessionDate).toISOString().split('T')[0] === item.fullDate
-          );
-          if (session && onDateClick) {
-            setSelectedDate(item.fullDate);
-            onDateClick(session.SessionDate, session.SessionDefinitionUID1);
-          }
-        }}
-        style={[
-          styles.dayContainer,
-          !available && styles.disabledContainer,
-        ]}
-      >
-        <Text
-          style={[
-            styles.dayText,
-            isSelected && styles.selectedDayText,
-            !available && styles.disabledText,
-          ]}
-        >
-          {item.day}
-        </Text>
-        <Text
-          style={[
-            styles.dateText,
-            isSelected && styles.selectedDateText,
-            !available && styles.disabledText,
-          ]}
-        >
-          {item.date}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
+  const renderDay = (item: SessionDay) => (
+    <TouchableOpacity
+      key={item.fullDate}
+      style={styles.dayBox}
+      onPress={() =>
+        onDateClick?.(item.session.SessionDate, item.session.SessionDefinitionUID1)
+      }
+    >
+      <Text style={styles.dayText}>{item.day}</Text>
+      <Text style={styles.dateText}>{item.date}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
-      {/* Month Header */}
+      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={handlePrevWeek}>
-          <Text style={styles.arrow}>{'<'}</Text>
+        <TouchableOpacity onPress={handlePrev} disabled={pageIndex === 0}>
+          <Text style={[styles.arrow, pageIndex === 0 && styles.disabledArrow]}>{'<'}</Text>
         </TouchableOpacity>
-        <Text style={styles.month}>{getMonthDisplay(week)}</Text>
-        <TouchableOpacity onPress={handleNextWeek}>
-          <Text style={styles.arrow}>{'>'}</Text>
+        <Text style={styles.title}>
+          {getMonthDisplayForChunk(currentChunk)}
+        </Text>
+        <TouchableOpacity onPress={handleNext} disabled={pageIndex >= chunkedSessions.length - 1}>
+          <Text style={[styles.arrow, pageIndex >= chunkedSessions.length - 1 && styles.disabledArrow]}>{'>'}</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Week Scroll */}
-      <FlatList
-        horizontal
-        data={week}
-        renderItem={renderItem}
-        keyExtractor={item => item.fullDate}
-        contentContainerStyle={styles.list}
-        showsHorizontalScrollIndicator={false}
-      />
+      {/* Sessions Grid */}
+      {currentChunk.length > 0 ? (
+        <View style={styles.weekRow}>
+          {currentChunk.map(renderDay)}
+        </View>
+      ) : (
+        <Text style={styles.noSessionsText}>No sessions available</Text>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 5,
-    borderRadius: 10,
     margin: 16,
+    paddingVertical: 10,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   arrow: {
-    fontSize: 20,
+    fontSize: 22,
     marginHorizontal: 20,
     color: '#4B3E75',
   },
-  month: {
+  disabledArrow: {
+    color: '#CCC',
+  },
+  title: {
     fontSize: 16,
-    color: '#4B3E75',
     fontFamily: 'ProximaNovaA-Bold',
+    color: '#4B3E75',
   },
-  list: {
-    justifyContent: 'space-around',
-    paddingHorizontal: 10,
+  weekRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 2
   },
-  dayContainer: {
+  dayBox: {
     alignItems: 'center',
-    marginHorizontal: 10,
+    padding: 10,
+    borderRadius: 8,
+    width: 45,
+    // backgroundColor: '#E0F7FA',
   },
   dayText: {
-    color: '#4B3E75',
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'ProximaNovaA-Bold',
+    color: '#4B3E75',
   },
   dateText: {
-    color: '#4B3E75',
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: 'ProximaNovaA-Bold',
+    color: '#4B3E75',
   },
-  selectedDayText: {
-    color: '#00BCD4',
-  },
-  selectedDateText: {
-    color: '#00BCD4',
-  },
-  disabledText: {
-    color: '#BDBDBD',
-  },
-  disabledContainer: {
-    opacity: 0.5,
+  noSessionsText: {
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#999',
+    marginTop: 10,
   },
 });

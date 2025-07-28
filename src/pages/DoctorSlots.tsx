@@ -25,7 +25,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
   const { doctorId, appointmentType } = route.params;
   const { branch,appointment,updateAppointment } = useApp();
   const [doctorDetail, setDoctorDetail] = useState<any>({});
-  const [doctorSessions, setDoctorSessions] = useState<any>({});
+  const [doctorSessions, setDoctorSessions] = useState<any>([]);
   const [doctorSlots, setDoctorSlots] = useState<any>({});
   const [doctorSpecialitites, setDoctorSpecialitites] = useState<string>('');
 
