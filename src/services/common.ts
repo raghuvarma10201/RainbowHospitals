@@ -85,3 +85,21 @@ export const fetchConsultationFee = async (payload : any) => {
     throw error;
   }
 };
+
+export const bookAppointment = async (payload : any) => {
+  try {
+    const response = await api.post('/bookAppointment', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const generateHash = async (payload : any) => {
+  try {
+    const response = await api.post('/generate-hash', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -26,6 +26,7 @@ import {
 } from '../services/Region/api';
 import {
     getBranches,
+    getPatientProfile,
     getRegions,
 } from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -67,7 +68,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
     const [branchesForRegion, setBranchesForRegion] = useState<Branch[]>([]);
     const [loadingRegions, setLoadingRegions] = useState(true);
 
-    const { branch, region, updateAllBranch, updateBranch, updateRegion } = useApp();
+    const { branch, region, updateAllBranch, updateBranch, updateRegion, updateProfile } = useApp();
     const [expandedRegionId, setExpandedRegionId] = useState<string | null>(null);
     const [branchHeights, setBranchHeights] = useState<{
         [key: string]: Animated.Value;
@@ -76,10 +77,19 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
 
     useEffect(() => {
         loadDetails();
+        getProfile();
     }, []);
 
 
-
+    const getProfile = async () => {
+       const mrn =  await AsyncStorage.getItem('mrn');
+        const data = await getPatientProfile({
+            mrn: mrn,
+        });
+        if (data.data[0] && data.data[0].PatientID) {
+            updateProfile(data.data[0]);
+        }
+    }
     useEffect(() => {
         setCurrentLocation(branch?.name || null);
         setSelectedBranch(branch || null);

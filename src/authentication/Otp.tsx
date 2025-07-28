@@ -146,20 +146,6 @@ const Otp: React.FC = () => {
               setLoggedIn(true);
               updateProfile(data.data[0]);
               navigation.navigate('Dashboard');
-              // const storedMpin = await AsyncStorage.getItem('firstTimeLogin');
-              // const { available } =
-              // await new ReactNativeBiometrics().isSensorAvailable();
-              // if (storedMpin || available) {
-              //   navigation.replace('Dashboard');
-              //   showSuccessToast(
-              //     data.PatientName
-              //       ? `Welcome back ${data.PatientName}!`
-              //       : `${authResponse.message}`,
-              //   );
-              //   setProfile(data.data[0]);
-              // } else {
-              //   navigation.replace('Biometric');
-              // }
             }
           } else if (authResponse.status == 500) {
             setLoading(false);

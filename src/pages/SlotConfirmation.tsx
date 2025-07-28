@@ -14,15 +14,16 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../App';
 import { useApp } from '../context/AppContext';
-import { fetchConsultationFee, getDoctorSessions } from '../services/common';
+import { fetchConsultationFee, generateHash } from '../services/common';
 import { ToastService } from '../utils/ToastService';
+import { doctorData } from '../Constants/data';
 
 const SlotConfirmation: React.FC = ({ route }: any) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const { doctor } = route.params;
   const { branch, appointment, updateAppointment } = useApp();
   const [selectedPatient, setSelectedPatient] = useState<string>('');
-  const [consultationFee, setConsultationFee] = useState<string>('');
+  const [consultationFee, setConsultationFee] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -33,19 +34,29 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
     try {
       setLoading(true);
       const payload = {
-        orgcode: '11MN',
+        orgcode: branch?.organisation.code ? String(branch.organisation.code) : '11MN',
         OrganisationUID: branch?.UID ? String(branch.UID) : '',
         Uhid: selectedPatient ? selectedPatient : 'MAHTMP-182297',
         Departmentcode: '11MNPAGP',
         VisitDate: appointment?.date,
         DoctorId: doctor.new_doctor_UID ?? '',
       }
-      console.log(payload);
       const response = await fetchConsultationFee(payload);
       console.log(response);
       if (response && response.status == 200) {
+        setConsultationFee(response.data.ConsultationFee);
+        if (appointment) {
+          updateAppointment({
+            ...appointment,
+            mrn : 'MAHTMP-182297',
+            Visittype : 'First Visit',
+            careprovider_code : doctor.new_doctor_UID,
+            price: response.data.ConsultationFee,
+            status: appointment.status ?? 'BOOKING', // Replace 'PENDING' with a valid BookingStatus default if needed
+            comment: appointment.comment ?? null // Ensure comment is string or null
+          });
+        }
         setLoading(false);
-
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -57,7 +68,25 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
       setLoading(false);
     }
   };
-
+  const navigateToOnlinePayment = async () => {
+    try {
+      setLoading(true);
+      const txnid = `TXNN_${Date.now()}`;
+      console.log("TransactionId--------------------",txnid);
+      // 2. Push PayUWebView
+      navigation.navigate('PayUWebView', {
+        finalPayload: appointment,
+        txnId: txnid,
+        amount: consultationFee.toFixed(2) || '0.00',
+        payuUrl: 'https://test.payu.in/_payment', // For Production
+      });
+    } catch (e) {
+      console.log(e);
+      ToastService.error('Could not start payment, please try again.');
+    } finally {
+      setLoading(false); // End loader
+    }
+  };
   return (
     <View style={styles.mainContainer}>
       <CommonHeader showLocation title={undefined} />
@@ -142,11 +171,11 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
               <Text style={[styles.paymentTxt, { color: '#000', fontFamily: 'ProximaNovaA-Semibold' }]}>
                 Consultation Fee
               </Text>
-              <Text style={[styles.paymentTxt, { color: '#000', fontFamily: 'ProximaNovaA-Semibold' }]}>₹ 900</Text>
+              <Text style={[styles.paymentTxt, { color: '#000', fontFamily: 'ProximaNovaA-Semibold' }]}>₹ {consultationFee}</Text>
             </View>
           </View>
           <View style={styles.payBtnsContainer}>
-            <TouchableOpacity
+            <TouchableOpacity  onPress={() => navigateToOnlinePayment()}
               style={[styles.payBtn, { backgroundColor: '#3C2871' }]}>
               <Text style={styles.payBtnTxt}>Pay Now</Text>
             </TouchableOpacity>
