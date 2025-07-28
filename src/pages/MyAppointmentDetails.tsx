@@ -1,12 +1,16 @@
-import {Dimensions,  Image,  ScrollView,  StyleSheet,  View,} from 'react-native';
+import {Dimensions,  Image,  ScrollView,  StyleSheet,  View, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {  Text,} from 'react-native-paper';
+import {  Text, Modal, Portal,} from 'react-native-paper';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const MyAppointmentDetails: React.FC = () => {
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
+
+  const [visible, setVisible] = React.useState(false);
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
 
   return (
 <View style={styles.mainContainer}>
@@ -43,18 +47,74 @@ const MyAppointmentDetails: React.FC = () => {
     </View>
 
     <View style={styles.patientInfo}>
-    <Text style={styles.patientInfoHeaderText}>Patient Info</Text>
-    {/* <View style={styles.patientInfoItem}>
-      <Text style={styles.patientInfoItemValue}>John Doe</Text>
-    </View> */}
+      <Text style={styles.patientInfoHeaderText}>Patient Info</Text>
+        <View>
+              <View style={styles.patientItem}>
+                <Image source={require ('../../assets/images/doc-img.png')} style={styles.patientImg}
+                />
+                <View>
+                  <Text style={{fontSize:15, color: '#6651AF', fontFamily:'ProximaNovaA-Semibold', marginBottom:2}}>sravani majjari</Text>
+                  <View style={styles.patientReports}>
+                    <Text style={styles.reports}>MRI Report</Text>
+                    <Text style={styles.reports}>Blood Reports</Text>
+                  </View>
+                
+                </View>
+              </View>
+        </View>
      
     </View>
+
+    <View style={[styles.patientInfo, {marginTop:15, borderRadius:10, }]}>
+      <Text style={styles.patientInfoHeaderText}>Time Date</Text>
+        <View  style={styles.timeDateItem}>
+            <View style={styles.timeFlexRow}>
+                  <Image source={require ('../../assets/images/footer-calendar-icon.png')} style={styles.timeIcon}
+                  />
+                  <Text style={{fontSize:14, color: '#6651AF', fontFamily:'ProximaNovaA-Semibold', marginBottom:2}}>
+                    17 July, 2025</Text>
+                </View>
+
+              <View>
+                  <View style={styles.timeFlexRow}>
+                    <Image source={require ('../../assets/images/time-icon.png')} style={styles.timeIcon}
+                    />
+                    <Text style={{fontSize:14, color: '#6651AF', fontFamily:'ProximaNovaA-Semibold', marginBottom:2}}>07.00 PM</Text>
+                  </View>
+              </View>
+        </View>     
+    </View>
+
+    
+    <View style={styles.payBtnsContainer}>
+         
+            <TouchableOpacity onPress={() => showModal()}
+              style={[styles.payBtn, { backgroundColor: 'grey' }]}>
+              <Text style={styles.payBtnTxt}>Cancel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.payBtn, { backgroundColor: '#3C2871' }]}>
+              <Text style={styles.payBtnTxt}>Reschedule</Text>
+            </TouchableOpacity>
+     
+      </View>
+
 
 
 
 </View>
 </ScrollView>
 <Footer />
+
+
+<Portal>
+  <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalWrapp}> 
+   <Text>Cancel Appointment</Text>
+  </Modal>
+</Portal>
+
+
 </View>
    
 
@@ -161,18 +221,113 @@ patientInfo: {
   },
 
   location:{
+    borderTopWidth:1,
+    borderTopColor:'#5B52A3',
     flexDirection:'row',
     alignItems:'flex-start',
     gap:5, 
     justifyContent:'center',
     marginTop:13,
     marginBottom:10,
+    paddingTop:10,
   },
   locationText:{
+
     fontSize:13,
-    fontFamily:'ProximaNovaA-Regular',
+    fontFamily:'ProximaNovaA-Semibold',
     color:'#fff',
     textAlign:'left',
-  }
+  },
+
+
+  patientItem: { 
+    marginTop:15,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+
+  },
+ 
+  patientImg: {
+    height:70,
+    width:70,
+    resizeMode: 'cover',
+    borderRadius: w,
+   borderWidth:1,
+   borderColor:'#E2EDEC',
+   marginRight:10,
+  },
+
+  patientReports:{
+    marginTop:5,
+flexDirection:'row',
+gap:10,
+
+  },
+    reports:{
+    backgroundColor:'#E2EDEC',
+    paddingHorizontal:10,
+    paddingVertical:5,
+    borderRadius:2,
+    fontSize:11,
+    color:'#000',
+    fontFamily:'ProximaNovaA-Regular',
+    marginBottom:10,
+  },
+  timeIcon:{
+    width:30,
+    height:30,
+    resizeMode:'contain',
+    marginRight:5,
+  },
+
+  timeDateItem:{
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'flex-start',
+    gap:15,
+    marginTop:10,
+    marginBottom:10,
+  },
+
+  timeFlexRow:{
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'space-between'
+    
+  },
+
+
+  payBtnsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginTop:10,
+   
+  },
+  payBtn: {
+    padding: w * 0.03,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '45%',
+    borderRadius:100,
+    fontFamily: 'ProximaNovaA-Regular',
+  },
+  payBtnTxt: {
+    fontSize: 13,
+    color: '#fff',
+    fontFamily: 'ProximaNovaA-Semibold',
+  },
+
+  modalWrapp:{
+    backgroundColor:'#fff',
+    padding:10,
+    borderRadius:10,
+    width:'90%',
+    alignSelf:'center',
+    height:200,
+    justifyContent:'center',
+  },
+
 
 }); 
