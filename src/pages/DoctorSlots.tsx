@@ -224,14 +224,15 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
             }}
           />
           <View>
-            <Text style={styles.centeredTxt}>Available Time</Text>
+            <Text style={[styles.centeredTxt, {marginBottom:5}]}>Available Time</Text>
             <FlatList
-              data={doctorSlots}
-              numColumns={4}
+              data={doctorSlots}             
               contentContainerStyle={styles.timeList}
               keyExtractor={(_, index) => index.toString()}
               renderItem={({ item, index }) => (
-                <TouchableOpacity onPress={() => {
+
+                // timeActive for active -- replace timeTxt
+                <TouchableOpacity style={styles.timeBtn} onPress={() => {
                    setSelectedSlot(item.SlotID);
                    setSelectedTime(formatTime24Hour(item.SessionStartDttm));
                 }} >
@@ -397,11 +398,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#b6e7e6ff',
     marginVertical: 10,
   },
+
+  timeBtn:{
+    width:65,
+   
+  },
+
   timeTxt: {
     color: '#000',
-    fontSize: 12,
+    lineHeight:20,
+    fontSize: 13,
     fontFamily: 'ProximaNovaA-Regular',
     marginHorizontal: w * 0.02,
+    textAlign:'center',
+    borderRadius:10,
+    backgroundColor:'transparent',
+
+
+  },
+
+  
+  timeActive: {
+    backgroundColor:'#4CC2BF',
+    color: '#fff',
   },
   centeredTxt: {
     color: '#3C2871',
@@ -410,9 +429,16 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Semibold',
   },
   timeList: {
+    width:'100%',
     alignItems: 'center',
-    marginVertical: h * 0.01,
+    marginVertical:10,
     fontFamily: 'ProximaNovaA-Semibold',
+    flexDirection:'row',
+    flexWrap:'wrap',
+    gap:10,
+    justifyContent:'center',
+
+
   },
   formButton: {
     backgroundColor: '#3C2871',
