@@ -17,6 +17,7 @@ import { useApp } from '../context/AppContext';
 import { fetchConsultationFee, generateHash } from '../services/common';
 import { ToastService } from '../utils/ToastService';
 import { doctorData } from '../Constants/data';
+import {Dropdown} from 'react-native-element-dropdown';
 
 const SlotConfirmation: React.FC = ({ route }: any) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
@@ -25,6 +26,18 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
   const [selectedPatient, setSelectedPatient] = useState<string>('');
   const [consultationFee, setConsultationFee] = useState<number>(0);
   const [loading, setLoading] = useState(false);
+  const [country, setCountry] = useState('1');
+
+  const local_data = [
+    {
+      value: '1',
+      lable: 'Amberwati',
+    },
+    {
+      value: '2',
+      lable: 'Rajkumar',
+    },
+  ];
 
   useEffect(() => {
     getConsultationFee();
@@ -158,7 +171,21 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
             />
             <View>
               <Text style={[styles.flexHead, { fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }]}>Booked for</Text>
-              <Text style={styles.flexSub}>Ambervati ▼</Text>
+              {/* <Text style={styles.flexSub}>Ambervati ▼</Text> */}
+              <Dropdown
+                style={styles.dropdownSelect}
+                selectedTextStyle={styles.selectedTextContry}
+                placeholderStyle={styles.placeholderCountry}
+                maxHeight={200}
+                value={country}
+                data={local_data}
+                valueField="value"
+                labelField="lable"
+                placeholder="Select Location"
+                containerStyle={styles.dropdownList}
+                activeColor="#fff"
+                onChange={e => setCountry(e.value)}
+              />
             </View>
           </View>
           <View>
@@ -373,5 +400,35 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#fff',
     fontFamily: 'ProximaNovaA-Semibold',
+  },
+
+  dropdownSelect: {
+    backgroundColor: '#b1e2e1ff',
+    height: 30,
+    paddingHorizontal: 10,
+    paddingLeft:10,
+    marginTop: 5,
+    color: '#000',
+    width: Dimensions.get('window').width * 0.4,
+  },
+  placeholderCountry: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: 13,
+    color: '#000',
+  },
+  selectedTextContry: {
+    fontSize: 13,
+    color: '#000',
+  },
+
+  dropdownList: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: 13,
+    marginLeft: 0,
+    marginRight:0,
+    padding: 0,
+    textAlign: 'left',
+    backgroundColor: '#E5F9F8',
+    lineHeight:20,
   },
 });

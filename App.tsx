@@ -40,6 +40,7 @@ import Home from './src/pages/Home';
 import DoctorsList from './src/pages/DoctorsList';
 import MyAppointments from './src/pages/MyAppointments';
 import PayUWebView from './src/pages/PayUWebView';
+import MyAppointmentDetails from './src/pages/MyAppointmentDetails';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -81,6 +82,7 @@ type MainStackParamList = {
   SlotConfirmation: { doctor: any };
   Home: undefined;
   MyAppointments: undefined;
+  MyAppointmentDetails: undefined;
   PayUWebView: {
     finalPayload: any;
     txnId: string;
@@ -117,6 +119,7 @@ export const MainStack = React.memo(() => (
     <MainStackNav.Screen name="Home" component={Home} />
     <MainStackNav.Screen name="MyAppointments" component={MyAppointments} />
     <MainStackNav.Screen name="PayUWebView" component={PayUWebView} />
+    <MainStackNav.Screen name="MyAppointmentDetails" component={MyAppointmentDetails} />
     <MainStackNav.Screen
       name="VaccinesPediatric"
       component={VaccinesPediatric}
