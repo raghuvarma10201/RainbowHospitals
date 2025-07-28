@@ -138,14 +138,14 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
       status: 'BOOKING',
       comment: appointment?.comment ?? '',
       mrn: appointment?.mrn ?? '',
-      OrganisationUID: branch?.organisation?.organisationid ?? '',
+      OrganisationUID: '2',
       AppointmentType: appointmentType ?? '',
       slotid: selectedSlot,
       date: selectedDate, // Provide default or actual value
       time: selectedTime, // Provide default or actual value
       transaction_id: appointment?.transaction_id ?? '', // Provide default or actual value
       price: appointment?.price ?? 0, // Provide default or actual value
-      payment_type: appointment?.payment_type ?? 'OFFLINE', // Provide default or actual value
+      payment_type: appointment?.payment_type ?? 'CASH', // Provide default or actual value
     });
     
     navigation.navigate('SlotConfirmation', {doctor : doctorDetail})

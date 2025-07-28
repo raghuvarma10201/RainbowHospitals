@@ -14,42 +14,64 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../App';
 import { useApp } from '../context/AppContext';
-import { fetchConsultationFee, generateHash } from '../services/common';
+import { fetchConsultationFee, fetchFamilyMembers, generateHash, getDoctorSlots } from '../services/common';
 import { ToastService } from '../utils/ToastService';
 import { doctorData } from '../Constants/data';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
+import { IMG_BASE_URL } from '../utils/environment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FamilyMember } from '../utils/types';
 
 const SlotConfirmation: React.FC = ({ route }: any) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const { doctor } = route.params;
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const { branch, appointment, updateAppointment } = useApp();
+  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<string>('');
   const [consultationFee, setConsultationFee] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [country, setCountry] = useState('1');
 
-  const local_data = [
-    {
-      value: '1',
-      lable: 'Amberwati',
-    },
-    {
-      value: '2',
-      lable: 'Rajkumar',
-    },
-  ];
-
   useEffect(() => {
-    getConsultationFee();
+    const fetchPhoneNumber = async () => {
+      const storedNumber = await AsyncStorage.getItem('mobileNumber');
+      setPhoneNumber(storedNumber);
+      getFamilyMembers();
+    };
+    fetchPhoneNumber();
   }, []);
 
-  const getConsultationFee = async () => {
+  const getFamilyMembers = async () => {
     try {
+      setLoading(true);
+      const payload = {
+        MobileNo: phoneNumber,
+      }
+      const response = await fetchFamilyMembers(payload);
+      if (response && response.status == 200) {
+        setLoading(false);
+        setFamilyMembers(response.data);
+        console.log(response.data);
+      } else {
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to load Family Members:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const getConsultationFee = async (mrn: any) => {
+    try {
+      console.log(mrn);
       setLoading(true);
       const payload = {
         orgcode: branch?.organisation.code ? String(branch.organisation.code) : '11MN',
         OrganisationUID: branch?.UID ? String(branch.UID) : '',
-        Uhid: selectedPatient ? selectedPatient : 'MAHTMP-182297',
+        Uhid: mrn ? mrn : 'MAHTMP-182297',
         Departmentcode: '11MNPAGP',
         VisitDate: appointment?.date,
         DoctorId: doctor.new_doctor_UID ?? '',
@@ -61,9 +83,9 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
         if (appointment) {
           updateAppointment({
             ...appointment,
-            mrn : 'MAHTMP-182297',
-            Visittype : 'First Visit',
-            careprovider_code : doctor.new_doctor_UID,
+            mrn: mrn,
+            Visittype: 'First Visit',
+            careprovider_code: doctor.new_doctor_UID,
             price: response.data.ConsultationFee,
             status: appointment.status ?? 'BOOKING', // Replace 'PENDING' with a valid BookingStatus default if needed
             comment: appointment.comment ?? null // Ensure comment is string or null
@@ -84,8 +106,7 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
   const navigateToOnlinePayment = async () => {
     try {
       setLoading(true);
-      const txnid = `TXNN_${Date.now()}`;
-      console.log("TransactionId--------------------",txnid);
+      const txnid = `TXN_${Date.now()}`;
       // 2. Push PayUWebView
       navigation.navigate('PayUWebView', {
         finalPayload: appointment,
@@ -104,11 +125,14 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
     <View style={styles.mainContainer}>
       <CommonHeader showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-
         <View style={styles.doctorDetailsContainer}>
           <View style={styles.doctorImgContainer}>
             <Image
-              source={require('../../assets/images/doc-img.png')}
+              source={doctor.small_image
+                ? { uri: `${IMG_BASE_URL}${doctor.small_image}` }
+                : {
+                  uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                }}
               style={styles.docImg}
             />
             <View style={styles.dotContainer}>
@@ -126,7 +150,7 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
               {doctor?.specialities}
             </Text>
             <Text style={[styles.docName, { fontSize: 13, color: '#4CC2BF', marginTop: 3, marginBottom: 10 }]}>
-              {`Experience 15 Years`}
+              {`Experience ${doctor?.experience ?? '0'} Years`}
             </Text>
             <View style={styles.consultBtnsContainer}>
               <TouchableOpacity style={styles.consultBtn}>
@@ -178,13 +202,16 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
                 placeholderStyle={styles.placeholderCountry}
                 maxHeight={200}
                 value={country}
-                data={local_data}
-                valueField="value"
-                labelField="lable"
-                placeholder="Select Location"
+                data={familyMembers}
+                valueField="PatientID"
+                labelField="PatientName"
+                placeholder="Select Patient"
                 containerStyle={styles.dropdownList}
                 activeColor="#fff"
-                onChange={e => setCountry(e.value)}
+                onChange={e => {
+                  setSelectedPatient(e.PatientID);
+                  getConsultationFee(e.PatientID);
+                }}
               />
             </View>
           </View>
@@ -202,7 +229,7 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
             </View>
           </View>
           <View style={styles.payBtnsContainer}>
-            <TouchableOpacity  onPress={() => navigateToOnlinePayment()}
+            <TouchableOpacity onPress={() => navigateToOnlinePayment()}
               style={[styles.payBtn, { backgroundColor: '#3C2871' }]}>
               <Text style={styles.payBtnTxt}>Pay Now</Text>
             </TouchableOpacity>
@@ -406,7 +433,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#b1e2e1ff',
     height: 30,
     paddingHorizontal: 10,
-    paddingLeft:10,
+    paddingLeft: 10,
     marginTop: 5,
     color: '#000',
     width: Dimensions.get('window').width * 0.4,
@@ -425,10 +452,10 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: 13,
     marginLeft: 0,
-    marginRight:0,
+    marginRight: 0,
     padding: 0,
     textAlign: 'left',
     backgroundColor: '#E5F9F8',
-    lineHeight:20,
+    lineHeight: 20,
   },
 });

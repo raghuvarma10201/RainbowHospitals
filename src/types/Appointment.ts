@@ -1,6 +1,6 @@
 export type BookingStatus = 'BOOKING' | 'Rescheduled' | 'Cancel';
 export type AppointmentType = 'Video' | 'Physical';
-export type PaymentType = 'ONLINE' | 'OFFLINE'; // extend as needed
+export type PaymentType = 'ONLINE' | 'CASH'; // extend as needed
 
 export interface BankDetails {
   bank_name: string | null;

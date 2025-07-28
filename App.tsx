@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {View, ActivityIndicator, StyleSheet, StatusBar} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -41,6 +41,7 @@ import DoctorsList from './src/pages/DoctorsList';
 import MyAppointments from './src/pages/MyAppointments';
 import PayUWebView from './src/pages/PayUWebView';
 import MyAppointmentDetails from './src/pages/MyAppointmentDetails';
+import MyStatusBar from './src/components/StatusBar';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -184,6 +185,7 @@ const App: React.FC = () => {
     <AuthContext.Provider value={authCtx}>
       <PaperProvider theme={theme}>
         <NavigationContainer ref={navigationRef}>
+          <MyStatusBar backgroundColor={'#3C2871'} />
           {isLoggedIn ? (
             <AppProvider>
               <MainStack />
