@@ -1,5 +1,7 @@
+import { Alert } from 'react-native';
 import api from './api';
 import axios from 'axios';
+import { AppointmentPayload } from '../types/Appointment';
 
 export const getPatientProfile = async (payload : any) => {
   try {
@@ -77,7 +79,7 @@ export const getDoctorSlots = async (payload : any) => {
   }
 };
 
-export const fetchConsultationFee = async (payload : any) => {
+export const fetchConsultationFee = async (payload : any): Promise<any> => {
   try {
     const response = await api.post('/getConsultationFee', payload);
     return response.data;
@@ -86,7 +88,8 @@ export const fetchConsultationFee = async (payload : any) => {
   }
 };
 
-export const bookAppointment = async (payload : any) => {
+export const bookAppointment = async (payload : AppointmentPayload) => {
+  
   try {
     const response = await api.post('/bookAppointment', payload);
     return response.data;
@@ -98,6 +101,15 @@ export const bookAppointment = async (payload : any) => {
 export const generateHash = async (payload : any) => {
   try {
     const response = await api.post('/generate-hash', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const fetchFamilyMembers = async (payload : any) => {
+  try {
+    const response = await api.post('/getPatientProfile', payload);
     return response.data;
   } catch (error) {
     throw error;

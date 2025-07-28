@@ -85,8 +85,25 @@ const PayUWebView: React.FC = ({ route }: any) => {
   };
 
   const updatePayment = useCallback(async (mihpayid: any) => {
-    console.log(finalPayload);
-    navigation.navigate('AppointmentConfirmed');
+    try {
+      setLoading(true);
+      finalPayload.mihpayid = mihpayid;
+      finalPayload.transaction_id = txnId;
+      console.log(finalPayload);
+      const response = await bookAppointment(finalPayload);
+      if (response && response.status == 200 && response.success == true) {
+        navigation.navigate('AppointmentConfirmed');
+        console.log('Booking successful:', response.data);
+      }else{
+        navigation.navigate('Dashboard');
+        ToastService.error(response.message);
+      }
+    } catch (error : any) {
+      console.log(error);
+      //console.error('Failed to load specialities:', error.message);
+    } finally {
+      setLoading(false);
+    }
   }, []);
   return (
     <View style={{ flex: 1 }}>
