@@ -77,3 +77,11 @@ export const getDoctorSlots = async (payload : any) => {
   }
 };
 
+export const fetchConsultationFee = async (payload : any) => {
+  try {
+    const response = await api.post('/getConsultationFee', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

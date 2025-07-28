@@ -7,17 +7,62 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CommonHeader from '../components/Header';
 import Footer from '../components/Footer';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../../App';
+import { useApp } from '../context/AppContext';
+import { fetchConsultationFee, getDoctorSessions } from '../services/common';
+import { ToastService } from '../utils/ToastService';
 
-const SlotConfirmation: React.FC = ({route}: any) => {
-  const doctor = route?.params;
+const SlotConfirmation: React.FC = ({ route }: any) => {
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const { doctor } = route.params;
+  const { branch, appointment, updateAppointment } = useApp();
+  const [selectedPatient, setSelectedPatient] = useState<string>('');
+  const [consultationFee, setConsultationFee] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    getConsultationFee();
+  }, []);
+
+  const getConsultationFee = async () => {
+    try {
+      setLoading(true);
+      const payload = {
+        orgcode: '11MN',
+        OrganisationUID: branch?.UID ? String(branch.UID) : '',
+        Uhid: selectedPatient ? selectedPatient : 'MAHTMP-182297',
+        Departmentcode: '11MNPAGP',
+        VisitDate: appointment?.date,
+        DoctorId: doctor.new_doctor_UID ?? '',
+      }
+      console.log(payload);
+      const response = await fetchConsultationFee(payload);
+      console.log(response);
+      if (response && response.status == 200) {
+        setLoading(false);
+
+      } else {
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to load Sessions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.mainContainer}>
-        <CommonHeader showLocation title={undefined} />
+      <CommonHeader showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-      
+
         <View style={styles.doctorDetailsContainer}>
           <View style={styles.doctorImgContainer}>
             <Image
@@ -29,16 +74,16 @@ const SlotConfirmation: React.FC = ({route}: any) => {
             </View>
           </View>
           <View style={styles.doctorDetails}>
-            <Text style={[styles.docName, {fontSize: 16, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Semibold'}]}>
+            <Text style={[styles.docName, { fontSize: 16, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Semibold' }]}>
               {doctor?.name}
             </Text>
-            <Text style={[styles.docName, {fontSize: 12, marginTop: 3,}]}>
+            <Text style={[styles.docName, { fontSize: 12, marginTop: 3, }]}>
               {doctor?.designation}
             </Text>
-            <Text style={[styles.docName, {fontSize: 12}]}>
-              {doctor?.speciality}
+            <Text style={[styles.docName, { fontSize: 12 }]}>
+              {doctor?.specialities}
             </Text>
-            <Text style={[styles.docName, {fontSize: 13, color: '#4CC2BF', marginTop: 3, marginBottom: 10}]}>
+            <Text style={[styles.docName, { fontSize: 13, color: '#4CC2BF', marginTop: 3, marginBottom: 10 }]}>
               {`Experience 15 Years`}
             </Text>
             <View style={styles.consultBtnsContainer}>
@@ -71,9 +116,9 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               style={styles.flexImg}
             />
             <View>
-              <Text style={[styles.flexHead, {fontFamily: 'ProximaNovaA-Semibold'}]}>Location</Text>
-              <Text style={[styles.flexHead, {fontSize: 13}]}>
-                Road No. 2, Banjara Hills
+              <Text style={[styles.flexHead, { fontFamily: 'ProximaNovaA-Semibold' }]}>Location</Text>
+              <Text style={[styles.flexHead, { fontSize: 13 }]}>
+                {branch?.name}
               </Text>
             </View>
           </View>
@@ -83,40 +128,40 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               style={styles.flexImg}
             />
             <View>
-              <Text style={[styles.flexHead, {fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2}]}>Booked for</Text>
+              <Text style={[styles.flexHead, { fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }]}>Booked for</Text>
               <Text style={styles.flexSub}>Ambervati ▼</Text>
             </View>
           </View>
           <View>
-            <View style={[styles.paymentBlock, {backgroundColor: '#4CC2BF'}]}>
-              <Text style={[styles.paymentTxt, {color: '#fff'}]}>
+            <View style={[styles.paymentBlock, { backgroundColor: '#4CC2BF' }]}>
+              <Text style={[styles.paymentTxt, { color: '#fff' }]}>
                 Total Charges
               </Text>
             </View>
-            <View style={[styles.paymentBlock, {backgroundColor: '#b1e2e1ff'}]}>
-              <Text style={[styles.paymentTxt, {color: '#000', fontFamily: 'ProximaNovaA-Semibold'}]}>
+            <View style={[styles.paymentBlock, { backgroundColor: '#b1e2e1ff' }]}>
+              <Text style={[styles.paymentTxt, { color: '#000', fontFamily: 'ProximaNovaA-Semibold' }]}>
                 Consultation Fee
               </Text>
-              <Text style={[styles.paymentTxt, {color: '#000', fontFamily: 'ProximaNovaA-Semibold'}]}>₹ 900</Text>
+              <Text style={[styles.paymentTxt, { color: '#000', fontFamily: 'ProximaNovaA-Semibold' }]}>₹ 900</Text>
             </View>
           </View>
           <View style={styles.payBtnsContainer}>
             <TouchableOpacity
-              style={[styles.payBtn, {backgroundColor: '#3C2871'}]}>
+              style={[styles.payBtn, { backgroundColor: '#3C2871' }]}>
               <Text style={styles.payBtnTxt}>Pay Now</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.payBtn, {backgroundColor: 'grey'}]}>
+              style={[styles.payBtn, { backgroundColor: 'grey' }]}>
               <Text style={styles.payBtnTxt}>Pay At Hospital</Text>
             </TouchableOpacity>
           </View>
-          <Text style={[styles.flexHead, {fontSize: 12}]}>
+          <Text style={[styles.flexHead, { fontSize: 12 }]}>
             Disclaimer: Please note that waiting times may vary depending on the
             doctor's schedule and unforeseen circumstances. We appreciate your
             patience and understanding
           </Text>
         </View>
-    
+
       </ScrollView>
       <Footer />
     </View>
@@ -142,7 +187,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3C2871',
     paddingTop: h * 0.1,
     paddingHorizontal: w * 0.02,
-    width:'90%',
+    width: '90%',
     alignSelf: 'center',
     marginTop: h * 0.12,
     borderTopLeftRadius: w * 0.1,
@@ -217,7 +262,7 @@ const styles = StyleSheet.create({
     paddingLeft: 32,
   },
   iconContainer: {
-    height:Dimensions.get('window').height * 0.08,
+    height: Dimensions.get('window').height * 0.08,
     width: 30,
     position: 'absolute',
     backgroundColor: '#4CC2BF',
@@ -238,7 +283,7 @@ const styles = StyleSheet.create({
   },
   calenderContainer: {
     backgroundColor: '#fff',
-    width:'90%',
+    width: '90%',
     alignSelf: 'center',
     paddingBottom: h * 0.03,
   },
@@ -265,7 +310,7 @@ const styles = StyleSheet.create({
     color: '#000',
     backgroundColor: '#b1e2e1ff',
     paddingVertical: 5,
-    borderRadius:3,
+    borderRadius: 3,
     marginBottom: 5,
   },
   paymentBlock: {

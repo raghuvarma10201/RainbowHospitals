@@ -23,23 +23,28 @@ import { useApp } from '../context/AppContext';
 const DoctorSlots: React.FC<any> = ({ route }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const { doctorId, appointmentType } = route.params;
-  const { branch } = useApp();
+  const { branch,appointment,updateAppointment } = useApp();
   const [doctorDetail, setDoctorDetail] = useState<any>({});
   const [doctorSessions, setDoctorSessions] = useState<any>({});
   const [doctorSlots, setDoctorSlots] = useState<any>({});
   const [doctorSpecialitites, setDoctorSpecialitites] = useState<string>('');
+
+  const [selectedSlot, setSelectedSlot] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedTime, setSelectedTime] = useState<string>('');
+  const [consultationFee, setConsultationFee] = useState<string>('');
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    //console.log("Branch --------------------------------",branch);
-    loadDoctors();
+    loadDoctor();
   }, []);
 
   const navigateTo = (path: keyof MainStackParamList, params: any) => {
     navigation.navigate(path, params);
   };
 
-  const loadDoctors = async () => {
+  const loadDoctor = async () => {
     try {
       setLoading(true);
       const response = await getDoctorDetail(doctorId);
@@ -47,13 +52,15 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
       if (response && response.status == 200) {
         setLoading(false);
         setDoctorDetail(response.data);
-        getSessions(response.data);
-        ////console.log(doctor);
+        await getSessions(response.data);
+        //await getConsultationFee(response.data);
+        
         const specialityNames = response.data.doctor_specialities
           .map((item: any) => item.speciality?.name)
           .filter(Boolean) // optional: removes undefined/null
           .join(', ');
         setDoctorSpecialitites(specialityNames);
+        doctorDetail.specialities = specialityNames;
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -65,6 +72,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
       setLoading(false);
     }
   };
+
   const getSessions = async (docData: any) => {
     console.log(branch?.organisation.organisationid);
     try {
@@ -92,7 +100,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
   };
   const getSlots = async (sessionDate: any, sessionId: string) => {
     sessionDate = new Date(sessionDate).toISOString().split('T')[0]
-    console.log(sessionDate);
+    setSelectedDate(sessionDate);
     try {
       setLoading(true);
       const payload = {
@@ -105,7 +113,6 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
       if (response && response.status == 200) {
         setLoading(false);
         setDoctorSlots(response.data);
-        console.log(response.data);
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -126,6 +133,23 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
   const doctor = route?.params;
   const availabletimings = ['10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM'];
 
+  const proceedPayment = async () => {
+    await updateAppointment({
+      status: 'BOOKING',
+      comment: appointment?.comment ?? '',
+      mrn: appointment?.mrn ?? '',
+      OrganisationUID: branch?.organisation?.organisationid ?? '',
+      AppointmentType: appointmentType ?? '',
+      slotid: selectedSlot,
+      date: selectedDate, // Provide default or actual value
+      time: selectedTime, // Provide default or actual value
+      transaction_id: appointment?.transaction_id ?? '', // Provide default or actual value
+      price: appointment?.price ?? 0, // Provide default or actual value
+      payment_type: appointment?.payment_type ?? 'OFFLINE', // Provide default or actual value
+    });
+    
+    navigation.navigate('SlotConfirmation', {doctor : doctorDetail})
+  }
   return (
     <View style={styles.mainContainer}>
       <CommonHeader showLocation title={undefined} />
@@ -207,7 +231,12 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
               contentContainerStyle={styles.timeList}
               keyExtractor={(_, index) => index.toString()}
               renderItem={({ item, index }) => (
+                <TouchableOpacity onPress={() => {
+                   setSelectedSlot(item.SlotID);
+                   setSelectedTime(formatTime24Hour(item.SessionStartDttm));
+                }} >
                 <Text style={styles.timeTxt}>{formatTime24Hour(item.SessionStartDttm)}</Text>
+                </TouchableOpacity>
               )}
             />
             <TouchableOpacity>
@@ -233,7 +262,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => navigateTo('SlotConfirmation', doctor)}
+          onPress={() => proceedPayment()}
           style={styles.formButton}>
           <Text style={styles.formButtonText}>Proceed To Confirm</Text>
         </TouchableOpacity>

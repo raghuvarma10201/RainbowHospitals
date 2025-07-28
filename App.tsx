@@ -77,7 +77,7 @@ type MainStackParamList = {
   VaccinesPediatric: undefined;
   BookScan: undefined;
   MedicalRecord: undefined;
-  SlotConfirmation: undefined;
+  SlotConfirmation: {doctor : any};
   Home:undefined;
   MyAppointments:undefined;
 };

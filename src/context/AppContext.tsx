@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Branch, Region } from './../services/Region/api';
 import { DoctorDetailsResponse, PatientProfile } from './../utils/types';
+import { AppointmentPayload } from '../types/Appointment';
 
 type AppCtx = {
   user: string | null;
@@ -17,7 +18,9 @@ type AppCtx = {
   doctorSessionCount: string;
   todayCount: number;
   upcomingCount: number;
-
+  appointment: AppointmentPayload | null;
+  
+  updateAppointment: (data: AppointmentPayload | null) => void;
   updateUser: (u: string | null) => void;
   updateBranch: (b: Branch | null) => void;
   updateAllBranch: (b: Branch[]) => void;
@@ -54,6 +57,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [doctorSessionCount, setDoctorSessionCount] = useState<string>('');
   const [todayCount, setTodayCount] = useState<number>(0);
   const [upcomingCount, setUpcomingCount] = useState<number>(0);
+  const [appointment, setAppointment] = useState<AppointmentPayload | null>(null);
 
   const ctx: AppCtx = {
     user,
@@ -69,6 +73,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     doctorSessionCount,
     todayCount,
     upcomingCount,
+    appointment,
     updateUser: setUser,
     updateBranch: setBranch,
     updateAllBranch: setAllBranch,
@@ -82,6 +87,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     updateSessionCount: setDoctorSessionCount,
     updateTodayCount: setTodayCount,
     updateUpcomingCount: setUpcomingCount,
+    updateAppointment : setAppointment
   };
 
   return <AppCtx.Provider value={ctx}>{children}</AppCtx.Provider>;
