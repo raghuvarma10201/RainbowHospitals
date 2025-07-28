@@ -1,20 +1,29 @@
-import {Dimensions,  Image,  ScrollView,  StyleSheet,  View,} from 'react-native';
+import {Dimensions,  Image,  ScrollView,  StyleSheet,  TouchableOpacity,  View,} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {  Text,} from 'react-native-paper';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {MainStackParamList} from '../../App';
 
 const MyAppointments: React.FC = () => {
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
 
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const navigateTo = (path: keyof MainStackParamList, params: any) => {
+    navigation.navigate(path, params);
+  };
+
   return (
+    
     <View style={styles.mainContainer}>
          <Header showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>     
         <View style={styles.container}>   
           <View style={styles.doctorsListContainer}>      
-              <View style={styles.doctorContainer}>
+              <TouchableOpacity style={styles.doctorItem} onPress={() => navigation.navigate('MyAppointmentDetails')}>
                 <Image source={require('../../assets/images/doc-img-2.png')}
                   style={styles.doctorImg}
                 />
@@ -44,9 +53,9 @@ const MyAppointments: React.FC = () => {
 
 
                 </View>
-              </View>
+              </TouchableOpacity>
 
-              <View style={styles.doctorContainer}>
+              <TouchableOpacity style={styles.doctorItem}>
                 <Image source={require('../../assets/images/doc-img-2.png')}
                   style={styles.doctorImg}
                 />
@@ -74,7 +83,7 @@ const MyAppointments: React.FC = () => {
                   <Image source={require('../../assets/images/right-arrow.png')} style={styles.rightArrow} />
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
         
           </View>
         </View>
@@ -111,7 +120,7 @@ const styles = StyleSheet.create({
   doctorsListContainer: {
    paddingHorizontal:15,
   },
-  doctorContainer: {
+  doctorItem: {
     paddingVertical: h * 0.01,
     marginTop: h * 0.01,
     flexDirection: 'row',
