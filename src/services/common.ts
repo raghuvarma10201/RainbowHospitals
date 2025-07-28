@@ -68,5 +68,12 @@ export const getDoctorSessions = async (payload : any) => {
   }
 };
 
-
+export const getDoctorSlots = async (payload : any) => {
+  try {
+    const response = await api.post('/getSlotsBySession', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 

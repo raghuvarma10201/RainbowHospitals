@@ -52,7 +52,7 @@ const Specialities: React.FC = () => {
   const currentDoctors = doctorData[currentSpecialty];
   const [doctors, setDoctors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const { updateBranch, updateAllBranch, updateRegion } = useApp();
+  const { branch } = useApp();
   const { setLoggedIn } = useAuth();
 
   useEffect(() => {
@@ -88,7 +88,7 @@ const Specialities: React.FC = () => {
         const response = await getDoctors(
           '',
           specialityId,
-          '',
+          '',//branch?.branch_id,
           '',
           appointmentType,
           1,
@@ -134,8 +134,9 @@ const Specialities: React.FC = () => {
 
   return (
     <View style={styles.mainContainer}>
-          <Header showLocation title={undefined} />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <Header showLocation title={undefined} />
+      {!loading && (
+        <ScrollView contentContainerStyle={styles.scrollContent}>
     
         <View style={styles.container}>
           <View style={styles.helloCard}>
@@ -217,7 +218,10 @@ const Specialities: React.FC = () => {
           </>
         )}
       </ScrollView>
-
+      )}
+      {loading && (
+        <Loader />
+      )}
       <Footer />
     </View>
   );

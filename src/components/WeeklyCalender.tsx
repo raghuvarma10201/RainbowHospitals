@@ -1,15 +1,15 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, FlatList} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 
-  type WeekDay = {
-    day: string;
-    date: number;
-    fullDate: string;
-    month: string;
-    monthShort: string;
-    year: number;
-  };
-  
+type WeekDay = {
+  day: string;
+  date: number;
+  fullDate: string;
+  month: string;
+  monthShort: string;
+  year: number;
+};
+
 function getCurrentWeek(baseDate = new Date()) {
   const today = new Date(baseDate);
   const currentDay = today.getDay(); // 0 (Sun) - 6 (Sat)
@@ -21,18 +21,20 @@ function getCurrentWeek(baseDate = new Date()) {
     const date = new Date(startOfWeek);
     date.setDate(startOfWeek.getDate() + i);
     week.push({
-      day: date.toLocaleDateString('en-US', {weekday: 'short'}),
+      day: date.toLocaleDateString('en-US', { weekday: 'short' }),
       date: date.getDate(),
       fullDate: date.toISOString().split('T')[0],
-      month: date.toLocaleDateString('en-US', {month: 'long'}),
-      monthShort: date.toLocaleDateString('en-US', {month: 'short'}),
+      month: date.toLocaleDateString('en-US', { month: 'long' }),
+      monthShort: date.toLocaleDateString('en-US', { month: 'short' }),
       year: date.getFullYear(),
     });
   }
   return week;
 }
 
-function getMonthDisplay(week: Array<{ day: string; date: number; fullDate: string; month: string; monthShort: string; year: number }>) {
+function getMonthDisplay(
+  week: Array<{ day: string; date: number; fullDate: string; month: string; monthShort: string; year: number }>
+) {
   const months = [...new Set(week.map(d => d.monthShort))];
   const years = [...new Set(week.map(d => d.year))];
 
@@ -45,11 +47,18 @@ function getMonthDisplay(week: Array<{ day: string; date: number; fullDate: stri
   }
 }
 
-export default function DynamicWeekWithMonth() {
+interface DynamicWeekWithMonthProps {
+  sessions: Array<{
+    SessionDate: string;
+    SessionDefinitionUID1: string;
+    [key: string]: any;
+  }>;
+  onDateClick?: (sessionDate: string, sessionDefinitionUID1: string) => void;
+}
+
+export const DynamicWeekWithMonth: React.FC<DynamicWeekWithMonthProps> = ({ sessions, onDateClick }) => {
   const [week, setWeek] = useState(getCurrentWeek());
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split('T')[0],
-  );
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
   const handlePrevWeek = () => {
     const newBase = new Date(week[0].fullDate);
@@ -67,16 +76,50 @@ export default function DynamicWeekWithMonth() {
     setSelectedDate(nextWeek[0].fullDate);
   };
 
-  const renderItem = ({item}: {item: WeekDay}) => {
+  const isDateAvailable = (date: string) => {
+    return Array.isArray(sessions) && sessions.some(
+      (s) => new Date(s.SessionDate).toISOString().split('T')[0] === date
+    );
+  };
+
+  const renderItem = ({ item }: { item: WeekDay }) => {
     const isSelected = item.fullDate === selectedDate;
+    const available = isDateAvailable(item.fullDate);
+
     return (
       <TouchableOpacity
-        onPress={() => setSelectedDate(item.fullDate)}
-        style={styles.dayContainer}>
-        <Text style={[styles.dayText, isSelected && styles.selectedDayText]}>
+        disabled={!available}
+        onPress={() => {
+          if (!available) return;
+          const session = sessions.find(
+            (s) => new Date(s.SessionDate).toISOString().split('T')[0] === item.fullDate
+          );
+          if (session && onDateClick) {
+            setSelectedDate(item.fullDate);
+            onDateClick(session.SessionDate, session.SessionDefinitionUID1);
+          }
+        }}
+        style={[
+          styles.dayContainer,
+          !available && styles.disabledContainer,
+        ]}
+      >
+        <Text
+          style={[
+            styles.dayText,
+            isSelected && styles.selectedDayText,
+            !available && styles.disabledText,
+          ]}
+        >
           {item.day}
         </Text>
-        <Text style={[styles.dateText, isSelected && styles.selectedDateText]}>
+        <Text
+          style={[
+            styles.dateText,
+            isSelected && styles.selectedDateText,
+            !available && styles.disabledText,
+          ]}
+        >
           {item.date}
         </Text>
       </TouchableOpacity>
@@ -107,7 +150,7 @@ export default function DynamicWeekWithMonth() {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -127,7 +170,7 @@ const styles = StyleSheet.create({
     color: '#4B3E75',
   },
   month: {
-    fontSize: 16, 
+    fontSize: 16,
     color: '#4B3E75',
     fontFamily: 'ProximaNovaA-Bold',
   },
@@ -154,5 +197,11 @@ const styles = StyleSheet.create({
   },
   selectedDateText: {
     color: '#00BCD4',
+  },
+  disabledText: {
+    color: '#BDBDBD',
+  },
+  disabledContainer: {
+    opacity: 0.5,
   },
 });

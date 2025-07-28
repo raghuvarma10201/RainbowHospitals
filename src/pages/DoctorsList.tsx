@@ -26,6 +26,7 @@ import {MainStackParamList} from '../../App';
 import {getDoctors, getSpecialities} from '../services/common';
 import {ToastService} from '../utils/ToastService';
 import {IMG_BASE_URL} from '../utils/environment';
+import { useApp } from '../context/AppContext';
 
 const local_data = [
   {
@@ -71,6 +72,7 @@ const DoctorsList: React.FC<any> = ({route}) => {
   ];
   const [doctors, setDoctors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const { branch } = useApp();
   useEffect(() => {
     loadDoctors();
   }, []);
@@ -162,6 +164,7 @@ const DoctorsList: React.FC<any> = ({route}) => {
           </View>
           <View style={styles.doctorsListContainer}>
             {doctors.map((doctor, index) => (
+              <TouchableOpacity onPress={() => navigation.navigate('DoctorSlots', { doctorId: doctor.id, appointmentType: 'video' })}>
               <View key={index} style={styles.doctorContainer}>
                 <Image
                   source={
@@ -196,6 +199,7 @@ const DoctorsList: React.FC<any> = ({route}) => {
                   </TouchableOpacity>
                 </View>
               </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>

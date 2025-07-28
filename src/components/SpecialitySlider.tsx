@@ -55,6 +55,7 @@ const SpecialtySlider = ({
       <FlatList
         ref={flatListRef}
         data={specialties}
+        scrollEnabled={false}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         horizontal

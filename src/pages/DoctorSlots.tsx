@@ -12,10 +12,10 @@ import React, { useEffect, useState } from 'react';
 import CommonHeader from '../components/Header';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Footer from '../components/Footer';
-import DynamicWeekWithMonth from '../components/WeeklyCalender';
+import { DynamicWeekWithMonth } from '../components/WeeklyCalender';
 import { useNavigation } from '@react-navigation/native';
 import { MainStackParamList } from '../../App';
-import { getDoctorDetail, getDoctors, getDoctorSessions } from '../services/common';
+import { getDoctorDetail, getDoctors, getDoctorSessions, getDoctorSlots } from '../services/common';
 import { ToastService } from '../utils/ToastService';
 import { IMG_BASE_URL } from '../utils/environment';
 import { useApp } from '../context/AppContext';
@@ -26,6 +26,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
   const { branch } = useApp();
   const [doctorDetail, setDoctorDetail] = useState<any>({});
   const [doctorSessions, setDoctorSessions] = useState<any>({});
+  const [doctorSlots, setDoctorSlots] = useState<any>({});
   const [doctorSpecialitites, setDoctorSpecialitites] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
@@ -64,17 +65,17 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
       setLoading(false);
     }
   };
-    const getSessions = async (docData : any) => {
+  const getSessions = async (docData: any) => {
+    console.log(branch?.organisation.organisationid);
     try {
       setLoading(true);
       const payload = {
-          CareproviderCode: docData.new_doctor_UID,
-          OrganisationUID: branch?.organisation.organisationid,
-          AppointmentType: "Physical",
-          noofdays: "30"
+        CareproviderCode: "500004", //docData.new_doctor_UID,
+        OrganisationUID: '2',//branch?.organisation.organisationid,
+        AppointmentType: "Physical",
+        noofdays: "30"
       }
       const response = await getDoctorSessions(payload);
-      console.log(response);
       if (response && response.status == 200) {
         setLoading(false);
         setDoctorSessions(response.data);
@@ -89,6 +90,39 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
       setLoading(false);
     }
   };
+  const getSlots = async (sessionDate: any, sessionId: string) => {
+    sessionDate = new Date(sessionDate).toISOString().split('T')[0]
+    console.log(sessionDate);
+    try {
+      setLoading(true);
+      const payload = {
+          SessionDefinitionUID: sessionId,
+          AppointmentDate: sessionDate,
+          OrganisationUID: '2',//branch?.organisation.organisationid,
+          AppointmentType: "Physical"
+      }
+      const response = await getDoctorSlots(payload);
+      if (response && response.status == 200) {
+        setLoading(false);
+        setDoctorSlots(response.data);
+        console.log(response.data);
+      } else {
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to load Sessions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  function formatTime24Hour(dateTimeString: string): string {
+    const date = new Date(dateTimeString);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
   const doctor = route?.params;
   const availabletimings = ['10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM'];
 
@@ -159,16 +193,21 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
           </View>
         </View>
         <View style={styles.calenderContainer}>
-          <DynamicWeekWithMonth />
+          <DynamicWeekWithMonth
+            sessions={doctorSessions}
+            onDateClick={(sessionDate: any, sessionId: string) => {
+              getSlots(sessionDate, sessionId);
+            }}
+          />
           <View>
             <Text style={styles.centeredTxt}>Available Time</Text>
             <FlatList
-              data={availabletimings}
+              data={doctorSlots}
               numColumns={4}
               contentContainerStyle={styles.timeList}
               keyExtractor={(_, index) => index.toString()}
               renderItem={({ item, index }) => (
-                <Text style={styles.timeTxt}>{item}</Text>
+                <Text style={styles.timeTxt}>{formatTime24Hour(item.SessionStartDttm)}</Text>
               )}
             />
             <TouchableOpacity>
@@ -199,7 +238,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
           <Text style={styles.formButtonText}>Proceed To Confirm</Text>
         </TouchableOpacity>
 
-     
+
       </ScrollView>
       <Footer />
     </View>
