@@ -119,27 +119,39 @@ const Login: React.FC = () => {
 
 export default Login;
 
+const h = Dimensions.get('window').height;
+const w = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 10,
-    paddingTop: 0,
+    paddingVertical: h * 0.03
   },
   logoImage: {
     marginHorizontal: 'auto',
     marginTop: '7%',
     marginBottom: '8%',
     width: '100%',
-    height: Dimensions.get('window').height * 0.11,
+    height: h * 0.11,
     justifyContent: 'space-between',
   },
   title: {
-    color: '#00B3AE', fontSize: 20, fontWeight: 'normal', marginTop: -12,
-    textAlign: 'center', textTransform: 'uppercase', marginBottom: 5, fontFamily: 'ProximaNovaA-Bold'
+    color: '#00B3AE', 
+    fontSize: 20, 
+    fontWeight: 'normal', 
+    marginTop: -12,
+    textAlign: 'center', 
+    textTransform: 'uppercase', 
+    marginBottom: 5, 
+    fontFamily: 'ProximaNovaA-Bold'
   },
 
   labelText: {
-    fontSize: 14, fontWeight: 'normal', color: '#000', marginBottom: 10, fontFamily: 'ProximaNovaA-Regular',
+    fontSize: 14, 
+    fontWeight: 'normal', 
+    color: '#000', 
+    marginBottom: 10, 
+    fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'center',
   },
   errorMessage: {

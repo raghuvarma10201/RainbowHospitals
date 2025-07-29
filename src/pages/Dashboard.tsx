@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: '#fff',
     flex: 1,
-    marginTop: StatusBar.currentHeight
+    // marginTop: StatusBar.currentHeight
   },
 
   scrollContent: {
