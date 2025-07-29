@@ -210,6 +210,7 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				1ED1294BA4CD571C4F6866BD /* [CP] Embed Pods Frameworks */,
+				49C899C22E37AA0D00201413 /* Jitsi Sound */,
 				D62E6DD90AD3FB94F83A0B4F /* [CP] Copy Pods Resources */,
 				D7001F01FF2984568CF880EC /* [CP-User] [RNFB] Core Configuration */,
 			);
@@ -338,6 +339,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RainbowHospitals/Pods-RainbowHospitals-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		49C899C22E37AA0D00201413 /* Jitsi Sound */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Jitsi Sound";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n  SOUNDS_DIR=\"${PROJECT_DIR}/../node_modules/@jitsi/react-native-sdk/sounds\"\n  cp $SOUNDS_DIR/* ${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\n";
 		};
 		7936441A7448187FCC28CED8 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

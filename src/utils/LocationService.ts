@@ -9,7 +9,6 @@ export const requestLocationPermission = async () => {
   });
 
   const result = await request(permission);
-  console.log('Location permission:', result);
   return result
 };
 
