@@ -88,7 +88,7 @@ type MainStackParamList = {
   Home: undefined;
   MyAppointments: undefined;
   MyAppointmentDetails: undefined;
-  JitsiCall: undefined;
+  JitsiCall: {roomName : string};
   PayUWebView: {
     finalPayload: any;
     txnId: string;

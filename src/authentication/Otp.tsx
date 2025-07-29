@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -15,45 +15,45 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import {Button, Text, Checkbox} from 'react-native-paper';
-import {ref} from 'yup';
-import {useApp} from '../context/AppContext';
-import {useFormik} from 'formik';
+import { Button, Text, Checkbox } from 'react-native-paper';
+import { ref } from 'yup';
+import { useApp } from '../context/AppContext';
+import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {login, VerifyOTP, authenticateUser} from '../services/auth';
-import {getPatientProfile, getRegions, getBranches} from '../services/common';
-import {ToastService} from '../utils/ToastService';
-import {getCurrentCoordinates} from '../utils/LocationService';
+import { login, VerifyOTP, authenticateUser } from '../services/auth';
+import { getPatientProfile, getRegions, getBranches } from '../services/common';
+import { ToastService } from '../utils/ToastService';
+import { getCurrentCoordinates } from '../utils/LocationService';
 import {
   findNearestBranch,
   findNearestRegion,
 } from '../services/Region/location';
-import {fetchBranchesByRegionId} from '../services/Region/api';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {AuthStackParamList, MainStackParamList, useAuth} from '../../App';
+import { fetchBranchesByRegionId } from '../services/Region/api';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList, MainStackParamList, useAuth } from '../../App';
 import Loader from '../components/Loader';
 
 const CELL_COUNT = 6;
 
 const Otp: React.FC = () => {
-  type CombinedNavigationProp = CompositeNavigationProp<NativeStackNavigationProp<AuthStackParamList>,NativeStackNavigationProp<MainStackParamList>>;
+  type CombinedNavigationProp = CompositeNavigationProp<NativeStackNavigationProp<AuthStackParamList>, NativeStackNavigationProp<MainStackParamList>>;
   const navigation = useNavigation<CombinedNavigationProp>();
   const [timer, setTimer] = useState(30);
   const [resendDisabled, setResendDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
-  const {updateMrn, updateProfile} = useApp();
+  const { updateMrn, updateProfile } = useApp();
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const {updateBranch, updateAllBranch, updateRegion} = useApp();
+  const { updateBranch, updateAllBranch, updateRegion } = useApp();
   const [value, setValue] = useState('');
-  const {setLoggedIn} = useAuth();
-  const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
+  const { setLoggedIn } = useAuth();
+  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
-  
+
   useEffect(() => {
     const fetchPhoneNumber = async () => {
       const storedNumber = await AsyncStorage.getItem('mobileNumber');
@@ -83,7 +83,7 @@ const Otp: React.FC = () => {
       if (response.status == 200 && response.success == true) {
         setLoading(false);
         ToastService.success('Success', 'Otp sent successfully');
-      }else{
+      } else {
         setLoading(false);
         ToastService.error('Error', response.message);
       }
@@ -91,7 +91,7 @@ const Otp: React.FC = () => {
       setLoading(false);
       console.error('Resend error:', error);
       ToastService.error('Failed to resend OTP.');
-    } finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -104,7 +104,7 @@ const Otp: React.FC = () => {
   }, [value]);
 
   const formik = useFormik({
-    initialValues: {otp: ''},
+    initialValues: { otp: '' },
     validationSchema: Yup.object({
       otp: Yup.string()
         .matches(/^\d{6}$/, 'Enter a valid 6-digit OTP')
@@ -118,24 +118,30 @@ const Otp: React.FC = () => {
           otp: value,
           fcmToken: (await AsyncStorage.getItem('FcmTtoken')) || 'adsdsad',
         };
-        
+
         const response = await VerifyOTP(payload);
-        console.log(response);
-        const token = response?.data?.token;
-        await AsyncStorage.multiSet([
-          ['accessToken',  token],
-          ['refreshToken', token],
-          ['tokenExpiry',  response.data.expiryTime],   // in UTC ISO string
-        ]);
-        if (!token) {
-          throw new Error('Token not found in response');
-        }
-        await loadDetails(token);
+
         if (response && response.status === 200) {
           ToastService.error('Success', response.data.message || 'OTP verified successfully');
-          const authResponse = await authenticateUser({ MobileNo: phoneNumber });
+          let authResponse;
+          try {
+            authResponse = await authenticateUser({ MobileNo: phoneNumber });
+          } catch (err: any) {
+            authResponse = err.response; // Axios puts the 4xx/5xx response here
+          }
           console.log(authResponse);
           if (authResponse && authResponse.status == 200) {
+            console.log(response);
+            const token = response?.data?.token;
+            await AsyncStorage.multiSet([
+              ['accessToken', token],
+              ['refreshToken', token],
+              ['tokenExpiry', response.data.expiryTime],   // in UTC ISO string
+            ]);
+            if (!token) {
+              throw new Error('Token not found in response');
+            }
+            await loadDetails(token);
             setLoading(false);
             updateMrn(authResponse.data.LoginName);
             await AsyncStorage.setItem('mrn', authResponse.data.LoginName);
@@ -153,7 +159,7 @@ const Otp: React.FC = () => {
             navigation.navigate('Registration');
           } else {
             setLoading(false);
-             navigation.navigate('Registration');
+            navigation.navigate('Registration');
             ToastService.error('Error', authResponse?.error);
           }
         } else {
@@ -198,7 +204,7 @@ const Otp: React.FC = () => {
       setLoading(false);
     }
   };
- if (loading) {
+  if (loading) {
     return (
       <Loader />
     );
@@ -247,7 +253,7 @@ const Otp: React.FC = () => {
           rootStyle={styles.codeFieldRoot}
           keyboardType="number-pad"
           textContentType="oneTimeCode"
-          renderCell={({index, symbol, isFocused}) => (
+          renderCell={({ index, symbol, isFocused }) => (
             <View
               key={index}
               style={[styles.cell, isFocused && styles.focusCell]}
@@ -265,7 +271,7 @@ const Otp: React.FC = () => {
         <View style={styles.timeContainer}>
           <TouchableOpacity disabled={resendDisabled} onPress={handleResend}>
             <Text
-              style={[styles.resendText, resendDisabled && {color: '#aaa'}]}>
+              style={[styles.resendText, resendDisabled && { color: '#aaa' }]}>
               Resend
             </Text>
           </TouchableOpacity>
@@ -380,7 +386,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3C2871',
     borderRadius: 10,
   },
-  textbeforeDot: {position: 'relative'},
+  textbeforeDot: { position: 'relative' },
   imgTextTitle: {
     fontSize: 15,
     fontWeight: 'normal',
@@ -433,7 +439,7 @@ const styles = StyleSheet.create({
   },
 
   cell: {
-    width:'13.75%',
+    width: '13.75%',
     height: 55,
     borderWidth: 1,
     borderColor: '#8a3ab9',
@@ -444,7 +450,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
   },

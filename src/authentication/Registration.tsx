@@ -71,7 +71,7 @@ const Registration: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <View>
-        <ImageBackground source={require('../../assets/images/logo.png')} style={styles.logoImage} resizeMode="contain" />
+        
 
 
 

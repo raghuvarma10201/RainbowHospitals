@@ -6,6 +6,7 @@ buildscript {
         targetSdkVersion = 34
         ndkVersion = "26.1.10909125"
         kotlinVersion = "1.9.25"
+        gradlePluginVersion = '7.0.4' // ✅ Set your actual AGP version here (7.0.4, 8.0.2, etc.)
     }
     repositories {
         google()
