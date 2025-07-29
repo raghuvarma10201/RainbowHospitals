@@ -1,4 +1,4 @@
-import { Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native'
+import { Dimensions, Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View, } from 'react-native'
 import React, { useState } from 'react';
 import { Card, Searchbar, TextInput, Icon, Text } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -39,9 +39,11 @@ const Dashboard: React.FC = () => {
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
 
+  
+
   return (
     <View style={styles.mainContainer}>
-      <Header showLocation title={undefined} />
+      <Header showLocation title={'home'} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
 
         <View style={styles.container}>
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: '#fff',
     flex: 1,
-
+    marginTop: StatusBar.currentHeight
   },
 
   scrollContent: {

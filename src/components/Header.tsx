@@ -47,7 +47,7 @@ interface CommonHeaderProps {
 }
 
 const CommonHeader: React.FC<CommonHeaderProps> = ({
-    
+
     title,
     showLocation = true,
     onNotificationPress,
@@ -56,7 +56,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
 }) => {
     const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
     const navigateTo = (path: keyof MainStackParamList, params: any) => {
-      navigation.navigate(path, params);
+        navigation.navigate(path, params);
     };
 
     const [menuVisible, setMenuVisible] = useState(false);
@@ -82,7 +82,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
 
 
     const getProfile = async () => {
-       const mrn =  await AsyncStorage.getItem('mrn');
+        const mrn = await AsyncStorage.getItem('mrn');
         const data = await getPatientProfile({
             mrn: mrn,
         });
@@ -97,33 +97,33 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
     }, [branch, region]);
 
     const loadDetails = async () => {
-    try {
-      const regions = await getRegions();
-      const location = await getCurrentCoordinates();
-      if (!location) throw new Error('Location unavailable');
-      const nearestRegion = findNearestRegion(
-        regions,
-        location.latitude,
-        location.longitude,
-      );
-      if (!nearestRegion) throw new Error('No region found nearby');
-      updateRegion(nearestRegion);
-      const allBranches = await getBranches(nearestRegion.region_id);
-      if (!allBranches.length) throw new Error('No branch data found');
-      updateAllBranch(allBranches);
-      const nearestBranch = findNearestBranch(
-        allBranches,
-        location.latitude,
-        location.longitude,
-      );
-      if (!nearestBranch) throw new Error('No nearby branch found');
-      updateBranch(nearestBranch);
-    } catch (err: any) {
-      //console.log(err);
-    } finally {
-      
-    }
-  };
+        try {
+            const regions = await getRegions();
+            const location = await getCurrentCoordinates();
+            if (!location) throw new Error('Location unavailable');
+            const nearestRegion = findNearestRegion(
+                regions,
+                location.latitude,
+                location.longitude,
+            );
+            if (!nearestRegion) throw new Error('No region found nearby');
+            updateRegion(nearestRegion);
+            const allBranches = await getBranches(nearestRegion.region_id);
+            if (!allBranches.length) throw new Error('No branch data found');
+            updateAllBranch(allBranches);
+            const nearestBranch = findNearestBranch(
+                allBranches,
+                location.latitude,
+                location.longitude,
+            );
+            if (!nearestBranch) throw new Error('No nearby branch found');
+            updateBranch(nearestBranch);
+        } catch (err: any) {
+            //console.log(err);
+        } finally {
+
+        }
+    };
     useEffect(() => {
         const loadRegions = async () => {
             try {
@@ -201,10 +201,11 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
     return (
         <View style={styles.header}>
             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                 <View style={styles.backArrowBlock}>
-                    <Image source={require('../../assets/images/back-arrow.png')} style={{ width:18, height:18, }} resizeMode="contain" />
-                </View>
-
+                {title != 'home' &&
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backArrowBlock}>
+                        <Image source={require('../../assets/images/back-arrow.png')} style={{ width: 18, height: 18, }} resizeMode="contain" />
+                    </TouchableOpacity>
+                }
                 {/* <View style={styles.profileIconBlock}>
                     <Image source={require('../../assets/images/profile-icon.png')} style={{ width: 30, height: 30, }} resizeMode="contain" />
                 </View> */}
@@ -212,7 +213,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
                     <TouchableOpacity style={styles.dropdownIcon} onPress={() => setLocationModalVisible(true)}>
                         <View style={{ marginLeft: 6 }}>
                             <Text style={{ fontSize: 12, color: '#fff', fontFamily: 'ProximaNovaA-Regular', }}> {branch?.name || 'Fetching location...'}</Text>
-                            <View style={{ flexDirection: 'row', justifyContent:"flex-start" }}>
+                            <View style={{ flexDirection: 'row', justifyContent: "flex-start" }}>
                                 <Image source={require('../../assets/images/map-icon.png')} style={{ width: 12, height: 12, marginRight: 3, marginTop: 3, }} />
                                 <Text style={{ fontSize: 10, color: '#fff', fontWeight: 'normal', marginTop: 0, fontFamily: 'ProximaNovaA-Regular' }}>
                                     {region?.name ?? ''}</Text>
@@ -225,14 +226,14 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
                 )}
             </View>
             <View style={styles.headerRight}>
-               <TouchableOpacity>
-                <Image source={require('../../assets/images/services-icon.png')} style={{ width:26, height:26, marginRight: 10, }} resizeMode="contain" />
+                <TouchableOpacity>
+                    <Image source={require('../../assets/images/services-icon.png')} style={{ width: 26, height: 26, marginRight: 10, }} resizeMode="contain" />
                 </TouchableOpacity>
 
                 <TouchableOpacity>
                     <Image source={require('../../assets/images/wallet-icon.png')} style={{ width: 26, height: 26, marginRight: 10, }} resizeMode="contain" />
                 </TouchableOpacity>
-               
+
                 <TouchableOpacity onPress={() => navigation.navigate('Home')}>
                     <Image source={require('../../assets/images/filter-icon.png')} style={{ width: 22, height: 22, }} resizeMode="contain" />
                 </TouchableOpacity>
@@ -369,16 +370,16 @@ const styles = StyleSheet.create({
 
     },
 
-    backArrowBlock:{
-        width:30,
-        height:30,
+    backArrowBlock: {
+        width: 30,
+        height: 30,
         backgroundColor: '#fff',
         borderRadius: 100,
         borderWidth: 3,
         borderColor: '#fff',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center', 
+        justifyContent: 'center',
         padding: 10,
     },
 
