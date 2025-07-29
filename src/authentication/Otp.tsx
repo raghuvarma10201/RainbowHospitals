@@ -285,12 +285,13 @@ const Otp: React.FC = () => {
 };
 
 export default Otp;
+const h = Dimensions.get('window').height;
+const w = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 10,
-    paddingTop: 0,
+    paddingVertical: h * 0.03
   },
   logoImage: {
     marginHorizontal: 'auto',
