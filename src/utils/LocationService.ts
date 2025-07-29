@@ -1,6 +1,7 @@
-import {PermissionsAndroid, Platform} from 'react-native';
+import { PermissionsAndroid, Platform } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import { PERMISSIONS, request } from 'react-native-permissions';
+import { ToastService } from './ToastService';
 
 export const requestLocationPermission = async () => {
   const permission = Platform.select({
@@ -22,14 +23,14 @@ export const getCurrentCoordinates = async (): Promise<{
   return new Promise((resolve, reject) => {
     Geolocation.getCurrentPosition(
       position => {
-        const {latitude, longitude} = position.coords;
-        resolve({latitude, longitude});
+        const { latitude, longitude } = position.coords;
+        resolve({ latitude, longitude });
       },
       error => {
         console.error('Location Error:', error.message);
         reject(null);
       },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
     );
   });
 };
