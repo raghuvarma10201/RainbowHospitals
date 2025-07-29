@@ -23,7 +23,10 @@ const MyAppointments: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <View style={styles.doctorsListContainer}>
-            <TouchableOpacity style={styles.doctorItem} onPress={() => navigation.navigate('MyAppointmentDetails')}>
+            <TouchableOpacity style={styles.doctorItem} 
+            // onPress={() => navigation.navigate('MyAppointmentDetails')}
+            onPress={() => navigation.navigate('JitsiCall',{roomName: 'test'})}
+            >
               <Image source={require('../../assets/images/doc-img-2.png')}
                 style={styles.doctorImg}
               />

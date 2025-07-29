@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -32,6 +32,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		49C899E02E38A14E00201413 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		00E356EE1AD99517003FC87E /* RainbowHospitalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RainbowHospitalsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -46,6 +59,8 @@
 		195CE71180CD48BFAED6C319 /* ProximaNovaA-Semibold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNovaA-Semibold.ttf"; path = "../assets/fonts/ProximaNovaA-Semibold.ttf"; sourceTree = "<group>"; };
 		25F83ECED59D6429D1997E61 /* Pods-RainbowHospitals.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RainbowHospitals.debug.xcconfig"; path = "Target Support Files/Pods-RainbowHospitals/Pods-RainbowHospitals.debug.xcconfig"; sourceTree = "<group>"; };
 		44808D5A9052D0715AEAC3D4 /* libPods-RainbowHospitals.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RainbowHospitals.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		49C899C82E38A14D00201413 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
+		49C899D42E38A14E00201413 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5B92EC0B87B4A739BB10D7C2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = RainbowHospitals/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		61C4DF51A66C856B53186CA5 /* Pods-RainbowHospitals-RainbowHospitalsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RainbowHospitals-RainbowHospitalsTests.debug.xcconfig"; path = "Target Support Files/Pods-RainbowHospitals-RainbowHospitalsTests/Pods-RainbowHospitals-RainbowHospitalsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = RainbowHospitals/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -58,6 +73,11 @@
 		C63D88B120F32A804A700C85 /* Pods-RainbowHospitals.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RainbowHospitals.release.xcconfig"; path = "Target Support Files/Pods-RainbowHospitals/Pods-RainbowHospitals.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		49C899CA2E38A14E00201413 /* BroadcastExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = BroadcastExtension; sourceTree = "<group>"; };
+		49C899D62E38A14E00201413 /* BroadcastExtensionSetupUI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = BroadcastExtensionSetupUI; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		00E356EB1AD99517003FC87E /* Frameworks */ = {
@@ -117,6 +137,8 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				44808D5A9052D0715AEAC3D4 /* libPods-RainbowHospitals.a */,
 				B9E934780F095B7F49B6F318 /* libPods-RainbowHospitals-RainbowHospitalsTests.a */,
+				49C899C82E38A14D00201413 /* ReplayKit.framework */,
+				49C899D42E38A14E00201413 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -134,6 +156,8 @@
 				13B07FAE1A68108700A75B9A /* RainbowHospitals */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* RainbowHospitalsTests */,
+				49C899CA2E38A14E00201413 /* BroadcastExtension */,
+				49C899D62E38A14E00201413 /* BroadcastExtensionSetupUI */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
@@ -213,6 +237,7 @@
 				49C899C22E37AA0D00201413 /* Jitsi Sound */,
 				D62E6DD90AD3FB94F83A0B4F /* [CP] Copy Pods Resources */,
 				D7001F01FF2984568CF880EC /* [CP-User] [RNFB] Core Configuration */,
+				49C899E02E38A14E00201413 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -229,6 +254,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -653,10 +679,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -729,10 +752,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

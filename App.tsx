@@ -42,6 +42,7 @@ import MyAppointments from './src/pages/MyAppointments';
 import PayUWebView from './src/pages/PayUWebView';
 import MyAppointmentDetails from './src/pages/MyAppointmentDetails';
 import MyStatusBar from './src/components/StatusBar';
+import JitsiCall from './src/pages/JitsiCall';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -84,6 +85,7 @@ type MainStackParamList = {
   Home: undefined;
   MyAppointments: undefined;
   MyAppointmentDetails: undefined;
+  JitsiCall: undefined;
   PayUWebView: {
     finalPayload: any;
     txnId: string;
@@ -121,6 +123,7 @@ export const MainStack = React.memo(() => (
     <MainStackNav.Screen name="MyAppointments" component={MyAppointments} />
     <MainStackNav.Screen name="PayUWebView" component={PayUWebView} />
     <MainStackNav.Screen name="MyAppointmentDetails" component={MyAppointmentDetails} />
+    <MainStackNav.Screen name="JitsiCall" component={JitsiCall} />
     <MainStackNav.Screen
       name="VaccinesPediatric"
       component={VaccinesPediatric}
