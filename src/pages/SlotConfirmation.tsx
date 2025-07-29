@@ -21,6 +21,8 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { IMG_BASE_URL } from '../utils/environment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FamilyMember } from '../utils/types';
+import TimerBanner from '../components/TimmerBanner';
+import Loader from '../components/Loader';
 
 const SlotConfirmation: React.FC = ({ route }: any) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
@@ -37,9 +39,9 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
     const fetchPhoneNumber = async () => {
       const storedNumber = await AsyncStorage.getItem('mobileNumber');
       setPhoneNumber(storedNumber);
-      getFamilyMembers();
     };
     fetchPhoneNumber();
+    getFamilyMembers();
   }, []);
 
   const getFamilyMembers = async () => {
@@ -244,9 +246,12 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
             patience and understanding
           </Text>
         </View>
-
+        <TimerBanner />        
       </ScrollView>
       <Footer />
+      {loading && (
+        <Loader />
+      )}
     </View>
   );
 };
@@ -436,7 +441,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     marginTop: 5,
     color: '#000',
-    width: Dimensions.get('window').width * 0.4,
+    width: Dimensions.get('window').width * 0.6,
   },
   placeholderCountry: {
     fontFamily: 'ProximaNovaA-Regular',

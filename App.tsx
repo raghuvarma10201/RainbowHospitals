@@ -41,6 +41,8 @@ import DoctorsList from './src/pages/DoctorsList';
 import MyAppointments from './src/pages/MyAppointments';
 import PayUWebView from './src/pages/PayUWebView';
 import MyAppointmentDetails from './src/pages/MyAppointmentDetails';
+import { TimerProvider } from './src/context/TimeContext';
+import Registration from './src/authentication/Registration';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -64,6 +66,7 @@ export const useAuth = () => {
 type AuthStackParamList = {
   Login: undefined;
   Otp: undefined;
+  Registration: undefined;
  
 };
 
@@ -102,6 +105,7 @@ export const AuthStack = React.memo(() => (
   <AuthStackNav.Navigator screenOptions={screenOptions}> 
     <AuthStackNav.Screen name="Login" component={Login} />
     <AuthStackNav.Screen name="Otp" component={Otp} />
+    <AuthStackNav.Screen name="Registration" component={Registration} />
   </AuthStackNav.Navigator>
 ));
 
@@ -184,6 +188,7 @@ const App: React.FC = () => {
     <AuthContext.Provider value={authCtx}>
       <PaperProvider theme={theme}>
         <NavigationContainer ref={navigationRef}>
+          <TimerProvider>
           {isLoggedIn ? (
             <AppProvider>
               <MainStack />
@@ -193,6 +198,7 @@ const App: React.FC = () => {
               <AuthStack />
             </AppProvider>
           )}
+          </TimerProvider>
         </NavigationContainer>
       </PaperProvider>
       <Toast />

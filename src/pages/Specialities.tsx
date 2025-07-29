@@ -25,16 +25,7 @@ import { useApp } from '../context/AppContext';
 import { getDoctors, getSpecialities } from '../services/common';
 import Loader from '../components/Loader';
 
-const local_data = [
-  {
-    value: '1',
-    lable: 'location',
-  },
-  {
-    value: '2',
-    lable: 'location2',
-  },
-];
+
 
 const Specialities: React.FC = () => {
   type AppNavigationProp = NativeStackNavigationProp<
@@ -70,7 +61,7 @@ const Specialities: React.FC = () => {
       if (response && response.status == 200) {
         setLoading(false);
         setSpecialities(response.data);
-        loadDoctors('','video');
+        loadDoctors('', 'video');
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -82,32 +73,32 @@ const Specialities: React.FC = () => {
       setLoading(false);
     }
   };
-    const loadDoctors = async (specialityId : any, appointmentType : any) => {
-      try {
-        setLoading(true);
-        const response = await getDoctors(
-          '',
-          specialityId,
-          '',//branch?.branch_id,
-          '',
-          appointmentType,
-          1,
-          10,
-        );
-        if (response && response.status == 200) {
-          setLoading(false);
-          setDoctors(response.data.doctors);
-        } else {
-          setLoading(false);
-          ToastService.error('Error', response.message);
-        }
-      } catch (error) {
+  const loadDoctors = async (specialityId: any, appointmentType: any) => {
+    try {
+      setLoading(true);
+      const response = await getDoctors(
+        '',
+        specialityId,
+        '',//branch?.branch_id,
+        '',
+        appointmentType,
+        1,
+        10,
+      );
+      if (response && response.status == 200) {
         setLoading(false);
-        console.error('Failed to load Doctors:', error);
-      } finally {
+        setDoctors(response.data.doctors);
+      } else {
         setLoading(false);
+        ToastService.error('Error', response.message);
       }
-    };
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to load Doctors:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleLeft = () => {
     setActiveSpecialtyIndex(prev =>
       prev === 0 ? specialties.length - 1 : prev - 1,
@@ -135,58 +126,10 @@ const Specialities: React.FC = () => {
   return (
     <View style={styles.mainContainer}>
       <Header showLocation title={undefined} />
-      {!loading && (
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-    
-        <View style={styles.container}>
-          <View style={styles.helloCard}>
-            <View style={styles.searchLocationBlock}>
-              <View style={styles.searchBlock}>
-                <TextInput
-                  mode="flat"
-                  style={[styles.searchFormInput, { color: 'white' }]}
-                  placeholder="search"
-                  value={search}
-                  onChangeText={setSearch}
-                  placeholderTextColor="#fff"
-                  underlineColor="transparent"
-                  activeUnderlineColor="transparent"
-                  theme={{
-                    colors: {
-                      text: 'white',
-                      placeholder: 'white',
-                      background: 'transparent',
-                    },
-                  }}
-                />
-                <Image
-                  source={require('../../assets/images/search-icon.png')}
-                  style={styles.formInputIcon}
-                />
-              </View>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
 
-              <View style={styles.searchBlock}>
-                <Dropdown
-                  style={styles.dropdownSelect}
-                  selectedTextStyle={styles.selectedTextContry}
-                  placeholderStyle={styles.placeholderCountry}
-                  maxHeight={200}
-                  value={country}
-                  data={local_data}
-                  valueField="value"
-                  labelField="lable"
-                  placeholder="Select Location"
-                  containerStyle={styles.dropdownList}
-                  activeColor="#fff"
-                  onChange={e => setCountry(e.value)}
-                />
-                <Image
-                  source={require('../../assets/images/map-icon.png')}
-                  style={styles.formInputIcon}
-                />
-              </View>
-            </View>
-          </View>
+        <View style={styles.container}>
+
 
           <View style={styles.quickActions}>
             <PaginatedGrid items={specialities} />
@@ -200,10 +143,10 @@ const Specialities: React.FC = () => {
               activeIndex={activeSpecialtyIndex}
               onLeftPress={handleLeft}
               onRightPress={handleRight}
-              onTabPress={(index,specialityId) => {
+              onTabPress={(index, specialityId) => {
                 setActiveSpecialtyIndex(index);
                 setActiveDocIndex(0);
-                loadDoctors(specialityId,"video");
+                loadDoctors(specialityId, "video");
 
               }}
             />
@@ -218,7 +161,6 @@ const Specialities: React.FC = () => {
           </>
         )}
       </ScrollView>
-      )}
       {loading && (
         <Loader />
       )}

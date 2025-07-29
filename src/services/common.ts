@@ -115,3 +115,11 @@ export const fetchFamilyMembers = async (payload : any) => {
     throw error;
   }
 };
+export const fetchSettings = async () => {
+  try {
+    const response = await api.get('/getSetting');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

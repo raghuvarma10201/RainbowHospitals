@@ -19,6 +19,8 @@ import { getDoctorDetail, getDoctors, getDoctorSessions, getDoctorSlots } from '
 import { ToastService } from '../utils/ToastService';
 import { IMG_BASE_URL } from '../utils/environment';
 import { useApp } from '../context/AppContext';
+import Loader from '../components/Loader';
+import { useTimer } from '../context/TimeContext';
 
 const DoctorSlots: React.FC<any> = ({ route }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
@@ -28,7 +30,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
   const [doctorSessions, setDoctorSessions] = useState<any>([]);
   const [doctorSlots, setDoctorSlots] = useState<any>({});
   const [doctorSpecialitites, setDoctorSpecialitites] = useState<string>('');
-
+  const {startTimer, secondsLeft, clearTimers} = useTimer();
   const [selectedSlot, setSelectedSlot] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
@@ -99,6 +101,9 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
     }
   };
   const getSlots = async (sessionDate: any, sessionId: string) => {
+    setDoctorSlots([]);
+    setSelectedSlot('');
+    setSelectedTime('');
     sessionDate = new Date(sessionDate).toISOString().split('T')[0]
     setSelectedDate(sessionDate);
     try {
@@ -130,10 +135,8 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
   }
-  const doctor = route?.params;
-  const availabletimings = ['10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM'];
-
   const proceedPayment = async () => {
+    startTimer();
     await updateAppointment({
       status: 'BOOKING',
       comment: appointment?.comment ?? '',
@@ -236,7 +239,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
                    setSelectedSlot(item.SlotID);
                    setSelectedTime(formatTime24Hour(item.SessionStartDttm));
                 }} >
-                <Text style={styles.timeTxt}>{formatTime24Hour(item.SessionStartDttm)}</Text>
+                <Text style={[styles.timeTxt, selectedTime === formatTime24Hour(item.SessionStartDttm) && styles.selectedTime]}>{formatTime24Hour(item.SessionStartDttm)}</Text>
                 </TouchableOpacity>
               )}
             />
@@ -261,16 +264,16 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
             </TouchableOpacity>
           </View>
         </View>
-
         <TouchableOpacity
           onPress={() => proceedPayment()}
           style={styles.formButton}>
           <Text style={styles.formButtonText}>Proceed To Confirm</Text>
         </TouchableOpacity>
-
-
       </ScrollView>
       <Footer />
+      {loading && (
+        <Loader />
+      )}
     </View>
   );
 };
@@ -413,10 +416,10 @@ const styles = StyleSheet.create({
     textAlign:'center',
     borderRadius:10,
     backgroundColor:'transparent',
-
-
   },
-
+  selectedTime : {
+    color:'#4CC2BF',
+  },
   
   timeActive: {
     backgroundColor:'#4CC2BF',

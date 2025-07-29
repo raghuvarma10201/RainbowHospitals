@@ -29,7 +29,7 @@ const local_data = [
 const LoginSchema = Yup.object({
   mobileNumber: Yup.string().required('Please enter valid mobile number')
 });
-const Login: React.FC = () => {
+const Registration: React.FC = () => {
   type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
   const navigation = useNavigation<NavigationProp>();
   const [value, setValue] = useState('');
@@ -52,8 +52,11 @@ const Login: React.FC = () => {
           ToastService.success('Success', 'Otp sent successfully');
           navigation.navigate('Otp');
         }
+        // if backend succeeds, mark app as logged‑in
+        //await AsyncStorage.multiSet([['mobileNumber', values.mobileNumber]]);
+        //setLoggedIn(true);
       } catch (e: any) {
-        console.log('Login failed', e);
+        console.error('Login failed', e);
         // Basic error surface – adapt as needed
         ToastService.error('Invalid credentials', 'Please try again');
         setErrors({ mobileNumber: 'Invalid credentials' });
@@ -70,15 +73,9 @@ const Login: React.FC = () => {
       <View>
         <ImageBackground source={require('../../assets/images/logo.png')} style={styles.logoImage} resizeMode="contain" />
 
-        <View style={styles.imgTextGroup}>
-          <View style={styles.imgTextBox}>
-            <View style={styles.textbeforeDot}>
-              <View style={styles.beforeDot} />
-              <Text style={styles.imgTextTitle}>Leading multi-specialty Hospital for pediatrics, obstetrics & gynecology</Text>
-            </View>
-          </View>
-          <Image source={require('../../assets/images/login-img.png')} style={styles.loginImg} resizeMode="contain" />
-        </View>
+
+
+
         <View style={styles.loginForm}>
           <Text variant="headlineMedium" style={styles.title}>SIGN IN</Text>
           <Text style={styles.labelText}>Mobile Number</Text>
@@ -97,6 +94,7 @@ const Login: React.FC = () => {
               activeColor="#fff"
               onChange={e => setCountry(e.value)}
             />
+
             <TextInput
               keyboardType="numeric"          // shows numeric keyboard
               maxLength={10}
@@ -112,12 +110,15 @@ const Login: React.FC = () => {
             <Text style={styles.primaryBtText}>Get OTP</Text>
           </TouchableOpacity>
         </View>
+
       </View>
+
     </ScrollView>
+
   );
 };
 
-export default Login;
+export default Registration;
 
 const styles = StyleSheet.create({
   container: {
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 0,
     marginTop: 10,
-    fontFamily: 'ProximaNovaA-Regular',
+    fontFamily:'ProximaNovaA-Regular',
   },
   primaryBt: {
     borderRadius: 40,
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: 200,
     alignSelf: 'center',
-    marginTop: 10,
+    marginTop:10,
   },
   primaryBtText: {
     color: '#fff',
@@ -202,12 +203,12 @@ const styles = StyleSheet.create({
   placeholderCountry: {
     fontSize: 16,
     color: '#000',
-    fontFamily: 'ProximaNovaA-Regular',
+    fontFamily:'ProximaNovaA-Regular',
   },
   selectedTextContry: {
     fontSize: 16,
     color: '#000',
-    fontFamily: 'ProximaNovaA-Regular',
+    fontFamily:'ProximaNovaA-Regular',
   },
 
   dropdownList: {
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     padding: 0,
     textAlign: 'left',
-    fontFamily: 'ProximaNovaA-Regular',
+    fontFamily:'ProximaNovaA-Regular',
   },
 
   imgTextGroup: {
