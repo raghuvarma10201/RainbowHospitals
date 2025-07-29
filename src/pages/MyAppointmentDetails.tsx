@@ -1,6 +1,6 @@
 import {Dimensions,  Image,  ScrollView,  StyleSheet,  View, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {  Text, Modal, Portal,} from 'react-native-paper';
+import {  Text, Modal, Portal,TextInput} from 'react-native-paper';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -53,7 +53,9 @@ const MyAppointmentDetails: React.FC = () => {
                 <Image source={require ('../../assets/images/doc-img.png')} style={styles.patientImg}
                 />
                 <View>
-                  <Text style={{fontSize:15, color: '#6651AF', fontFamily:'ProximaNovaA-Semibold', marginBottom:2}}>sravani majjari</Text>
+                  <Text style={{fontSize:13, color: '#6651AF', fontFamily:'ProximaNovaA-Bold', marginBottom:2}}>#65456</Text>
+                  <Text style={{fontSize:15, color: '#6651AF', fontFamily:'ProximaNovaA-Semibold', marginBottom:6}}>Sravani majjari</Text>
+                 
                   <View style={styles.patientReports}>
                     <Text style={styles.reports}>MRI Report</Text>
                     <Text style={styles.reports}>Blood Reports</Text>
@@ -100,7 +102,9 @@ const MyAppointmentDetails: React.FC = () => {
      
       </View>
 
-
+      <TouchableOpacity style={styles.chatBtn}>
+      <Image source={require('../../assets/images/chat-icon.png')} style={styles.chatIcon} />
+    </TouchableOpacity>
 
 
 </View>
@@ -110,7 +114,51 @@ const MyAppointmentDetails: React.FC = () => {
 
 <Portal>
   <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalWrapp}> 
-   <Text>Cancel Appointment</Text>
+   <Text style={styles.formTitle}>Cancel Appointment</Text>
+   <Text style={styles.formSubTitle}>Need Bank Details to refund the amount</Text>
+
+   <View style={styles.formContainer}>
+   
+    <View style={styles.formRow}>
+      <Text style={styles.formLabel}>Bank Name</Text>
+      <TextInput mode="flat" underlineColor="transparent" style={[styles.formInput]} />
+    </View>
+
+
+    <View style={styles.formRow}>
+      <Text style={styles.formLabel}>Account Number</Text>
+      <TextInput mode="flat" underlineColor="transparent" style={styles.formInput} />
+    </View>
+
+    <View style={styles.formRow}>
+      <Text style={styles.formLabel}>IFSC Code</Text>
+      <TextInput mode="flat" underlineColor="transparent" style={styles.formInput} />
+    </View>
+
+    <View style={styles.formRow}>
+      <Text style={styles.formLabel}>Account Holder Name</Text>
+      <TextInput mode="flat" underlineColor="transparent" style={styles.formInput} />
+    </View>
+
+    <View style={styles.formRow}>
+      <Text style={styles.formLabel}>Branch Name </Text>
+      <TextInput mode="flat" underlineColor="transparent" style={styles.formInput} />
+    </View>
+
+    
+      <View style={styles.formRowBtn}>
+        <TouchableOpacity style={[styles.formButton, {backgroundColor:'grey'}]}>
+          <Text style={styles.formButtonText}>Cancel</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.formButton}>
+          <Text style={styles.formButtonText}>Submit</Text>
+        </TouchableOpacity>
+    </View>
+
+  
+
+  </View>
   </Modal>
 </Portal>
 
@@ -133,13 +181,14 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     padding: 0,
-    paddingBottom: 100,
+    paddingBottom:0,
   },
 
   container: {
     flex: 1,
-    paddingBottom: 10,
+    paddingBottom:50,
     paddingTop: 0,
+    position:'relative',
   },
 
 //---
@@ -319,15 +368,109 @@ gap:10,
     fontFamily: 'ProximaNovaA-Semibold',
   },
 
+
+  //--
   modalWrapp:{
     backgroundColor:'#fff',
-    padding:10,
+    paddingHorizontal:15,
+    paddingVertical:20,
     borderRadius:10,
     width:'90%',
     alignSelf:'center',
-    height:200,
-    justifyContent:'center',
+
+    justifyContent:'flex-start',
   },
 
+  //---
+  
+  formTitle:{
+    fontSize:18,
+    textAlign:'center',
+    marginTop:0,
+    fontFamily:'ProximaNovaA-Bold',
+    fontWeight:'bold',
+    color:'#000',
+    marginBottom:5,
+  },
+  formSubTitle:{
+    fontSize:13,
+    fontFamily:'ProximaNovaA-Regular',
+    color:'#000',
+    marginBottom:10,
+    textAlign:'center',
+  },
+
+  formContainer:{
+    backgroundColor:'#fff',
+    borderRadius:10,
+    padding:10,
+    marginTop:10,
+  },
+
+  formRow:{   
+    marginBottom:15,
+  },
+
+  formLabel:{
+    fontSize:13,
+    fontFamily:'ProximaNovaA-Regular',
+    color:'#000',
+    marginBottom:5,
+  },
+
+  formInput:{
+    height:36, 
+    borderWidth:0,
+    borderColor:'transparent',
+    borderRadius: 6,
+    backgroundColor:'#C7E8E7',
+  },
+
+  formRowBtn:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    gap:10,
+  },
+
+  formButton:{
+    backgroundColor:'#3C2871',
+    borderRadius:10,
+    padding:10,
+    marginTop:10,
+    width:'45%',
+  },
+  formButtonText:{
+    color:'#fff',
+    textAlign:'center',
+    fontSize:14,
+    fontFamily:'ProximaNovaA-Bold',
+    fontWeight:'bold',
+    padding:5,
+    borderRadius:10, 
+  },
+
+  chatBtn:{
+    backgroundColor:'#00B3AE',
+    borderRadius:100, 
+   width:62,
+   height:62,
+   justifyContent:'center',
+   alignItems:'center',
+   alignSelf:'center',
+   position:'absolute',
+bottom:-40,
+right:18,
+zIndex:2,
+borderWidth:3,
+borderColor:'#00A69E',
+
+  },
+
+  chatIcon:{
+    width:35,
+    height:35,
+    resizeMode:'contain',
+  },
 
 }); 
