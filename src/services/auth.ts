@@ -12,5 +12,6 @@ export const VerifyOTP = async (payload: any) => {
 };
 export const authenticateUser = async (payload: any) => {
   const { data } = await api.post('/checkUser', payload);
+  console.log(data);
   return data;
 };

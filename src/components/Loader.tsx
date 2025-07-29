@@ -9,28 +9,34 @@ const theme = {
 } as const;
 
 const Loader: React.FC<{ fullScreen?: boolean }> = ({ fullScreen = true }) => {
-
   useEffect(() => {
-    // Any side effects if needed
+    // Side effects if needed
   }, []);
 
   return (
-    <View style={[styles.splashSt, !fullScreen && styles.inline]}>
+    <View style={[styles.overlay, !fullScreen && styles.inline]}>
       <ActivityIndicator size="large" color={theme.colors.primary} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  splashSt: {
-    flex: 1,
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 50% black background
     justifyContent: 'center',
     alignItems: 'center',
-    //backgroundColor: 'transparent', // Transparent background
+    zIndex: 999,
   },
   inline: {
-    flex: 0, // For non-fullscreen mode
-    backgroundColor: 'transparent',
+    position: 'relative',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    width: '100%',
+    height: '100%',
   },
 });
 

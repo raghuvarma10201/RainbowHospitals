@@ -30,7 +30,7 @@ import {
   findNearestRegion,
 } from '../services/Region/location';
 import {fetchBranchesByRegionId} from '../services/Region/api';
-import {useNavigation} from '@react-navigation/native';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList, MainStackParamList, useAuth} from '../../App';
 import Loader from '../components/Loader';
@@ -38,11 +38,8 @@ import Loader from '../components/Loader';
 const CELL_COUNT = 6;
 
 const Otp: React.FC = () => {
-  type AppNavigationProp = NativeStackNavigationProp<
-    MainStackParamList,
-    'Dashboard'
-  >;
-  const navigation = useNavigation<AppNavigationProp>();
+  type CombinedNavigationProp = CompositeNavigationProp<NativeStackNavigationProp<AuthStackParamList>,NativeStackNavigationProp<MainStackParamList>>;
+  const navigation = useNavigation<CombinedNavigationProp>();
   const [timer, setTimer] = useState(30);
   const [resendDisabled, setResendDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -121,7 +118,9 @@ const Otp: React.FC = () => {
           otp: value,
           fcmToken: (await AsyncStorage.getItem('FcmTtoken')) || 'adsdsad',
         };
+        
         const response = await VerifyOTP(payload);
+        console.log(response);
         const token = response?.data?.token;
         await AsyncStorage.multiSet([
           ['accessToken',  token],
@@ -135,6 +134,7 @@ const Otp: React.FC = () => {
         if (response && response.status === 200) {
           ToastService.error('Success', response.data.message || 'OTP verified successfully');
           const authResponse = await authenticateUser({ MobileNo: phoneNumber });
+          console.log(authResponse);
           if (authResponse && authResponse.status == 200) {
             setLoading(false);
             updateMrn(authResponse.data.LoginName);
@@ -150,9 +150,10 @@ const Otp: React.FC = () => {
           } else if (authResponse.status == 500) {
             setLoading(false);
             ToastService.error('Error', authResponse.message);
+            navigation.navigate('Registration');
           } else {
             setLoading(false);
-            // /navigation.navigate('Otp');
+             navigation.navigate('Registration');
             ToastService.error('Error', authResponse?.error);
           }
         } else {
