@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../App';
+import { useJitsi } from '../context/JitsiContext';
 
 const MyAppointments: React.FC = () => {
   const w = Dimensions.get('window').width;
@@ -14,6 +15,21 @@ const MyAppointments: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const navigateTo = (path: keyof MainStackParamList, params: any) => {
     navigation.navigate(path, params);
+  };
+
+  const { showJitsi } = useJitsi();
+
+  const startVideoCall = () => {
+    showJitsi({
+      roomName: 'DemoRoom123',
+      token: '', // Optional if not using JWT auth
+      serverURL: 'https://dev.rb.vc.demos.im/', // Optional (defaults if not passed)
+      userInfo: {
+        displayName: 'Sunny',
+        email: 'sunny@example.com',
+        // avatar: 'https://yourdomain.com/avatar.png',
+      },
+    });
   };
 
   return (
@@ -25,7 +41,8 @@ const MyAppointments: React.FC = () => {
           <View style={styles.doctorsListContainer}>
             <TouchableOpacity style={styles.doctorItem} 
             // onPress={() => navigation.navigate('MyAppointmentDetails')}
-            onPress={() => navigation.navigate('JitsiCall',{roomName: 'test'})}
+            // onPress={() => navigation.navigate('JitsiCall',{roomName: 'test'})}
+            onPress={() => startVideoCall()}
             >
               <Image source={require('../../assets/images/doc-img-2.png')}
                 style={styles.doctorImg}

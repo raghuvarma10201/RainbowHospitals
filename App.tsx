@@ -45,6 +45,7 @@ import { TimerProvider } from './src/context/TimeContext';
 import Registration from './src/authentication/Registration';
 import MyStatusBar from './src/components/StatusBar';
 import JitsiCall from './src/pages/JitsiCall';
+import { JitsiProvider } from './src/context/JitsiContext';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -192,6 +193,8 @@ const App: React.FC = () => {
     <AuthContext.Provider value={authCtx}>
       <PaperProvider theme={theme}>
         <NavigationContainer ref={navigationRef}>
+
+      <JitsiProvider>
           <TimerProvider>
           <MyStatusBar backgroundColor={'#3C2871'} />
           {isLoggedIn ? (
@@ -204,6 +207,7 @@ const App: React.FC = () => {
             </AppProvider>
           )}
           </TimerProvider>
+          </JitsiProvider>
         </NavigationContainer>
       </PaperProvider>
       <Toast />

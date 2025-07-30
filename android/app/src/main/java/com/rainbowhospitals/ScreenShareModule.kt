@@ -2,7 +2,7 @@ package com.rainbowhospitals
 
 import com.facebook.react.bridge.*
 import com.facebook.react.module.annotations.ReactModule
-import android.app.Activity
+import androidx.activity.ComponentActivity
 
 @ReactModule(name = ScreenShareModule.NAME)
 class ScreenShareModule(reactContext: ReactApplicationContext) :
@@ -18,7 +18,8 @@ class ScreenShareModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun startScreenSharing() {
-        currentActivity?.let { activity ->
+        val activity = currentActivity as? ComponentActivity
+        if (activity != null) {
             helper = ScreenShareHelper(activity)
             helper?.startScreenCapture()
         }
@@ -26,7 +27,8 @@ class ScreenShareModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun stopScreenSharing() {
-        currentActivity?.let {
+        val activity = currentActivity as? ComponentActivity
+        if (activity != null) {
             helper?.stopScreenCapture()
         }
     }

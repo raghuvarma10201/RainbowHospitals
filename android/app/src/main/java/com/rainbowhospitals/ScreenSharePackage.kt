@@ -2,6 +2,7 @@ package com.rainbowhospitals
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
+import com.facebook.react.bridge.ReactApplicationContext // ✅ Add this import
 import com.facebook.react.uimanager.ViewManager
 import android.app.Application
 import android.content.Context

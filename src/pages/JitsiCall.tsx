@@ -1,13 +1,13 @@
-import React, {useCallback, useRef} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
-import {JitsiMeeting} from '@jitsi/react-native-sdk';
-import {NativeModules} from 'react-native';
+import React, { useCallback, useRef } from 'react';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { JitsiMeeting } from '@jitsi/react-native-sdk';
+import { NativeModules } from 'react-native';
 
-const {ScreenRecorder} = NativeModules;
+const { ScreenRecorder } = NativeModules;
 
-const JitsiCall = ({route, navigation}: any) => {
+const JitsiCall = ({ route, navigation }: any) => {
   const jitsiMeeting = useRef(null);
-  const {roomName} = route.params;
+  const { roomName } = route.params;
 
   const onReadyToClose = useCallback(() => {
     navigation.goBack();
@@ -22,7 +22,7 @@ const JitsiCall = ({route, navigation}: any) => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       {/* Jitsi meeting view */}
       <JitsiMeeting
         config={{
@@ -33,6 +33,7 @@ const JitsiCall = ({route, navigation}: any) => {
             'screensharing',
             'overflowmenu',
             'hangup',
+            'toggle-camera',
           ],
           whiteboard: {
             enabled: true,
@@ -51,7 +52,7 @@ const JitsiCall = ({route, navigation}: any) => {
         ref={jitsiMeeting}
         room={roomName}
         serverURL="https://dev.rb.vc.demos.im/"
-        style={{flex: 1}}
+        style={{ flex: 1 }}
       />
     </View>
   );

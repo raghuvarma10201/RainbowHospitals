@@ -1,27 +1,31 @@
 package com.rainbowhospitals
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
+import android.app.Activity
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 
-class ScreenShareHelper(private val activity: Activity) {
+class ScreenShareHelper(private val activity: ComponentActivity) {
 
     private val mediaProjectionManager =
         activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
 
-    private val launcher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-            ScreenCaptureService.resultCode = result.resultCode
-            ScreenCaptureService.dataIntent = result.data
+    private val launcher: ActivityResultLauncher<Intent> =
+        activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                ScreenCaptureService.resultCode = result.resultCode
+                ScreenCaptureService.dataIntent = result.data
 
-            val intent = Intent(activity, ScreenCaptureService::class.java).apply {
-                action = ScreenCaptureService.ACTION_START
+                val intent = Intent(activity, ScreenCaptureService::class.java).apply {
+                    action = ScreenCaptureService.ACTION_START
+                }
+                activity.startService(intent)
             }
-            activity.startService(intent)
         }
-    }
 
     fun startScreenCapture() {
         val intent = mediaProjectionManager.createScreenCaptureIntent()
