@@ -14,7 +14,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Footer from '../components/Footer';
 import { DynamicWeekWithMonth } from '../components/WeeklyCalender';
 import { useNavigation } from '@react-navigation/native';
-import { MainStackParamList } from '../../App';
 import { getDoctorDetail, getDoctors, getDoctorSessions, getDoctorSlots } from '../services/common';
 import { ToastService } from '../utils/ToastService';
 import { IMG_BASE_URL } from '../utils/environment';
@@ -22,6 +21,7 @@ import { useApp } from '../context/AppContext';
 import Loader from '../components/Loader';
 import { useTimer } from '../context/TimeContext';
 import ShortInfoText from '../components/ShortInfoText';
+import { MainStackParamList } from '../navigation/types';
 
 const DoctorSlots: React.FC<any> = ({ route }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
@@ -225,6 +225,8 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
           />
           <View>
             <Text style={[styles.centeredTxt, {marginBottom:5}]}>Available Time</Text>
+            {
+              doctorSlots.length ?
             <FlatList
               data={doctorSlots}             
               contentContainerStyle={styles.timeList}
@@ -240,6 +242,24 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
                 </TouchableOpacity>
               )}
             />
+            :
+              <Text
+                style={[
+                  styles.centeredTxt,
+                  {
+                    marginTop: h * 0.02,
+                    fontFamily: 'ProximaNovaA-Regular',
+                    fontSize: 14,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#fff',
+                    paddingBottom: 5,
+                    textAlign: 'center',
+                    marginHorizontal: 'auto',
+                  },
+                ]}>
+                No Slots Available
+              </Text>
+            }
             <TouchableOpacity>
               <Text
                 style={[

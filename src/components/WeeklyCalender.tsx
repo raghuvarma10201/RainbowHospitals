@@ -43,6 +43,7 @@ function getMonthDisplayForChunk(chunk: SessionDay[]): string {
 
 
 export const DynamicWeekWithMonth: React.FC<Props> = ({ sessions, onDateClick }) => {
+  const [selectedDate, setSelectedDate] = useState((new Date(sessions[0]?.SessionDate)).toISOString().split('T')[0])
   const sortedSessions = useMemo(() => {
     return [...sessions]
       .sort((a, b) => new Date(a.SessionDate).getTime() - new Date(b.SessionDate).getTime())
@@ -82,11 +83,14 @@ export const DynamicWeekWithMonth: React.FC<Props> = ({ sessions, onDateClick })
       
       style={styles.dayBox}
       onPress={() =>
+      {
+        setSelectedDate((new Date(item.session.SessionDate)).toISOString().split('T')[0])
         onDateClick?.(item.session.SessionDate, item.session.SessionDefinitionUID1)
       }
+      }
     >
-      <Text style={styles.dayText}>{item.day}</Text>
-      <Text style={styles.dateText}>{item.date}</Text>
+      <Text style={[styles.dayText,{color: (new Date(item.session.SessionDate)).toISOString().split('T')[0] == selectedDate ? '#4CC2BF' : '#4B3E75'}]}>{item.day}</Text>
+      <Text style={[styles.dateText,{color: (new Date(item.session.SessionDate)).toISOString().split('T')[0] == selectedDate ? '#4CC2BF' : '#4B3E75'}]}>{item.date}</Text>
     </TouchableOpacity>
   );
 
@@ -156,12 +160,10 @@ const styles = StyleSheet.create({
   dayText: {
     fontSize: 12,
     fontFamily: 'ProximaNovaA-Bold',
-    color: '#4B3E75',
   },
   dateText: {
     fontSize: 14,
     fontFamily: 'ProximaNovaA-Bold',
-    color: '#4B3E75',
   },
   noSessionsText: {
     textAlign: 'center',
