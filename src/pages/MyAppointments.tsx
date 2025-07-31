@@ -5,8 +5,8 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../../App';
 import { useJitsi } from '../context/JitsiContext';
+import { MainStackParamList } from '../navigation/types';
 
 const MyAppointments: React.FC = () => {
   const w = Dimensions.get('window').width;
@@ -40,8 +40,8 @@ const MyAppointments: React.FC = () => {
         <View style={styles.container}>
           <View style={styles.doctorsListContainer}>
             <TouchableOpacity style={styles.doctorItem} 
-            onPress={() => navigation.navigate('MyAppointmentDetails')}
-            // onPress={() => navigation.navigate('JitsiCall',{roomName: 'test'})}
+            // onPress={() => navigation.navigate('MyAppointmentDetails')}
+            onPress={() => startVideoCall()}
             >
               <Image source={require('../../assets/images/doc-img-2.png')}
                 style={styles.doctorImg}
