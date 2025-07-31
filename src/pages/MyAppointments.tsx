@@ -10,6 +10,7 @@ import { useJitsi } from '../context/JitsiContext';
 import { useApp } from '../context/AppContext';
 import { getAppointments } from '../services/common';
 import { ToastService } from '../utils/ToastService';
+import { formatAppointmentDateTime } from '../utils/dateTime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MainStackParamList } from '../navigation/types';
 
@@ -45,22 +46,20 @@ const MyAppointments: React.FC = () => {
   const loadAppointments = async () => {
     try {
       const payload = {
-        patientId: AsyncStorage.getItem('mrn'),
-        startdate: "2025-06-18"
+        patientId: await AsyncStorage.getItem('mrn')
       }
       setLoading(true);
       const response = await getAppointments(payload);
-      console.log(response);
       if (response && response.status == 200) {
         setLoading(false);
-        setAppointments(response.data.doctors);
+        setAppointments(response.data);
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
       }
     } catch (error) {
       setLoading(false);
-      console.error('Failed to load Doctors:', error);
+      console.error('Failed to load Appointments', error);
     } finally {
       setLoading(false);
     }
@@ -72,71 +71,50 @@ const MyAppointments: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <View style={styles.doctorsListContainer}>
-            <TouchableOpacity style={styles.doctorItem} 
-            // onPress={() => navigation.navigate('MyAppointmentDetails')}
-            onPress={() => startVideoCall()}
-            >
-              <Image source={require('../../assets/images/doc-img-2.png')}
-                style={styles.doctorImg}
-              />
-              <View>
-                <Text style={[styles.docName, { fontSize: 11, color: '#3C2871', fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }]}>
-                  #34543
-                </Text>
-                <Text style={[styles.docName, { fontSize: 14, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Bold', marginBottom: 2 }]}>
-                  Dr. Ramesh Konanki
-                </Text>
-                <Text style={[styles.docName, { fontSize: 11, color: '#000', fontFamily: 'ProximaNovaA-Regular', marginBottom: 5 }]}>
-                  Senior Consultant - Pediatric Neurologist
-                </Text>
-
-                <Text style={[styles.consultationText, { fontFamily: 'ProximaNovaA-Semibold', }]}>
-                  Physical Consultation
-                </Text>
-
-                <View style={styles.row}>
-                  <Text style={[styles.docName, { color: '#000', fontSize: 12, fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }]}>
-                    2025-08-01 at 10:00 AM
+            {appointments.map((appointment, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.doctorItem}
+                onPress={() => navigation.navigate('MyAppointmentDetails', { appointmentData: appointment })}
+              >
+                <Image
+                  source={
+                    appointment.image
+                      ? { uri: `${appointment.image}` }
+                      : {
+                        uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                      }
+                  }
+                  style={styles.doctorImg}
+                />
+                <View>
+                  <Text style={[styles.docName, { fontSize: 11, color: '#3C2871', fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }]}>
+                    #{appointment?.appointmentnumber ?? 'N/A'}
                   </Text>
 
-                  <Image source={require('../../assets/images/right-arrow.png')} style={styles.rightArrow} />
-                </View>
-
-
-
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.doctorItem}>
-              <Image source={require('../../assets/images/doc-img-2.png')}
-                style={styles.doctorImg}
-              />
-              <View>
-                <Text style={[styles.docName, { fontSize: 11, color: '#3C2871', fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }]}>
-                  #34543
-                </Text>
-                <Text style={[styles.docName, { fontSize: 14, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Bold', marginBottom: 2 }]}>
-                  Dr. Ramesh Konanki
-                </Text>
-                <Text style={[styles.docName, { fontSize: 11, color: '#000', fontFamily: 'ProximaNovaA-Regular', marginBottom: 5 }]}>
-                  Senior Consultant - Pediatric Neurologist
-                </Text>
-
-                <Text style={[styles.consultationText, { fontFamily: 'ProximaNovaA-Semibold', }]}>
-                  Physical Consultation
-                </Text>
-
-
-                <View style={styles.row}>
-                  <Text style={[styles.docName, { color: '#000', fontSize: 12, fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }]}>
-                    2025-08-01 at 10:00 AM
+                  <Text style={[styles.docName, { fontSize: 14, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Bold', marginBottom: 2 }]}>
+                    {appointment?.CareProviderName ?? 'Doctor Name'}
                   </Text>
 
-                  <Image source={require('../../assets/images/right-arrow.png')} style={styles.rightArrow} />
-                </View>
-              </View>
-            </TouchableOpacity>
+                  <Text style={[styles.docName, { fontSize: 11, color: '#000', fontFamily: 'ProximaNovaA-Regular', marginBottom: 5 }]}>
+                    {appointment?.SpecialtyName ?? 'Specialization'}
+                  </Text>
 
+                  <Text style={[styles.consultationText, { fontFamily: 'ProximaNovaA-Semibold' }]}>
+                    {appointment?.AppointmentType ?? 'Consultation Type'}
+                  </Text>
+                  <View style={styles.row}>
+                    <Text style={[styles.docName, { color: '#000', fontSize: 12, fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }]}>
+                      {formatAppointmentDateTime(appointment?.SlotStartDttm)}
+                    </Text>
+                    <Image
+                      source={require('../../assets/images/right-arrow.png')}
+                      style={styles.rightArrow}
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
       </ScrollView>
@@ -171,6 +149,7 @@ const styles = StyleSheet.create({
 
   doctorsListContainer: {
     paddingHorizontal: 15,
+
   },
   doctorItem: {
     paddingVertical: h * 0.01,
@@ -195,6 +174,7 @@ const styles = StyleSheet.create({
   docName: {
     fontSize: 11,
     color: '#000',
+    width: w * 0.7
 
   },
   payBtn: {
@@ -238,6 +218,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     fontSize: 12,
     color: '#000',
+    width: "auto",
     fontFamily: 'ProximaNovaA-Regular',
     marginBottom: 5,
   }

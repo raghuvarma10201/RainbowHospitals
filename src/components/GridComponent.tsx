@@ -13,7 +13,7 @@ import {gridData} from '../Constants/data';
 import {IMG_BASE_URL} from '../utils/environment';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../App';
+import { MainStackParamList } from '../navigation/types';
 
 const {width} = Dimensions.get('window');
 const ITEMS_PER_PAGE = 9;
