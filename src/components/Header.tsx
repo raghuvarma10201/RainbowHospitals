@@ -36,6 +36,7 @@ import { getCurrentCoordinates } from '../utils/LocationService';
 interface CommonHeaderProps {
     title?: string;
     showLocation?: boolean;
+    showBack?: boolean;
     onProfilePress?: () => void;
     onNotificationPress?: () => void;
     onChatPress?: () => void;
@@ -50,6 +51,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
 
     title,
     showLocation = true,
+    showBack = true,
     onNotificationPress,
     onChatPress,
     home,
@@ -201,14 +203,16 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
     return (
         <View style={styles.header}>
             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                {title != 'home' &&
+                {showBack &&
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backArrowBlock}>
                         <Image source={require('../../assets/images/back-arrow.png')} style={{ width: 18, height: 18, }} resizeMode="contain" />
                     </TouchableOpacity>
                 }
-                {/* <View style={styles.profileIconBlock}>
+                {!showBack && (
+                <View style={styles.profileIconBlock}>
                     <Image source={require('../../assets/images/profile-icon.png')} style={{ width: 30, height: 30, }} resizeMode="contain" />
-                </View> */}
+                </View> 
+                )}
                 {showLocation && (
                     <TouchableOpacity style={styles.dropdownIcon} onPress={() => setLocationModalVisible(true)}>
                         <View style={{ marginLeft: 6 }}>
@@ -374,7 +378,7 @@ const styles = StyleSheet.create({
     backArrowBlock: {
         width: 30,
         height: 30,
-        backgroundColor: '#fff',
+        backgroundColor: 'tra',
         borderRadius: 100,
         borderWidth: 3,
         borderColor: '#fff',

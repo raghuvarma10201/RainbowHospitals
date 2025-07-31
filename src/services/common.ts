@@ -115,6 +115,16 @@ export const fetchFamilyMembers = async (payload : any) => {
     throw error;
   }
 };
+
+export const getAppointments = async (payload : any) => {
+  try {
+    const response = await api.post('/getAppointmentForPatient',payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const fetchSettings = async () => {
   try {
     const response = await api.get('/getSetting');

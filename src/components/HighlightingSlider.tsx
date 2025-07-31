@@ -61,7 +61,7 @@ const Highlight = ({
 
   const renderItem = ({ item, index }: { item: any; index: number }) => {
     if (!item || item.key === 'left-spacer' || item.key === 'right-spacer') {
-      return <View style={{ width: SPACER_WIDTH }} />;
+      return <View  key={item.key} style={{ width: SPACER_WIDTH }} />;
     }
 
     const inputRange = [
@@ -116,9 +116,10 @@ const Highlight = ({
     <Animated.FlatList
       ref={flatListRef}
       data={data}
-      keyExtractor={(_, index) => index.toString()}
+      keyExtractor={(_, index) => 'qq'+''+index.toString()}
       renderItem={renderItem}
       horizontal
+      scrollEnabled={true}
       showsHorizontalScrollIndicator={false}
       snapToInterval={ITEM_WIDTH}
       decelerationRate="fast"

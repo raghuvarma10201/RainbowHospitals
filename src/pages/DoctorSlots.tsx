@@ -21,6 +21,7 @@ import { IMG_BASE_URL } from '../utils/environment';
 import { useApp } from '../context/AppContext';
 import Loader from '../components/Loader';
 import { useTimer } from '../context/TimeContext';
+import ShortInfoText from '../components/ShortInfoText';
 
 const DoctorSlots: React.FC<any> = ({ route }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
@@ -212,11 +213,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
                 styles.docName,
                 { fontSize: 16, color: '#4CC2BF', marginBottom: 5 },
               ]}>{`About`}</Text>
-            <Text
-              style={[
-                styles.docName,
-                { fontSize: 12 },
-              ]}>{doctorDetail?.short_info}</Text>
+              <ShortInfoText text={doctorDetail?.short_info || ''} />
           </View>
         </View>
         <View style={styles.calenderContainer}>
@@ -231,11 +228,11 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
             <FlatList
               data={doctorSlots}             
               contentContainerStyle={styles.timeList}
-              keyExtractor={(_, index) => index.toString()}
+              keyExtractor={(_, index) => 'rqq'+''+index.toString()}
               renderItem={({ item, index }) => (
 
                 // timeActive for active -- replace timeTxt
-                <TouchableOpacity style={styles.timeBtn} onPress={() => {
+                <TouchableOpacity key={item.SlotID} style={styles.timeBtn} onPress={() => {
                    setSelectedSlot(item.SlotID);
                    setSelectedTime(formatTime24Hour(item.SessionStartDttm));
                 }} >
