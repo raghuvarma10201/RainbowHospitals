@@ -14,7 +14,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Footer from '../components/Footer';
 import { DynamicWeekWithMonth } from '../components/WeeklyCalender';
 import { useNavigation } from '@react-navigation/native';
-import { MainStackParamList } from '../../App';
+import { MainStackParamList } from '../navigation/types';
 import { getDoctorDetail, getDoctors, getDoctorSessions, getDoctorSlots } from '../services/common';
 import { ToastService } from '../utils/ToastService';
 import { IMG_BASE_URL } from '../utils/environment';

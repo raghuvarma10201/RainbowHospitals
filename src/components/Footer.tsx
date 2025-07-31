@@ -8,7 +8,7 @@ import {
     Image,
     TouchableOpacity
 } from 'react-native';
-import { MainStackParamList } from '../../App';
+import { MainStackParamList } from '../navigation/types';
 
 interface FooterProps {
     activeIcon?: string;

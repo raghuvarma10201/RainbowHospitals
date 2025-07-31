@@ -28,7 +28,7 @@ export type MainStackParamList = {
   SlotConfirmation: { doctor: any };
   Home: undefined;
   MyAppointments: undefined;
-  MyAppointmentDetails: undefined;
+  MyAppointmentDetails: {appointmentData : any};
   JitsiCall: { roomName: string };
   PayUWebView: {
     finalPayload: any;

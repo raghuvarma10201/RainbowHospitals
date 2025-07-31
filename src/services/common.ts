@@ -124,7 +124,14 @@ export const getAppointments = async (payload : any) => {
     throw error;
   }
 };
-
+export const fetchAppointmentChat = async (BookingId : any) => {
+  try {
+    const response = await api.get('/appointmentChat/'+BookingId);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 export const fetchSettings = async () => {
   try {
     const response = await api.get('/getSetting');

@@ -7,7 +7,7 @@ import Banners from '../components/Slider';
 
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../../App';
+import { MainStackParamList } from '../navigation/types';
 const local_data = [
   {
     value: '1',

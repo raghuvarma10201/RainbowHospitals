@@ -4,9 +4,10 @@ import {Card, Searchbar , TextInput, Icon,  Banner,Text,  Modal, Portal, } from 
 import { Dropdown } from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import {MainStackParamList} from '../../App';
+
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { MainStackParamList } from '../navigation/types';
 
 const local_data = [
   {
