@@ -12,7 +12,6 @@ import CommonHeader from '../components/Header';
 import Footer from '../components/Footer';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../../App';
 import { useApp } from '../context/AppContext';
 import { fetchConsultationFee, fetchFamilyMembers, generateHash, getDoctorSlots } from '../services/common';
 import { ToastService } from '../utils/ToastService';
@@ -23,6 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FamilyMember } from '../utils/types';
 import TimerBanner from '../components/TimmerBanner';
 import Loader from '../components/Loader';
+import { MainStackParamList } from '../navigation/types';
 
 const SlotConfirmation: React.FC = ({ route }: any) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();

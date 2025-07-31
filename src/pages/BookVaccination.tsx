@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../../App';
+import { MainStackParamList } from '../navigation/types';
 
 const BookVaccination: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);

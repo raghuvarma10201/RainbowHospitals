@@ -9,6 +9,10 @@ export const requestLocationPermission = async () => {
     android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
   });
 
+  if (!permission) {
+    throw new Error('Location permission is not available for this platform.');
+  }
+
   const result = await request(permission);
   return result
 };

@@ -8,25 +8,26 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import CommonHeader from '../components/Header';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Footer from '../components/Footer';
 import { DynamicWeekWithMonth } from '../components/WeeklyCalender';
 import { useNavigation } from '@react-navigation/native';
-import { MainStackParamList } from '../../App';
 import { getDoctorDetail, getDoctors, getDoctorSessions, getDoctorSlots } from '../services/common';
 import { ToastService } from '../utils/ToastService';
 import { IMG_BASE_URL } from '../utils/environment';
 import { useApp } from '../context/AppContext';
 import Loader from '../components/Loader';
-import { useTimer } from '../context/TimeContext';
+import {useTimer} from '../context/TimeContext';
 import ShortInfoText from '../components/ShortInfoText';
+import {MainStackParamList} from '../navigation/types';
 
-const DoctorSlots: React.FC<any> = ({ route }) => {
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const { doctorId, appointmentType } = route.params;
-  const { branch,appointment,updateAppointment } = useApp();
+const DoctorSlots: React.FC<any> = ({route}) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const {doctorId, appointmentType} = route.params;
+  const {branch, appointment, updateAppointment} = useApp();
   const [doctorDetail, setDoctorDetail] = useState<any>({});
   const [doctorSessions, setDoctorSessions] = useState<any>([]);
   const [doctorSlots, setDoctorSlots] = useState<any>({});
@@ -57,7 +58,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
         setDoctorDetail(response.data);
         await getSessions(response.data);
         //await getConsultationFee(response.data);
-        
+
         const specialityNames = response.data.doctor_specialities
           .map((item: any) => item.speciality?.name)
           .filter(Boolean) // optional: removes undefined/null
@@ -81,11 +82,11 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
     try {
       setLoading(true);
       const payload = {
-        CareproviderCode: "500004", //docData.new_doctor_UID,
-        OrganisationUID: '2',//branch?.organisation.organisationid,
-        AppointmentType: "Physical",
-        noofdays: "30"
-      }
+        CareproviderCode: '500004', //docData.new_doctor_UID,
+        OrganisationUID: '2', //branch?.organisation.organisationid,
+        AppointmentType: 'Physical',
+        noofdays: '30',
+      };
       const response = await getDoctorSessions(payload);
       if (response && response.status == 200) {
         setLoading(false);
@@ -105,16 +106,16 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
     setDoctorSlots([]);
     setSelectedSlot('');
     setSelectedTime('');
-    sessionDate = new Date(sessionDate).toISOString().split('T')[0]
+    sessionDate = new Date(sessionDate).toISOString().split('T')[0];
     setSelectedDate(sessionDate);
     try {
       setLoading(true);
       const payload = {
-          SessionDefinitionUID: sessionId,
-          AppointmentDate: sessionDate,
-          OrganisationUID: '2',//branch?.organisation.organisationid,
-          AppointmentType: "Physical"
-      }
+        SessionDefinitionUID: sessionId,
+        AppointmentDate: sessionDate,
+        OrganisationUID: '2', //branch?.organisation.organisationid,
+        AppointmentType: 'Physical',
+      };
       const response = await getDoctorSlots(payload);
       if (response && response.status == 200) {
         setLoading(false);
@@ -151,22 +152,23 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
       price: appointment?.price ?? 0, // Provide default or actual value
       payment_type: appointment?.payment_type ?? 'CASH', // Provide default or actual value
     });
-    
-    navigation.navigate('SlotConfirmation', {doctor : doctorDetail})
-  }
+
+    navigation.navigate('SlotConfirmation', {doctor: doctorDetail});
+  };
   return (
     <View style={styles.mainContainer}>
       <CommonHeader showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-
         <View style={styles.doctorDetailsContainer}>
           <View style={styles.doctorImgContainer}>
             <Image
-              source={doctorDetail.small_image
-                ? { uri: `${IMG_BASE_URL}${doctorDetail.small_image}` }
-                : {
-                  uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
-                }}
+              source={
+                doctorDetail.small_image
+                  ? {uri: `${IMG_BASE_URL}${doctorDetail.small_image}`}
+                  : {
+                      uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                    }
+              }
               style={styles.docImg}
             />
             <View style={styles.dotContainer}>
@@ -174,16 +176,28 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
             </View>
           </View>
           <View style={styles.doctorDetails}>
-            <Text style={[styles.docName, { fontSize: 16, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Semibold' }]}>
+            <Text
+              style={[
+                styles.docName,
+                {
+                  fontSize: 16,
+                  color: '#4CC2BF',
+                  fontFamily: 'ProximaNovaA-Semibold',
+                },
+              ]}>
               {doctorDetail?.name}
             </Text>
-            <Text style={[styles.docName, { fontSize: 12, marginTop: 3, }]}>
+            <Text style={[styles.docName, {fontSize: 12, marginTop: 3}]}>
               {doctorDetail?.designation}
             </Text>
-            <Text style={[styles.docName, { fontSize: 10, }]}>
+            <Text style={[styles.docName, {fontSize: 10}]}>
               {doctorSpecialitites}
             </Text>
-            <Text style={[styles.docName, { fontSize: 13, color: '#4CC2BF', marginTop: 3, marginBottom: 5 }]}>
+            <Text
+              style={[
+                styles.docName,
+                {fontSize: 13, color: '#4CC2BF', marginTop: 3, marginBottom: 5},
+              ]}>
               {`Experience ${doctorDetail?.experience ?? '0'} Years`}
             </Text>
             <View style={styles.consultBtnsContainer}>
@@ -211,35 +225,68 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
             <Text
               style={[
                 styles.docName,
-                { fontSize: 16, color: '#4CC2BF', marginBottom: 5 },
+                {fontSize: 16, color: '#4CC2BF', marginBottom: 5},
               ]}>{`About`}</Text>
-              <ShortInfoText text={doctorDetail?.short_info || ''} />
+            <ShortInfoText text={doctorDetail?.short_info || ''} />
           </View>
         </View>
         <View style={styles.calenderContainer}>
-          <DynamicWeekWithMonth
-            sessions={doctorSessions}
-            onDateClick={(sessionDate: any, sessionId: string) => {
-              getSlots(sessionDate, sessionId);
-            }}
-          />
-          <View>
-            <Text style={[styles.centeredTxt, {marginBottom:5}]}>Available Time</Text>
-            <FlatList
-              data={doctorSlots}             
-              contentContainerStyle={styles.timeList}
-              keyExtractor={(_, index) => 'rqq'+''+index.toString()}
-              renderItem={({ item, index }) => (
-
-                // timeActive for active -- replace timeTxt
-                <TouchableOpacity key={item.SlotID} style={styles.timeBtn} onPress={() => {
-                   setSelectedSlot(item.SlotID);
-                   setSelectedTime(formatTime24Hour(item.SessionStartDttm));
-                }} >
-                <Text style={[styles.timeTxt, selectedTime === formatTime24Hour(item.SessionStartDttm) && styles.selectedTime]}>{formatTime24Hour(item.SessionStartDttm)}</Text>
-                </TouchableOpacity>
-              )}
+          {doctorSessions && (
+            <DynamicWeekWithMonth
+              sessions={doctorSessions}
+              onDateClick={(sessionDate: any, sessionId: string) => {
+                getSlots(sessionDate, sessionId);
+              }}
             />
+          )}
+          <View>
+            <Text style={[styles.centeredTxt, {marginBottom: 5}]}>
+              Available Time
+            </Text>
+            {doctorSlots.length ? (
+              <FlatList
+                data={doctorSlots}
+                contentContainerStyle={styles.timeList}
+                keyExtractor={(_, index) => 'rqq' + '' + index.toString()}
+                renderItem={({item, index}) => (
+                  // timeActive for active -- replace timeTxt
+                  <TouchableOpacity
+                    key={item.SlotID}
+                    style={styles.timeBtn}
+                    onPress={() => {
+                      setSelectedSlot(item.SlotID);
+                      setSelectedTime(formatTime24Hour(item.SessionStartDttm));
+                    }}>
+                    <Text
+                      style={[
+                        styles.timeTxt,
+                        selectedTime ===
+                          formatTime24Hour(item.SessionStartDttm) &&
+                          styles.selectedTime,
+                      ]}>
+                      {formatTime24Hour(item.SessionStartDttm)}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              />
+            ) : (
+              <Text
+                style={[
+                  styles.centeredTxt,
+                  {
+                    marginTop: h * 0.02,
+                    fontFamily: 'ProximaNovaA-Regular',
+                    fontSize: 14,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#fff',
+                    paddingBottom: 5,
+                    textAlign: 'center',
+                    marginHorizontal: 'auto',
+                  },
+                ]}>
+                No Slots Available
+              </Text>
+            )}
             <TouchableOpacity>
               <Text
                 style={[
@@ -268,9 +315,7 @@ const DoctorSlots: React.FC<any> = ({ route }) => {
         </TouchableOpacity>
       </ScrollView>
       <Footer />
-      {loading && (
-        <Loader />
-      )}
+      {loading && <Loader />}
     </View>
   );
 };
@@ -361,7 +406,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 10,
-
   },
   consultBtn: {
     paddingVertical: w * 0.03,
@@ -399,27 +443,26 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 
-  timeBtn:{
-    width:65,
-   
+  timeBtn: {
+    width: 65,
   },
 
   timeTxt: {
     color: '#000',
-    lineHeight:20,
+    lineHeight: 20,
     fontSize: 13,
     fontFamily: 'ProximaNovaA-Regular',
     marginHorizontal: w * 0.02,
-    textAlign:'center',
-    borderRadius:10,
-    backgroundColor:'transparent',
+    textAlign: 'center',
+    borderRadius: 10,
+    backgroundColor: 'transparent',
   },
-  selectedTime : {
-    color:'#4CC2BF',
+  selectedTime: {
+    color: '#4CC2BF',
   },
-  
+
   timeActive: {
-    backgroundColor:'#4CC2BF',
+    backgroundColor: '#4CC2BF',
     color: '#fff',
   },
   centeredTxt: {
@@ -429,16 +472,14 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Semibold',
   },
   timeList: {
-    width:'100%',
+    width: '100%',
     alignItems: 'center',
-    marginVertical:10,
+    marginVertical: 10,
     fontFamily: 'ProximaNovaA-Semibold',
-    flexDirection:'row',
-    flexWrap:'wrap',
-    gap:10,
-    justifyContent:'center',
-
-
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    justifyContent: 'center',
   },
   formButton: {
     backgroundColor: '#3C2871',
@@ -447,7 +488,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: '90%',
     alignSelf: 'center',
-
   },
   formButtonText: {
     color: '#fff',
