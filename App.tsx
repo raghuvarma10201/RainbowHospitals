@@ -6,24 +6,24 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import {View, ActivityIndicator, StyleSheet, StatusBar} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
+import { View, ActivityIndicator, StyleSheet, StatusBar } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
 } from '@react-navigation/native-stack';
-import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import dayjs from 'dayjs';
 
-import {navigationRef} from './src/navigation/RootNavigation';
+import { navigationRef } from './src/navigation/RootNavigation';
 
 // ------- Screens -------
 import Login from './src/authentication/Login';
-import {AppProvider} from './src/context/AppContext';
+import { AppProvider } from './src/context/AppContext';
 import Toast from 'react-native-toast-message';
 import './src/i18n';
-import {I18nManager} from 'react-native';
+import { I18nManager } from 'react-native';
 import Splash from './src/pages/Splash';
 import Otp from './src/authentication/Otp';
 import Dashboard from './src/pages/Dashboard';
@@ -45,6 +45,7 @@ import { TimerProvider } from './src/context/TimeContext';
 import Registration from './src/authentication/Registration';
 import MyStatusBar from './src/components/StatusBar';
 import JitsiCall from './src/pages/JitsiCall';
+import { JitsiProvider } from './src/context/JitsiContext';
 
 if (I18nManager.isRTL) {
   I18nManager.allowRTL(false);
@@ -69,7 +70,7 @@ type AuthStackParamList = {
   Login: undefined;
   Otp: undefined;
   Registration: undefined;
- 
+
 };
 
 type MainStackParamList = {
@@ -88,7 +89,7 @@ type MainStackParamList = {
   Home: undefined;
   MyAppointments: undefined;
   MyAppointmentDetails: undefined;
-  JitsiCall: {roomName : string};
+  JitsiCall: { roomName: string };
   PayUWebView: {
     finalPayload: any;
     txnId: string;
@@ -97,15 +98,15 @@ type MainStackParamList = {
   };
 };
 
-export type {AuthStackParamList, MainStackParamList};
+export type { AuthStackParamList, MainStackParamList };
 
 // ------- Navigator instances -------
 const AuthStackNav = createNativeStackNavigator<AuthStackParamList>();
 const MainStackNav = createNativeStackNavigator<MainStackParamList>();
-const screenOptions: NativeStackNavigationOptions = {headerShown: false};
+const screenOptions: NativeStackNavigationOptions = { headerShown: false };
 
 export const AuthStack = React.memo(() => (
-  <AuthStackNav.Navigator screenOptions={screenOptions}> 
+  <AuthStackNav.Navigator screenOptions={screenOptions}>
     <AuthStackNav.Screen name="Login" component={Login} />
     <AuthStackNav.Screen name="Otp" component={Otp} />
     <AuthStackNav.Screen name="Registration" component={Registration} />
@@ -177,7 +178,7 @@ const App: React.FC = () => {
   }, []);
 
   // Stable value to avoid re‑renders of consumers
-  const authCtx = useMemo(() => ({isLoggedIn, setLoggedIn}), [isLoggedIn]);
+  const authCtx = useMemo(() => ({ isLoggedIn, setLoggedIn }), [isLoggedIn]);
 
   // Splash while booting
   if (booting) {
@@ -192,18 +193,20 @@ const App: React.FC = () => {
     <AuthContext.Provider value={authCtx}>
       <PaperProvider theme={theme}>
         <NavigationContainer ref={navigationRef}>
-          <TimerProvider>
           <MyStatusBar backgroundColor={'#3C2871'} />
-          {isLoggedIn ? (
-            <AppProvider>
-              <MainStack />
-            </AppProvider>
-          ) : (
-            <AppProvider>
-              <AuthStack />
-            </AppProvider>
-          )}
-          </TimerProvider>
+          <JitsiProvider>
+            <TimerProvider>
+              {isLoggedIn ? (
+                <AppProvider>
+                  <MainStack />
+                </AppProvider>
+              ) : (
+                <AppProvider>
+                  <AuthStack />
+                </AppProvider>
+              )}
+            </TimerProvider>
+          </JitsiProvider>
         </NavigationContainer>
       </PaperProvider>
       <Toast />

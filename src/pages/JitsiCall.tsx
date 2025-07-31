@@ -1,12 +1,13 @@
-import React, {useCallback, useRef} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
-import {JitsiMeeting} from '@jitsi/react-native-sdk';
-// import {useMeetingStore} from '../Context/meetingStore';
+import React, { useCallback, useRef } from 'react';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { JitsiMeeting } from '@jitsi/react-native-sdk';
+import { NativeModules } from 'react-native';
 
-const JitsiCall = ({route, navigation}: any) => {
+const { ScreenRecorder } = NativeModules;
+
+const JitsiCall = ({ route, navigation }: any) => {
   const jitsiMeeting = useRef(null);
-  const {roomName} = route.params;
-//   const setMinimized = useMeetingStore(s => s.setMinimized);
+  const { roomName } = route.params;
 
   const onReadyToClose = useCallback(() => {
     navigation.goBack();
@@ -21,7 +22,7 @@ const JitsiCall = ({route, navigation}: any) => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       {/* Jitsi meeting view */}
       <JitsiMeeting
         config={{
@@ -32,6 +33,7 @@ const JitsiCall = ({route, navigation}: any) => {
             'screensharing',
             'overflowmenu',
             'hangup',
+            'toggle-camera',
           ],
           whiteboard: {
             enabled: true,
@@ -44,41 +46,32 @@ const JitsiCall = ({route, navigation}: any) => {
           'fullscreen.enabled': false,
           'android.screensharing.enabled': true,
           'pip.enabled': true,
-          'ios.screensharing.enabled': true
+          'ios.screensharing.enabled': true,
         }}
         token="..."
         ref={jitsiMeeting}
         room={roomName}
         serverURL="https://dev.rb.vc.demos.im/"
-        style={{flex: 1}}
+        style={{ flex: 1 }}
       />
-
-      {/* Minimize button overlay */}
-      {/* <TouchableOpacity
-        style={styles.minimizeButton}
-        onPress={() => {
-          setMinimized(true);
-          // navigation.goBack();
-        }}>
-        <Text style={styles.minimizeText}>⤢</Text>
-      </TouchableOpacity> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  minimizeButton: {
+  recordButton: {
     position: 'absolute',
-    top: 50,
-    right: 20,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    padding: 10,
+    bottom: 40,
+    backgroundColor: '#ff3b30',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     borderRadius: 30,
-    zIndex: 10,
+    zIndex: 100,
+    elevation: 5,
   },
-  minimizeText: {
+  recordButtonText: {
     color: 'white',
-    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

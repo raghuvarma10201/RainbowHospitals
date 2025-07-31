@@ -116,4 +116,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    // implementation 'org.webrtc:google-webrtc:1.0.32006'
+    implementation 'org.jitsi:webrtc:124.0.0'
 }
