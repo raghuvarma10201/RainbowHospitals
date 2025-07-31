@@ -7,8 +7,9 @@ import Footer from '../components/Footer';
 
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { AuthStackParamList, MainStackParamList, useAuth } from '../../App';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthStackParamList, MainStackParamList } from '../navigation/types';
+import { useAuth } from '../context/AuthContext';
 
 
 

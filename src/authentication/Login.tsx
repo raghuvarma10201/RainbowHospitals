@@ -4,7 +4,6 @@ import { Button, Text, Checkbox } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { AuthStackParamList, useAuth } from '../../App';
 import { login } from '../services/auth'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,6 +11,8 @@ import { ToastService } from '../utils/ToastService';
 import Loader from '../components/Loader';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../navigation/types';
+import { useAuth } from '../context/AuthContext';
 
 const local_data = [
   {

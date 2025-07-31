@@ -32,8 +32,9 @@ import {
 import { fetchBranchesByRegionId } from '../services/Region/api';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { AuthStackParamList, MainStackParamList, useAuth } from '../../App';
 import Loader from '../components/Loader';
+import { AuthStackParamList, MainStackParamList } from '../navigation/types';
+import { useAuth } from '../context/AuthContext';
 
 const CELL_COUNT = 6;
 
