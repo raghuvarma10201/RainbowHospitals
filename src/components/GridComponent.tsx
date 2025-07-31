@@ -55,7 +55,7 @@ const PaginatedGrid: React.FC<ItemsProps> = ({items}) => {
   const renderPage = (page: any, pageIndex: any) => (
     <View key={pageIndex} style={styles.page}>
       {page.map((item: any) => (
-        <TouchableOpacity key={item.id}  onPress={() => navigateToDoctors(item.id)}>
+        <TouchableOpacity key={item.icon_image}  onPress={() => navigateToDoctors(item.id)}>
           <View style={styles.itemContainer}>
             <View
               style={[styles.iconBox, item.isSpecial && styles.specialItem]}>

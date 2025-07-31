@@ -37,7 +37,7 @@ const SpecialtySlider = ({
   }, [activeIndex]);
 
   const renderItem = ({item, index}: {item: any; index: number}) => (
-    <TouchableOpacity onPress={() => onTabPress(index,item.speciality_id)}>
+    <TouchableOpacity key={item.speciality_id} onPress={() => onTabPress(index,item.speciality_id)}>
       <Text
         style={[styles.tabText, index === activeIndex && styles.activeTabText]}>
         {item.name}
@@ -55,8 +55,8 @@ const SpecialtySlider = ({
       <FlatList
         ref={flatListRef}
         data={specialties}
-        scrollEnabled={false}
-        keyExtractor={(item, index) => index.toString()}
+        scrollEnabled={true}
+        keyExtractor={(item, index) => 'cqq'+''+index.toString()}
         renderItem={renderItem}
         horizontal
         showsHorizontalScrollIndicator={false}

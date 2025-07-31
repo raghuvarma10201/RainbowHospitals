@@ -79,7 +79,7 @@ export const DynamicWeekWithMonth: React.FC<Props> = ({ sessions, onDateClick })
 
   const renderDay = (item: SessionDay) => (
     <TouchableOpacity
-      key={item.fullDate}
+      
       style={styles.dayBox}
       onPress={() =>
         onDateClick?.(item.session.SessionDate, item.session.SessionDefinitionUID1)

@@ -120,18 +120,15 @@ const Otp: React.FC = () => {
         };
 
         const response = await VerifyOTP(payload);
-
         if (response && response.status === 200) {
-          ToastService.error('Success', response.data.message || 'OTP verified successfully');
+          ToastService.success('Success', response.data.message || 'OTP verified successfully');
           let authResponse;
           try {
             authResponse = await authenticateUser({ MobileNo: phoneNumber });
           } catch (err: any) {
             authResponse = err.response; // Axios puts the 4xx/5xx response here
           }
-          console.log(authResponse);
           if (authResponse && authResponse.status == 200) {
-            console.log(response);
             const token = response?.data?.token;
             await AsyncStorage.multiSet([
               ['accessToken', token],

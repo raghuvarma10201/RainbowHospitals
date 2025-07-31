@@ -43,7 +43,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <View style={styles.mainContainer}>
-      <Header showLocation title={'home'} />
+      <Header showLocation showBack={false} title={'home'} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
 
         <View style={styles.container}>

@@ -38,23 +38,25 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
   useEffect(() => {
     const fetchPhoneNumber = async () => {
       const storedNumber = await AsyncStorage.getItem('mobileNumber');
+      getFamilyMembers(storedNumber);
       setPhoneNumber(storedNumber);
     };
     fetchPhoneNumber();
-    getFamilyMembers();
+    
   }, []);
 
-  const getFamilyMembers = async () => {
+  const getFamilyMembers = async (storedNumber : any) => {
     try {
       setLoading(true);
       const payload = {
-        MobileNo: phoneNumber,
+        MobileNo: storedNumber,
       }
       const response = await fetchFamilyMembers(payload);
+
       if (response && response.status == 200) {
         setLoading(false);
         setFamilyMembers(response.data);
-        console.log(response.data);
+        console.log("Family-----------------------------------",response.data);
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -81,14 +83,14 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
       const response = await fetchConsultationFee(payload);
       console.log(response);
       if (response && response.status == 200) {
-        setConsultationFee(response.data.ConsultationFee);
+        setConsultationFee(response.data.ConsultationFee ? response.data.ConsultationFee : response.data.RegistrationFee);
         if (appointment) {
           updateAppointment({
             ...appointment,
             mrn: mrn,
             Visittype: 'First Visit',
             careprovider_code: doctor.new_doctor_UID,
-            price: response.data.ConsultationFee,
+            price: response.data.ConsultationFee ? response.data.ConsultationFee : response.data.RegistrationFee,
             status: appointment.status ?? 'BOOKING', // Replace 'PENDING' with a valid BookingStatus default if needed
             comment: appointment.comment ?? null // Ensure comment is string or null
           });

@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   Searchbar,
@@ -17,15 +17,15 @@ import {
   Modal,
   Portal,
 } from 'react-native-paper';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../App';
-import {getDoctors, getSpecialities} from '../services/common';
-import {ToastService} from '../utils/ToastService';
-import {IMG_BASE_URL} from '../utils/environment';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../../App';
+import { getDoctors, getSpecialities } from '../services/common';
+import { ToastService } from '../utils/ToastService';
+import { IMG_BASE_URL } from '../utils/environment';
 import { useApp } from '../context/AppContext';
 
 const local_data = [
@@ -60,9 +60,9 @@ const doctors = [
   },
 ];
 
-const DoctorsList: React.FC<any> = ({route}) => {
+const DoctorsList: React.FC<any> = ({ route }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {specialityId, appointmentType} = route.params;
+  const { specialityId, appointmentType } = route.params;
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
   const banners = [
@@ -109,9 +109,9 @@ const DoctorsList: React.FC<any> = ({route}) => {
   };
   return (
     <View style={styles.mainContainer}>
-         <Header showLocation title={undefined} />
+      <Header showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-     
+
         <View style={styles.container}>
           <Image
             source={require('../../assets/images/doctors-list-img.png')}
@@ -121,7 +121,7 @@ const DoctorsList: React.FC<any> = ({route}) => {
             <View style={styles.searchBlock}>
               <TextInput
                 mode="flat"
-                style={[styles.searchFormInput, {color: 'white'}]}
+                style={[styles.searchFormInput, { color: 'white' }]}
                 placeholder="search"
                 value={search}
                 onChangeText={setSearch}
@@ -164,41 +164,41 @@ const DoctorsList: React.FC<any> = ({route}) => {
           </View>
           <View style={styles.doctorsListContainer}>
             {doctors.map((doctor, index) => (
-              <TouchableOpacity onPress={() => navigation.navigate('DoctorSlots', { doctorId: doctor.id, appointmentType: 'video' })}>
-              <View key={index} style={styles.doctorContainer}>
-                <Image
-                  source={
-                    doctor.small_image
-                      ? {uri: `${IMG_BASE_URL}${doctor.small_image}`}
-                      : {
+              <TouchableOpacity key={index} onPress={() => navigation.navigate('DoctorSlots', { doctorId: doctor.id, appointmentType: 'video' })}>
+                <View  style={styles.doctorContainer}>
+                  <Image
+                    source={
+                      doctor.small_image
+                        ? { uri: `${IMG_BASE_URL}${doctor.small_image}` }
+                        : {
                           uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
                         }
-                  }
-                  style={styles.doctorImg}
-                />
-                <View>
-                  <Text style={[styles.docName, {color: '#4CC2BF', fontFamily:'ProximaNovaA-Semibold', marginBottom:2}]}>
-                    {doctor?.name}
-                  </Text>
-                  <Text style={[styles.docName, {fontSize: 11, fontFamily:'ProximaNovaA-Regular',}]}>
-                    {doctor?.designation}
-                  </Text>
-                  <Text
-                    style={[styles.docName, {fontSize: 11, fontFamily:'ProximaNovaA-Regular',}]}
-                    numberOfLines={2}
-                    ellipsizeMode="tail">
-                    {doctor?.doctor_specialities[0].speciality.name}
-                  </Text>
-                  <Text
-                    style={[styles.docName, {fontSize: 12, fontFamily:'ProximaNovaA-Regular', color: '#4CC2BF', marginTop:2}]}>
-                    {`Experience 15 Years`}
-                  </Text>
-                  <TouchableOpacity
-                    style={[styles.payBtn, {backgroundColor: '#3C2871'}]}>
-                    <Text style={styles.payBtnTxt}>Book Appointment</Text>
-                  </TouchableOpacity>
+                    }
+                    style={styles.doctorImg}
+                  />
+                  <View>
+                    <Text style={[styles.docName, { color: '#4CC2BF', fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }]}>
+                      {doctor?.name}
+                    </Text>
+                    <Text style={[styles.docName, { fontSize: 11, fontFamily: 'ProximaNovaA-Regular', }]}>
+                      {doctor?.designation}
+                    </Text>
+                    <Text
+                      style={[styles.docName, { fontSize: 11, fontFamily: 'ProximaNovaA-Regular', }]}
+                      numberOfLines={2}
+                      ellipsizeMode="tail">
+                      {doctor?.doctor_specialities[0].speciality.name}
+                    </Text>
+                    <Text
+                      style={[styles.docName, { fontSize: 12, fontFamily: 'ProximaNovaA-Regular', color: '#4CC2BF', marginTop: 2 }]}>
+                      {`Experience ${doctor?.experience ?? '0'} Years`}
+                    </Text>
+                    <TouchableOpacity
+                      style={[styles.payBtn, { backgroundColor: '#3C2871' }]}>
+                      <Text style={styles.payBtnTxt}>Book Appointment</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
               </TouchableOpacity>
             ))}
           </View>
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   doctorsListContainer: {
-   paddingHorizontal:15,
+    paddingHorizontal: 15,
   },
   doctorContainer: {
     width: '70%',
@@ -315,14 +315,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: w * 0.05,
   },
- 
+
   doctorImg: {
     height: h * 0.12,
     width: h * 0.12,
     resizeMode: 'cover',
     borderRadius: w,
-   borderWidth:1,
-   borderColor:'#E2EDEC',
+    borderWidth: 1,
+    borderColor: '#E2EDEC',
   },
   docName: {
     fontSize: 11,
@@ -330,17 +330,17 @@ const styles = StyleSheet.create({
 
   },
   payBtn: {
-  paddingVertical:5,
-  paddingHorizontal:10,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius:50,
+    borderRadius: 50,
     maxWidth: w * 0.4,
-    marginTop:10,
+    marginTop: 10,
   },
   payBtnTxt: {
-    fontSize: 12, 
+    fontSize: 12,
     color: '#fff',
-    fontFamily:'ProximaNovaA-Regular',
+    fontFamily: 'ProximaNovaA-Regular',
   },
 });
