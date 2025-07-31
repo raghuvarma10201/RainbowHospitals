@@ -16,7 +16,6 @@ import Highlight from '../components/HighlightingSlider';
 import SpecialtyTabs from '../components/SpecialitySlider';
 import SpecialtySlider from '../components/SpecialitySlider';
 import { doctorData } from '../Constants/data';
-import { MainStackParamList, useAuth } from '../../App';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import PaginatedGrid from '../components/GridComponent';
@@ -24,6 +23,8 @@ import { ToastService } from '../utils/ToastService';
 import { useApp } from '../context/AppContext';
 import { getDoctors, getSpecialities } from '../services/common';
 import Loader from '../components/Loader';
+import { MainStackParamList } from '../navigation/types';
+import { useAuth } from '../context/AuthContext';
 
 
 
