@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import React, {useState, useMemo, useEffect} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 type Session = {
   SessionDate: string;
@@ -26,8 +26,8 @@ function getMonthDisplayForChunk(chunk: SessionDay[]): string {
   const start = chunk[0].dateObj;
   const end = chunk[chunk.length - 1].dateObj;
 
-  const startMonth = start.toLocaleDateString('en-US', { month: 'short' });
-  const endMonth = end.toLocaleDateString('en-US', { month: 'short' });
+  const startMonth = start.toLocaleDateString('en-US', {month: 'short'});
+  const endMonth = end.toLocaleDateString('en-US', {month: 'short'});
 
   const startYear = start.getFullYear();
   const endYear = end.getFullYear();
@@ -41,23 +41,37 @@ function getMonthDisplayForChunk(chunk: SessionDay[]): string {
   }
 }
 
-
-export const DynamicWeekWithMonth: React.FC<Props> = ({ sessions, onDateClick }) => {
-  const [selectedDate, setSelectedDate] = useState((new Date(sessions[0]?.SessionDate)).toISOString().split('T')[0])
+export const DynamicWeekWithMonth: React.FC<Props> = ({
+  sessions,
+  onDateClick,
+}) => {
   const sortedSessions = useMemo(() => {
     return [...sessions]
-      .sort((a, b) => new Date(a.SessionDate).getTime() - new Date(b.SessionDate).getTime())
+      .filter(s => s.SessionDate && !isNaN(new Date(s.SessionDate).getTime()))
+      .sort(
+        (a, b) =>
+          new Date(a.SessionDate).getTime() - new Date(b.SessionDate).getTime(),
+      )
       .map(s => {
         const date = new Date(s.SessionDate);
         return {
           fullDate: date.toISOString().split('T')[0],
-          day: date.toLocaleDateString('en-US', { weekday: 'short' }),
+          day: date.toLocaleDateString('en-US', {weekday: 'short'}),
           date: date.getDate(),
           dateObj: date,
           session: s,
         };
       });
   }, [sessions]);
+
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [pageIndex, setPageIndex] = useState(0);
+
+  useEffect(() => {
+    if (sortedSessions.length > 0) {
+      setSelectedDate(sortedSessions[0].fullDate);
+    }
+  }, [sortedSessions]);
 
   const chunkedSessions: SessionDay[][] = useMemo(() => {
     const chunks: SessionDay[][] = [];
@@ -67,7 +81,6 @@ export const DynamicWeekWithMonth: React.FC<Props> = ({ sessions, onDateClick })
     return chunks;
   }, [sortedSessions]);
 
-  const [pageIndex, setPageIndex] = useState(0);
   const currentChunk = chunkedSessions[pageIndex] || [];
 
   const handlePrev = () => {
@@ -80,17 +93,28 @@ export const DynamicWeekWithMonth: React.FC<Props> = ({ sessions, onDateClick })
 
   const renderDay = (item: SessionDay) => (
     <TouchableOpacity
-      
       style={styles.dayBox}
-      onPress={() =>
-      {
-        setSelectedDate((new Date(item.session.SessionDate)).toISOString().split('T')[0])
-        onDateClick?.(item.session.SessionDate, item.session.SessionDefinitionUID1)
-      }
-      }
-    >
-      <Text style={[styles.dayText,{color: (new Date(item.session.SessionDate)).toISOString().split('T')[0] == selectedDate ? '#4CC2BF' : '#4B3E75'}]}>{item.day}</Text>
-      <Text style={[styles.dateText,{color: (new Date(item.session.SessionDate)).toISOString().split('T')[0] == selectedDate ? '#4CC2BF' : '#4B3E75'}]}>{item.date}</Text>
+      onPress={() => {
+        setSelectedDate(item.fullDate);
+        onDateClick?.(
+          item.session.SessionDate,
+          item.session.SessionDefinitionUID1,
+        );
+      }}>
+      <Text
+        style={[
+          styles.dayText,
+          {color: item.fullDate === selectedDate ? '#4CC2BF' : '#4B3E75'},
+        ]}>
+        {item.day}
+      </Text>
+      <Text
+        style={[
+          styles.dateText,
+          {color: item.fullDate === selectedDate ? '#4CC2BF' : '#4B3E75'},
+        ]}>
+        {item.date}
+      </Text>
     </TouchableOpacity>
   );
 
@@ -99,21 +123,29 @@ export const DynamicWeekWithMonth: React.FC<Props> = ({ sessions, onDateClick })
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handlePrev} disabled={pageIndex === 0}>
-          <Text style={[styles.arrow, pageIndex === 0 && styles.disabledArrow]}>{'<'}</Text>
+          <Text style={[styles.arrow, pageIndex === 0 && styles.disabledArrow]}>
+            {'<'}
+          </Text>
         </TouchableOpacity>
         <Text style={styles.title}>
           {getMonthDisplayForChunk(currentChunk)}
         </Text>
-        <TouchableOpacity onPress={handleNext} disabled={pageIndex >= chunkedSessions.length - 1}>
-          <Text style={[styles.arrow, pageIndex >= chunkedSessions.length - 1 && styles.disabledArrow]}>{'>'}</Text>
+        <TouchableOpacity
+          onPress={handleNext}
+          disabled={pageIndex >= chunkedSessions.length - 1}>
+          <Text
+            style={[
+              styles.arrow,
+              pageIndex >= chunkedSessions.length - 1 && styles.disabledArrow,
+            ]}>
+            {'>'}
+          </Text>
         </TouchableOpacity>
       </View>
 
       {/* Sessions Grid */}
       {currentChunk.length > 0 ? (
-        <View style={styles.weekRow}>
-          {currentChunk.map(renderDay)}
-        </View>
+        <View style={styles.weekRow}>{currentChunk.map(renderDay)}</View>
       ) : (
         <Text style={styles.noSessionsText}>No sessions available</Text>
       )}
@@ -148,14 +180,13 @@ const styles = StyleSheet.create({
   weekRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 2
+    gap: 2,
   },
   dayBox: {
     alignItems: 'center',
     padding: 10,
     borderRadius: 8,
     width: 45,
-    // backgroundColor: '#E0F7FA',
   },
   dayText: {
     fontSize: 12,
