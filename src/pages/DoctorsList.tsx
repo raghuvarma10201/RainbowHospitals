@@ -22,11 +22,11 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../../App';
 import { getDoctors, getSpecialities } from '../services/common';
 import { ToastService } from '../utils/ToastService';
 import { IMG_BASE_URL } from '../utils/environment';
 import { useApp } from '../context/AppContext';
+import { MainStackParamList } from '../navigation/types';
 
 const local_data = [
   {
@@ -36,27 +36,6 @@ const local_data = [
   {
     value: '2',
     lable: 'location2',
-  },
-];
-
-const doctors = [
-  {
-    name: 'Dr. Ramesh K',
-    designation: 'Senior Consultant',
-    speciality: 'Neurology',
-    image: require('../../assets/images/doc-img.png'),
-  },
-  {
-    name: 'Dr. Sirisha R',
-    designation: 'Senior Consultant',
-    speciality: 'Cardiology',
-    image: require('../../assets/images/doc-img-2.jpg'),
-  },
-  {
-    name: 'Dr. Prashant B',
-    designation: 'Senior Consultant',
-    speciality: 'Pulmonology',
-    image: require('../../assets/images/doc-img-3.jpg'),
   },
 ];
 

@@ -5,8 +5,13 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../../App';
+
 import { useJitsi } from '../context/JitsiContext';
+import { useApp } from '../context/AppContext';
+import { getAppointments } from '../services/common';
+import { ToastService } from '../utils/ToastService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MainStackParamList } from '../navigation/types';
 
 const MyAppointments: React.FC = () => {
   const w = Dimensions.get('window').width;
@@ -16,8 +21,14 @@ const MyAppointments: React.FC = () => {
   const navigateTo = (path: keyof MainStackParamList, params: any) => {
     navigation.navigate(path, params);
   };
-
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { branch } = useApp();
   const { showJitsi } = useJitsi();
+
+  useEffect(() => {
+    loadAppointments();
+  }, []);
 
   const startVideoCall = () => {
     showJitsi({
@@ -31,7 +42,29 @@ const MyAppointments: React.FC = () => {
       },
     });
   };
-
+  const loadAppointments = async () => {
+    try {
+      const payload = {
+        patientId: AsyncStorage.getItem('mrn'),
+        startdate: "2025-06-18"
+      }
+      setLoading(true);
+      const response = await getAppointments(payload);
+      console.log(response);
+      if (response && response.status == 200) {
+        setLoading(false);
+        setAppointments(response.data.doctors);
+      } else {
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to load Doctors:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
 
     <View style={styles.mainContainer}>
@@ -39,9 +72,9 @@ const MyAppointments: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <View style={styles.doctorsListContainer}>
-            <TouchableOpacity style={styles.doctorItem} 
-            onPress={() => navigation.navigate('MyAppointmentDetails')}
-            // onPress={() => navigation.navigate('JitsiCall',{roomName: 'test'})}
+            <TouchableOpacity style={styles.doctorItem}
+              //onPress={() => navigation.navigate('MyAppointmentDetails')}
+              onPress={() => navigation.navigate('JitsiCall', { roomName: 'test' })}
             >
               <Image source={require('../../assets/images/doc-img-2.png')}
                 style={styles.doctorImg}
