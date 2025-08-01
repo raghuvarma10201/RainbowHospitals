@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -44,6 +44,7 @@ const screen_width = Dimensions.get('window').width;
 
 const AppointmentChat: React.FC<any> = ({ route }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const scrollViewRef = useRef<ScrollView>(null);
   const {bookingId, doctor} = route.params;
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState([
@@ -121,7 +122,10 @@ const AppointmentChat: React.FC<any> = ({ route }) => {
       if (response && response.status == 200) {
         console.log('message sent', response);
         setInputText('');
+        setMediaFile({ name: '', uri: '', type: '' })
+        setTypeOfMedia('')
         fetchChat();
+        scrollViewRef.current?.scrollToEnd({ animated: true });
       } else {
         //setLoading(false);
         ToastService.error('Error', response.message);
@@ -248,13 +252,16 @@ const AppointmentChat: React.FC<any> = ({ route }) => {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <CommonHeader showLocation={false} title={doctor || 'Doctor'} />
-      <ScrollView style={styles.messagesContainer}>
+      <ScrollView style={styles.messagesContainer}
+  ref={scrollViewRef}
+  onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}>
         {messages?.map((msg, index) => (
           <View
             key={index}
             style={[
               styles.messageBubble,
               msg.sender === 'Patient' ? styles.userBubble : styles.aiBubble,
+              index === messages.length - 1 && { marginBottom: screen_height * 0.03 },
             ]}>
             {msg?.media?.length
               ? msg?.media?.map((file, index) =>
