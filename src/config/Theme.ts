@@ -1,5 +1,5 @@
 // src/config/theme.ts
-import { DefaultTheme } from 'react-native-paper';
+import {DefaultTheme} from 'react-native-paper';
 
 export const AppTheme = {
   ...DefaultTheme,
