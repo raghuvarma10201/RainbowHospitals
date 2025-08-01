@@ -29,7 +29,7 @@ export type MainStackParamList = {
   Home: undefined;
   MyAppointments: undefined;
   MyAppointmentDetails: {appointmentData : any};
-  AppointmentChat: {bookingId : any};
+  AppointmentChat: {bookingId : any, doctor: any};
   JitsiCall: { roomName: string };
   PayUWebView: {
     finalPayload: any;

@@ -37,13 +37,14 @@ import { fetchAppointmentChat, sendAppointmentChat } from '../services/common';
 import { ToastService } from '../utils/ToastService';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/types';
+import CommonHeader from '../components/Header';
 const audioRecorderPlayer = new AudioRecorderPlayer();
 const screen_height = Dimensions.get('window').height;
 const screen_width = Dimensions.get('window').width;
 
 const AppointmentChat: React.FC<any> = ({ route }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {bookingId} = route.params;
+  const {bookingId, doctor} = route.params;
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState([
     { sender: 'Doctor', message: 'Hi', media: [{ file_path: '' }] },
@@ -246,6 +247,7 @@ const AppointmentChat: React.FC<any> = ({ route }) => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <CommonHeader showLocation={false} title={doctor || 'Doctor'} />
       <ScrollView style={styles.messagesContainer}>
         {messages.reverse().map((msg, index) => (
           <View
