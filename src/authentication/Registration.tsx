@@ -18,17 +18,18 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 const gender_data = [
   {
     value: '1',
-    lable: 'male',
+    label: 'male',
 
   },
   {
     value: '2',
-    lable: 'Female',
+    label: 'Female',
 
   },
 ];
 
-const countries =[
+
+const countries_data =[
   { label: 'India', value: 'IN' },
   { label: 'United States', value: 'US' },
   { label: 'United Kingdom', value: 'UK' },
@@ -39,6 +40,10 @@ const countries =[
 const LoginSchema = Yup.object({
   mobileNumber: Yup.string().required('Please enter valid mobile number'),
   dob: Yup.string().required('Date of Birth is required'),
+  title: Yup.string().required('Title is required'),
+  firstName: Yup.string().required('First Name is required'),
+  lastName: Yup.string().required('Last Name is required'),
+  email: Yup.string().required('Email is required'),
 });
 const Registration: React.FC = () => {
   const [checked, setChecked] = useState(false);
@@ -54,25 +59,19 @@ const Registration: React.FC = () => {
   };
  // DateTimePickerModal End
 
-
-
-
-
-
   type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
   const navigation = useNavigation<NavigationProp>();
-  const [country, setCountry] = useState('1');
-  const [gender, setGender] = useState('1');
+  const [country, setCountry] = useState('');
+  const [gender, setGender] = useState('');
   const { setLoggedIn } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const formik = useFormik({
 
     initialValues: {
-       mobileNumber: '',
-       dob: '',
-      
+       mobileNumber: '', title:'', firstName:'', lastName:'', email:'',        
       },
+
     validationSchema: LoginSchema,
     onSubmit: async (values, { setSubmitting, setErrors, setFieldError }) => {
       setLoading(true);
@@ -95,8 +94,11 @@ const Registration: React.FC = () => {
         console.error('Login failed', e);
         // Basic error surface – adapt as needed
         ToastService.error('Invalid credentials', 'Please try again');
-        setErrors({ mobileNumber: 'Invalid credentials' });
-        setErrors({ mobileNumber: 'Invalid credentials' });
+        // setErrors({ mobileNumber: 'Invalid credentials' });
+        setErrors({ title: 'Invalid credentials' });
+        setErrors({ firstName: 'Invalid credentials' });
+        setErrors({ lastName: 'Invalid credentials' });
+        setErrors({ email: 'Invalid credentials' });
       } finally {
         setSubmitting(false);
         setLoading(false);
@@ -117,14 +119,16 @@ const Registration: React.FC = () => {
         <View style={styles.formRow}>
            <Text style={styles.formLabel}>Title *</Text>
             <TextInput style={styles.formInput}
-              keyboardType="numeric"          // shows numeric keyboard
+              keyboardType="default"          // shows numeric keyboard
               maxLength={10}                  
               placeholder="Enter Title"
-              onChangeText={formik.handleChange('Title')}
-              onBlur={formik.handleBlur('mobileNumber')}
-              value={formik.values.mobileNumber}
-            />
+              onChangeText={formik.handleChange('title')}
+              onBlur={formik.handleBlur('title')}
+              value={formik.values.title}
+            />   
+              {formik.touched.title && formik.errors.title && <Text style={styles.errorMessage}>{formik.errors.title}</Text>}     
         </View>
+    
 
         <View style={styles.formRow}>
            <Text style={styles.formLabel}>First Name *</Text>
@@ -134,8 +138,9 @@ const Registration: React.FC = () => {
               placeholderTextColor="#000"
              onChangeText={formik.handleChange('firstName')}
              onBlur={formik.handleBlur('firstName')}
-                //  value={formik.values.firstName}
+             value={formik.values.firstName}
              />
+               {formik.touched.firstName && formik.errors.firstName && <Text style={styles.errorMessage}>{formik.errors.firstName}</Text>} 
         </View>
 
         <View style={styles.formRow}>
@@ -146,9 +151,9 @@ const Registration: React.FC = () => {
               placeholderTextColor="#000"
              onChangeText={formik.handleChange('lastName')}
              onBlur={formik.handleBlur('lastName')}
-       
-                //  value={formik.values.firstName}
+             value={formik.values.lastName}
            />
+             {formik.touched.lastName && formik.errors.lastName && <Text style={styles.errorMessage}>{formik.errors.lastName}</Text>} 
         </View>
 
         <View style={styles.formRow}>
@@ -160,8 +165,9 @@ const Registration: React.FC = () => {
               placeholderTextColor="#000"
              onChangeText={formik.handleChange('email')}
              onBlur={formik.handleBlur('email')}
-            //  value={formik.values.email}
+            value={formik.values.email}
              />
+               {formik.touched.email && formik.errors.email && <Text style={styles.errorMessage}>{formik.errors.email}</Text>} 
         </View>
 
         <View style={styles.formRow}>
@@ -172,12 +178,12 @@ const Registration: React.FC = () => {
               placeholderStyle={styles.placeholderCountry}
               maxHeight={200}
               value={country}
-              data={countries}
+              data={countries_data}
               valueField="value"
-              labelField="lable"
+              labelField="label"
               placeholder="Select country"
               containerStyle={styles.dropdownList}
-              activeColor="#000"
+              activeColor="#fff"
               onChange={e => setCountry(e.value)}
             />       
         </View>
@@ -198,31 +204,46 @@ const Registration: React.FC = () => {
         </View>
 
         <View style={styles.formRow}>
-           <Text style={styles.formLabel}>Gender *</Text>
+           <Text style={styles.formLabel}>Gender </Text>
            <Dropdown
               style={styles.dropdownSelect}
-              selectedTextStyle={styles.selectedTextContry}
+              selectedTextStyle={styles.selectedTextGender}
               placeholderStyle={styles.placeholderCountry}
               maxHeight={200}
               value={gender}
               data={gender_data}
               valueField="value"
-              labelField="lable"
+              labelField="label"
               placeholder="Select Gender"
               containerStyle={styles.dropdownList}
-              activeColor="#000"
+              activeColor="#fff"
               onChange={e => setGender(e.value)}
             />
         </View>
+        
 
         <View style={styles.formRow}>
            <Text style={styles.formLabel}>Address</Text>
-            <TextInput style={styles.formInput} />
+            <TextInput style={styles.formInput}
+                  keyboardType="default"                  
+                  placeholder="Enter Address"
+                   placeholderTextColor="#000"
+                  onChangeText={formik.handleChange('address')}
+                  onBlur={formik.handleBlur('address')}
+                   //  value={formik.values.email}
+                  />
         </View>
 
         <View style={styles.formRow}>
            <Text style={styles.formLabel}>Pincode</Text>
-            <TextInput style={[styles.formInput, {color:'#000',}]} />
+            <TextInput style={styles.formInput}
+             keyboardType="default"                  
+             placeholder="Enter Pincode"
+              placeholderTextColor="#000"
+             onChangeText={formik.handleChange('pincode')}
+             onBlur={formik.handleBlur('pincode')}
+              //  value={formik.values.email}
+              />
         </View>
 
         <View style={styles.formRow}>
@@ -264,9 +285,10 @@ const Registration: React.FC = () => {
               value={formik.values.mobileNumber}
             />
           </View> */}
-          {formik.touched.mobileNumber && formik.errors.mobileNumber && <Text style={styles.errorMessage}>{formik.errors.mobileNumber}</Text>}
+          {/* {formik.touched.mobileNumber && formik.errors.mobileNumber && <Text style={styles.errorMessage}>{formik.errors.mobileNumber}</Text>} */}
+        
           <TouchableOpacity style={styles.primaryBt} onPress={() => formik.handleSubmit()}>
-            <Text style={styles.primaryBtText}>Get OTP</Text>
+            <Text style={styles.primaryBtText}>Submit</Text>
           </TouchableOpacity>
         </View>
 
@@ -287,7 +309,7 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     padding: 0,
-    paddingBottom: 100,
+    paddingBottom:20,
   },
 
   container: {
@@ -334,7 +356,7 @@ const styles = StyleSheet.create({
   },
 
   errorMessage: {
-    color: '#FFACAC',
+    color: '#FF0000',
     marginTop: 0,
     marginBottom: 5,
     fontSize: 13,
@@ -437,7 +459,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Regular',
   },
   selectedTextContry: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#000',
     fontFamily: 'ProximaNovaA-Regular',
   },
@@ -448,7 +470,20 @@ const styles = StyleSheet.create({
     padding: 0,
     textAlign: 'left',
     fontFamily: 'ProximaNovaA-Regular',
-   backgroundColor:'#000',
-
+   fontSize:14,
+   color:'#000',
   },
+
+
+
+
+
+
+  selectedTextGender: {
+    fontSize: 14,
+    color: '#000',
+    fontFamily: 'ProximaNovaA-Regular',
+  },
+
+
 });
