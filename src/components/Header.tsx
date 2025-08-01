@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 15,
         paddingVertical: 10,
-        marginTop: Platform.OS == 'android' ? StatusBar.currentHeight : 0
+        // marginTop: Platform.OS == 'android' ? StatusBar.currentHeight : 0
     },
 
 

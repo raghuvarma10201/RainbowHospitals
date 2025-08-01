@@ -1,4 +1,3 @@
-// src/components/StatusBar.tsx
 import React from 'react';
 import {
   StatusBar,
@@ -6,6 +5,7 @@ import {
   View,
   StyleSheet,
   StatusBarStyle,
+  SafeAreaView
 } from 'react-native';
 
 interface MyStatusBarProps {
@@ -17,20 +17,24 @@ const MyStatusBar: React.FC<MyStatusBarProps> = ({
   backgroundColor,
   barStyle = 'light-content',
 }) => {
-  return (
-    <View style={[styles.statusBar, { backgroundColor }]}>
-      <StatusBar
-        translucent
-        backgroundColor={backgroundColor}
-        barStyle={barStyle}
-      />
+  return Platform.OS === 'ios' ? (
+    <SafeAreaView style={[styles.iosStatusBar, { backgroundColor }]}>
+      <StatusBar translucent backgroundColor={backgroundColor} barStyle={barStyle} />
+    </SafeAreaView>
+  ) : (
+    <View style={[styles.androidStatusBar, { backgroundColor }]}>
+      <StatusBar translucent backgroundColor={backgroundColor} barStyle={barStyle} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  statusBar: {
-    height: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  iosStatusBar: {
+    zIndex: 10,
+  },
+  androidStatusBar: {
+    height: StatusBar.currentHeight,
+    zIndex: 10,
   },
 });
 
