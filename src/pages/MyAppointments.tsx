@@ -75,8 +75,8 @@ const MyAppointments: React.FC = () => {
               <TouchableOpacity
                 key={index}
                 style={styles.doctorItem}
-                // onPress={() => navigation.navigate('MyAppointmentDetails', { appointmentData: appointment })}
-                onPress={() => startVideoCall()}
+                onPress={() => navigation.navigate('MyAppointmentDetails', { appointmentData: appointment })}
+                //onPress={() => startVideoCall()}
               >
                 <Image
                   source={
