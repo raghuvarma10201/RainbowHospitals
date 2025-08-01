@@ -16,6 +16,7 @@ import {
   AppointmentConfirmed,
 } from '../pages';
 import {Login, Otp, Registration} from '../authentication';
+import AppointmentChat from '../pages/AppointmentChat';
 
 export const routes = {
   Login: 'Login',
@@ -36,6 +37,7 @@ export const routes = {
   Home: 'Home',
   MyAppointments: 'MyAppointments',
   MyAppointmentDetails: 'MyAppointmentDetails',
+  AppointmentChat : 'AppointmentChat',
   JitsiCall: 'JitsiCall',
   PayUWebView: 'PayUWebView',
 };
@@ -60,6 +62,7 @@ export const app_screens = [
   {name: routes.MyAppointments, component: MyAppointments},
   {name: routes.PayUWebView, component: PayUWebView},
   {name: routes.MyAppointmentDetails, component: MyAppointmentDetails},
+  {name: routes.AppointmentChat, component: AppointmentChat},
   {name: routes.VaccinesPediatric, component: VaccinesPediatric},
   {name: routes.AppointmentConfirmed, component: AppointmentConfirmed},
 ];
