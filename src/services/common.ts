@@ -132,6 +132,18 @@ export const fetchAppointmentChat = async (BookingId : any) => {
     throw error;
   }
 };
+export const sendAppointmentChat = async (payload: any) => {
+  try {
+    const response = await api.post('/addAppointmentMessage', payload, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 export const fetchSettings = async () => {
   try {
     const response = await api.get('/getSetting');

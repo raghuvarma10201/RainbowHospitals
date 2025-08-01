@@ -103,7 +103,7 @@ const MyAppointmentDetails: React.FC<any> = ({ route }) => {
               <Text style={styles.payBtnTxt}>Reschedule</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.chatBtn}>
+          <TouchableOpacity style={styles.chatBtn} onPress={() => navigation.navigate('AppointmentChat', { bookingId: appointmentData.appointmentnumber })}>
             <Image source={require('../../assets/images/chat-icon.png')} style={styles.chatIcon} />
           </TouchableOpacity>
         </View>

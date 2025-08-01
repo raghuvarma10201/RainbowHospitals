@@ -16,6 +16,7 @@ import SlotConfirmation from '../pages/SlotConfirmation';
 import VaccinesPediatric from '../pages/VaccinesPediatric';
 import AppointmentConfirmed from '../pages/AppointmentConfirmed';
 import MyAppointmentDetails from '../pages/MyAppointmentDetails';
+import AppointmentChat from "../pages/AppointmentChat";
 
 const MainStackNav = createNativeStackNavigator<MainStackParamList>();
 
@@ -34,6 +35,7 @@ export const MainStack = React.memo(() => (
     <MainStackNav.Screen name="MyAppointments" component={MyAppointments} />
     <MainStackNav.Screen name="PayUWebView" component={PayUWebView} />
     <MainStackNav.Screen name="MyAppointmentDetails" component={MyAppointmentDetails} />
+    <MainStackNav.Screen name="AppointmentChat" component={AppointmentChat} />
     {/* <MainStackNav.Screen name="JitsiCall" component={JitsiCall} /> */}
     <MainStackNav.Screen name="VaccinesPediatric" component={VaccinesPediatric} />
     <MainStackNav.Screen name="AppointmentConfirmed" component={AppointmentConfirmed} />

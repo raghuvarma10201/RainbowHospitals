@@ -29,6 +29,7 @@ export type MainStackParamList = {
   Home: undefined;
   MyAppointments: undefined;
   MyAppointmentDetails: {appointmentData : any};
+  AppointmentChat: {bookingId : any};
   JitsiCall: { roomName: string };
   PayUWebView: {
     finalPayload: any;

@@ -14,7 +14,7 @@ import {
   Linking,
   Dimensions,
 } from 'react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { greenColor, purpuleColor, whiteColor } from '../Constants/Constant';
 import { RootStackParamList } from '../utils/types';
 
@@ -33,16 +33,17 @@ import {
   PlayBackType,
 } from 'react-native-audio-recorder-player';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import { fetchAppointmentChat } from '../services/common';
+import { fetchAppointmentChat, sendAppointmentChat } from '../services/common';
 import { ToastService } from '../utils/ToastService';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../navigation/types';
 const audioRecorderPlayer = new AudioRecorderPlayer();
 const screen_height = Dimensions.get('window').height;
 const screen_width = Dimensions.get('window').width;
-type ChatWithAIRouteProp = RouteProp<RootStackParamList, 'ChatWithDoctor'>;
 
-const AppointmentChat: React.FC = () => {
-  const route = useRoute<ChatWithAIRouteProp>();
-  const bookingId = route?.params?.contextData;
+const AppointmentChat: React.FC<any> = ({ route }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const bookingId = route?.params;
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState([
     { sender: 'Doctor', message: 'Hi', media: [{ file_path: '' }] },
@@ -107,38 +108,30 @@ const AppointmentChat: React.FC = () => {
     }
   }, []);
 
-  const sendMessage = async () => {
-    const token = await AsyncStorage.getItem('access_token');
-    let formdata = new FormData();
-
-    formdata.append('sender', 'Patient');
-    formdata.append('receiver', 'Doctor');
-    formdata.append('message', inputText);
-    formdata.append('bookingUID', bookingId);
-    if (mediaFile?.name) formdata.append('document', mediaFile);
-    fetch(`${API_BASE_URL}/api/addAppointmentMessage`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${token}`,
-      },
-      body: formdata,
-    })
-      .then(response => {
-        if (response.ok) {
-          console.log('message sent', response);
-          setInputText('');
-          fetchChat();
-        } else {
-          console.log('Error sending message');
-          ToastService.error("Error', 'Failed to send message. Please try again.");
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
+  const sendMessage = useCallback(async () => {
+    try {
+      let formdata = new FormData();
+      formdata.append('sender', 'Patient');
+      formdata.append('receiver', 'Doctor');
+      formdata.append('message', inputText);
+      formdata.append('bookingUID', bookingId);
+      if (mediaFile?.name) formdata.append('document', mediaFile);
+      console.log(formdata);
+      const response = await sendAppointmentChat(formdata);
+      if (response && response.status == 200) {
+        console.log('message sent', response);
+        setInputText('');
+        fetchChat();
+      } else {
+        //setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error) {
+      console.error('Error fetching chat:', error);
+      setMessages([]);
+    } finally {
+    }
+  }, []);
   const selectMediaType = async (mediaType: string) => {
     switch (mediaType) {
       case 'cam':
