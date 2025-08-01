@@ -97,7 +97,7 @@ const AppointmentChat: React.FC<any> = ({ route }) => {
   const fetchChat = async () => {
     try {
       const data = await fetchAppointmentChat(bookingId);
-      const chat = data?.data || [];
+      const chat = data?.data?.reverse() || [];
       setMessages(chat);
       console.log(chat);
     } catch (error) {
@@ -249,7 +249,7 @@ const AppointmentChat: React.FC<any> = ({ route }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <CommonHeader showLocation={false} title={doctor || 'Doctor'} />
       <ScrollView style={styles.messagesContainer}>
-        {messages.reverse().map((msg, index) => (
+        {messages?.map((msg, index) => (
           <View
             key={index}
             style={[
