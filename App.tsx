@@ -30,9 +30,10 @@ import { JitsiProvider } from './src/context/JitsiContext';
 
 // Components
 import MyStatusBar from './src/components/StatusBar';
-import { setupNotificationListeners } from './src/utils/firebaseNotificationHandler';
+import { requestUserPermission, setupNotificationListeners } from './src/utils/firebaseNotificationHandler';
 import notifee, {AndroidImportance} from '@notifee/react-native';
 import { initializeApp } from '@react-native-firebase/app';
+import { getMessaging } from '@react-native-firebase/messaging';
 
 // Initialize RTL
 configureRTL();
@@ -45,10 +46,20 @@ const App: React.FC = () => {
     checkAuthStatus();
   }, []);
 
+  useEffect(() => {
+    const requestUserPermissions = async () => {
+      await requestUserPermission();
+      const FcmTtoken = await getMessaging().getToken();
+      console.log('FCM Token:', FcmTtoken);
+      await AsyncStorage.setItem('FcmTtoken', FcmTtoken);
+    };
+    requestUserPermissions();
+  }, []);
+
     //user notification permission
   useEffect(() => {
     // Request notification permissions and setup handlers
-    setupNotificationListeners();
+    //setupNotificationListeners();
     createNotificationChannels();
   }, []);
 
