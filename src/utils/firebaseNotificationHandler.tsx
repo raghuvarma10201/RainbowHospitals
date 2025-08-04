@@ -11,7 +11,7 @@ export const requestUserPermission = async () => {
     //console.log('✅ Notification permission granted.');
     const token = await messaging().getToken();
 
-    //console.log('📲 FCM Token:', token);
+    console.log('📲 FCM Token:', token);
     // Send token to backend if needed
   }
 };
