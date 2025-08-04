@@ -30,6 +30,9 @@ import { JitsiProvider } from './src/context/JitsiContext';
 
 // Components
 import MyStatusBar from './src/components/StatusBar';
+import { setupNotificationListeners } from './src/utils/firebaseNotificationHandler';
+import notifee, {AndroidImportance} from '@notifee/react-native';
+import { initializeApp } from '@react-native-firebase/app';
 
 // Initialize RTL
 configureRTL();
@@ -42,6 +45,37 @@ const App: React.FC = () => {
     checkAuthStatus();
   }, []);
 
+    //user notification permission
+  useEffect(() => {
+    // Request notification permissions and setup handlers
+    setupNotificationListeners();
+    createNotificationChannels();
+  }, []);
+
+  // 🔊 Create custom sound channels
+  const createNotificationChannels = async () => {
+    await notifee.createChannel({
+      id: 'general',
+      name: 'General Notifications',
+      sound: 'alert1', // Make sure alert1.mp3 is in /res/raw/
+      importance: AndroidImportance.HIGH,
+    });
+
+    await notifee.createChannel({
+      id: 'appointment',
+      name: 'Appointment Alerts',
+      sound: 'alert2',
+      importance: AndroidImportance.HIGH,
+    });
+
+    await notifee.createChannel({
+      id: 'critical',
+      name: 'Critical Emergency',
+      sound: 'alert3',
+      importance: AndroidImportance.HIGH,
+    });
+  };
+  
   const checkAuthStatus = async () => {
     try {
       const [token, expiry] = await Promise.all([
