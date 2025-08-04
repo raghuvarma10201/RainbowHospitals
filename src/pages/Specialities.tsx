@@ -1,32 +1,17 @@
-import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { Card, Searchbar, TextInput, Icon, Text } from 'react-native-paper';
-import { Dropdown } from 'react-native-element-dropdown';
+import {Dimensions, ScrollView, StyleSheet, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Banners from '../components/Slider';
 import Highlight from '../components/HighlightingSlider';
-import SpecialtyTabs from '../components/SpecialitySlider';
 import SpecialtySlider from '../components/SpecialitySlider';
-import { doctorData } from '../Constants/data';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {doctorData} from '../Constants/data';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import PaginatedGrid from '../components/GridComponent';
-import { ToastService } from '../utils/ToastService';
-import { useApp } from '../context/AppContext';
-import { getDoctors, getSpecialities } from '../services/common';
+import {ToastService} from '../utils/ToastService';
+import {getDoctors, getSpecialities} from '../services/common';
 import Loader from '../components/Loader';
-import { MainStackParamList } from '../navigation/types';
-import { useAuth } from '../context/AuthContext';
-
-
+import {MainStackParamList} from '../navigation/types';
 
 const Specialities: React.FC = () => {
   type AppNavigationProp = NativeStackNavigationProp<
@@ -34,18 +19,12 @@ const Specialities: React.FC = () => {
     'Dashboard'
   >;
   const navigation = useNavigation<AppNavigationProp>();
-  const [search, setSearch] = useState('');
-  const [country, setCountry] = useState('1');
   const [specialities, setSpecialities] = useState<any>([]);
   const specialties = Object.keys(doctorData) as Array<keyof typeof doctorData>;
   const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1); // Default: Neurology
   const [activeDocIndex, setActiveDocIndex] = useState(2);
-  const currentSpecialty = specialties[activeSpecialtyIndex];
-  const currentDoctors = doctorData[currentSpecialty];
   const [doctors, setDoctors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const { branch } = useApp();
-  const { setLoggedIn } = useAuth();
 
   useEffect(() => {
     loadSpecialities();
@@ -80,7 +59,7 @@ const Specialities: React.FC = () => {
       const response = await getDoctors(
         '',
         specialityId,
-        '',//branch?.branch_id,
+        '', //branch?.branch_id,
         '',
         appointmentType,
         1,
@@ -114,24 +93,15 @@ const Specialities: React.FC = () => {
     setActiveDocIndex(0);
   };
 
-  const [activeindex, setActiveindex] = useState(0);
-  const w = Dimensions.get('window').width;
-  const h = Dimensions.get('window').height;
-
   if (loading) {
-    return (
-      <Loader />
-    );
+    return <Loader />;
   }
 
   return (
     <View style={styles.mainContainer}>
       <Header showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-
         <View style={styles.container}>
-
-
           <View style={styles.quickActions}>
             <PaginatedGrid items={specialities} />
           </View>
@@ -147,8 +117,7 @@ const Specialities: React.FC = () => {
               onTabPress={(index, specialityId) => {
                 setActiveSpecialtyIndex(index);
                 setActiveDocIndex(0);
-                loadDoctors(specialityId, "video");
-
+                loadDoctors(specialityId, 'video');
               }}
             />
             <Highlight
@@ -162,15 +131,15 @@ const Specialities: React.FC = () => {
           </>
         )}
       </ScrollView>
-      {loading && (
-        <Loader />
-      )}
+      {loading && <Loader />}
       <Footer />
     </View>
   );
 };
 
 export default Specialities;
+
+const h = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mainContainer: {
