@@ -11,7 +11,7 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
 import com.oney.WebRTCModule.WebRTCModuleOptions
-import com.rainbowhospitals.ScreenSharePackage
+// import com.rainbowhospitals.ScreenSharePackage
 
 
 class MainApplication : Application(), ReactApplication {
@@ -22,7 +22,7 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.apply {
               // Packages that cannot be autolinked yet can be added manually here, for example:
               // add(MyReactNativePackage())
-              add(ScreenSharePackage())
+              // add(ScreenSharePackage())
             }
 
         override fun getJSMainModuleName(): String = "index"

@@ -37,5 +37,10 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+      <service
+    android:name="org.jitsi.meet.sdk.ScreenCapturerService"
+    android:permission="android.permission.BIND_SCREEN_SERVICE"
+    android:exported="false"
+    android:foregroundServiceType="mediaProjection" />
     </application>
 </manifest>
