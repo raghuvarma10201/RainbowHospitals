@@ -1,52 +1,54 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ImageBackground, ScrollView, TextInput, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { Button, Text, Checkbox } from 'react-native-paper';
-import { Dropdown } from 'react-native-element-dropdown';
-import { useFormik } from 'formik';
+import React, {useState} from 'react';
+import {
+  StyleSheet,
+  View,
+  ImageBackground,
+  ScrollView,
+  TextInput,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import {Text} from 'react-native-paper';
+import {Dropdown} from 'react-native-element-dropdown';
+import {useFormik} from 'formik';
 import * as Yup from 'yup';
-import { login } from '../services/auth'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {login} from '../services/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ToastService } from '../utils/ToastService';
-import Loader from '../components/Loader';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { AuthStackParamList } from '../navigation/types';
-import { useAuth } from '../context/AuthContext';
+import {ToastService} from '../utils/ToastService';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AuthStackParamList} from '../navigation/types';
 
 const local_data = [
   {
     value: '1',
     lable: '+91',
-
   },
   {
     value: '2',
     lable: '+92',
-
   },
 ];
 
 const LoginSchema = Yup.object({
-  mobileNumber: Yup.string().required('Please enter valid mobile number')
+  mobileNumber: Yup.string().required('Please enter valid mobile number'),
 });
 const Login: React.FC = () => {
   type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
   const navigation = useNavigation<NavigationProp>();
-  const [value, setValue] = useState('');
   const [country, setCountry] = useState('1');
-  const { setLoggedIn } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const formik = useFormik({
-    initialValues: { mobileNumber: '' },
+    initialValues: {mobileNumber: ''},
     validationSchema: LoginSchema,
-    onSubmit: async (values, { setSubmitting, setErrors, setFieldError }) => {
+    onSubmit: async (values, {setSubmitting, setErrors, setFieldError}) => {
       setLoading(true);
       try {
         setSubmitting(true);
         const response = await login({
-          number: values.mobileNumber
+          number: values.mobileNumber,
         });
         if (response.status == 200 && response.success == true) {
           await AsyncStorage.multiSet([['mobileNumber', values.mobileNumber]]);
@@ -57,11 +59,10 @@ const Login: React.FC = () => {
         console.log('Login failed', e);
         // Basic error surface – adapt as needed
         ToastService.error('Invalid credentials', 'Please try again');
-        setErrors({ mobileNumber: 'Invalid credentials' });
+        setErrors({mobileNumber: 'Invalid credentials'});
       } finally {
         setSubmitting(false);
         setLoading(false);
-
       }
     },
   });
@@ -69,19 +70,32 @@ const Login: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <View>
-        <ImageBackground source={require('../../assets/images/logo.png')} style={styles.logoImage} resizeMode="contain" />
+        <ImageBackground
+          source={require('../../assets/images/logo.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
 
         <View style={styles.imgTextGroup}>
           <View style={styles.imgTextBox}>
             <View style={styles.textbeforeDot}>
               <View style={styles.beforeDot} />
-              <Text style={styles.imgTextTitle}>Leading multi-specialty Hospital for pediatrics, obstetrics & gynecology</Text>
+              <Text style={styles.imgTextTitle}>
+                Leading multi-specialty Hospital for pediatrics, obstetrics &
+                gynecology
+              </Text>
             </View>
           </View>
-          <Image source={require('../../assets/images/login-img.png')} style={styles.loginImg} resizeMode="contain" />
+          <Image
+            source={require('../../assets/images/login-img.png')}
+            style={styles.loginImg}
+            resizeMode="contain"
+          />
         </View>
         <View style={styles.loginForm}>
-          <Text variant="headlineMedium" style={styles.title}>SIGN IN</Text>
+          <Text variant="headlineMedium" style={styles.title}>
+            SIGN IN
+          </Text>
           <Text style={styles.labelText}>Mobile Number</Text>
           <View style={styles.formViewGroup}>
             <Dropdown
@@ -99,7 +113,7 @@ const Login: React.FC = () => {
               onChange={e => setCountry(e.value)}
             />
             <TextInput
-              keyboardType="numeric"          // shows numeric keyboard
+              keyboardType="numeric" // shows numeric keyboard
               maxLength={10}
               style={styles.formInput}
               placeholder="Enter Mobile Number"
@@ -108,8 +122,14 @@ const Login: React.FC = () => {
               value={formik.values.mobileNumber}
             />
           </View>
-          {formik.touched.mobileNumber && formik.errors.mobileNumber && <Text style={styles.errorMessage}>{formik.errors.mobileNumber}</Text>}
-          <TouchableOpacity style={styles.primaryBt} onPress={() => formik.handleSubmit()}>
+          {formik.touched.mobileNumber && formik.errors.mobileNumber && (
+            <Text style={styles.errorMessage}>
+              {formik.errors.mobileNumber}
+            </Text>
+          )}
+          <TouchableOpacity
+            style={styles.primaryBt}
+            onPress={() => formik.handleSubmit()}>
             <Text style={styles.primaryBtText}>Get OTP</Text>
           </TouchableOpacity>
         </View>
@@ -126,7 +146,7 @@ const w = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: h * 0.03
+    paddingVertical: h * 0.03,
   },
   logoImage: {
     marginHorizontal: 'auto',
@@ -137,21 +157,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    color: '#00B3AE', 
-    fontSize: 20, 
-    fontWeight: 'normal', 
+    color: '#00B3AE',
+    fontSize: 20,
+    fontWeight: 'normal',
     marginTop: -12,
-    textAlign: 'center', 
-    textTransform: 'uppercase', 
-    marginBottom: 5, 
-    fontFamily: 'ProximaNovaA-Bold'
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    marginBottom: 5,
+    fontFamily: 'ProximaNovaA-Bold',
   },
 
   labelText: {
-    fontSize: 14, 
-    fontWeight: 'normal', 
-    color: '#000', 
-    marginBottom: 10, 
+    fontSize: 14,
+    fontWeight: 'normal',
+    color: '#000',
+    marginBottom: 10,
     fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'center',
   },
@@ -163,8 +183,7 @@ const styles = StyleSheet.create({
     fontWeight: 400,
   },
   loginForm: {
-    paddingHorizontal: 20
-
+    paddingHorizontal: 20,
   },
   formViewGroup: {
     flexDirection: 'row',
@@ -184,6 +203,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 0,
     marginTop: 10,
+    width: '100%',
     fontFamily: 'ProximaNovaA-Regular',
   },
   primaryBt: {
@@ -200,7 +220,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'normal',
     textAlign: 'center',
-
   },
 
   dropdownSelect: {
@@ -244,10 +263,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#3C2871',
     borderRadius: 10,
     marginTop: 0,
-
-
   },
-  textbeforeDot: { position: 'relative' },
+  textbeforeDot: {position: 'relative'},
   imgTextTitle: {
     fontSize: Dimensions.get('window').height * 0.024,
     fontWeight: 'normal',
@@ -267,7 +284,6 @@ const styles = StyleSheet.create({
     borderWidth: 7,
     borderColor: '#fff',
     marginRight: 6,
-
   },
   loginImg: {
     height: Dimensions.get('window').height * 0.43,
@@ -277,6 +293,5 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginLeft: 'auto',
     right: '-15%',
-  }
-
+  },
 });
