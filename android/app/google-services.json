@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "686287175369",
+    "project_id": "rainbow-hospitals-88c02",
+    "storage_bucket": "rainbow-hospitals-88c02.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686287175369:android:65f0d833b912f7ebb81718",
+        "android_client_info": {
+          "package_name": "com.rainbowhospital"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFX4-xveNqcNN9rq0G4Et94iPVMd8THGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
