@@ -4,14 +4,13 @@ import { Button, Text, } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { login } from '../services/auth'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { registerUser } from '../services/common'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ToastService } from '../utils/ToastService';
 import Loader from '../components/Loader';
-import { useNavigation } from '@react-navigation/native';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { AuthStackParamList } from '../navigation/types';
+import { AuthStackParamList, MainStackParamList } from '../navigation/types';
 import { useAuth } from '../context/AuthContext';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
@@ -28,6 +27,17 @@ const gender_data = [
   },
 ];
 
+const bloodgroup_data = [
+  {value: '1', label: 'A',},
+  {value: '2', label: 'B',},
+  { value: '3', label: 'AB', },
+  {value: '4', label: 'O', },  
+];
+
+const rhfactor_data = [
+  { label: 'Positive', value: '1' },
+  { label: 'Negative', value: '2' },
+];
 
 const countries_data =[
   { label: 'India', value: 'IN' },
@@ -37,15 +47,34 @@ const countries_data =[
   { label: 'Australia', value: 'AU' },
 ];
 
-const LoginSchema = Yup.object({
-  mobileNumber: Yup.string().required('Please enter valid mobile number'),
-  dob: Yup.string().required('Date of Birth is required'),
-  title: Yup.string().required('Title is required'),
-  firstName: Yup.string().required('First Name is required'),
+
+
+const RegistrationSchema = Yup.object({
+  // mobileNumber: Yup.string().required('Please enter valid mobile number'),
+
+  foreName: Yup.string().required('Fore Name is required'),
+  middleName: Yup.string().required('Middle Name is required'),
   lastName: Yup.string().required('Last Name is required'),
-  email: Yup.string().required('Email is required'),
+    // email: Yup.string().required('Email is required'),
+    email: Yup.string()
+    .email('Invalid email address')
+    .required('Email is required'),
+    country: Yup.string().required('Country is required'),
+    dob: Yup.string().required('Date of Birth is required'),
+    phoneNumber: Yup.string().required('Phone Number is required'),
+    gender: Yup.string().required('Gender is required'),
+    bloodgroup: Yup.string().required('Blood Group is required'),
+    rhfactor:Yup.string().required('RHfactor is required'),
+  // address: Yup.string().required('Address is required'),
+  // pincode: Yup.string().required('Pincode is required'),
+  checked: Yup.boolean().required('Please agree to our Terms of Services and Privacy Policy'),
+
+
 });
 const Registration: React.FC = () => {
+  type CombinedNavigationProp = CompositeNavigationProp<NativeStackNavigationProp<AuthStackParamList>, NativeStackNavigationProp<MainStackParamList>>;
+  const navigation = useNavigation<CombinedNavigationProp>();
+
   const [checked, setChecked] = useState(false);
 
  // DateTimePickerModal
@@ -59,46 +88,80 @@ const Registration: React.FC = () => {
   };
  // DateTimePickerModal End
 
-  type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
-  const navigation = useNavigation<NavigationProp>();
+
   const [country, setCountry] = useState('');
   const [gender, setGender] = useState('');
+  const [bloodgroup, setBloodgroup] = useState('');
+  const [rhfactor, setRhfactor] = useState('');
   const { setLoggedIn } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  const formik = useFormik({
 
+
+  const formik = useFormik({
     initialValues: {
-       mobileNumber: '', title:'', firstName:'', lastName:'', email:'',        
+      foreName:'', middleName:'', lastName:'', email:'',  
+       country: '', dob: '', phoneNumber: '', gender: '', bloodgroup: '', rhfactor: '',
+        // address: '', pincode: '',
+         checked: false,
       },
 
-    validationSchema: LoginSchema,
+    validationSchema: RegistrationSchema,    
     onSubmit: async (values, { setSubmitting, setErrors, setFieldError }) => {
       setLoading(true);
       try {
         setSubmitting(true);
-        const response = await login({
-          number: values.mobileNumber
-        });
-        if (response.status == 200 && response.success == true) {
-          await AsyncStorage.multiSet([['mobileNumber', values.mobileNumber]]);
- 
+        const response = await registerUser({
+          // number: values.mobileNumber,
+          ForeName: values.foreName,
+          MiddleName: values.middleName,
+          LastName: values.lastName,
+          Gender: gender,
+          dtBirthDttm: selectedDate?.toISOString(),
+          EmailId: values.email,
+          Country: country,        
+          PhoneNo: values.phoneNumber,        
+          Bloodgroup: bloodgroup,
+          RHfactor: rhfactor,
+            // address: values.address,
+            // pincode: values.pincode,
+          checked: checked,
           
-          ToastService.success('Success', 'Otp sent successfully');
-          navigation.navigate('Otp');
+        });
+
+        console.log("Registration response", response);
+        if (response.status == 200 && response.success == true) {
+          await AsyncStorage.multiSet([
+            //  ['mobileNumber', values.mobileNumber],
+             ['foreName', values.foreName],
+             ['middleName', values.middleName],
+             ['lastName', values.lastName],
+             ['email', values.email],
+             ['country', country],
+             ['dob', selectedDate?.toISOString() || ''],
+             ['phoneNumber', values.phoneNumber],
+             ['gender', gender],
+             ['bloodgroup', bloodgroup],
+             ['rhfactor', rhfactor],
+            //  ['address', values.address],
+            //  ['pincode', values.pincode],
+             ['checked', checked.toString()],
+           
+          ]);
+
+          
+          ToastService.success('Success', 'Registration sent successfully');
+          navigation.navigate('Dashboard');
         }
         // if backend succeeds, mark app as logged‑in
         //await AsyncStorage.multiSet([['mobileNumber', values.mobileNumber]]);
         //setLoggedIn(true);
       } catch (e: any) {
-        console.error('Login failed', e);
+        console.error('Registration failed', e);
         // Basic error surface – adapt as needed
         ToastService.error('Invalid credentials', 'Please try again');
         // setErrors({ mobileNumber: 'Invalid credentials' });
-        setErrors({ title: 'Invalid credentials' });
-        setErrors({ firstName: 'Invalid credentials' });
-        setErrors({ lastName: 'Invalid credentials' });
-        setErrors({ email: 'Invalid credentials' });
+     
       } finally {
         setSubmitting(false);
         setLoading(false);
@@ -117,30 +180,30 @@ const Registration: React.FC = () => {
         <View style={styles.regForm}>
 
         <View style={styles.formRow}>
-           <Text style={styles.formLabel}>Title *</Text>
+           <Text style={styles.formLabel}>Fore Name *</Text>
             <TextInput style={styles.formInput}
               keyboardType="default"          // shows numeric keyboard
               maxLength={10}                  
-              placeholder="Enter Title"
-              onChangeText={formik.handleChange('title')}
-              onBlur={formik.handleBlur('title')}
-              value={formik.values.title}
+              placeholder="Enter Fore Name"
+              onChangeText={formik.handleChange('foreName')}
+              onBlur={formik.handleBlur('foreName')}
+              value={formik.values.foreName}
             />   
-              {formik.touched.title && formik.errors.title && <Text style={styles.errorMessage}>{formik.errors.title}</Text>}     
+              {formik.touched.foreName && formik.errors.foreName && <Text style={styles.errorMessage}>{formik.errors.foreName}</Text>}     
         </View>
     
 
         <View style={styles.formRow}>
-           <Text style={styles.formLabel}>First Name *</Text>
+           <Text style={styles.formLabel}>Middle Name *</Text>
             <TextInput style={styles.formInput}
              keyboardType="default"                  
-             placeholder="Enter First Name"
+             placeholder="Enter Middle Name"
               placeholderTextColor="#000"
-             onChangeText={formik.handleChange('firstName')}
-             onBlur={formik.handleBlur('firstName')}
-             value={formik.values.firstName}
+             onChangeText={formik.handleChange('middleName')}
+             onBlur={formik.handleBlur('middleName')}
+             value={formik.values.middleName}
              />
-               {formik.touched.firstName && formik.errors.firstName && <Text style={styles.errorMessage}>{formik.errors.firstName}</Text>} 
+               {formik.touched.middleName && formik.errors.middleName && <Text style={styles.errorMessage}>{formik.errors.middleName}</Text>} 
         </View>
 
         <View style={styles.formRow}>
@@ -166,9 +229,14 @@ const Registration: React.FC = () => {
              onChangeText={formik.handleChange('email')}
              onBlur={formik.handleBlur('email')}
             value={formik.values.email}
+         
+                   
              />
                {formik.touched.email && formik.errors.email && <Text style={styles.errorMessage}>{formik.errors.email}</Text>} 
         </View>
+
+
+
 
         <View style={styles.formRow}>
            <Text style={styles.formLabel}>Country</Text>
@@ -184,7 +252,7 @@ const Registration: React.FC = () => {
               placeholder="Select country"
               containerStyle={styles.dropdownList}
               activeColor="#fff"
-              onChange={e => setCountry(e.value)}
+              onChange={e => formik.setFieldValue('country', e.label)}
             />       
         </View>
 
@@ -192,16 +260,37 @@ const Registration: React.FC = () => {
            <Text style={styles.formLabel}>Date of Birth</Text>
               <TouchableOpacity onPress={showDatePicker}>
                 <Text style={styles.formInput}>
-                  {selectedDate ? selectedDate.toDateString() : 'Select Date'}
+                {formik.values.dob ? new Date(formik.values.dob).toDateString() : 'Select Date'}
                 </Text>
               </TouchableOpacity>
               <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                onConfirm={handleConfirm}
-                onCancel={hideDatePicker}
-              />    
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={(date) => {
+              formik.setFieldValue('dob', date.toISOString());
+              hideDatePicker();
+            }}
+            onCancel={hideDatePicker}
+          />
         </View>
+
+        <View style={styles.formRow}>
+        <Text style={styles.formLabel}>Phone Number</Text>
+        <TextInput
+              keyboardType="numeric"        
+              maxLength={10}
+              style={styles.formInput}
+              placeholder="Enter Phone Number"
+                placeholderTextColor="#000"
+              onChangeText={formik.handleChange('phoneNumber')}
+              onBlur={formik.handleBlur('phoneNumber')}
+              value={formik.values.phoneNumber}
+            />
+            {formik.touched.phoneNumber && formik.errors.phoneNumber && <Text style={styles.errorMessage}>{formik.errors.phoneNumber}</Text>} 
+
+          </View>
+
+
 
         <View style={styles.formRow}>
            <Text style={styles.formLabel}>Gender </Text>
@@ -217,11 +306,51 @@ const Registration: React.FC = () => {
               placeholder="Select Gender"
               containerStyle={styles.dropdownList}
               activeColor="#fff"
-              onChange={e => setGender(e.value)}
+              onChange={e => formik.setFieldValue('gender', e.label)}
+            />
+        </View>
+
+
+        
+        <View style={styles.formRow}>
+           <Text style={styles.formLabel}>Blood Group </Text>
+           <Dropdown
+              style={styles.dropdownSelect}
+              selectedTextStyle={styles.selectedTextGender}
+              placeholderStyle={styles.placeholderCountry}
+              maxHeight={200}
+              value={bloodgroup}
+              data={bloodgroup_data}
+              valueField="value"
+              labelField="label"
+              placeholder="Select Blood Group"
+              containerStyle={styles.dropdownList}
+              activeColor="#fff"
+              onChange={e => formik.setFieldValue('bloodgroup', e.label)}
+              // onChange={e => console.log(e.label)}
+            />
+        </View>
+
+        <View style={styles.formRow}>
+           <Text style={styles.formLabel}>RH factor </Text>
+           <Dropdown
+              style={styles.dropdownSelect}
+              selectedTextStyle={styles.selectedTextGender}
+              placeholderStyle={styles.placeholderCountry}
+              maxHeight={200}
+              value={rhfactor}
+              data={rhfactor_data}
+              valueField="value"
+              labelField="label"
+              placeholder="Select RH factor"
+              containerStyle={styles.dropdownList}
+              activeColor="#fff"
+              onChange={e => formik.setFieldValue('rhfactor', e.label)}
+      
             />
         </View>
         
-
+{/* 
         <View style={styles.formRow}>
            <Text style={styles.formLabel}>Address</Text>
             <TextInput style={styles.formInput}
@@ -232,9 +361,9 @@ const Registration: React.FC = () => {
                   onBlur={formik.handleBlur('address')}
                    //  value={formik.values.email}
                   />
-        </View>
+        </View> */}
 
-        <View style={styles.formRow}>
+        {/* <View style={styles.formRow}>
            <Text style={styles.formLabel}>Pincode</Text>
             <TextInput style={styles.formInput}
              keyboardType="default"                  
@@ -244,7 +373,7 @@ const Registration: React.FC = () => {
              onBlur={formik.handleBlur('pincode')}
               //  value={formik.values.email}
               />
-        </View>
+        </View> */}
 
         <View style={styles.formRow}>
           <TouchableOpacity

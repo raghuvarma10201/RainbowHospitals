@@ -15,3 +15,9 @@ export const authenticateUser = async (payload: any) => {
   console.log(data);
   return data;
 };
+
+// export const registerUser = async (payload: any) => {
+//   const { data } = await api.post('/registerNewPatient', payload);
+//   console.log(data);
+//   return data;
+// };

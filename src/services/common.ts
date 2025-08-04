@@ -140,3 +140,12 @@ export const fetchSettings = async () => {
     throw error;
   }
 };
+
+export const registerUser = async (payload:any) => {
+  try {
+    const response = await api.get('/registerNewPatient' , payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
