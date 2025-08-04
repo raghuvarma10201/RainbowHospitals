@@ -76,6 +76,7 @@ const MyAppointments: React.FC = () => {
                 key={index}
                 style={styles.doctorItem}
                 onPress={() => navigation.navigate('MyAppointmentDetails', { appointmentData: appointment })}
+                //onPress={() => startVideoCall()}
               >
                 <Image
                   source={

@@ -119,3 +119,5 @@ dependencies {
     // implementation 'org.webrtc:google-webrtc:1.0.32006'
     implementation 'org.jitsi:webrtc:124.0.0'
 }
+
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -14,11 +14,11 @@ import {
   Linking,
   Dimensions,
 } from 'react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { greenColor, purpuleColor, whiteColor } from '../Constants/Constant';
 import { RootStackParamList } from '../utils/types';
 
-import { API_BASE_URL } from '../utils/environment';
+import { API_IMG_URL } from '../utils/environment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -33,16 +33,19 @@ import {
   PlayBackType,
 } from 'react-native-audio-recorder-player';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import { fetchAppointmentChat } from '../services/common';
+import { fetchAppointmentChat, sendAppointmentChat } from '../services/common';
 import { ToastService } from '../utils/ToastService';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../navigation/types';
+import CommonHeader from '../components/Header';
 const audioRecorderPlayer = new AudioRecorderPlayer();
 const screen_height = Dimensions.get('window').height;
 const screen_width = Dimensions.get('window').width;
-type ChatWithAIRouteProp = RouteProp<RootStackParamList, 'ChatWithDoctor'>;
 
-const AppointmentChat: React.FC = () => {
-  const route = useRoute<ChatWithAIRouteProp>();
-  const bookingId = route?.params?.contextData;
+const AppointmentChat: React.FC<any> = ({ route }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const scrollViewRef = useRef<ScrollView>(null);
+  const {bookingId, doctor} = route.params;
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState([
     { sender: 'Doctor', message: 'Hi', media: [{ file_path: '' }] },
@@ -92,53 +95,47 @@ const AppointmentChat: React.FC = () => {
     }
   };
 
-  const fetchChat = useCallback(async () => {
+  const fetchChat = async () => {
     try {
       const data = await fetchAppointmentChat(bookingId);
-      const chat = data?.data || [];
-      chat.forEach((el: { media: any; }) => {
-        console.log(el.media);
-      });
+      const chat = data?.data?.reverse() || [];
       setMessages(chat);
+      console.log(chat);
     } catch (error) {
       console.error('Error fetching chat:', error);
       setMessages([]);
     } finally {
     }
-  }, []);
-
-  const sendMessage = async () => {
-    const token = await AsyncStorage.getItem('access_token');
-    let formdata = new FormData();
-
-    formdata.append('sender', 'Patient');
-    formdata.append('receiver', 'Doctor');
-    formdata.append('message', inputText);
-    formdata.append('bookingUID', bookingId);
-    if (mediaFile?.name) formdata.append('document', mediaFile);
-    fetch(`${API_BASE_URL}/api/addAppointmentMessage`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${token}`,
-      },
-      body: formdata,
-    })
-      .then(response => {
-        if (response.ok) {
-          console.log('message sent', response);
-          setInputText('');
-          fetchChat();
-        } else {
-          console.log('Error sending message');
-          ToastService.error("Error', 'Failed to send message. Please try again.");
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
   };
 
+  const sendMessage = async () => {
+    try {
+      let formdata = new FormData();
+      formdata.append('sender', 'Patient');
+      formdata.append('receiver', 'Doctor');
+      formdata.append('message', inputText);
+      formdata.append('bookingUID', bookingId);
+      if (mediaFile?.name) formdata.append('document', mediaFile);
+      
+      const response = await sendAppointmentChat(formdata);
+      console.log(response);
+      if (response && response.status == 200) {
+        console.log('message sent', response);
+        setInputText('');
+        setMediaFile({ name: '', uri: '', type: '' })
+        setTypeOfMedia('')
+        fetchChat();
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      } else {
+        //setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error) {
+      console.error('Error fetching chat:', error);
+      setMessages([]);
+    } finally {
+    }
+  };
   const selectMediaType = async (mediaType: string) => {
     switch (mediaType) {
       case 'cam':
@@ -254,13 +251,17 @@ const AppointmentChat: React.FC = () => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView style={styles.messagesContainer}>
-        {messages.map((msg, index) => (
+        <CommonHeader showLocation={false} title={doctor || 'Doctor'} />
+      <ScrollView style={styles.messagesContainer}
+  ref={scrollViewRef}
+  onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}>
+        {messages?.map((msg, index) => (
           <View
             key={index}
             style={[
               styles.messageBubble,
               msg.sender === 'Patient' ? styles.userBubble : styles.aiBubble,
+              index === messages.length - 1 && { marginBottom: screen_height * 0.03 },
             ]}>
             {msg?.media?.length
               ? msg?.media?.map((file, index) =>
@@ -268,7 +269,7 @@ const AppointmentChat: React.FC = () => {
                   <View>
                     <Video
                       source={{
-                        uri: `${API_BASE_URL}/${file?.file_path}`.replace(
+                        uri: `${API_IMG_URL}/${file?.file_path}`.replace(
                           /\\/g,
                           '/',
                         ),
@@ -292,7 +293,7 @@ const AppointmentChat: React.FC = () => {
                   <TouchableOpacity
                     onPress={() =>
                       openDocument(
-                        `${API_BASE_URL}/${file?.file_path}`.replace(
+                        `${API_IMG_URL}/${file?.file_path}`.replace(
                           /\\/g,
                           '/',
                         ),
@@ -327,7 +328,7 @@ const AppointmentChat: React.FC = () => {
                 ) : (
                   <Image
                     source={{
-                      uri: `${API_BASE_URL}/${file?.file_path}`.replace(
+                      uri: `${API_IMG_URL}/${file?.file_path}`.replace(
                         /\\/g,
                         '/',
                       ),

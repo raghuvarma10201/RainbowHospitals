@@ -12,12 +12,17 @@ import React, {useEffect, useState} from 'react';
 import CommonHeader from '../components/Header';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Footer from '../components/Footer';
-import { DynamicWeekWithMonth } from '../components/WeeklyCalender';
-import { useNavigation } from '@react-navigation/native';
-import { getDoctorDetail, getDoctors, getDoctorSessions, getDoctorSlots } from '../services/common';
-import { ToastService } from '../utils/ToastService';
-import { IMG_BASE_URL } from '../utils/environment';
-import { useApp } from '../context/AppContext';
+import {DynamicWeekWithMonth} from '../components/WeeklyCalender';
+import {useNavigation} from '@react-navigation/native';
+import {
+  getDoctorDetail,
+  getDoctors,
+  getDoctorSessions,
+  getDoctorSlots,
+} from '../services/common';
+import {ToastService} from '../utils/ToastService';
+import {IMG_BASE_URL} from '../utils/environment';
+import {useApp} from '../context/AppContext';
 import Loader from '../components/Loader';
 import {useTimer} from '../context/TimeContext';
 import ShortInfoText from '../components/ShortInfoText';
@@ -309,8 +314,12 @@ const DoctorSlots: React.FC<any> = ({route}) => {
           </View>
         </View>
         <TouchableOpacity
+          disabled={!selectedSlot}
           onPress={() => proceedPayment()}
-          style={styles.formButton}>
+          style={[
+            styles.formButton,
+            {backgroundColor: selectedSlot ? '#3C2871' : 'grey'},
+          ]}>
           <Text style={styles.formButtonText}>Proceed To Confirm</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -482,7 +491,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   formButton: {
-    backgroundColor: '#3C2871',
     borderRadius: 10,
     padding: 10,
     marginTop: 10,
