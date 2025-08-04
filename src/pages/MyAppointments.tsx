@@ -1,11 +1,15 @@
 import {
+  Alert,
   Dimensions,
   Image,
+  NativeModules,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
+const {ScreenShare} = NativeModules;
+
 import React, {useEffect, useState} from 'react';
 import {Text} from 'react-native-paper';
 import Header from '../components/Header';
@@ -72,6 +76,14 @@ const MyAppointments: React.FC = () => {
       setLoading(false);
     }
   };
+  const startSharing = async () => {
+    try {
+      const res = await ScreenShare.startScreenShare();
+      Alert.alert('Success', res);
+    } catch (err) {
+      Alert.alert('Error', err.message);
+    }
+  };
   return (
     <View style={styles.mainContainer}>
       <Header showLocation title={undefined} />
@@ -83,7 +95,8 @@ const MyAppointments: React.FC = () => {
                 key={index}
                 style={styles.doctorItem}
                 // onPress={() => navigation.navigate('MyAppointmentDetails', { appointmentData: appointment })}
-                onPress={() => startVideoCall()}>
+                // onPress={() => startVideoCall()}
+                onPress={() => startSharing()}>
                 <Image
                   source={
                     appointment.image
