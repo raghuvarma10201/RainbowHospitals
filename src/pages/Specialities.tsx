@@ -21,7 +21,7 @@ const Specialities: React.FC = () => {
   const navigation = useNavigation<AppNavigationProp>();
   const [specialities, setSpecialities] = useState<any>([]);
   const specialties = Object.keys(doctorData) as Array<keyof typeof doctorData>;
-  const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1); // Default: Neurology
+  const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1);
   const [activeDocIndex, setActiveDocIndex] = useState(2);
   const [doctors, setDoctors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -106,7 +106,6 @@ const Specialities: React.FC = () => {
             <PaginatedGrid items={specialities} />
           </View>
         </View>
-
         {specialities?.length > 0 && (
           <>
             <SpecialtySlider

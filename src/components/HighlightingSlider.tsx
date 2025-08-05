@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -10,9 +10,10 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { IMG_BASE_URL } from '../utils/environment';
+import {IMG_BASE_URL} from '../utils/environment';
+import FastImage from 'react-native-fast-image';
 
-const { width: screenWidth } = Dimensions.get('window');
+const {width: screenWidth} = Dimensions.get('window');
 const ITEM_WIDTH = screenWidth * 0.4;
 const SPACER_WIDTH = (screenWidth - ITEM_WIDTH) / 2;
 const AUTO_SCROLL_INTERVAL = 3000;
@@ -41,7 +42,7 @@ const Highlight = ({
   useEffect(() => {
     // Add spacers to both ends
     //console.log(doctors);
-    setData([{ key: 'left-spacer' }, ...doctors, { key: 'right-spacer' }]);
+    setData([{key: 'left-spacer'}, ...doctors, {key: 'right-spacer'}]);
   }, [doctors]);
 
   useEffect(() => {
@@ -59,9 +60,9 @@ const Highlight = ({
     return () => clearInterval(autoScroll);
   }, [doctors, autoScrollEnabled]);
 
-  const renderItem = ({ item, index }: { item: any; index: number }) => {
+  const renderItem = ({item, index}: {item: any; index: number}) => {
     if (!item || item.key === 'left-spacer' || item.key === 'right-spacer') {
-      return <View  key={item.key} style={{ width: SPACER_WIDTH }} />;
+      return <View key={item.key} style={{width: SPACER_WIDTH}} />;
     }
 
     const inputRange = [
@@ -83,27 +84,34 @@ const Highlight = ({
     });
 
     return (
-      <Animated.View style={[{ transform: [{ scale }], opacity }]}>
+      <Animated.View style={[{transform: [{scale}], opacity}]}>
         <TouchableOpacity
-          onPress={() => nav('DoctorSlots', {doctorId : item.id, appointmentType : "video"})}
+          onPress={() =>
+            nav('DoctorSlots', {doctorId: item.id, appointmentType: 'video'})
+          }
           style={styles.itemContainer}>
-          <Image
+          <FastImage
             source={
               item?.small_image
-                ? {uri: `${IMG_BASE_URL}${item?.small_image}`}
+                ? {uri: `${IMG_BASE_URL}${item?.small_image}`, priority: 'high'}
                 : {
                     uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                    priority: 'high',
                   }
             }
-            style={[styles.banner, { height, width: ITEM_WIDTH }]}
+            style={[styles.banner, {height, width: ITEM_WIDTH}]}
             resizeMode="cover"
           />
           <View style={styles.doctorDetails}>
             <Text style={styles.docName}>{item?.name}</Text>
-            <Text style={[styles.docName, { fontSize: 12 }]}>
+            <Text style={[styles.docName, {fontSize: 12}]}>
               {item?.designation}
             </Text>
-            <Text style={[styles.docName, { fontSize: 10, fontFamily:'ProximaNovaA-Regular', }]}>
+            <Text
+              style={[
+                styles.docName,
+                {fontSize: 10, fontFamily: 'ProximaNovaA-Regular'},
+              ]}>
               {item?.speciality}
             </Text>
           </View>
@@ -116,7 +124,7 @@ const Highlight = ({
     <Animated.FlatList
       ref={flatListRef}
       data={data}
-      keyExtractor={(_, index) => 'qq'+''+index.toString()}
+      keyExtractor={(_, index) => 'qq' + '' + index.toString()}
       renderItem={renderItem}
       horizontal
       scrollEnabled={true}
@@ -124,7 +132,7 @@ const Highlight = ({
       snapToInterval={ITEM_WIDTH}
       decelerationRate="fast"
       bounces={false}
-      onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+      onScroll={Animated.event([{nativeEvent: {contentOffset: {x: scrollX}}}], {
         useNativeDriver: true,
       })}
       onMomentumScrollEnd={event => {
@@ -150,20 +158,16 @@ const styles = StyleSheet.create({
     borderColor: '#3C2871',
     borderRadius: 10,
     marginTop: 10,
-
   },
-  banner: {
-
-  },
+  banner: {},
   doctorDetails: {
     padding: 8,
     backgroundColor: '#3C2871',
-     width: ITEM_WIDTH
+    width: ITEM_WIDTH,
   },
   docName: {
     fontSize: 14,
     color: '#fff',
-    fontFamily:'ProximaNovaA-Semibold'
+    fontFamily: 'ProximaNovaA-Semibold',
   },
-
 });

@@ -1,31 +1,43 @@
-import { Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { Text, } from 'react-native-paper';
+import {
+  Alert,
+  Dimensions,
+  Image,
+  NativeModules,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+const {ScreenShare} = NativeModules;
+
+import React, {useEffect, useState} from 'react';
+import {Text} from 'react-native-paper';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-import { useJitsi } from '../context/JitsiContext';
-import { useApp } from '../context/AppContext';
-import { getAppointments } from '../services/common';
-import { ToastService } from '../utils/ToastService';
-import { formatAppointmentDateTime } from '../utils/dateTime';
+import {useJitsi} from '../context/JitsiContext';
+import {useApp} from '../context/AppContext';
+import {getAppointments} from '../services/common';
+import {ToastService} from '../utils/ToastService';
+import {formatAppointmentDateTime} from '../utils/dateTime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MainStackParamList } from '../navigation/types';
+import {MainStackParamList} from '../navigation/types';
 
 const MyAppointments: React.FC = () => {
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
 
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const navigateTo = (path: keyof MainStackParamList, params: any) => {
     navigation.navigate(path, params);
   };
   const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const { branch } = useApp();
-  const { showJitsi } = useJitsi();
+  const {branch} = useApp();
+  const {showJitsi} = useJitsi();
 
   useEffect(() => {
     loadAppointments();
@@ -46,8 +58,8 @@ const MyAppointments: React.FC = () => {
   const loadAppointments = async () => {
     try {
       const payload = {
-        patientId: await AsyncStorage.getItem('mrn')
-      }
+        patientId: await AsyncStorage.getItem('mrn'),
+      };
       setLoading(true);
       const response = await getAppointments(payload);
       if (response && response.status == 200) {
@@ -64,8 +76,15 @@ const MyAppointments: React.FC = () => {
       setLoading(false);
     }
   };
+  const startSharing = async () => {
+    try {
+      const res = await ScreenShare.startScreenShare();
+      Alert.alert('Success', res);
+    } catch (err) {
+      Alert.alert('Error', err.message);
+    }
+  };
   return (
-
     <View style={styles.mainContainer}>
       <Header showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -75,37 +94,77 @@ const MyAppointments: React.FC = () => {
               <TouchableOpacity
                 key={index}
                 style={styles.doctorItem}
-                onPress={() => navigation.navigate('MyAppointmentDetails', { appointmentData: appointment })}
-                //onPress={() => startVideoCall()}
-              >
+                // onPress={() => navigation.navigate('MyAppointmentDetails', { appointmentData: appointment })}
+                // onPress={() => startVideoCall()}
+                onPress={() => startSharing()}>
                 <Image
                   source={
                     appointment.image
-                      ? { uri: `${appointment.image}` }
+                      ? {uri: `${appointment.image}`}
                       : {
-                        uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
-                      }
+                          uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                        }
                   }
                   style={styles.doctorImg}
                 />
                 <View>
-                  <Text style={[styles.docName, { fontSize: 11, color: '#3C2871', fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }]}>
+                  <Text
+                    style={[
+                      styles.docName,
+                      {
+                        fontSize: 11,
+                        color: '#3C2871',
+                        fontFamily: 'ProximaNovaA-Semibold',
+                        marginBottom: 2,
+                      },
+                    ]}>
                     #{appointment?.appointmentnumber ?? 'N/A'}
                   </Text>
 
-                  <Text style={[styles.docName, { fontSize: 14, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Bold', marginBottom: 2 }]}>
+                  <Text
+                    style={[
+                      styles.docName,
+                      {
+                        fontSize: 14,
+                        color: '#4CC2BF',
+                        fontFamily: 'ProximaNovaA-Bold',
+                        marginBottom: 2,
+                      },
+                    ]}>
                     {appointment?.CareProviderName ?? 'Doctor Name'}
                   </Text>
 
-                  <Text style={[styles.docName, { fontSize: 11, color: '#000', fontFamily: 'ProximaNovaA-Regular', marginBottom: 5 }]}>
+                  <Text
+                    style={[
+                      styles.docName,
+                      {
+                        fontSize: 11,
+                        color: '#000',
+                        fontFamily: 'ProximaNovaA-Regular',
+                        marginBottom: 5,
+                      },
+                    ]}>
                     {appointment?.SpecialtyName ?? 'Specialization'}
                   </Text>
 
-                  <Text style={[styles.consultationText, { fontFamily: 'ProximaNovaA-Semibold' }]}>
+                  <Text
+                    style={[
+                      styles.consultationText,
+                      {fontFamily: 'ProximaNovaA-Semibold'},
+                    ]}>
                     {appointment?.AppointmentType ?? 'Consultation Type'}
                   </Text>
                   <View style={styles.row}>
-                    <Text style={[styles.docName, { color: '#000', fontSize: 12, fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }]}>
+                    <Text
+                      style={[
+                        styles.docName,
+                        {
+                          color: '#000',
+                          fontSize: 12,
+                          fontFamily: 'ProximaNovaA-Semibold',
+                          marginBottom: 2,
+                        },
+                      ]}>
                       {formatAppointmentDateTime(appointment?.SlotStartDttm)}
                     </Text>
                     <Image
@@ -121,12 +180,10 @@ const MyAppointments: React.FC = () => {
       </ScrollView>
       <Footer />
     </View>
-
-
   );
-}
+};
 
-export default MyAppointments
+export default MyAppointments;
 
 const h = Dimensions.get('window').height;
 const w = Dimensions.get('window').width;
@@ -147,10 +204,8 @@ const styles = StyleSheet.create({
     paddingTop: 0,
   },
 
-
   doctorsListContainer: {
     paddingHorizontal: 15,
-
   },
   doctorItem: {
     paddingVertical: h * 0.01,
@@ -160,7 +215,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E2EDEC',
     paddingBottom: 15,
-
   },
 
   doctorImg: {
@@ -175,8 +229,7 @@ const styles = StyleSheet.create({
   docName: {
     fontSize: 11,
     color: '#000',
-    width: w * 0.7
-
+    width: w * 0.7,
   },
   payBtn: {
     paddingVertical: 5,
@@ -193,17 +246,12 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Regular',
   },
   row: {
-
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#fff',
     marginTop: 4,
-
-
-
-
   },
 
   rightArrow: {
@@ -219,8 +267,8 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     fontSize: 12,
     color: '#000',
-    width: "auto",
+    width: 'auto',
     fontFamily: 'ProximaNovaA-Regular',
     marginBottom: 5,
-  }
-}); 
+  },
+});
