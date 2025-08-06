@@ -1,3 +1,5 @@
+import {ImageProps} from 'react-native';
+
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
@@ -281,4 +283,14 @@ export type DoctorListPayloadSpecialityid = {
   speciality_id?: number;
   page: number;
   pageSize: number;
+};
+
+export type upcomingApointment = {
+  title: string;
+  doctorName: string;
+  doctorImg: ImageProps;
+  doctorSpeciality: string;
+  appointmentDateAndTime: string;
+  appointmentType: string;
+  appointmentNumber: string;
 };
