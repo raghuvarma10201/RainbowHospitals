@@ -87,9 +87,9 @@ const DoctorSlots: React.FC<any> = ({route}) => {
     try {
       setLoading(true);
       const payload = {
-        CareproviderCode: '500004', //docData.new_doctor_UID,
-        OrganisationUID: '2', //branch?.organisation.organisationid,
-        AppointmentType: 'Physical',
+        CareproviderCode: docData.new_doctor_UID, //'500004',
+        OrganisationUID: branch?.organisation.organisationid, //2,
+        AppointmentType: appointmentType,
         noofdays: '30',
       };
       const response = await getDoctorSessions(payload);

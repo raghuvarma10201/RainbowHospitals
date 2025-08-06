@@ -24,10 +24,12 @@ export type Branch = {
   UID:string
   branch_id:number
   organisation : any
-  
 };
 
-
+export type Setting = {
+  key: string;
+  value: string;
+};
 
 export const fetchRegions = async (token: string): Promise<Region[]> => {
   const response = await fetch(`${API_BASE_URL}/api/getRegions`, {
