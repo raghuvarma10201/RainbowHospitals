@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Card, Searchbar, TextInput, Icon, Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../components/Header';
@@ -20,6 +20,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
 import {upcomingData} from '../Constants/data';
 import {upcomingApointment} from '../utils/types';
+
+const {width} = Dimensions.get('window');
 const local_data = [
   {
     value: '1',
@@ -36,6 +38,8 @@ const Dashboard: React.FC = () => {
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
+  const scrollRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(0);
   const banners = [
     require('../../assets/images/slide1.png'),
     require('../../assets/images/slide1.png'),
@@ -49,6 +53,13 @@ const Dashboard: React.FC = () => {
   const [activeindex, setActiveindex] = useState(0);
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
+
+  const handleScroll = (event: any) => {
+    const pageIndex = Math.round(
+      event.nativeEvent.contentOffset.x / (width * 0.8),
+    );
+    setCurrentPage(pageIndex);
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -130,9 +141,12 @@ const Dashboard: React.FC = () => {
             </View>
           </View>
           <ScrollView
+            ref={scrollRef}
             horizontal
-            showsHorizontalScrollIndicator={false}
-            pagingEnabled>
+            pagingEnabled
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            showsHorizontalScrollIndicator={false}>
             {upcomingData.map(
               (appointment: upcomingApointment, index: number) => (
                 <Card.Content
@@ -246,6 +260,14 @@ const Dashboard: React.FC = () => {
               ),
             )}
           </ScrollView>
+          <View style={styles.paginationContainer}>
+            {upcomingData.map((_, index) => (
+              <View
+                key={index}
+                style={[styles.dot, currentPage === index && styles.activeDot]}
+              />
+            ))}
+          </View>
 
           <View style={styles.quickActions}>
             <TouchableOpacity
@@ -571,8 +593,7 @@ const styles = StyleSheet.create({
 
   upcomingAppBlockcard: {
     flex: 1,
-    marginTop: 16,
-    marginBottom: 16,
+    marginVertical: 16,
     padding: 10,
     borderRadius: 12,
     backgroundColor: '#EFEAF6',
@@ -704,5 +725,20 @@ const styles = StyleSheet.create({
   footerCallButtonIconImage: {
     width: 15,
     height: 15,
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 20,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#ccc',
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: '#4527a0',
   },
 });
