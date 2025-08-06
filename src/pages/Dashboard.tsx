@@ -1,13 +1,15 @@
 import { Dimensions, Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View, } from 'react-native'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Searchbar, TextInput, Icon, Text } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Banners from '../components/Slider';
-
+import moment from 'moment';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/types';
+import { getAppointments } from '../services/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const local_data = [
   {
     value: '1',
@@ -25,21 +27,58 @@ const Dashboard: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [appointments, setAppointments] = useState<any[]>([]);
   const banners = [
     require('../../assets/images/slide1.png'),
     require('../../assets/images/slide1.png'),
     require('../../assets/images/slide1.png'),
   ];
-
-  const navigateTo = (path: keyof MainStackParamList) => {
-    navigation.navigate(path as any, undefined);
-  };
-
+  const [loading, setLoading] = useState<boolean>(false);
   const [activeindex, setActiveindex] = useState(0);
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
 
-  
+  useEffect(() => {
+    const today = new Date();
+    const formattedToday = moment(today).format('YYYY-MM-DD');
+    setSelectedDate(today);
+    fetchMyAppointments(formattedToday);
+  }, []);
+
+  const navigateTo = (path: keyof MainStackParamList, data : any) => {
+    navigation.navigate(path as any, data);
+  };
+
+
+  const fetchMyAppointments = async (date: string) => {
+    try {
+      setLoading(true);
+      const payload = {
+        mrn: await AsyncStorage.getItem('mrn'),
+        date: date,
+      };
+      const response = await getAppointments(payload);
+      console.log("---------",response);
+      const filtered = response.data.filter((item: any) => {
+        const slotDate = moment(item.SlotStartDttm).format('YYYY-MM-DD');
+        return slotDate >= date;
+      });
+
+      const sortedAppointments = filtered.sort((a: any, b: any) => {
+        const aTime = moment(a.SlotStartDttm).valueOf();
+        const bTime = moment(b.SlotStartDttm).valueOf();
+        return aTime - bTime;
+      });
+      setAppointments(sortedAppointments);
+      console.log("---------",sortedAppointments);
+    } catch (error) {
+      console.error('❌ Error fetching appointments:', error);
+      setAppointments([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -93,13 +132,10 @@ const Dashboard: React.FC = () => {
 
           <Card.Content style={[styles.upcomingAppBlockcard, { elevation: 0, }]}>
             <View style={styles.row}>
-
               <Image
                 source={require('../../assets/images/doc-img.png')} // replace with actual image
                 style={styles.docImage}
               />
-
-
               <View style={styles.upcomingAppBlockcontent}>
                 <Text style={styles.upcomingAppTitle}> UPCOMING APPOINTMENTS </Text>
                 <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 12, color: '#3C2469', }}>Dr. Ramesh Konanki</Text>
@@ -112,7 +148,6 @@ const Dashboard: React.FC = () => {
                   </View>
                   <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 11, color: '#3C2469', }}> #1023456</Text>
                 </View>
-
                 <View style={styles.bottomUABlock}>
                   <TouchableOpacity onPress={() => navigation.navigate('DoctorSlots', { doctorId: 1, appointmentType: 'video' })}>
                     <Text style={[styles.rescheduleBt, { fontFamily: 'ProximaNovaA-Regular', fontSize: 11, color: '#fff', }]}>Reschedule</Text>
@@ -121,8 +156,6 @@ const Dashboard: React.FC = () => {
                   <TouchableOpacity  >
                     <Text style={{ fontFamily: 'ProximaNovaA-Regular', fontSize: 11, color: '#fff', paddingLeft: 5 }}> Cancel</Text>
                   </TouchableOpacity>
-
-
                 </View>
               </View>
             </View>
@@ -131,17 +164,17 @@ const Dashboard: React.FC = () => {
 
           <View style={styles.quickActions}>
 
-            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('Specialities')}>
+            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('Specialities',{appointmentType : 'Physical'})}>
               <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}>Book Physical Consultation</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('AppointmentConfirmed')}>
+            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('Specialities',{appointmentType : 'Video'})}>
               <Image source={require('../../assets/images/video-consultation-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> Book Video Consultation</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('BookVaccination')}>
+            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('BookVaccination',{})}>
               <Image source={require('../../assets/images/vaccine-icon.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> Book Vaccination</Text>
             </TouchableOpacity>
@@ -156,12 +189,12 @@ const Dashboard: React.FC = () => {
 
 
           <View style={[styles.quickActions, { justifyContent: 'center', marginTop: 5 }]}>
-            <TouchableOpacity style={[styles.actionItem, { marginRight: '5.5%' }]} onPress={() => navigateTo('BookScan')}>
+            <TouchableOpacity style={[styles.actionItem, { marginRight: '5.5%' }]} onPress={() => navigateTo('BookScan',{})}>
               <Image source={require('../../assets/images/book-scan.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> Book Scan</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('MedicalRecord')}>
+            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('MedicalRecord',{})}>
               <Image source={require('../../assets/images/view-report.png')} style={styles.iconAction} />
               <Text style={styles.actionText}> View Report </Text>
             </TouchableOpacity>
@@ -211,8 +244,6 @@ const Dashboard: React.FC = () => {
 
       </View>
     </View>
-
-
   );
 }
 

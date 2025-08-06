@@ -20,6 +20,8 @@
 		9152E8F49994DE325B436B28 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5B92EC0B87B4A739BB10D7C2 /* PrivacyInfo.xcprivacy */; };
 		B40642AB80444866825F5B4D /* ProximaNovaA-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 195CE71180CD48BFAED6C319 /* ProximaNovaA-Semibold.ttf */; };
 		B5C0479D3F39407CAC578710 /* libPods-RainbowHospitals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27C1F5537A4D8E37362940BD /* libPods-RainbowHospitals.a */; };
+		4470DEC3A4574CE68406E0CA /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73631E2F46474620BD51D05E /* BootSplash.storyboard */; };
+		ECAF88FCFC724C86B8BEA932 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA269BB9DA2C4F6392325E44 /* Colors.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +74,8 @@
 		B6D357B8888E44EFB4282ECC /* ProximaNovaA-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNovaA-Regular.ttf"; path = "../assets/fonts/ProximaNovaA-Regular.ttf"; sourceTree = "<group>"; };
 		DBF0671247BE3810B612E93F /* Pods-RainbowHospitals-RainbowHospitalsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RainbowHospitals-RainbowHospitalsTests.debug.xcconfig"; path = "Target Support Files/Pods-RainbowHospitals-RainbowHospitalsTests/Pods-RainbowHospitals-RainbowHospitalsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		73631E2F46474620BD51D05E /* BootSplash.storyboard */ = {isa = PBXFileReference; name = "BootSplash.storyboard"; path = "RainbowHospitals/BootSplash.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		AA269BB9DA2C4F6392325E44 /* Colors.xcassets */ = {isa = PBXFileReference; name = "Colors.xcassets"; path = "RainbowHospitals/Colors.xcassets"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = folder.assetcatalog; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -147,6 +151,8 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				5B92EC0B87B4A739BB10D7C2 /* PrivacyInfo.xcprivacy */,
+				73631E2F46474620BD51D05E /* BootSplash.storyboard */,
+				AA269BB9DA2C4F6392325E44 /* Colors.xcassets */,
 			);
 			name = RainbowHospitals;
 			sourceTree = "<group>";
@@ -325,6 +331,8 @@
 				1D54786985534C7A81CD66C1 /* ProximaNovaA-Regular.ttf in Resources */,
 				B40642AB80444866825F5B4D /* ProximaNovaA-Semibold.ttf in Resources */,
 				9152E8F49994DE325B436B28 /* PrivacyInfo.xcprivacy in Resources */,
+				4470DEC3A4574CE68406E0CA /* BootSplash.storyboard in Resources */,
+				ECAF88FCFC724C86B8BEA932 /* Colors.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

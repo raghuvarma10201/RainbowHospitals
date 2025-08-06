@@ -56,6 +56,8 @@ const Otp: React.FC = () => {
   });
 
   useEffect(() => {
+    const FcmToken = AsyncStorage.getItem('FcmTtoken');
+    console.log('FCM Token:', FcmToken);
     const fetchPhoneNumber = async () => {
       const storedNumber = await AsyncStorage.getItem('mobileNumber');
       setPhoneNumber(storedNumber);

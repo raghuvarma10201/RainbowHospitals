@@ -155,7 +155,8 @@ export const fetchSettings = async () => {
 
 export const registerUser = async (payload:any) => {
   try {
-    const response = await api.get('/registerNewPatient' , payload);
+    console.log(payload);
+    const response = await api.post('/registerNewPatient', payload);
     return response.data;
   } catch (error) {
     throw error;

@@ -80,7 +80,7 @@ const MyAppointments: React.FC = () => {
     try {
       const res = await ScreenShare.startScreenShare();
       Alert.alert('Success', res);
-    } catch (err) {
+    } catch (err : any) {
       Alert.alert('Error', err.message);
     }
   };
