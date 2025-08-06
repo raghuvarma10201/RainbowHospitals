@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ImageBackground, ScrollView, TextInput, Image, TouchableOpacity,  Pressable, Platform } from 'react-native';
+import { StyleSheet, View, ImageBackground, ScrollView, TextInput, Image, TouchableOpacity, Pressable, Platform } from 'react-native';
 import { Button, Text, } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useFormik } from 'formik';
@@ -28,10 +28,10 @@ const gender_data = [
 ];
 
 const bloodgroup_data = [
-  {value: '1', label: 'A',},
-  {value: '2', label: 'B',},
+  { value: '1', label: 'A', },
+  { value: '2', label: 'B', },
   { value: '3', label: 'AB', },
-  {value: '4', label: 'O', },  
+  { value: '4', label: 'O', },
 ];
 
 const rhfactor_data = [
@@ -39,7 +39,7 @@ const rhfactor_data = [
   { label: 'Negative', value: '2' },
 ];
 
-const countries_data =[
+const countries_data = [
   { label: 'India', value: 'IN' },
   { label: 'United States', value: 'US' },
   { label: 'United Kingdom', value: 'UK' },
@@ -55,16 +55,16 @@ const RegistrationSchema = Yup.object({
   foreName: Yup.string().required('Fore Name is required'),
   middleName: Yup.string().required('Middle Name is required'),
   lastName: Yup.string().required('Last Name is required'),
-    // email: Yup.string().required('Email is required'),
-    email: Yup.string()
+  // email: Yup.string().required('Email is required'),
+  email: Yup.string()
     .email('Invalid email address')
     .required('Email is required'),
-    country: Yup.string().required('Country is required'),
-    dob: Yup.string().required('Date of Birth is required'),
-    phoneNumber: Yup.string().required('Phone Number is required'),
-    gender: Yup.string().required('Gender is required'),
-    bloodgroup: Yup.string().required('Blood Group is required'),
-    rhfactor:Yup.string().required('RHfactor is required'),
+  country: Yup.string().required('Country is required'),
+  dob: Yup.string().required('Date of Birth is required'),
+  phoneNumber: Yup.string().required('Phone Number is required'),
+  gender: Yup.string().required('Gender is required'),
+  bloodgroup: Yup.string().required('Blood Group is required'),
+  rhfactor: Yup.string().required('RHfactor is required'),
   // address: Yup.string().required('Address is required'),
   // pincode: Yup.string().required('Pincode is required'),
   checked: Yup.boolean().required('Please agree to our Terms of Services and Privacy Policy'),
@@ -77,16 +77,16 @@ const Registration: React.FC = () => {
 
   const [checked, setChecked] = useState(false);
 
- // DateTimePickerModal
+  // DateTimePickerModal
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const showDatePicker = () => {setDatePickerVisibility(true);};
-  const hideDatePicker = () => {setDatePickerVisibility(false);};
+  const showDatePicker = () => { setDatePickerVisibility(true); };
+  const hideDatePicker = () => { setDatePickerVisibility(false); };
   const handleConfirm = (date: Date) => {
     setSelectedDate(date);
     hideDatePicker();
   };
- // DateTimePickerModal End
+  // DateTimePickerModal End
 
 
   const [country, setCountry] = useState('');
@@ -100,13 +100,13 @@ const Registration: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      foreName:'', middleName:'', lastName:'', email:'',  
-       country: '', dob: '', phoneNumber: '', gender: '', bloodgroup: '', rhfactor: '',
-        // address: '', pincode: '',
-         checked: false,
-      },
+      foreName: '', middleName: '', lastName: '', email: '',
+      country: '', dob: '', phoneNumber: '', gender: '', bloodgroup: '', rhfactor: '',
+      // address: '', pincode: '',
+      checked: false,
+    },
 
-    validationSchema: RegistrationSchema,    
+    validationSchema: RegistrationSchema,
     onSubmit: async (values, { setSubmitting, setErrors, setFieldError }) => {
       setLoading(true);
       try {
@@ -119,37 +119,37 @@ const Registration: React.FC = () => {
           Gender: gender,
           dtBirthDttm: selectedDate?.toISOString(),
           EmailId: values.email,
-          Country: country,        
-          PhoneNo: values.phoneNumber,        
+          Country: country,
+          PhoneNo: values.phoneNumber,
           Bloodgroup: bloodgroup,
           RHfactor: rhfactor,
-            // address: values.address,
-            // pincode: values.pincode,
+          // address: values.address,
+          // pincode: values.pincode,
           checked: checked,
-          
+
         });
 
         console.log("Registration response", response);
         if (response.status == 200 && response.success == true) {
           await AsyncStorage.multiSet([
             //  ['mobileNumber', values.mobileNumber],
-             ['foreName', values.foreName],
-             ['middleName', values.middleName],
-             ['lastName', values.lastName],
-             ['email', values.email],
-             ['country', country],
-             ['dob', selectedDate?.toISOString() || ''],
-             ['phoneNumber', values.phoneNumber],
-             ['gender', gender],
-             ['bloodgroup', bloodgroup],
-             ['rhfactor', rhfactor],
+            ['foreName', values.foreName],
+            ['middleName', values.middleName],
+            ['lastName', values.lastName],
+            ['email', values.email],
+            ['country', country],
+            ['dob', selectedDate?.toISOString() || ''],
+            ['phoneNumber', values.phoneNumber],
+            ['gender', gender],
+            ['bloodgroup', bloodgroup],
+            ['rhfactor', rhfactor],
             //  ['address', values.address],
             //  ['pincode', values.pincode],
-             ['checked', checked.toString()],
-           
+            ['checked', checked.toString()],
+
           ]);
 
-          
+
           ToastService.success('Success', 'Registration sent successfully');
           navigation.navigate('Dashboard');
         }
@@ -161,7 +161,7 @@ const Registration: React.FC = () => {
         // Basic error surface – adapt as needed
         ToastService.error('Invalid credentials', 'Please try again');
         // setErrors({ mobileNumber: 'Invalid credentials' });
-     
+
       } finally {
         setSubmitting(false);
         setLoading(false);
@@ -174,73 +174,73 @@ const Registration: React.FC = () => {
     <ScrollView contentContainerStyle={styles.scrollContent}>
       <View style={styles.container}>
 
-      <Text variant="headlineMedium" style={styles.title}>Registration</Text>
-      <Text style={styles.labelText}>You need to register your account only once.</Text>
-        
+        <Text variant="headlineMedium" style={styles.title}>Registration</Text>
+        <Text style={styles.labelText}>You need to register your account only once.</Text>
+
         <View style={styles.regForm}>
 
-        <View style={styles.formRow}>
-           <Text style={styles.formLabel}>Fore Name *</Text>
+          <View style={styles.formRow}>
+            <Text style={styles.formLabel}>Fore Name *</Text>
             <TextInput style={styles.formInput}
               keyboardType="default"          // shows numeric keyboard
-              maxLength={10}                  
+              maxLength={10}
               placeholder="Enter Fore Name"
               onChangeText={formik.handleChange('foreName')}
               onBlur={formik.handleBlur('foreName')}
               value={formik.values.foreName}
-            />   
-              {formik.touched.foreName && formik.errors.foreName && <Text style={styles.errorMessage}>{formik.errors.foreName}</Text>}     
-        </View>
-    
+            />
+            {formik.touched.foreName && formik.errors.foreName && <Text style={styles.errorMessage}>{formik.errors.foreName}</Text>}
+          </View>
 
-        <View style={styles.formRow}>
-           <Text style={styles.formLabel}>Middle Name *</Text>
+
+          <View style={styles.formRow}>
+            <Text style={styles.formLabel}>Middle Name *</Text>
             <TextInput style={styles.formInput}
-             keyboardType="default"                  
-             placeholder="Enter Middle Name"
+              keyboardType="default"
+              placeholder="Enter Middle Name"
               placeholderTextColor="#000"
-             onChangeText={formik.handleChange('middleName')}
-             onBlur={formik.handleBlur('middleName')}
-             value={formik.values.middleName}
-             />
-               {formik.touched.middleName && formik.errors.middleName && <Text style={styles.errorMessage}>{formik.errors.middleName}</Text>} 
-        </View>
+              onChangeText={formik.handleChange('middleName')}
+              onBlur={formik.handleBlur('middleName')}
+              value={formik.values.middleName}
+            />
+            {formik.touched.middleName && formik.errors.middleName && <Text style={styles.errorMessage}>{formik.errors.middleName}</Text>}
+          </View>
 
-        <View style={styles.formRow}>
-           <Text style={styles.formLabel}>Last Name *</Text>
+          <View style={styles.formRow}>
+            <Text style={styles.formLabel}>Last Name *</Text>
             <TextInput style={styles.formInput}
-             keyboardType="default"                  
-             placeholder="Enter Last Name"
+              keyboardType="default"
+              placeholder="Enter Last Name"
               placeholderTextColor="#000"
-             onChangeText={formik.handleChange('lastName')}
-             onBlur={formik.handleBlur('lastName')}
-             value={formik.values.lastName}
-           />
-             {formik.touched.lastName && formik.errors.lastName && <Text style={styles.errorMessage}>{formik.errors.lastName}</Text>} 
-        </View>
+              onChangeText={formik.handleChange('lastName')}
+              onBlur={formik.handleBlur('lastName')}
+              value={formik.values.lastName}
+            />
+            {formik.touched.lastName && formik.errors.lastName && <Text style={styles.errorMessage}>{formik.errors.lastName}</Text>}
+          </View>
 
-        <View style={styles.formRow}>
-           <Text style={styles.formLabel}>Email *</Text>
+          <View style={styles.formRow}>
+            <Text style={styles.formLabel}>Email *</Text>
             <TextInput style={styles.formInput}
-             keyboardType="email-address"
-             autoCapitalize="none"
-             placeholder="Enter your email"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              placeholder="Enter your email"
               placeholderTextColor="#000"
-             onChangeText={formik.handleChange('email')}
-             onBlur={formik.handleBlur('email')}
-            value={formik.values.email}
-         
-                   
-             />
-               {formik.touched.email && formik.errors.email && <Text style={styles.errorMessage}>{formik.errors.email}</Text>} 
-        </View>
+              onChangeText={formik.handleChange('email')}
+              onBlur={formik.handleBlur('email')}
+              value={formik.values.email}
+
+
+            />
+            {formik.touched.email && formik.errors.email && <Text style={styles.errorMessage}>{formik.errors.email}</Text>}
+          </View>
 
 
 
 
-        <View style={styles.formRow}>
-           <Text style={styles.formLabel}>Country</Text>
-           <Dropdown
+          <View style={styles.formRow}>
+            <Text style={styles.formLabel}>Country</Text>
+            <Dropdown
               style={styles.dropdownSelect}
               selectedTextStyle={styles.selectedTextContry}
               placeholderStyle={styles.placeholderCountry}
@@ -253,48 +253,48 @@ const Registration: React.FC = () => {
               containerStyle={styles.dropdownList}
               activeColor="#fff"
               onChange={e => formik.setFieldValue('country', e.label)}
-            />       
-        </View>
+            />
+          </View>
 
-        <View style={styles.formRow}>
-           <Text style={styles.formLabel}>Date of Birth</Text>
-              <TouchableOpacity onPress={showDatePicker}>
-                <Text style={styles.formInput}>
+          <View style={styles.formRow}>
+            <Text style={styles.formLabel}>Date of Birth</Text>
+            <TouchableOpacity onPress={showDatePicker}>
+              <Text style={styles.formInput}>
                 {formik.values.dob ? new Date(formik.values.dob).toDateString() : 'Select Date'}
-                </Text>
-              </TouchableOpacity>
-              <DateTimePickerModal
-            isVisible={isDatePickerVisible}
-            mode="date"
-            onConfirm={(date) => {
-              formik.setFieldValue('dob', date.toISOString());
-              hideDatePicker();
-            }}
-            onCancel={hideDatePicker}
-          />
-        </View>
+              </Text>
+            </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={(date) => {
+                formik.setFieldValue('dob', date.toISOString());
+                hideDatePicker();
+              }}
+              onCancel={hideDatePicker}
+            />
+          </View>
 
-        <View style={styles.formRow}>
-        <Text style={styles.formLabel}>Phone Number</Text>
-        <TextInput
-              keyboardType="numeric"        
+          <View style={styles.formRow}>
+            <Text style={styles.formLabel}>Phone Number</Text>
+            <TextInput
+              keyboardType="numeric"
               maxLength={10}
               style={styles.formInput}
               placeholder="Enter Phone Number"
-                placeholderTextColor="#000"
+              placeholderTextColor="#000"
               onChangeText={formik.handleChange('phoneNumber')}
               onBlur={formik.handleBlur('phoneNumber')}
               value={formik.values.phoneNumber}
             />
-            {formik.touched.phoneNumber && formik.errors.phoneNumber && <Text style={styles.errorMessage}>{formik.errors.phoneNumber}</Text>} 
+            {formik.touched.phoneNumber && formik.errors.phoneNumber && <Text style={styles.errorMessage}>{formik.errors.phoneNumber}</Text>}
 
           </View>
 
 
 
-        <View style={styles.formRow}>
-           <Text style={styles.formLabel}>Gender </Text>
-           <Dropdown
+          <View style={styles.formRow}>
+            <Text style={styles.formLabel}>Gender </Text>
+            <Dropdown
               style={styles.dropdownSelect}
               selectedTextStyle={styles.selectedTextGender}
               placeholderStyle={styles.placeholderCountry}
@@ -308,13 +308,10 @@ const Registration: React.FC = () => {
               activeColor="#fff"
               onChange={e => formik.setFieldValue('gender', e.label)}
             />
-        </View>
-
-
-        
-        <View style={styles.formRow}>
-           <Text style={styles.formLabel}>Blood Group </Text>
-           <Dropdown
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.formLabel}>Blood Group </Text>
+            <Dropdown
               style={styles.dropdownSelect}
               selectedTextStyle={styles.selectedTextGender}
               placeholderStyle={styles.placeholderCountry}
@@ -327,13 +324,13 @@ const Registration: React.FC = () => {
               containerStyle={styles.dropdownList}
               activeColor="#fff"
               onChange={e => formik.setFieldValue('bloodgroup', e.label)}
-              // onChange={e => console.log(e.label)}
+            // onChange={e => console.log(e.label)}
             />
-        </View>
+          </View>
 
-        <View style={styles.formRow}>
-           <Text style={styles.formLabel}>RH factor </Text>
-           <Dropdown
+          <View style={styles.formRow}>
+            <Text style={styles.formLabel}>RH factor </Text>
+            <Dropdown
               style={styles.dropdownSelect}
               selectedTextStyle={styles.selectedTextGender}
               placeholderStyle={styles.placeholderCountry}
@@ -346,11 +343,11 @@ const Registration: React.FC = () => {
               containerStyle={styles.dropdownList}
               activeColor="#fff"
               onChange={e => formik.setFieldValue('rhfactor', e.label)}
-      
+
             />
-        </View>
-        
-{/* 
+          </View>
+
+          {/* 
         <View style={styles.formRow}>
            <Text style={styles.formLabel}>Address</Text>
             <TextInput style={styles.formInput}
@@ -362,8 +359,7 @@ const Registration: React.FC = () => {
                    //  value={formik.values.email}
                   />
         </View> */}
-
-        {/* <View style={styles.formRow}>
+          {/* <View style={styles.formRow}>
            <Text style={styles.formLabel}>Pincode</Text>
             <TextInput style={styles.formInput}
              keyboardType="default"                  
@@ -374,20 +370,19 @@ const Registration: React.FC = () => {
               //  value={formik.values.email}
               />
         </View> */}
+          <View style={styles.formRow}>
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => setChecked(!checked)}
+            >
+              <View style={[styles.checkbox, checked && styles.checked]}>
+                {checked && <Text style={styles.checkmark}>✓</Text>}
+              </View>
+              <Text style={styles.checkBoxlabel}>Agree to our Terms of Services and Privacy Policy</Text>
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.formRow}>
-          <TouchableOpacity
-            style={styles.checkboxContainer}
-            onPress={() => setChecked(!checked)}
-          >
-            <View style={[styles.checkbox, checked && styles.checked]}>
-              {checked && <Text style={styles.checkmark}>✓</Text>}
-            </View>
-            <Text style={styles.checkBoxlabel}>Agree to our Terms of Services and Privacy Policy</Text>
-          </TouchableOpacity>
-        </View>
 
- 
           {/* <View style={styles.formViewGroup}>
             <Dropdown
               style={styles.dropdownSelect}
@@ -415,7 +410,7 @@ const Registration: React.FC = () => {
             />
           </View> */}
           {/* {formik.touched.mobileNumber && formik.errors.mobileNumber && <Text style={styles.errorMessage}>{formik.errors.mobileNumber}</Text>} */}
-        
+
           <TouchableOpacity style={styles.primaryBt} onPress={() => formik.handleSubmit()}>
             <Text style={styles.primaryBtText}>Submit</Text>
           </TouchableOpacity>
@@ -431,38 +426,31 @@ const Registration: React.FC = () => {
 export default Registration;
 
 const styles = StyleSheet.create({
-
-
-
-
-
   scrollContent: {
     padding: 0,
-    paddingBottom:20,
+    paddingBottom: 20,
   },
-
   container: {
     flex: 1,
-    paddingHorizontal:15,
+    paddingHorizontal: 15,
     paddingBottom: 10,
     paddingTop: 0,
   },
-
   title: {
-    color: '#00B3AE', 
-    fontSize: 20, 
-    fontWeight: 'normal',   
-    textAlign: 'center', 
-    textTransform: 'uppercase', 
+    color: '#00B3AE',
+    fontSize: 20,
+    fontWeight: 'normal',
+    textAlign: 'center',
+    textTransform: 'uppercase',
     fontFamily: 'ProximaNovaA-Bold',
-    marginTop:60,
+    marginTop: 60,
   },
 
   labelText: {
-    fontSize: 14, 
-    fontWeight: 'normal', 
-    color: '#000', 
-    marginBottom: 10, 
+    fontSize: 14,
+    fontWeight: 'normal',
+    color: '#000',
+    marginBottom: 10,
     fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'center',
   },
@@ -483,7 +471,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
 
   },
-
   errorMessage: {
     color: '#FF0000',
     marginTop: 0,
@@ -495,58 +482,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
 
   },
-
-
-
-
-
-
-
-  formRow:{marginBottom:12,},
-  formLabel:{fontSize:12, fontFamily:'ProximaNovaA-Regular', color:'#000', marginBottom:5,},
-  formInput:{
-    height:40,
-    flex:1,
-    borderWidth:1,
-    borderColor:'#C7E8E7',
-    borderRadius:10,
-    padding:10,
-    backgroundColor:'#C7E8E7',
-    fontFamily:'ProximaNovaA-Regular',
-    fontSize:14,
-    color:'#000',
+  formRow: { marginBottom: 12, },
+  formLabel: { fontSize: 12, fontFamily: 'ProximaNovaA-Regular', color: '#000', marginBottom: 5, },
+  formInput: {
+    height: 40,
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#C7E8E7',
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: '#C7E8E7',
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: 14,
+    color: '#000',
   },
-  
-
-  formButton:{
-    backgroundColor:'#3C2871',
-    borderRadius:10,
-    padding:10,
-    marginTop:10,
+  formButton: {
+    backgroundColor: '#3C2871',
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 10,
   },
-  formButtonText:{
-    color:'#fff',
-    textAlign:'center',
-    fontSize:14,
-    fontFamily:'ProximaNovaA-Bold',
-    fontWeight:'bold',
-    padding:5,
-    borderRadius:10, 
+  formButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 14,
+    fontFamily: 'ProximaNovaA-Bold',
+    fontWeight: 'bold',
+    padding: 5,
+    borderRadius: 10,
   },
-
-  regForm:{marginTop:10,},
-
+  regForm: { marginTop: 10, },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     paddingVertical: 8,
   },
-  checkBoxlabel:{
-    fontFamily:'ProximaNovaA-Regular',
-    fontSize:13,
+  checkBoxlabel: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: 13,
     flexWrap: 'wrap',
-    paddingRight:20,
-  
+    paddingRight: 20,
+
   },
 
   checkbox: {
@@ -568,20 +544,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
   },
-
-  //--
-  
   dropdownSelect: {
-    paddingHorizontal: 10, 
+    paddingHorizontal: 10,
     width: '100%',
-    height:40,
-    flex:1,
-    borderWidth:1,
-    borderColor:'#C7E8E7',
-    borderRadius:10,
-    backgroundColor:'#C7E8E7',
+    height: 40,
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#C7E8E7',
+    borderRadius: 10,
+    backgroundColor: '#C7E8E7',
   },
-
   placeholderCountry: {
     fontSize: 14,
     color: '#000',
@@ -592,22 +564,15 @@ const styles = StyleSheet.create({
     color: '#000',
     fontFamily: 'ProximaNovaA-Regular',
   },
-
   dropdownList: {
     marginLeft: 0,
     marginRight: 10,
     padding: 0,
     textAlign: 'left',
     fontFamily: 'ProximaNovaA-Regular',
-   fontSize:14,
-   color:'#000',
+    fontSize: 14,
+    color: '#000',
   },
-
-
-
-
-
-
   selectedTextGender: {
     fontSize: 14,
     color: '#000',

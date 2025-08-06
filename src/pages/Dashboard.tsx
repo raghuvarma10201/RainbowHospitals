@@ -9,15 +9,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Card, Searchbar, TextInput, Icon, Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Banners from '../components/Slider';
-
+import moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
+import {getAppointments} from '../services/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {upcomingData} from '../Constants/data';
 import {upcomingApointment} from '../utils/types';
 
@@ -40,16 +42,14 @@ const Dashboard: React.FC = () => {
   const [country, setCountry] = useState('1');
   const scrollRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [appointments, setAppointments] = useState<any[]>([]);
   const banners = [
     require('../../assets/images/slide1.png'),
     require('../../assets/images/slide1.png'),
     require('../../assets/images/slide1.png'),
   ];
-
-  const navigateTo = (path: keyof MainStackParamList) => {
-    navigation.navigate(path as any, undefined);
-  };
-
+  const [loading, setLoading] = useState<boolean>(false);
   const [activeindex, setActiveindex] = useState(0);
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
@@ -59,6 +59,45 @@ const Dashboard: React.FC = () => {
       event.nativeEvent.contentOffset.x / (width * 0.8),
     );
     setCurrentPage(pageIndex);
+  };
+  useEffect(() => {
+    const today = new Date();
+    const formattedToday = moment(today).format('YYYY-MM-DD');
+    setSelectedDate(today);
+    fetchMyAppointments(formattedToday);
+  }, []);
+
+  const navigateTo = (path: keyof MainStackParamList, data?: any) => {
+    navigation.navigate(path as any, data);
+  };
+
+  const fetchMyAppointments = async (date: string) => {
+    try {
+      setLoading(true);
+      const payload = {
+        mrn: await AsyncStorage.getItem('mrn'),
+        date: date,
+      };
+      const response = await getAppointments(payload);
+      console.log('---------', response);
+      const filtered = response.data.filter((item: any) => {
+        const slotDate = moment(item.SlotStartDttm).format('YYYY-MM-DD');
+        return slotDate >= date;
+      });
+
+      const sortedAppointments = filtered.sort((a: any, b: any) => {
+        const aTime = moment(a.SlotStartDttm).valueOf();
+        const bTime = moment(b.SlotStartDttm).valueOf();
+        return aTime - bTime;
+      });
+      setAppointments(sortedAppointments);
+      console.log('---------', sortedAppointments);
+    } catch (error) {
+      console.error('❌ Error fetching appointments:', error);
+      setAppointments([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -272,7 +311,7 @@ const Dashboard: React.FC = () => {
           <View style={styles.quickActions}>
             <TouchableOpacity
               style={styles.actionItem}
-              onPress={() => navigateTo('Specialities')}>
+              onPress={() => navigateTo('Specialities', {})}>
               <Image
                 source={require('../../assets/images/physical-consultation-icon.png')}
                 style={styles.iconAction}
@@ -282,7 +321,7 @@ const Dashboard: React.FC = () => {
 
             <TouchableOpacity
               style={styles.actionItem}
-              onPress={() => navigateTo('AppointmentConfirmed')}>
+              onPress={() => navigateTo('AppointmentConfirmed', {})}>
               <Image
                 source={require('../../assets/images/video-consultation-icon.png')}
                 style={styles.iconAction}
@@ -313,7 +352,7 @@ const Dashboard: React.FC = () => {
             ]}>
             <TouchableOpacity
               style={[styles.actionItem, {marginRight: '5.5%'}]}
-              onPress={() => navigateTo('BookScan')}>
+              onPress={() => navigateTo('BookScan', {})}>
               <Image
                 source={require('../../assets/images/book-scan.png')}
                 style={styles.iconAction}
@@ -323,7 +362,7 @@ const Dashboard: React.FC = () => {
 
             <TouchableOpacity
               style={styles.actionItem}
-              onPress={() => navigateTo('MedicalRecord')}>
+              onPress={() => navigateTo('MedicalRecord', {})}>
               <Image
                 source={require('../../assets/images/view-report.png')}
                 style={styles.iconAction}

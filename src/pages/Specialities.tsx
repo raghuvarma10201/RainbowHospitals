@@ -13,12 +13,9 @@ import {getDoctors, getSpecialities} from '../services/common';
 import Loader from '../components/Loader';
 import {MainStackParamList} from '../navigation/types';
 
-const Specialities: React.FC = () => {
-  type AppNavigationProp = NativeStackNavigationProp<
-    MainStackParamList,
-    'Dashboard'
-  >;
-  const navigation = useNavigation<AppNavigationProp>();
+const Specialities: React.FC = ({ route }: any) => {
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const { appointmentType } = route.params;
   const [specialities, setSpecialities] = useState<any>([]);
   const specialties = Object.keys(doctorData) as Array<keyof typeof doctorData>;
   const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1);
@@ -41,7 +38,7 @@ const Specialities: React.FC = () => {
       if (response && response.status == 200) {
         setLoading(false);
         setSpecialities(response.data);
-        loadDoctors('', 'video');
+        loadDoctors('', appointmentType);
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -116,7 +113,7 @@ const Specialities: React.FC = () => {
               onTabPress={(index, specialityId) => {
                 setActiveSpecialtyIndex(index);
                 setActiveDocIndex(0);
-                loadDoctors(specialityId, 'video');
+                loadDoctors(specialityId, appointmentType);
               }}
             />
             <Highlight

@@ -59,7 +59,7 @@ const App: React.FC = () => {
     //user notification permission
   useEffect(() => {
     // Request notification permissions and setup handlers
-    //setupNotificationListeners();
+    setupNotificationListeners();
     createNotificationChannels();
   }, []);
 
