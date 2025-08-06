@@ -1,14 +1,24 @@
-import { Dimensions, Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View, } from 'react-native'
-import React, { useEffect, useState } from 'react';
-import { Card, Searchbar, TextInput, Icon, Text } from 'react-native-paper';
-import { Dropdown } from 'react-native-element-dropdown';
+import {
+  Dimensions,
+  Image,
+  ImageProps,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {Card, Searchbar, TextInput, Icon, Text} from 'react-native-paper';
+import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Banners from '../components/Slider';
 import moment from 'moment';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../navigation/types';
-import { getAppointments } from '../services/common';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {MainStackParamList} from '../navigation/types';
+import {getAppointments} from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { upcomingData } from '../Constants/data';
 import { upcomingApointment } from '../utils/types';
@@ -29,6 +39,8 @@ const Dashboard: React.FC = () => {
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
+  const scrollRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
   const banners = [
@@ -41,6 +53,12 @@ const Dashboard: React.FC = () => {
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
 
+  const handleScroll = (event: any) => {
+    const pageIndex = Math.round(
+      event.nativeEvent.contentOffset.x / (w * 0.8),
+    );
+    setCurrentPage(pageIndex);
+  };
   useEffect(() => {
     const today = new Date();
     const formattedToday = moment(today).format('YYYY-MM-DD');
@@ -51,7 +69,6 @@ const Dashboard: React.FC = () => {
   const navigateTo = (path: keyof MainStackParamList, data?: any) => {
     navigation.navigate(path as any, data);
   };
-
 
   const fetchMyAppointments = async (date: string) => {
     try {
@@ -162,6 +179,7 @@ const Dashboard: React.FC = () => {
             </View>
           </View>
           <ScrollView
+            ref={scrollRef}
             horizontal
             showsHorizontalScrollIndicator={false}
             pagingEnabled>
@@ -282,6 +300,14 @@ const Dashboard: React.FC = () => {
               ),
             )}
           </ScrollView>
+          <View style={styles.paginationContainer}>
+            {upcomingData.map((_, index) => (
+              <View
+                key={index}
+                style={[styles.dot, currentPage === index && styles.activeDot]}
+              />
+            ))}
+          </View>
 
           <View style={styles.quickActions}>
             <TouchableOpacity
@@ -740,5 +766,20 @@ const styles = StyleSheet.create({
   footerCallButtonIconImage: {
     width: 15,
     height: 15,
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 20,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#ccc',
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: '#4527a0',
   },
 });
