@@ -20,10 +20,9 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
 import {getAppointments} from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {upcomingData} from '../Constants/data';
-import {upcomingApointment} from '../utils/types';
-
-const {width} = Dimensions.get('window');
+import { upcomingData } from '../Constants/data';
+import { upcomingApointment } from '../utils/types';
+import { formatAppointmentDate, formatAppointmentTime } from '../utils/dateTime';
 const local_data = [
   {
     value: '1',
@@ -43,7 +42,7 @@ const Dashboard: React.FC = () => {
   const scrollRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [appointments, setAppointments] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
   const banners = [
     require('../../assets/images/slide1.png'),
     require('../../assets/images/slide1.png'),
@@ -56,7 +55,7 @@ const Dashboard: React.FC = () => {
 
   const handleScroll = (event: any) => {
     const pageIndex = Math.round(
-      event.nativeEvent.contentOffset.x / (width * 0.8),
+      event.nativeEvent.contentOffset.x / (w * 0.8),
     );
     setCurrentPage(pageIndex);
   };
@@ -79,7 +78,7 @@ const Dashboard: React.FC = () => {
         date: date,
       };
       const response = await getAppointments(payload);
-      console.log('---------', response);
+      console.log("---------", response);
       const filtered = response.data.filter((item: any) => {
         const slotDate = moment(item.SlotStartDttm).format('YYYY-MM-DD');
         return slotDate >= date;
@@ -91,7 +90,7 @@ const Dashboard: React.FC = () => {
         return aTime - bTime;
       });
       setAppointments(sortedAppointments);
-      console.log('---------', sortedAppointments);
+      console.log("---------", sortedAppointments);
     } catch (error) {
       console.error('❌ Error fetching appointments:', error);
       setAppointments([]);
@@ -110,7 +109,7 @@ const Dashboard: React.FC = () => {
               <View style={styles.searchBlock}>
                 <TextInput
                   mode="flat"
-                  style={[styles.searchFormInput, {color: 'white'}]}
+                  style={[styles.searchFormInput, { color: 'white' }]}
                   placeholder="search"
                   value={search}
                   onChangeText={setSearch}
@@ -182,24 +181,27 @@ const Dashboard: React.FC = () => {
           <ScrollView
             ref={scrollRef}
             horizontal
-            pagingEnabled
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            showsHorizontalScrollIndicator={false}>
-            {upcomingData.map(
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled>
+            {appointments.map(
               (appointment: upcomingApointment, index: number) => (
                 <Card.Content
-                  style={[styles.upcomingAppBlockcard, {elevation: 0}]}>
+                  style={[styles.upcomingAppBlockcard, { elevation: 0 }]}>
                   <View style={styles.row}>
                     <Image
-                      source={appointment?.doctorImg} // replace with actual image
+                    source={
+                        appointment?.image
+                          ? { uri: `${appointment?.image}` }
+                          : {
+                            uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                          }
+                      }
                       style={styles.docImage}
                     />
 
                     <View style={styles.upcomingAppBlockcontent}>
                       <Text style={styles.upcomingAppTitle}>
-                        {' '}
-                        {appointment?.title}{' '}
+                        Upcoming Appointment
                       </Text>
                       <Text
                         style={{
@@ -207,7 +209,7 @@ const Dashboard: React.FC = () => {
                           fontSize: 12,
                           color: '#3C2469',
                         }}>
-                        {appointment?.doctorName}
+                        {appointment?.CareProviderTitle} {appointment?.CareProviderName}
                       </Text>
                       <Text
                         style={{
@@ -215,10 +217,10 @@ const Dashboard: React.FC = () => {
                           fontSize: 8,
                           color: '#3C2469',
                         }}>
-                        {appointment?.doctorSpeciality}
+                        {appointment?.SpecialtyName}
                       </Text>
                       <Text style={styles.upcomingTime}>
-                        {appointment?.appointmentDateAndTime}
+                        {formatAppointmentDate(appointment?.SlotStartDttm)} {formatAppointmentTime(appointment?.SlotStartDttm)}
                       </Text>
                       <View
                         style={{
@@ -236,7 +238,7 @@ const Dashboard: React.FC = () => {
                           }}>
                           <Image
                             source={require('../../assets/images/user-icon.png')}
-                            style={{width: 11, height: 11, marginRight: 1}}
+                            style={{ width: 11, height: 11, marginRight: 1 }}
                           />
                           <Text
                             style={{
@@ -245,7 +247,7 @@ const Dashboard: React.FC = () => {
                               color: '#3C2469',
                             }}>
                             {' '}
-                            {appointment?.appointmentType}
+                            {appointment?.AppointmentType}
                           </Text>
                         </View>
                         <Text
@@ -255,7 +257,7 @@ const Dashboard: React.FC = () => {
                             color: '#3C2469',
                           }}>
                           {' '}
-                          #{appointment?.appointmentNumber}
+                          #{appointment?.appointmentnumber}
                         </Text>
                       </View>
 
@@ -279,7 +281,6 @@ const Dashboard: React.FC = () => {
                             Reschedule
                           </Text>
                         </TouchableOpacity>
-
                         <TouchableOpacity>
                           <Text
                             style={{
@@ -311,7 +312,7 @@ const Dashboard: React.FC = () => {
           <View style={styles.quickActions}>
             <TouchableOpacity
               style={styles.actionItem}
-              onPress={() => navigateTo('Specialities', {})}>
+              onPress={() => navigateTo('Specialities', {appointmentType : 'Physical'})}>
               <Image
                 source={require('../../assets/images/physical-consultation-icon.png')}
                 style={styles.iconAction}
@@ -321,7 +322,7 @@ const Dashboard: React.FC = () => {
 
             <TouchableOpacity
               style={styles.actionItem}
-              onPress={() => navigateTo('AppointmentConfirmed', {})}>
+              onPress={() => navigateTo('AppointmentConfirmed', {appointmentType : "Video"})}>
               <Image
                 source={require('../../assets/images/video-consultation-icon.png')}
                 style={styles.iconAction}
@@ -348,11 +349,11 @@ const Dashboard: React.FC = () => {
           <View
             style={[
               styles.quickActions,
-              {justifyContent: 'center', marginTop: 5},
+              { justifyContent: 'center', marginTop: 5 },
             ]}>
             <TouchableOpacity
-              style={[styles.actionItem, {marginRight: '5.5%'}]}
-              onPress={() => navigateTo('BookScan', {})}>
+              style={[styles.actionItem, { marginRight: '5.5%' }]}
+              onPress={() => navigateTo('BookScan')}>
               <Image
                 source={require('../../assets/images/book-scan.png')}
                 style={styles.iconAction}
@@ -362,7 +363,7 @@ const Dashboard: React.FC = () => {
 
             <TouchableOpacity
               style={styles.actionItem}
-              onPress={() => navigateTo('MedicalRecord', {})}>
+              onPress={() => navigateTo('MedicalRecord')}>
               <Image
                 source={require('../../assets/images/view-report.png')}
                 style={styles.iconAction}
@@ -632,7 +633,8 @@ const styles = StyleSheet.create({
 
   upcomingAppBlockcard: {
     flex: 1,
-    marginVertical: 16,
+    marginTop: 16,
+    marginBottom: 32,
     padding: 10,
     borderRadius: 12,
     backgroundColor: '#EFEAF6',
@@ -659,7 +661,7 @@ const styles = StyleSheet.create({
     paddingBottom: 7,
   },
 
-  rescheduleBt: {borderRightWidth: 1, borderColor: '#4CC2BF', paddingEnd: 10},
+  rescheduleBt: { borderRightWidth: 1, borderColor: '#4CC2BF', paddingEnd: 10 },
   // upcomingAppBlockcard End
 
   quickActions: {

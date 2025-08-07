@@ -34,6 +34,7 @@ import { requestUserPermission, setupNotificationListeners } from './src/utils/f
 import notifee, {AndroidImportance} from '@notifee/react-native';
 import { initializeApp } from '@react-native-firebase/app';
 import { getMessaging } from '@react-native-firebase/messaging';
+import { fetchSettings } from './src/services/common';
 
 // Initialize RTL
 configureRTL();
@@ -41,7 +42,7 @@ configureRTL();
 const App: React.FC = () => {
   const [booting, setBooting] = useState(true);
   const [isLoggedIn, setLoggedIn] = useState(false);
-
+  
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -63,6 +64,15 @@ const App: React.FC = () => {
     createNotificationChannels();
   }, []);
 
+  const getSettings = async () => {
+    const settings = await fetchSettings();
+
+    if (settings && settings.status == 200) {
+
+    } else {
+      console.error('❌ Failed to fetch settings.');
+    }
+  }
   // 🔊 Create custom sound channels
   const createNotificationChannels = async () => {
     await notifee.createChannel({

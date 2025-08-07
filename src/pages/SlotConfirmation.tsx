@@ -52,7 +52,6 @@ const SlotConfirmation: React.FC = ({ route }: any) => {
         MobileNo: storedNumber,
       }
       const response = await fetchFamilyMembers(payload);
-
       if (response && response.status == 200) {
         setLoading(false);
         setFamilyMembers(response.data);
