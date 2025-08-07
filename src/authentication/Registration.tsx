@@ -16,27 +16,27 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const gender_data = [
   {
-    value: '1',
-    label: 'male',
+    value: 'male',
+    label: 'Male',
 
   },
   {
-    value: '2',
+    value: 'female',
     label: 'Female',
 
   },
 ];
 
 const bloodgroup_data = [
-  { value: '1', label: 'A', },
-  { value: '2', label: 'B', },
-  { value: '3', label: 'AB', },
-  { value: '4', label: 'O', },
+  { value: 'A', label: 'A', },
+  { value: 'B', label: 'B', },
+  { value: 'AB', label: 'AB', },
+  { value: 'O', label: 'O', },
 ];
 
 const rhfactor_data = [
-  { label: 'Positive', value: '1' },
-  { label: 'Negative', value: '2' },
+  { label: 'Positive', value: 'positive' },
+  { label: 'Negative', value: 'negative' },
 ];
 
 const countries_data = [
@@ -79,20 +79,12 @@ const Registration: React.FC = () => {
 
   // DateTimePickerModal
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const showDatePicker = () => { setDatePickerVisibility(true); };
   const hideDatePicker = () => { setDatePickerVisibility(false); };
-  const handleConfirm = (date: Date) => {
-    setSelectedDate(date);
-    hideDatePicker();
-  };
   // DateTimePickerModal End
 
 
-  const [country, setCountry] = useState('');
-  const [gender, setGender] = useState('');
-  const [bloodgroup, setBloodgroup] = useState('');
-  const [rhfactor, setRhfactor] = useState('');
+
   const { setLoggedIn } = useAuth();
   const [loading, setLoading] = useState(false);
 
@@ -116,13 +108,13 @@ const Registration: React.FC = () => {
           ForeName: values.foreName,
           MiddleName: values.middleName,
           LastName: values.lastName,
-          Gender: gender,
-          dtBirthDttm: selectedDate?.toISOString(),
-          EmailId: values.email,
-          Country: country,
-          PhoneNo: values.phoneNumber,
-          Bloodgroup: bloodgroup,
-          RHfactor: rhfactor,
+            Gender: values.gender,
+            dtBirthDttm: values.dob,
+            EmailId: values.email,
+           Country: values.country,
+           PhoneNo: values.phoneNumber,
+           Bloodgroup: values.bloodgroup,
+           RHfactor: values.rhfactor,
           // address: values.address,
           // pincode: values.pincode,
           checked: checked,
@@ -137,12 +129,12 @@ const Registration: React.FC = () => {
             ['middleName', values.middleName],
             ['lastName', values.lastName],
             ['email', values.email],
-            ['country', country],
-            ['dob', selectedDate?.toISOString() || ''],
-            ['phoneNumber', values.phoneNumber],
-            ['gender', gender],
-            ['bloodgroup', bloodgroup],
-            ['rhfactor', rhfactor],
+            ['country', values.country],
+              ['dob', values.dob],
+              ['phoneNumber', values.phoneNumber],
+             ['gender', values.gender],
+             ['bloodgroup', values.bloodgroup],
+             ['rhfactor', values.rhfactor],
             //  ['address', values.address],
             //  ['pincode', values.pincode],
             ['checked', checked.toString()],
@@ -245,14 +237,14 @@ const Registration: React.FC = () => {
               selectedTextStyle={styles.selectedTextContry}
               placeholderStyle={styles.placeholderCountry}
               maxHeight={200}
-              value={country}
-              data={countries_data}
-              valueField="value"
-              labelField="label"
-              placeholder="Select country"
-              containerStyle={styles.dropdownList}
-              activeColor="#fff"
-              onChange={e => formik.setFieldValue('country', e.label)}
+                             value={formik.values.country}
+               data={countries_data}
+               valueField="value"
+               labelField="label"
+               placeholder="Select country"
+               containerStyle={styles.dropdownList}
+               activeColor="#fff"
+               onChange={e => formik.setFieldValue('country', e.label)}
             />
           </View>
 
@@ -299,14 +291,14 @@ const Registration: React.FC = () => {
               selectedTextStyle={styles.selectedTextGender}
               placeholderStyle={styles.placeholderCountry}
               maxHeight={200}
-              value={gender}
-              data={gender_data}
-              valueField="value"
-              labelField="label"
-              placeholder="Select Gender"
-              containerStyle={styles.dropdownList}
-              activeColor="#fff"
-              onChange={e => formik.setFieldValue('gender', e.label)}
+                             value={formik.values.gender}
+               data={gender_data}
+               valueField="value"
+               labelField="label"
+               placeholder="Select Gender"
+               containerStyle={styles.dropdownList}
+               activeColor="#fff"
+               onChange={e => formik.setFieldValue('gender', e.label)}
             />
           </View>
           <View style={styles.formRow}>
@@ -316,15 +308,15 @@ const Registration: React.FC = () => {
               selectedTextStyle={styles.selectedTextGender}
               placeholderStyle={styles.placeholderCountry}
               maxHeight={200}
-              value={bloodgroup}
-              data={bloodgroup_data}
-              valueField="value"
-              labelField="label"
-              placeholder="Select Blood Group"
-              containerStyle={styles.dropdownList}
-              activeColor="#fff"
-              onChange={e => formik.setFieldValue('bloodgroup', e.label)}
-            // onChange={e => console.log(e.label)}
+                             value={formik.values.bloodgroup}
+               data={bloodgroup_data}
+               valueField="value"
+               labelField="label"
+               placeholder="Select Blood Group"
+               containerStyle={styles.dropdownList}
+               activeColor="#fff"
+               onChange={e => formik.setFieldValue('bloodgroup', e.value)}
+             //onChange={e => console.log(e.value)}
             />
           </View>
 
@@ -335,14 +327,15 @@ const Registration: React.FC = () => {
               selectedTextStyle={styles.selectedTextGender}
               placeholderStyle={styles.placeholderCountry}
               maxHeight={200}
-              value={rhfactor}
-              data={rhfactor_data}
-              valueField="value"
-              labelField="label"
-              placeholder="Select RH factor"
-              containerStyle={styles.dropdownList}
-              activeColor="#fff"
-              onChange={e => formik.setFieldValue('rhfactor', e.label)}
+                             value={formik.values.rhfactor}
+               data={rhfactor_data}
+               valueField="value"
+               labelField="label"
+               placeholder="Select RH factor"
+               containerStyle={styles.dropdownList}
+               activeColor="#fff"
+               onChange={e => formik.setFieldValue('rhfactor', e.value)}
+              //onChange={e => console.log(e.value)}
 
             />
           </View>
