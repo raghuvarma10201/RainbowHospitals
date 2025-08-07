@@ -80,7 +80,7 @@ const MyAppointments: React.FC = () => {
     try {
       const res = await ScreenShare.startScreenShare();
       Alert.alert('Success', res);
-    } catch (err : any) {
+    } catch (err: any) {
       Alert.alert('Error', err.message);
     }
   };
@@ -95,8 +95,9 @@ const MyAppointments: React.FC = () => {
                 key={index}
                 style={styles.doctorItem}
                 // onPress={() => navigation.navigate('MyAppointmentDetails', { appointmentData: appointment })}
-                // onPress={() => startVideoCall()}
-                onPress={() => startSharing()}>
+                onPress={() => startVideoCall()}
+                // onPress={() => startSharing()}
+              >
                 <Image
                   source={
                     appointment.image

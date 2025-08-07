@@ -1,3 +1,5 @@
+// File: JitsiModal.tsx
+
 import React, {useCallback, useRef, useEffect, useState} from 'react';
 import {
   StyleSheet,
@@ -11,11 +13,15 @@ import {
   BackHandler,
   Platform,
   Image,
+  NativeModules,
+  NativeEventEmitter,
 } from 'react-native';
 import {JitsiMeeting} from '@jitsi/react-native-sdk';
 
-const screen = Dimensions.get('window');
+const {ScreenShareModule} = NativeModules;
+const screenShareEmitter = new NativeEventEmitter(ScreenShareModule);
 
+const screen = Dimensions.get('window');
 const CORNER_MARGIN = 10;
 const SNAP_WIDTH = 160;
 const SNAP_HEIGHT = 100;
@@ -23,6 +29,7 @@ const SNAP_HEIGHT = 100;
 const JitsiModal = ({visible, options, onClose}: any) => {
   const jitsiMeeting = useRef(null);
   const [minimized, setMinimized] = useState(false);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
 
   const position = useRef(
     new Animated.ValueXY({
@@ -36,12 +43,11 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     onClose?.();
   }, [onClose]);
 
-  // Auto-minimize on Android back press
   useEffect(() => {
     const onBackPress = () => {
       if (visible && !minimized) {
         setMinimized(true);
-        return true; // prevent default back action
+        return true;
       }
       return false;
     };
@@ -61,6 +67,7 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     if (!visible) {
       setMinimized(false);
       jitsiMeeting.current?.close?.();
+      setIsScreenSharing(false);
     }
   }, [visible]);
 
@@ -115,6 +122,35 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     }),
   ).current;
 
+  useEffect(() => {
+    const grantedListener = screenShareEmitter.addListener(
+      'ScreenSharePermissionGranted',
+      () => {
+        console.log('✅ Screen share permission granted');
+        setIsScreenSharing(true);
+      },
+    );
+
+    const deniedListener = screenShareEmitter.addListener(
+      'ScreenSharePermissionDenied',
+      () => {
+        console.warn('❌ Screen share permission denied');
+      },
+    );
+
+    return () => {
+      grantedListener.remove();
+      deniedListener.remove();
+    };
+  }, []);
+
+  const handleStartScreenShare = () => {
+    if (Platform.OS === 'android') {
+      console.log('📺 Requesting screen share permission...');
+      ScreenShareModule.startScreenShare();
+    }
+  };
+
   if (!visible || !options?.roomName) return null;
 
   return (
@@ -129,7 +165,6 @@ const JitsiModal = ({visible, options, onClose}: any) => {
         <TouchableOpacity
           onPress={() => setMinimized(true)}
           style={styles.minimizeButton}>
-          {/* <Text style={styles.minimizeText}>—</Text> */}
           <Image
             source={require('../../assets/images/compress-icon.png')}
             style={styles.compressIcon}
@@ -180,6 +215,15 @@ const JitsiModal = ({visible, options, onClose}: any) => {
             serverURL={options.serverURL || 'https://meet.jit.si'}
             style={{flex: 1}}
           />
+
+          {/* Screen Share Button */}
+          {!isScreenSharing && Platform.OS === 'android' && (
+            <TouchableOpacity
+              onPress={handleStartScreenShare}
+              style={styles.screenShareButton}>
+              <Text style={styles.screenShareText}>Start Screen Share</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </TouchableWithoutFeedback>
     </Animated.View>
@@ -247,6 +291,21 @@ const styles = StyleSheet.create({
     height: '100%',
     zIndex: 1000,
     backgroundColor: 'transparent',
+  },
+  screenShareButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#1e90ff',
+    borderRadius: 8,
+    zIndex: 1001,
+  },
+  screenShareText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
 
