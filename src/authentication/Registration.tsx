@@ -76,6 +76,15 @@ const Registration: React.FC = () => {
   const navigation = useNavigation<CombinedNavigationProp>();
 
   const [checked, setChecked] = useState(false);
+  const [mobileNumber, setMobileNumber] = useState('');
+
+  useEffect(() => {
+    AsyncStorage.getItem('mobileNumber').then((mobileNumber) => {
+      if (mobileNumber) {
+        setMobileNumber(mobileNumber);
+      }
+    });
+  }, []);
 
   // DateTimePickerModal
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -103,51 +112,65 @@ const Registration: React.FC = () => {
       setLoading(true);
       try {
         setSubmitting(true);
-        const response = await registerUser({
-          // number: values.mobileNumber,
-          ForeName: values.foreName,
-          MiddleName: values.middleName,
-          LastName: values.lastName,
-            Gender: values.gender,
-            dtBirthDttm: values.dob,
-            EmailId: values.email,
-           Country: values.country,
-           PhoneNo: values.phoneNumber,
-           Bloodgroup: values.bloodgroup,
-           RHfactor: values.rhfactor,
-          // address: values.address,
-          // pincode: values.pincode,
-          checked: checked,
+                 const response = await registerUser(
+                  {
+    //  ForeName: "Chandra",
+    // MiddleName: "shekhar",
+    // LastName: "A",
+    // Gender: "Male",
+    // dtBirthDttm: "2016-12-28T00:00:00.000Z",
+    // PhoneNo: "12345678",
+    // MobileNo: "8686865707",
+    // EmailId: "test@gmail.com",
+    // OrganisationUID: "8",
+    // MotherName: "qwerty",
+    // Country: "India",
+    // Bloodgroup: "A",
+    // RHfactor: "POSITIVE",
+    // PatientID: "MAHTMP-169626",
+    // relation:"father"
 
-        });
+    ForeName: values.foreName,
+    MiddleName: values.middleName,
+    LastName: values.lastName,
+    Gender: values.gender,
+    dtBirthDttm: values.dob,
+    EmailId: values.email,
+    Country: values.country,        
+    PhoneNo: values.phoneNumber,        
+    Bloodgroup: values.bloodgroup,
+    RHfactor: values.rhfactor,  
+    checked: checked,
+     relation:"self",
+    OrganisationUID: "8",
+   MobileNo: mobileNumber,
+  
 
-        console.log("Registration response", response);
-        if (response.status == 200 && response.success == true) {
-          await AsyncStorage.multiSet([
-            //  ['mobileNumber', values.mobileNumber],
-            ['foreName', values.foreName],
-            ['middleName', values.middleName],
-            ['lastName', values.lastName],
-            ['email', values.email],
-            ['country', values.country],
-              ['dob', values.dob],
-              ['phoneNumber', values.phoneNumber],
+   
+         }
+        );
+
+       console.log("Registration response", response);
+         if (response.status == 200 && response.success == true) {
+           await AsyncStorage.multiSet([
+             ['foreName', values.foreName],
+             ['middleName', values.middleName],
+             ['lastName', values.lastName],
+             ['email', values.email],
+             ['country', values.country],
+             ['dob', values.dob],
+             ['phoneNumber', values.phoneNumber],
              ['gender', values.gender],
              ['bloodgroup', values.bloodgroup],
              ['rhfactor', values.rhfactor],
-            //  ['address', values.address],
-            //  ['pincode', values.pincode],
-            ['checked', checked.toString()],
+             ['checked', checked.toString()],
+             ['mobileNumber', mobileNumber],
+           ]);
 
-          ]);
-
-
-          ToastService.success('Success', 'Registration sent successfully');
-          navigation.navigate('Dashboard');
-        }
-        // if backend succeeds, mark app as logged‑in
-        //await AsyncStorage.multiSet([['mobileNumber', values.mobileNumber]]);
-        //setLoggedIn(true);
+           ToastService.success('Success', 'Registration sent successfully');
+           setLoggedIn(true); 
+         }
+       
       } catch (e: any) {
         console.error('Registration failed', e);
         // Basic error surface – adapt as needed
@@ -277,6 +300,25 @@ const Registration: React.FC = () => {
               onChangeText={formik.handleChange('phoneNumber')}
               onBlur={formik.handleBlur('phoneNumber')}
               value={formik.values.phoneNumber}
+              editable={false}
+            />
+            {formik.touched.phoneNumber && formik.errors.phoneNumber && <Text style={styles.errorMessage}>{formik.errors.phoneNumber}</Text>}
+
+          </View>
+
+
+          <View style={styles.formRow}>
+            <Text style={styles.formLabel}>Mobile Number</Text>
+            <TextInput
+              keyboardType="numeric"
+              maxLength={10}
+              style={styles.formInput}
+              placeholder="Enter Mobile Number"
+              placeholderTextColor="#000"
+              onChangeText={formik.handleChange('mobileNumber')}
+              onBlur={formik.handleBlur('mobileNumber')}
+              value={mobileNumber}
+              editable={false}
             />
             {formik.touched.phoneNumber && formik.errors.phoneNumber && <Text style={styles.errorMessage}>{formik.errors.phoneNumber}</Text>}
 
