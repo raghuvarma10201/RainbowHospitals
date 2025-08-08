@@ -27,7 +27,7 @@ const SNAP_WIDTH = 160;
 const SNAP_HEIGHT = 100;
 
 const JitsiModal = ({visible, options, onClose}: any) => {
-  const jitsiMeeting = useRef(null);
+  const jitsiMeeting = useRef<any>(null);
   const [minimized, setMinimized] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
 
@@ -43,6 +43,7 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     onClose?.();
   }, [onClose]);
 
+  // Back button minimization
   useEffect(() => {
     const onBackPress = () => {
       if (visible && !minimized) {
@@ -63,17 +64,18 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     };
   }, [visible, minimized]);
 
+  // Reset state when closing modal
   useEffect(() => {
     if (!visible) {
       setMinimized(false);
-      jitsiMeeting.current?.close?.();
       setIsScreenSharing(false);
+      jitsiMeeting.current?.close?.();
     }
   }, [visible]);
 
+  // Snap minimized video to nearest corner
   const snapToNearestCorner = () => {
     const {x, y} = position.__getValue();
-
     const corners = [
       {x: CORNER_MARGIN, y: CORNER_MARGIN},
       {x: screen.width - SNAP_WIDTH - CORNER_MARGIN, y: CORNER_MARGIN},
@@ -122,11 +124,12 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     }),
   ).current;
 
+  // Listen for native events
   useEffect(() => {
     const grantedListener = screenShareEmitter.addListener(
       'ScreenSharePermissionGranted',
       () => {
-        console.log('✅ Screen share permission granted');
+        console.log('✅ [RN] Screen share permission granted');
         setIsScreenSharing(true);
       },
     );
@@ -134,7 +137,8 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     const deniedListener = screenShareEmitter.addListener(
       'ScreenSharePermissionDenied',
       () => {
-        console.warn('❌ Screen share permission denied');
+        console.warn('❌ [RN] Screen share permission denied');
+        setIsScreenSharing(false);
       },
     );
 
@@ -144,10 +148,15 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     };
   }, []);
 
+  // Trigger native permission dialog
   const handleStartScreenShare = () => {
     if (Platform.OS === 'android') {
-      console.log('📺 Requesting screen share permission...');
+      console.log('📺 [RN] Requesting screen share permission...');
       ScreenShareModule.startScreenShare();
+    } else {
+      console.warn(
+        '⚠️ Screen sharing not yet implemented for iOS in this flow.',
+      );
     }
   };
 
@@ -201,13 +210,26 @@ const JitsiModal = ({visible, options, onClose}: any) => {
                 'toggle-camera',
               ],
             }}
-            eventListeners={{onReadyToClose}}
+            eventListeners={{
+              onReadyToClose,
+              onConferenceJoined: () => {
+                console.log(
+                  '✅ Conference joined, starting screen share if pending...',
+                );
+                if (Platform.OS === 'android') {
+                  NativeModules.ScreenShareModule.confirmConferenceJoined();
+                }
+              },
+            }}
             flags={{
               'audioMute.enabled': true,
               'fullscreen.enabled': false,
               'android.screensharing.enabled': true,
               'pip.enabled': true,
               'ios.screensharing.enabled': true,
+              'welcomepage.enabled': false,
+              'recording.enabled': true,
+              'live-streaming.enabled': true,
             }}
             ref={jitsiMeeting}
             token={options.token}
@@ -216,7 +238,7 @@ const JitsiModal = ({visible, options, onClose}: any) => {
             style={{flex: 1}}
           />
 
-          {/* Screen Share Button */}
+          {/* Screen Share Button — only if not sharing */}
           {!isScreenSharing && Platform.OS === 'android' && (
             <TouchableOpacity
               onPress={handleStartScreenShare}

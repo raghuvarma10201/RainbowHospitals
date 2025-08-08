@@ -9,9 +9,9 @@ buildscript {
         gradlePluginVersion = '7.0.4' // ✅ Set your actual AGP version here (7.0.4, 8.0.2, etc.)
     }
     repositories {
-        google()
-        mavenCentral()
-    }
+    google()
+    mavenCentral()
+  }
     dependencies {
         classpath("com.android.tools.build:gradle:8.6.0")
         classpath("com.facebook.react:react-native-gradle-plugin")
