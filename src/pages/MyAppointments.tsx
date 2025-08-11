@@ -47,7 +47,7 @@ const MyAppointments: React.FC = () => {
     showJitsi({
       roomName: 'DemoRoom123',
       token: '', // Optional if not using JWT auth
-      serverURL: 'https://dev.rb.vc.demos.im/', // Optional (defaults if not passed)
+      serverURL: 'https://dev.rb.vc.demos.im/', // Optional (defaults if not passed) // room url - https://dev.rb.vc.demos.im/DemoRoom123
       userInfo: {
         displayName: 'Sunny',
         email: 'sunny@example.com',
@@ -94,8 +94,12 @@ const MyAppointments: React.FC = () => {
               <TouchableOpacity
                 key={index}
                 style={styles.doctorItem}
-                // onPress={() => navigation.navigate('MyAppointmentDetails', { appointmentData: appointment })}
-                onPress={() => startVideoCall()}
+                onPress={() =>
+                  navigation.navigate('MyAppointmentDetails', {
+                    appointmentData: appointment,
+                  })
+                }
+                // onPress={() => startVideoCall()}
                 // onPress={() => startSharing()}
               >
                 <Image

@@ -19,7 +19,6 @@ import {
 import {JitsiMeeting} from '@jitsi/react-native-sdk';
 
 const {ScreenShareModule} = NativeModules;
-const screenShareEmitter = new NativeEventEmitter(ScreenShareModule);
 
 const screen = Dimensions.get('window');
 const CORNER_MARGIN = 10;
@@ -124,42 +123,6 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     }),
   ).current;
 
-  // Listen for native events
-  useEffect(() => {
-    const grantedListener = screenShareEmitter.addListener(
-      'ScreenSharePermissionGranted',
-      () => {
-        console.log('✅ [RN] Screen share permission granted');
-        setIsScreenSharing(true);
-      },
-    );
-
-    const deniedListener = screenShareEmitter.addListener(
-      'ScreenSharePermissionDenied',
-      () => {
-        console.warn('❌ [RN] Screen share permission denied');
-        setIsScreenSharing(false);
-      },
-    );
-
-    return () => {
-      grantedListener.remove();
-      deniedListener.remove();
-    };
-  }, []);
-
-  // Trigger native permission dialog
-  const handleStartScreenShare = () => {
-    if (Platform.OS === 'android') {
-      console.log('📺 [RN] Requesting screen share permission...');
-      ScreenShareModule.startScreenShare();
-    } else {
-      console.warn(
-        '⚠️ Screen sharing not yet implemented for iOS in this flow.',
-      );
-    }
-  };
-
   if (!visible || !options?.roomName) return null;
 
   return (
@@ -177,6 +140,17 @@ const JitsiModal = ({visible, options, onClose}: any) => {
           <Image
             source={require('../../assets/images/compress-icon.png')}
             style={styles.compressIcon}
+          />
+        </TouchableOpacity>
+      )}
+
+      {!minimized && (
+        <TouchableOpacity
+          onPress={() => ScreenShareModule.toggleScreenShare()}
+          style={styles.shareButton}>
+          <Image
+            source={require('../../assets/images/share-icon.png')}
+            style={styles.shareIcon}
           />
         </TouchableOpacity>
       )}
@@ -204,7 +178,7 @@ const JitsiModal = ({visible, options, onClose}: any) => {
               toolbarButtons: [
                 'microphone',
                 'camera',
-                'screensharing',
+                'toggle-share-screen',
                 'overflowmenu',
                 'hangup',
                 'toggle-camera',
@@ -212,14 +186,6 @@ const JitsiModal = ({visible, options, onClose}: any) => {
             }}
             eventListeners={{
               onReadyToClose,
-              onConferenceJoined: () => {
-                console.log(
-                  '✅ Conference joined, starting screen share if pending...',
-                );
-                if (Platform.OS === 'android') {
-                  NativeModules.ScreenShareModule.confirmConferenceJoined();
-                }
-              },
             }}
             flags={{
               'audioMute.enabled': true,
@@ -237,15 +203,6 @@ const JitsiModal = ({visible, options, onClose}: any) => {
             serverURL={options.serverURL || 'https://meet.jit.si'}
             style={{flex: 1}}
           />
-
-          {/* Screen Share Button — only if not sharing */}
-          {!isScreenSharing && Platform.OS === 'android' && (
-            <TouchableOpacity
-              onPress={handleStartScreenShare}
-              style={styles.screenShareButton}>
-              <Text style={styles.screenShareText}>Start Screen Share</Text>
-            </TouchableOpacity>
-          )}
         </View>
       </TouchableWithoutFeedback>
     </Animated.View>
@@ -286,10 +243,25 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 10,
   },
+  shareButton: {
+    position: 'absolute',
+    top: h * 0.15,
+    right: w * 0.015,
+    zIndex: 1001,
+    backgroundColor: '#000',
+    padding: 8,
+    borderRadius: 10,
+  },
   compressIcon: {
     height: w * 0.07,
     width: w * 0.07,
     resizeMode: 'cover',
+  },
+  shareIcon: {
+    height: w * 0.07,
+    width: w * 0.07,
+    resizeMode: 'cover',
+    tintColor: '#fff',
   },
   expandOverlay: {
     position: 'absolute',

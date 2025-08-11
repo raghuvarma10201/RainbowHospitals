@@ -1,39 +1,69 @@
-import { Dimensions, Image, ScrollView, StyleSheet, View, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { Text, Modal, Portal, TextInput } from 'react-native-paper';
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Text, Modal, Portal, TextInput} from 'react-native-paper';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../navigation/types';
-import { formatAppointmentDate, formatAppointmentTime } from '../utils/dateTime';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {MainStackParamList} from '../navigation/types';
+import {formatAppointmentDate, formatAppointmentTime} from '../utils/dateTime';
+import {bookAppointment} from '../services/common';
 
-const MyAppointmentDetails: React.FC<any> = ({ route }) => {
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const { appointmentData } = route.params;
+const MyAppointmentDetails: React.FC<any> = ({route}) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const {appointmentData} = route.params;
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
 
   const [visible, setVisible] = React.useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+  const [bank_details, setBank_details] = useState({
+    bank_name: '',
+    account_number: '',
+    ifsc_code: '',
+    account_holder_name: '',
+    branch_name: '',
+  });
+
+  const cancelAppointment = async () => {
+    const obj = {
+      status: 'Cancel',
+      appointmentnumber: appointmentData?.BookingUID,
+      bank_details,
+    };
+    console.log(obj);
+    try {
+      const resp = await bookAppointment(obj);
+      console.log(resp);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={styles.mainContainer}>
       <Header showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
-
           <View style={styles.doctorDetailsContainer}>
             <View style={styles.doctorImgContainer}>
               <Image
                 source={
-                    appointmentData.image
-                      ? { uri: `${appointmentData.image}` }
-                      : {
+                  appointmentData.image
+                    ? {uri: `${appointmentData.image}`}
+                    : {
                         uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
                       }
-                  }
+                }
                 style={styles.docImg}
               />
               <View style={styles.dotContainer}>
@@ -41,20 +71,30 @@ const MyAppointmentDetails: React.FC<any> = ({ route }) => {
               </View>
             </View>
             <View style={styles.doctorDetails}>
-              <Text style={[styles.docName, { fontSize: 16, color: '#4CC2BF', fontFamily: 'ProximaNovaA-Semibold' }]}>
-                 {appointmentData?.CareProviderName ?? 'Doctor Name'}
+              <Text
+                style={[
+                  styles.docName,
+                  {
+                    fontSize: 16,
+                    color: '#4CC2BF',
+                    fontFamily: 'ProximaNovaA-Semibold',
+                  },
+                ]}>
+                {appointmentData?.CareProviderName ?? 'Doctor Name'}
               </Text>
-              <Text style={[styles.docName, { fontSize: 12, marginTop: 3, }]}>
-                 {appointmentData?.SpecialtyName ?? 'Specialization'}
+              <Text style={[styles.docName, {fontSize: 12, marginTop: 3}]}>
+                {appointmentData?.SpecialtyName ?? 'Specialization'}
               </Text>
-
-
 
               <View style={styles.location}>
-                <Image source={require('../../assets/images/map-icon.png')} style={{ width: 15, height: 15 }} />
-                <Text style={styles.locationText}>{appointmentData?.OrganisationName ?? ''}</Text>
+                <Image
+                  source={require('../../assets/images/map-icon.png')}
+                  style={{width: 15, height: 15}}
+                />
+                <Text style={styles.locationText}>
+                  {appointmentData?.OrganisationName ?? ''}
+                </Text>
               </View>
-
             </View>
           </View>
 
@@ -62,11 +102,29 @@ const MyAppointmentDetails: React.FC<any> = ({ route }) => {
             <Text style={styles.patientInfoHeaderText}>Patient Info</Text>
             <View>
               <View style={styles.patientItem}>
-                <Image source={require('../../assets/images/doc-img.png')} style={styles.patientImg}
+                <Image
+                  source={require('../../assets/images/doc-img.png')}
+                  style={styles.patientImg}
                 />
                 <View>
-                  <Text style={{ fontSize: 13, color: '#6651AF', fontFamily: 'ProximaNovaA-Bold', marginBottom: 2 }}>#{appointmentData?.BookingUID ?? ''}</Text>
-                  <Text style={{ fontSize: 15, color: '#6651AF', fontFamily: 'ProximaNovaA-Semibold', marginBottom: 6 }}>{appointmentData?.PatientName ?? ''}</Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      color: '#6651AF',
+                      fontFamily: 'ProximaNovaA-Bold',
+                      marginBottom: 2,
+                    }}>
+                    #{appointmentData?.BookingUID ?? ''}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      color: '#6651AF',
+                      fontFamily: 'ProximaNovaA-Semibold',
+                      marginBottom: 6,
+                    }}>
+                    {appointmentData?.PatientName ?? ''}
+                  </Text>
                   <View style={styles.patientReports}>
                     <Text style={styles.reports}>MRI Report</Text>
                     <Text style={styles.reports}>Blood Reports</Text>
@@ -75,76 +133,165 @@ const MyAppointmentDetails: React.FC<any> = ({ route }) => {
               </View>
             </View>
           </View>
-          <View style={[styles.patientInfo, { marginTop: 15, borderRadius: 10, }]}>
+          <View style={[styles.patientInfo, {marginTop: 15, borderRadius: 10}]}>
             <Text style={styles.patientInfoHeaderText}>Time Date</Text>
             <View style={styles.timeDateItem}>
               <View style={styles.timeFlexRow}>
-                <Image source={require('../../assets/images/footer-calendar-icon.png')} style={styles.timeIcon}
+                <Image
+                  source={require('../../assets/images/footer-calendar-icon.png')}
+                  style={styles.timeIcon}
                 />
-                <Text style={{ fontSize: 14, color: '#6651AF', fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }}>
-                  {formatAppointmentDate(appointmentData?.SlotStartDttm)}</Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: '#6651AF',
+                    fontFamily: 'ProximaNovaA-Semibold',
+                    marginBottom: 2,
+                  }}>
+                  {formatAppointmentDate(appointmentData?.SlotStartDttm)}
+                </Text>
               </View>
               <View>
                 <View style={styles.timeFlexRow}>
-                  <Image source={require('../../assets/images/time-icon.png')} style={styles.timeIcon}
+                  <Image
+                    source={require('../../assets/images/time-icon.png')}
+                    style={styles.timeIcon}
                   />
-                  <Text style={{ fontSize: 14, color: '#6651AF', fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 }}>{formatAppointmentTime(appointmentData?.SlotStartDttm)}</Text>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: '#6651AF',
+                      fontFamily: 'ProximaNovaA-Semibold',
+                      marginBottom: 2,
+                    }}>
+                    {formatAppointmentTime(appointmentData?.SlotStartDttm)}
+                  </Text>
                 </View>
               </View>
             </View>
           </View>
           <View style={styles.payBtnsContainer}>
-            <TouchableOpacity onPress={() => showModal()}
-              style={[styles.payBtn, { backgroundColor: 'grey' }]}>
+            <TouchableOpacity
+              onPress={() => showModal()}
+              style={[styles.payBtn, {backgroundColor: 'grey'}]}>
               <Text style={styles.payBtnTxt}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.payBtn, { backgroundColor: '#3C2871' }]}>
+              style={[styles.payBtn, {backgroundColor: '#3C2871'}]}>
               <Text style={styles.payBtnTxt}>Reschedule</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.chatBtn} onPress={() => navigation.navigate('AppointmentChat', { bookingId: appointmentData.appointmentnumber, doctor: appointmentData.CareProviderName })}>
-            <Image source={require('../../assets/images/chat-icon.png')} style={styles.chatIcon} />
+          <TouchableOpacity
+            style={styles.chatBtn}
+            onPress={() =>
+              navigation.navigate('AppointmentChat', {
+                bookingId: appointmentData.appointmentnumber,
+                doctor: appointmentData.CareProviderName,
+              })
+            }>
+            <Image
+              source={require('../../assets/images/chat-icon.png')}
+              style={styles.chatIcon}
+            />
           </TouchableOpacity>
         </View>
       </ScrollView>
       <Footer />
       <Portal>
-        <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalWrapp}>
+        <Modal
+          visible={visible}
+          onDismiss={hideModal}
+          contentContainerStyle={styles.modalWrapp}>
           <Text style={styles.formTitle}>Cancel Appointment</Text>
-          <Text style={styles.formSubTitle}>Need Bank Details to refund the amount</Text>
+          <Text style={styles.formSubTitle}>
+            Need Bank Details to refund the amount
+          </Text>
 
           <View style={styles.formContainer}>
             <View style={styles.formRow}>
               <Text style={styles.formLabel}>Bank Name</Text>
-              <TextInput mode="flat" underlineColor="transparent" style={[styles.formInput]} />
+              <TextInput
+                mode="flat"
+                underlineColor="transparent"
+                style={[styles.formInput]}
+                onChangeText={text =>
+                  setBank_details(prev => ({
+                    ...prev,
+                    bank_name: text,
+                  }))
+                }
+              />
             </View>
 
             <View style={styles.formRow}>
               <Text style={styles.formLabel}>Account Number</Text>
-              <TextInput mode="flat" underlineColor="transparent" style={styles.formInput} />
+              <TextInput
+                mode="flat"
+                underlineColor="transparent"
+                style={styles.formInput}
+                onChangeText={text =>
+                  setBank_details(prev => ({
+                    ...prev,
+                    account_number: text,
+                  }))
+                }
+              />
             </View>
 
             <View style={styles.formRow}>
               <Text style={styles.formLabel}>IFSC Code</Text>
-              <TextInput mode="flat" underlineColor="transparent" style={styles.formInput} />
+              <TextInput
+                mode="flat"
+                underlineColor="transparent"
+                style={styles.formInput}
+                onChangeText={text =>
+                  setBank_details(prev => ({
+                    ...prev,
+                    ifsc_code: text,
+                  }))
+                }
+              />
             </View>
 
             <View style={styles.formRow}>
               <Text style={styles.formLabel}>Account Holder Name</Text>
-              <TextInput mode="flat" underlineColor="transparent" style={styles.formInput} />
+              <TextInput
+                mode="flat"
+                underlineColor="transparent"
+                style={styles.formInput}
+                onChangeText={text =>
+                  setBank_details(prev => ({
+                    ...prev,
+                    account_holder_name: text,
+                  }))
+                }
+              />
             </View>
 
             <View style={styles.formRow}>
               <Text style={styles.formLabel}>Branch Name </Text>
-              <TextInput mode="flat" underlineColor="transparent" style={styles.formInput} />
+              <TextInput
+                mode="flat"
+                underlineColor="transparent"
+                style={styles.formInput}
+                onChangeText={text =>
+                  setBank_details(prev => ({
+                    ...prev,
+                    branch_name: text,
+                  }))
+                }
+              />
             </View>
             <View style={styles.formRowBtn}>
-              <TouchableOpacity style={[styles.formButton, { backgroundColor: 'grey' }]}>
+              <TouchableOpacity
+                onPress={() => hideModal()}
+                style={[styles.formButton, {backgroundColor: 'grey'}]}>
                 <Text style={styles.formButtonText}>Cancel</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.formButton}>
+              <TouchableOpacity
+                onPress={() => cancelAppointment()}
+                style={styles.formButton}>
                 <Text style={styles.formButtonText}>Submit</Text>
               </TouchableOpacity>
             </View>
@@ -153,9 +300,9 @@ const MyAppointmentDetails: React.FC<any> = ({ route }) => {
       </Portal>
     </View>
   );
-}
+};
 
-export default MyAppointmentDetails
+export default MyAppointmentDetails;
 
 const h = Dimensions.get('window').height;
 const w = Dimensions.get('window').width;
@@ -200,7 +347,6 @@ const styles = StyleSheet.create({
     marginTop: -50,
     position: 'relative',
     marginBottom: 10,
-
   },
   docImg: {
     width: 100,
@@ -246,7 +392,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
 
-
   patientInfoHeaderText: {
     fontSize: 16,
     marginTop: 10,
@@ -267,19 +412,16 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   locationText: {
-
     fontSize: 13,
     fontFamily: 'ProximaNovaA-Semibold',
     color: '#fff',
     textAlign: 'left',
   },
 
-
   patientItem: {
     marginTop: 15,
     flexDirection: 'row',
     alignItems: 'flex-start',
-
   },
 
   patientImg: {
@@ -296,7 +438,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     flexDirection: 'row',
     gap: 10,
-
   },
   reports: {
     backgroundColor: '#E2EDEC',
@@ -327,10 +468,8 @@ const styles = StyleSheet.create({
   timeFlexRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
-
+    justifyContent: 'space-between',
   },
-
 
   payBtnsContainer: {
     flexDirection: 'row',
@@ -338,7 +477,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     marginTop: 10,
-
   },
   payBtn: {
     padding: w * 0.03,
@@ -353,7 +491,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'ProximaNovaA-Semibold',
   },
-
 
   //--
   modalWrapp: {
@@ -450,7 +587,6 @@ const styles = StyleSheet.create({
     zIndex: 2,
     borderWidth: 3,
     borderColor: '#00A69E',
-
   },
 
   chatIcon: {
@@ -458,5 +594,4 @@ const styles = StyleSheet.create({
     height: 35,
     resizeMode: 'contain',
   },
-
-}); 
+});
