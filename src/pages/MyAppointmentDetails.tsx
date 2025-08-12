@@ -17,16 +17,16 @@ import {formatAppointmentDate, formatAppointmentTime} from '../utils/dateTime';
 import {bookAppointment} from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useApp} from '../context/AppContext';
-import { ToastService } from '../utils/ToastService';
+import {ToastService} from '../utils/ToastService';
 
 const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {appointmentData} = route.params;
+  const {appointmentData, cancel} = route.params;
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
 
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = React.useState(cancel || false);
   const [loading, setLoading] = useState(false);
   const {branch} = useApp();
   const showModal = () => setVisible(true);
@@ -55,7 +55,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       if (response?.status == 200 && response?.success) {
         setLoading(false);
         ToastService.success('Success', 'Appointment Cancelled Successfully');
-        navigation.goBack()
+        navigation.goBack();
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -196,6 +196,12 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
               <Text style={styles.payBtnTxt}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('DoctorSlots', {
+                  doctorId: 1,
+                  appointmentType: 'video',
+                })
+              }
               style={[styles.payBtn, {backgroundColor: '#3C2871'}]}>
               <Text style={styles.payBtnTxt}>Reschedule</Text>
             </TouchableOpacity>
@@ -317,7 +323,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           </View>
         </Modal>
       </Portal>
-      
+
       {loading && <Loader />}
     </View>
   );

@@ -20,9 +20,9 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
 import {getAppointments} from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { upcomingData } from '../Constants/data';
-import { upcomingApointment } from '../utils/types';
-import { formatAppointmentDate, formatAppointmentTime } from '../utils/dateTime';
+import {upcomingData} from '../Constants/data';
+import {upcomingApointment} from '../utils/types';
+import {formatAppointmentDate, formatAppointmentTime} from '../utils/dateTime';
 const local_data = [
   {
     value: '1',
@@ -54,9 +54,7 @@ const Dashboard: React.FC = () => {
   const h = Dimensions.get('window').height;
 
   const handleScroll = (event: any) => {
-    const pageIndex = Math.round(
-      event.nativeEvent.contentOffset.x / (w * 0.8),
-    );
+    const pageIndex = Math.round(event.nativeEvent.contentOffset.x / (w * 0.8));
     setCurrentPage(pageIndex);
   };
   useEffect(() => {
@@ -78,7 +76,7 @@ const Dashboard: React.FC = () => {
         date: date,
       };
       const response = await getAppointments(payload);
-      console.log("---------", response);
+      console.log('---------', response);
       const filtered = response.data.filter((item: any) => {
         const slotDate = moment(item.SlotStartDttm).format('YYYY-MM-DD');
         return slotDate >= date;
@@ -90,7 +88,7 @@ const Dashboard: React.FC = () => {
         return aTime - bTime;
       });
       setAppointments(sortedAppointments);
-      console.log("---------", sortedAppointments);
+      console.log('---------', sortedAppointments);
     } catch (error) {
       console.error('❌ Error fetching appointments:', error);
       setAppointments([]);
@@ -109,7 +107,7 @@ const Dashboard: React.FC = () => {
               <View style={styles.searchBlock}>
                 <TextInput
                   mode="flat"
-                  style={[styles.searchFormInput, { color: 'white' }]}
+                  style={[styles.searchFormInput, {color: 'white'}]}
                   placeholder="search"
                   value={search}
                   onChangeText={setSearch}
@@ -186,15 +184,15 @@ const Dashboard: React.FC = () => {
             {appointments.map(
               (appointment: upcomingApointment, index: number) => (
                 <Card.Content
-                  style={[styles.upcomingAppBlockcard, { elevation: 0 }]}>
+                  style={[styles.upcomingAppBlockcard, {elevation: 0}]}>
                   <View style={styles.row}>
                     <Image
-                    source={
+                      source={
                         appointment?.image
-                          ? { uri: `${appointment?.image}` }
+                          ? {uri: `${appointment?.image}`}
                           : {
-                            uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
-                          }
+                              uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                            }
                       }
                       style={styles.docImage}
                     />
@@ -209,7 +207,8 @@ const Dashboard: React.FC = () => {
                           fontSize: 12,
                           color: '#3C2469',
                         }}>
-                        {appointment?.CareProviderTitle} {appointment?.CareProviderName}
+                        {appointment?.CareProviderTitle}{' '}
+                        {appointment?.CareProviderName}
                       </Text>
                       <Text
                         style={{
@@ -220,7 +219,8 @@ const Dashboard: React.FC = () => {
                         {appointment?.SpecialtyName}
                       </Text>
                       <Text style={styles.upcomingTime}>
-                        {formatAppointmentDate(appointment?.SlotStartDttm)} {formatAppointmentTime(appointment?.SlotStartDttm)}
+                        {formatAppointmentDate(appointment?.SlotStartDttm)}{' '}
+                        {formatAppointmentTime(appointment?.SlotStartDttm)}
                       </Text>
                       <View
                         style={{
@@ -238,7 +238,7 @@ const Dashboard: React.FC = () => {
                           }}>
                           <Image
                             source={require('../../assets/images/user-icon.png')}
-                            style={{ width: 11, height: 11, marginRight: 1 }}
+                            style={{width: 11, height: 11, marginRight: 1}}
                           />
                           <Text
                             style={{
@@ -281,7 +281,13 @@ const Dashboard: React.FC = () => {
                             Reschedule
                           </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() =>
+                            navigation.navigate('MyAppointmentDetails', {
+                              appointmentData: appointment,
+                              cancel: true,
+                            })
+                          }>
                           <Text
                             style={{
                               fontFamily: 'ProximaNovaA-Regular',
@@ -300,19 +306,26 @@ const Dashboard: React.FC = () => {
               ),
             )}
           </ScrollView>
-          <View style={styles.paginationContainer}>
-            {upcomingData.map((_, index) => (
-              <View
-                key={index}
-                style={[styles.dot, currentPage === index && styles.activeDot]}
-              />
-            ))}
-          </View>
+          {appointments?.length > 1 && (
+            <View style={styles.paginationContainer}>
+              {appointments.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    currentPage === index && styles.activeDot,
+                  ]}
+                />
+              ))}
+            </View>
+          )}
 
           <View style={styles.quickActions}>
             <TouchableOpacity
               style={styles.actionItem}
-              onPress={() => navigateTo('Specialities', {appointmentType : 'Physical'})}>
+              onPress={() =>
+                navigateTo('Specialities', {appointmentType: 'Physical'})
+              }>
               <Image
                 source={require('../../assets/images/physical-consultation-icon.png')}
                 style={styles.iconAction}
@@ -322,7 +335,9 @@ const Dashboard: React.FC = () => {
 
             <TouchableOpacity
               style={styles.actionItem}
-              onPress={() => navigateTo('AppointmentConfirmed', {appointmentType : "Video"})}>
+              onPress={() =>
+                navigateTo('AppointmentConfirmed', {appointmentType: 'Video'})
+              }>
               <Image
                 source={require('../../assets/images/video-consultation-icon.png')}
                 style={styles.iconAction}
@@ -349,10 +364,10 @@ const Dashboard: React.FC = () => {
           <View
             style={[
               styles.quickActions,
-              { justifyContent: 'center', marginTop: 5 },
+              {justifyContent: 'center', marginTop: 5},
             ]}>
             <TouchableOpacity
-              style={[styles.actionItem, { marginRight: '5.5%' }]}
+              style={[styles.actionItem, {marginRight: '5.5%'}]}
               onPress={() => navigateTo('BookScan')}>
               <Image
                 source={require('../../assets/images/book-scan.png')}
@@ -661,7 +676,7 @@ const styles = StyleSheet.create({
     paddingBottom: 7,
   },
 
-  rescheduleBt: { borderRightWidth: 1, borderColor: '#4CC2BF', paddingEnd: 10 },
+  rescheduleBt: {borderRightWidth: 1, borderColor: '#4CC2BF', paddingEnd: 10},
   // upcomingAppBlockcard End
 
   quickActions: {
