@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 const {ScreenShare} = NativeModules;
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Text} from 'react-native-paper';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 import {useJitsi} from '../context/JitsiContext';
@@ -39,9 +39,11 @@ const MyAppointments: React.FC = () => {
   const {branch} = useApp();
   const {showJitsi} = useJitsi();
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     loadAppointments();
-  }, []);
+  }, [])
+);
 
   const startVideoCall = () => {
     showJitsi({

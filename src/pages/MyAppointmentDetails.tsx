@@ -15,6 +15,9 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
 import {formatAppointmentDate, formatAppointmentTime} from '../utils/dateTime';
 import {bookAppointment} from '../services/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useApp} from '../context/AppContext';
+import { ToastService } from '../utils/ToastService';
 
 const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
@@ -24,6 +27,8 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const h = Dimensions.get('window').height;
 
   const [visible, setVisible] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const {branch} = useApp();
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   const [bank_details, setBank_details] = useState({
@@ -36,16 +41,30 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
 
   const cancelAppointment = async () => {
     const obj = {
-      status: 'Cancel',
+      status: 'CANCEL',
       appointmentnumber: appointmentData?.BookingUID,
+      comment: '',
+      mrn: await AsyncStorage.getItem('mrn'),
+      OrganisationUID: appointmentData?.OrganisationUID,
+      AppointmentType: appointmentData?.AppointmentType,
       bank_details,
     };
     console.log(obj);
     try {
-      const resp = await bookAppointment(obj);
-      console.log(resp);
+      const response = await bookAppointment(obj);
+      if (response?.status == 200 && response?.success) {
+        setLoading(false);
+        ToastService.success('Success', 'Appointment Cancelled Successfully');
+        navigation.goBack()
+      } else {
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
     } catch (error) {
-      console.log(error);
+      setLoading(false);
+      console.error('Failed to load Doctors:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -298,6 +317,8 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           </View>
         </Modal>
       </Portal>
+      
+      {loading && <Loader />}
     </View>
   );
 };
