@@ -21,6 +21,7 @@ import {ToastService} from '../utils/ToastService';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList} from '../navigation/types';
+import {pallette} from '../Constants/Constant';
 
 // Device dimensions for responsive styling
 const {height: h, width: w} = Dimensions.get('window');
@@ -124,7 +125,7 @@ const Login: React.FC = () => {
               labelField="lable"
               placeholder="Select country"
               containerStyle={styles.dropdownList}
-              activeColor="#fff"
+              activeColor={pallette.white}
               onChange={e => setCountry(e.value)}
             />
             <TextInput
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
 
   /* Title Text */
   title: {
-    color: '#00B3AE',
+    color: pallette.app_green,
     fontSize: h * 0.025,
     fontWeight: 'normal',
     marginTop: -h * 0.015,
@@ -195,14 +196,14 @@ const styles = StyleSheet.create({
   labelText: {
     fontSize: h * 0.018,
     fontWeight: 'normal',
-    color: '#000',
+    color: pallette.black,
     marginBottom: h * 0.012,
     fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'center',
   },
 
   errorMessage: {
-    color: '#FFACAC',
+    color: pallette.red,
     marginBottom: h * 0.007,
     fontSize: h * 0.016,
     fontWeight: '400',
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
     marginBottom: h * 0.007,
     paddingHorizontal: w * 0.025,
     paddingVertical: h * 0.012,
-    backgroundColor: '#E6E7E8',
+    backgroundColor: pallette.light_grey,
   },
   formInput: {
     height: h * 0.045,
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
   /* Submit Button */
   primaryBt: {
     borderRadius: h * 0.05,
-    backgroundColor: '#818385',
+    backgroundColor: pallette.dark_grey,
     marginBottom: h * 0.025,
     paddingVertical: h * 0.015,
     paddingHorizontal: w * 0.05,
@@ -242,7 +243,7 @@ const styles = StyleSheet.create({
     marginTop: h * 0.015,
   },
   primaryBtText: {
-    color: '#fff',
+    color: pallette.white,
     fontSize: h * 0.018,
     textAlign: 'center',
   },
@@ -252,18 +253,18 @@ const styles = StyleSheet.create({
     height: h * 0.04,
     paddingHorizontal: w * 0.025,
     borderRightWidth: 2,
-    borderRightColor: '#6D6F71',
+    borderRightColor: pallette.dark_grey,
     width: w * 0.2,
     marginRight: w * 0.02,
   },
   placeholderCountry: {
     fontSize: h * 0.018,
-    color: '#000',
+    color: pallette.black,
     fontFamily: 'ProximaNovaA-Regular',
   },
   selectedTextContry: {
     fontSize: h * 0.018,
-    color: '#000',
+    color: pallette.black,
     fontFamily: 'ProximaNovaA-Regular',
   },
   dropdownList: {
@@ -279,13 +280,13 @@ const styles = StyleSheet.create({
     width: w * 0.45,
     paddingVertical: h * 0.012,
     paddingHorizontal: w * 0.04,
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     borderRadius: w * 0.025,
   },
   textbeforeDot: {position: 'relative'},
   imgTextTitle: {
     fontSize: h * 0.024,
-    color: '#fff',
+    color: pallette.white,
     textAlign: 'left',
     paddingBottom: h * 0.025,
   },
@@ -295,10 +296,10 @@ const styles = StyleSheet.create({
     right: '-20%',
     width: w * 0.08,
     height: w * 0.08,
-    backgroundColor: '#00B3AE',
+    backgroundColor: pallette.app_green,
     borderRadius: w * 0.1,
     borderWidth: w * 0.02,
-    borderColor: '#fff',
+    borderColor: pallette.white,
   },
   loginImg: {
     height: h * 0.43,

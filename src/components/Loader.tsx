@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import React, {useEffect} from 'react';
+import {View, StyleSheet, ActivityIndicator} from 'react-native';
+import {pallette} from '../Constants/Constant';
 
 const theme = {
   colors: {
-    primary: '#3C2871',
+    primary: pallette.app_purple,
     background: '#f6f6f6',
   },
 } as const;
 
-const Loader: React.FC<{ fullScreen?: boolean }> = ({ fullScreen = true }) => {
+const Loader: React.FC<{fullScreen?: boolean}> = ({fullScreen = true}) => {
   useEffect(() => {
     // Side effects if needed
   }, []);

@@ -24,6 +24,7 @@ import {ToastService} from '../utils/ToastService';
 import {formatAppointmentDateTime} from '../utils/dateTime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MainStackParamList} from '../navigation/types';
+import {pallette} from '../Constants/Constant';
 
 const MyAppointments: React.FC = () => {
   const w = Dimensions.get('window').width;
@@ -120,7 +121,7 @@ const MyAppointments: React.FC = () => {
                       styles.docName,
                       {
                         fontSize: 11,
-                        color: '#3C2871',
+                        color: pallette.app_purple,
                         fontFamily: 'ProximaNovaA-Semibold',
                         marginBottom: 2,
                       },
@@ -146,7 +147,7 @@ const MyAppointments: React.FC = () => {
                       styles.docName,
                       {
                         fontSize: 11,
-                        color: '#000',
+                        color: pallette.black,
                         fontFamily: 'ProximaNovaA-Regular',
                         marginBottom: 5,
                       },
@@ -166,7 +167,7 @@ const MyAppointments: React.FC = () => {
                       style={[
                         styles.docName,
                         {
-                          color: '#000',
+                          color: pallette.black,
                           fontSize: 12,
                           fontFamily: 'ProximaNovaA-Semibold',
                           marginBottom: 2,
@@ -196,7 +197,7 @@ const h = Dimensions.get('window').height;
 const w = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     flex: 1,
   },
 
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
   },
   docName: {
     fontSize: 11,
-    color: '#000',
+    color: pallette.black,
     width: w * 0.7,
   },
   payBtn: {
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
   },
   payBtnTxt: {
     fontSize: 12,
-    color: '#fff',
+    color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
   },
   row: {
@@ -257,7 +258,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#fff',
+    borderBottomColor: pallette.white,
     marginTop: 4,
   },
 
@@ -273,7 +274,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 3,
     fontSize: 12,
-    color: '#000',
+    color: pallette.black,
     width: 'auto',
     fontFamily: 'ProximaNovaA-Regular',
     marginBottom: 5,

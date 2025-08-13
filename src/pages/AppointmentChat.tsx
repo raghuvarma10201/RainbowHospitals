@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
-  Button,
   PermissionsAndroid,
   Linking,
   Dimensions,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {greenColor, purpuleColor, whiteColor} from '../Constants/Constant';
+import {pallette, purpuleColor, whiteColor} from '../Constants/Constant';
 import {API_IMG_URL} from '../utils/environment';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -416,7 +415,7 @@ export default AppointmentChat;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
   },
   messagesContainer: {
     flex: 1,
@@ -464,7 +463,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
   },
-  documentName: {color: '#000', fontSize: 16},
+  documentName: {color: pallette.black, fontSize: 16},
   inputContainer: {
     flexDirection: 'row',
     padding: 10,
@@ -500,7 +499,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
   },
-  sendText: {color: '#fff', fontSize: 16},
+  sendText: {color: pallette.white, fontSize: 16},
   floatingLabel: {
     position: 'absolute',
     paddingHorizontal: screen_width * 0.03,

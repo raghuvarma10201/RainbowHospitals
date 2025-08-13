@@ -19,12 +19,11 @@ export const fontSize16 = 16;
 export const fontSize18 = 18;
 export const fontSize20 = 20;
 export const pallette = {
-
-  primary: '#631879',
-  secondary: '#76328C',
-  text_color: '#333',
-  grey: '#00000060',
-  error: '#ff4d4d',
-  blue: '#2a7fba',
-  placeholder: '#999',
+  white: '#FFFFFF',
+  black: '#000000',
+  red: '#f54a4a',
+  light_grey: '#E6E7E8',
+  dark_grey: '#818385',
+  app_green: '#00B3AE',
+  app_purple: '#3C2871',
 };

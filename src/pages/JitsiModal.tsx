@@ -14,6 +14,7 @@ import {
   StatusBar,
 } from 'react-native';
 import {JitsiMeeting} from '@jitsi/react-native-sdk';
+import {pallette} from '../Constants/Constant';
 
 // === Constants (kept module-scoped to avoid re-allocations per render) ===
 const CORNER_MARGIN = 10;
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: Math.round(initialScreen.width * 0.015),
     zIndex: 1001,
-    backgroundColor: '#000',
+    backgroundColor: pallette.black,
     padding: 8,
     borderRadius: 10,
   },

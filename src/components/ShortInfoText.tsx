@@ -1,25 +1,23 @@
-import React, { useState, useMemo } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import React, {useState, useMemo} from 'react';
+import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
+import {pallette} from '../Constants/Constant';
 
-const ShortInfoText: React.FC<{ text: string }> = ({ text }) => {
+const ShortInfoText: React.FC<{text: string}> = ({text}) => {
   const [expanded, setExpanded] = useState(false);
 
   // Clean the HTML tags using regex
-    const cleanText = useMemo(() => {
+  const cleanText = useMemo(() => {
     return text
-      ?.replace(/<[^>]*>/g, '')         // remove HTML tags
-      .replace(/\s+/g, ' ')             // collapse multiple spaces
-      .trim();                          // trim leading/trailing spaces
+      ?.replace(/<[^>]*>/g, '') // remove HTML tags
+      .replace(/\s+/g, ' ') // collapse multiple spaces
+      .trim(); // trim leading/trailing spaces
   }, [text]);
 
   const toggleExpanded = () => setExpanded(prev => !prev);
 
   return (
     <View>
-      <Text
-        style={styles.docName}
-        numberOfLines={expanded ? undefined : 2}
-      >
+      <Text style={styles.docName} numberOfLines={expanded ? undefined : 2}>
         {cleanText}
       </Text>
       {cleanText.length > 80 && ( // only show toggle if long text
@@ -36,16 +34,16 @@ const ShortInfoText: React.FC<{ text: string }> = ({ text }) => {
 const styles = StyleSheet.create({
   docName: {
     fontSize: 12,
-    color: '#fff',
+    color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
-    textAlign : "justify"
+    textAlign: 'justify',
   },
   readMore: {
-    color: '#fff',
+    color: pallette.white,
     marginTop: 4,
     fontSize: 12,
     fontWeight: 'bold',
-    textAlign : "right"
+    textAlign: 'right',
   },
 });
 

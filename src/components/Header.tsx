@@ -29,6 +29,7 @@ import {
   findNearestBranch,
 } from '../services/Region/location';
 import {getCurrentCoordinates} from '../utils/LocationService';
+import {pallette} from '../Constants/Constant';
 
 interface CommonHeaderProps {
   title?: string;
@@ -210,7 +211,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
             style={styles.backArrowBlock}>
             <Image
               source={require('../../assets/images/back-arrow.png')}
-              style={{width: 18, height: 18, tintColor: '#fff'}}
+              style={{width: 18, height: 18, tintColor: pallette.white}}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -232,7 +233,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
               <Text
                 style={{
                   fontSize: 12,
-                  color: '#fff',
+                  color: pallette.white,
                   fontFamily: 'ProximaNovaA-Regular',
                 }}>
                 {' '}
@@ -247,7 +248,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
                 <Text
                   style={{
                     fontSize: 10,
-                    color: '#fff',
+                    color: pallette.white,
                     fontWeight: 'normal',
                     marginTop: 0,
                     fontFamily: 'ProximaNovaA-Regular',
@@ -396,7 +397,7 @@ const styles = StyleSheet.create({
   },
   //Header
   header: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -408,10 +409,10 @@ const styles = StyleSheet.create({
   profileIconBlock: {
     width: 40,
     height: 40,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     borderRadius: 100,
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: pallette.white,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -429,7 +430,7 @@ const styles = StyleSheet.create({
   },
 
   headerText: {
-    color: '#fff',
+    color: pallette.white,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -509,7 +510,7 @@ const styles = StyleSheet.create({
   },
   locationOptionText: {
     fontSize: 16,
-    color: '#000',
+    color: pallette.black,
   },
   selectedLocationText: {
     color: '#8B5A8C',

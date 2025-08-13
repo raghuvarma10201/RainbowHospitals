@@ -1,40 +1,40 @@
 // App.tsx
-import React, { useEffect, useMemo, useState } from 'react';
-import {
-  View,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native';
+import React, {useEffect, useMemo, useState} from 'react';
+import {View, ActivityIndicator, StyleSheet} from 'react-native';
 import dayjs from 'dayjs';
 import Toast from 'react-native-toast-message';
-import { NavigationContainer } from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Provider as PaperProvider } from 'react-native-paper';
+import {Provider as PaperProvider} from 'react-native-paper';
 
 import './src/i18n';
 
 // Config
-import { AppTheme } from './src/config/Theme';
-import { configureRTL } from './src/config/RTL';
+import {AppTheme} from './src/config/Theme';
+import {configureRTL} from './src/config/RTL';
 
 // Navigation
-import { navigationRef } from './src/navigation/RootNavigation';
-import { MainStack } from './src/navigation/AppNavigation';
-import { AuthStack } from './src/navigation/AuthNavigation';
+import {navigationRef} from './src/navigation/RootNavigation';
+import {MainStack} from './src/navigation/AppNavigation';
+import {AuthStack} from './src/navigation/AuthNavigation';
 
 // Contexts
-import { AppProvider } from './src/context/AppContext';
-import { AuthContext } from './src/context/AuthContext';
-import { TimerProvider } from './src/context/TimeContext';
-import { JitsiProvider } from './src/context/JitsiContext';
+import {AppProvider} from './src/context/AppContext';
+import {AuthContext} from './src/context/AuthContext';
+import {TimerProvider} from './src/context/TimeContext';
+import {JitsiProvider} from './src/context/JitsiContext';
 
 // Components
 import MyStatusBar from './src/components/StatusBar';
-import { requestUserPermission, setupNotificationListeners } from './src/utils/firebaseNotificationHandler';
+import {
+  requestUserPermission,
+  setupNotificationListeners,
+} from './src/utils/firebaseNotificationHandler';
 import notifee, {AndroidImportance} from '@notifee/react-native';
-import { initializeApp } from '@react-native-firebase/app';
-import { getMessaging } from '@react-native-firebase/messaging';
-import { fetchSettings } from './src/services/common';
+import {initializeApp} from '@react-native-firebase/app';
+import {getMessaging} from '@react-native-firebase/messaging';
+import {fetchSettings} from './src/services/common';
+import {pallette, whiteColor} from './src/Constants/Constant';
 
 // Initialize RTL
 configureRTL();
@@ -42,7 +42,7 @@ configureRTL();
 const App: React.FC = () => {
   const [booting, setBooting] = useState(true);
   const [isLoggedIn, setLoggedIn] = useState(false);
-  
+
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -57,7 +57,7 @@ const App: React.FC = () => {
     requestUserPermissions();
   }, []);
 
-    //user notification permission
+  //user notification permission
   useEffect(() => {
     // Request notification permissions and setup handlers
     setupNotificationListeners();
@@ -68,11 +68,10 @@ const App: React.FC = () => {
     const settings = await fetchSettings();
 
     if (settings && settings.status == 200) {
-
     } else {
       console.error('❌ Failed to fetch settings.');
     }
-  }
+  };
   // 🔊 Create custom sound channels
   const createNotificationChannels = async () => {
     await notifee.createChannel({
@@ -96,7 +95,7 @@ const App: React.FC = () => {
       importance: AndroidImportance.HIGH,
     });
   };
-  
+
   const checkAuthStatus = async () => {
     try {
       const [token, expiry] = await Promise.all([
@@ -118,7 +117,7 @@ const App: React.FC = () => {
     }
   };
 
-  const authCtx = useMemo(() => ({ isLoggedIn, setLoggedIn }), [isLoggedIn]);
+  const authCtx = useMemo(() => ({isLoggedIn, setLoggedIn}), [isLoggedIn]);
 
   if (booting) {
     return (
@@ -154,6 +153,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
   },
 });

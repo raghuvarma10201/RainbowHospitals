@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useTimer} from '../context/TimeContext';
+import {pallette} from '../Constants/Constant';
 
 const TimerBanner = () => {
   const {secondsLeft} = useTimer();
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffe082',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
+    shadowColor: pallette.black,
     shadowOpacity: 0.05,
     shadowOffset: {width: 0, height: -1},
     elevation: 2,

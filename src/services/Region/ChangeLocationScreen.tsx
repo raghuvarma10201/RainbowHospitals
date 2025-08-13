@@ -1,12 +1,7 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  StyleSheet,
-} from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import React, {useState} from 'react';
+import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
+import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
+import {pallette} from '../../Constants/Constant';
 
 // Define type for route params
 type ChangeLocationParams = {
@@ -28,7 +23,8 @@ const LOCATIONS = [
 
 const ChangeLocationScreen = () => {
   const navigation = useNavigation();
-  const route = useRoute<RouteProp<Record<string, ChangeLocationParams>, string>>();
+  const route =
+    useRoute<RouteProp<Record<string, ChangeLocationParams>, string>>();
 
   const currentLocation = route.params?.currentLocation;
   const onLocationChange = route.params?.onLocationChange;
@@ -47,10 +43,13 @@ const ChangeLocationScreen = () => {
       <Text style={styles.title}>Change Location</Text>
       <FlatList
         data={LOCATIONS}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.item} onPress={() => setSelected(item)}>
-            <View style={[styles.radioOuter, selected === item && styles.selected]}>
+        keyExtractor={item => item}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => setSelected(item)}>
+            <View
+              style={[styles.radioOuter, selected === item && styles.selected]}>
               {selected === item && <View style={styles.radioInner} />}
             </View>
             <Text style={styles.text}>{item}</Text>
@@ -70,7 +69,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
   },
   title: {
     fontSize: 20,
@@ -114,7 +113,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
+    color: pallette.white,
     fontWeight: 'bold',
   },
 });

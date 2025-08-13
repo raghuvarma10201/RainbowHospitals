@@ -12,10 +12,12 @@ import {ToastService} from '../utils/ToastService';
 import {getDoctors, getSpecialities} from '../services/common';
 import Loader from '../components/Loader';
 import {MainStackParamList} from '../navigation/types';
+import {pallette} from '../Constants/Constant';
 
-const Specialities: React.FC = ({ route }: any) => {
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const { appointmentType } = route.params;
+const Specialities: React.FC = ({route}: any) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const {appointmentType} = route.params;
   const [specialities, setSpecialities] = useState<any>([]);
   const specialties = Object.keys(doctorData) as Array<keyof typeof doctorData>;
   const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1);
@@ -139,7 +141,7 @@ const h = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     flex: 1,
   },
 
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
 
   //Header
   header: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -168,17 +170,17 @@ const styles = StyleSheet.create({
   profileIconBlock: {
     width: 40,
     height: 40,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     borderRadius: 100,
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: pallette.white,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   headerText: {
-    color: '#fff',
+    color: pallette.white,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -210,7 +212,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     fontSize: 15,
     fontWeight: 400,
-    color: '#fff',
+    color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
   },
 
@@ -223,7 +225,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     fontSize: 13,
     fontWeight: 400,
-    color: '#fff',
+    color: pallette.white,
     backgroundColor: 'transparent',
     fontFamily: 'ProximaNovaA-Regular',
     width: Dimensions.get('window').width * 0.43,
@@ -235,7 +237,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 14,
     left: 10,
-    tintColor: '#fff',
+    tintColor: pallette.white,
   },
 
   //
@@ -245,18 +247,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingLeft: 30,
     marginTop: 5,
-    color: '#fff',
+    color: pallette.white,
     width: Dimensions.get('window').width * 0.43,
   },
 
   placeholderCountry: {
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: 13,
-    color: '#fff',
+    color: pallette.white,
   },
   selectedTextContry: {
     fontSize: 13,
-    color: '#fff',
+    color: pallette.white,
   },
 
   dropdownList: {
@@ -288,7 +290,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   actionItemIcon: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     borderRadius: 10,
     padding: 15,
     paddingTop: 15,
@@ -309,7 +311,7 @@ const styles = StyleSheet.create({
   },
 
   activeActionItem: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     borderRadius: 10,
     padding: 10,
     paddingTop: 15,
@@ -319,7 +321,7 @@ const styles = StyleSheet.create({
   },
 
   activeActionText: {
-    color: '#fff',
+    color: pallette.white,
     fontSize: 11,
     textAlign: 'center',
     marginTop: 4,
@@ -327,6 +329,6 @@ const styles = StyleSheet.create({
   activeIconAction: {
     width: 40,
     height: 40,
-    tintColor: '#fff',
+    tintColor: pallette.white,
   },
 });

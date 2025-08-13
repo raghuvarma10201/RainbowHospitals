@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {IMG_BASE_URL} from '../utils/environment';
 import FastImage from 'react-native-fast-image';
+import {pallette} from '../Constants/Constant';
 
 const {width: screenWidth} = Dimensions.get('window');
 const ITEM_WIDTH = screenWidth * 0.4;
@@ -155,19 +156,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#3C2871',
+    borderColor: pallette.app_purple,
     borderRadius: 10,
     marginTop: 10,
   },
   banner: {},
   doctorDetails: {
     padding: 8,
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     width: ITEM_WIDTH,
   },
   docName: {
     fontSize: 14,
-    color: '#fff',
+    color: pallette.white,
     fontFamily: 'ProximaNovaA-Semibold',
   },
 });

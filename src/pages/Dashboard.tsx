@@ -1,16 +1,13 @@
 import {
   Dimensions,
   Image,
-  ImageProps,
-  SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Card, Searchbar, TextInput, Icon, Text} from 'react-native-paper';
+import React, {useCallback, useRef, useState} from 'react';
+import {Card, TextInput, Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Banners from '../components/Slider';
@@ -20,9 +17,9 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
 import {getAppointments} from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {upcomingData} from '../Constants/data';
 import {upcomingApointment} from '../utils/types';
 import {formatAppointmentDate, formatAppointmentTime} from '../utils/dateTime';
+import {pallette} from '../Constants/Constant';
 const local_data = [
   {
     value: '1',
@@ -41,7 +38,6 @@ const Dashboard: React.FC = () => {
   const [country, setCountry] = useState('1');
   const scrollRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
   const banners = [
     require('../../assets/images/slide1.png'),
@@ -53,16 +49,10 @@ const Dashboard: React.FC = () => {
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
 
-  const handleScroll = (event: any) => {
-    const pageIndex = Math.round(event.nativeEvent.contentOffset.x / (w * 0.8));
-    setCurrentPage(pageIndex);
-  };
-
   useFocusEffect(
     useCallback(() => {
       const today = new Date();
       const formattedToday = moment(today).format('YYYY-MM-DD');
-      setSelectedDate(today);
       fetchMyAppointments(formattedToday);
     }, []),
   );
@@ -144,7 +134,7 @@ const Dashboard: React.FC = () => {
                   labelField="lable"
                   placeholder="Select Location"
                   containerStyle={styles.dropdownList}
-                  activeColor="#fff"
+                  activeColor={pallette.white}
                   onChange={e => setCountry(e.value)}
                 />
                 <Image
@@ -159,7 +149,7 @@ const Dashboard: React.FC = () => {
                 style={{
                   fontFamily: 'ProximaNovaA-Regular',
                   fontSize: 16,
-                  color: '#fff',
+                  color: pallette.white,
                 }}>
                 Hello,
               </Text>
@@ -167,7 +157,7 @@ const Dashboard: React.FC = () => {
                 style={{
                   fontFamily: 'ProximaNovaA-Semibold',
                   fontSize: 20,
-                  color: '#fff',
+                  color: pallette.white,
                 }}>
                 Amberwati
               </Text>
@@ -175,7 +165,7 @@ const Dashboard: React.FC = () => {
                 style={{
                   fontFamily: 'ProximaNovaA-Regular',
                   fontSize: 11,
-                  color: '#fff',
+                  color: pallette.white,
                 }}>
                 We are here to help!{' '}
               </Text>
@@ -282,7 +272,7 @@ const Dashboard: React.FC = () => {
                               {
                                 fontFamily: 'ProximaNovaA-Regular',
                                 fontSize: 11,
-                                color: '#fff',
+                                color: pallette.white,
                               },
                             ]}>
                             Reschedule
@@ -293,7 +283,7 @@ const Dashboard: React.FC = () => {
                             style={{
                               fontFamily: 'ProximaNovaA-Regular',
                               fontSize: 11,
-                              color: '#fff',
+                              color: pallette.white,
                               paddingLeft: 5,
                             }}>
                             {' '}
@@ -307,14 +297,19 @@ const Dashboard: React.FC = () => {
               ),
             )}
           </ScrollView>
-          <View style={styles.paginationContainer}>
-            {upcomingData.map((_, index) => (
-              <View
-                key={index}
-                style={[styles.dot, currentPage === index && styles.activeDot]}
-              />
-            ))}
-          </View>
+          {appointments.length > 1 && (
+            <View style={styles.paginationContainer}>
+              {appointments.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    currentPage === index && styles.activeDot,
+                  ]}
+                />
+              ))}
+            </View>
+          )}
 
           <View style={styles.quickActions}>
             <TouchableOpacity
@@ -406,7 +401,7 @@ const Dashboard: React.FC = () => {
                   height: 8,
                   width: 8,
                   borderRadius: 5,
-                  backgroundColor: index == activeindex ? '#00B3AE' : 'grey',
+                  backgroundColor: index == activeindex ? pallette.app_green : 'grey',
                   marginHorizontal: w * 0.01,
                 }}
                 key={index}
@@ -435,7 +430,7 @@ export default Dashboard;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     flex: 1,
     // marginTop: StatusBar.currentHeight
   },
@@ -454,7 +449,7 @@ const styles = StyleSheet.create({
 
   //Header
   header: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -465,17 +460,17 @@ const styles = StyleSheet.create({
   profileIconBlock: {
     width: 40,
     height: 40,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     borderRadius: 100,
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: pallette.white,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   headerText: {
-    color: '#fff',
+    color: pallette.white,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -487,7 +482,7 @@ const styles = StyleSheet.create({
   //Header End
 
   helloCard: {
-    backgroundColor: '#00B3AE',
+    backgroundColor: pallette.app_green,
     borderRadius: 10,
     paddingVertical: 20,
     paddingHorizontal: 10,
@@ -508,7 +503,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     fontSize: 15,
     fontWeight: 400,
-    color: '#fff',
+    color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
   },
 
@@ -521,7 +516,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     fontSize: 13,
     fontWeight: 400,
-    color: '#fff',
+    color: pallette.white,
     backgroundColor: 'transparent',
     fontFamily: 'ProximaNovaA-Regular',
     width: Dimensions.get('window').width * 0.4,
@@ -533,7 +528,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 14,
     left: 10,
-    tintColor: '#fff',
+    tintColor: pallette.white,
   },
 
   //
@@ -543,18 +538,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingLeft: 30,
     marginTop: 5,
-    color: '#fff',
+    color: pallette.white,
     width: Dimensions.get('window').width * 0.4,
   },
 
   placeholderCountry: {
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: 13,
-    color: '#fff',
+    color: pallette.white,
   },
   selectedTextContry: {
     fontSize: 13,
-    color: '#fff',
+    color: pallette.white,
   },
 
   dropdownList: {
@@ -586,7 +581,7 @@ const styles = StyleSheet.create({
   leftUABlock: {
     width: 110,
     height: 110,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     borderRadius: 100,
     overflow: 'hidden',
     marginTop: 40,
@@ -604,7 +599,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     padding: 7,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
@@ -619,8 +614,8 @@ const styles = StyleSheet.create({
   upcomingAppTitle: {
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: 10,
-    color: '#fff',
-    backgroundColor: '#3C2871',
+    color: pallette.white,
+    backgroundColor: pallette.app_purple,
     padding: 10,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 0,
@@ -634,7 +629,7 @@ const styles = StyleSheet.create({
   upcomingTime: {
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: 11,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     color: '#3C2469',
     textAlign: 'center',
     padding: 4,
@@ -704,7 +699,7 @@ const styles = StyleSheet.create({
   },
 
   activeActionItem: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     borderRadius: 10,
     padding: 10,
     paddingTop: 15,
@@ -714,7 +709,7 @@ const styles = StyleSheet.create({
   },
 
   activeActionText: {
-    color: '#fff',
+    color: pallette.white,
     fontSize: 11,
     textAlign: 'center',
     marginTop: 4,
@@ -722,7 +717,7 @@ const styles = StyleSheet.create({
   activeIconAction: {
     width: 40,
     height: 40,
-    tintColor: '#fff',
+    tintColor: pallette.white,
   },
   //   footer
   footerCall: {
@@ -737,12 +732,12 @@ const styles = StyleSheet.create({
   },
   footerCallButton: {
     position: 'relative',
-    color: '#fff',
+    color: pallette.white,
     alignItems: 'center',
     paddingVertical: 10,
     width: 100,
     height: 45,
-    backgroundColor: '#00B3AE',
+    backgroundColor: pallette.app_green,
 
     borderTopEndRadius: 10,
     borderTopStartRadius: 10,
@@ -752,7 +747,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   footerCallButtonText: {
-    color: '#fff',
+    color: pallette.white,
     fontSize: 13,
     fontFamily: 'ProximaNovaA-Regular',
     fontWeight: 'bold',
@@ -761,10 +756,10 @@ const styles = StyleSheet.create({
   },
 
   footerCallButtonIcon: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     borderRadius: 100,
     borderWidth: 1,
-    borderColor: '#fff',
+    borderColor: pallette.white,
     width: 30,
     height: 30,
     position: 'absolute',

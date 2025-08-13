@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -15,41 +15,45 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import { Button, Text, Checkbox } from 'react-native-paper';
-import { ref } from 'yup';
-import { useApp } from '../context/AppContext';
-import { useFormik } from 'formik';
+import {Button, Text, Checkbox} from 'react-native-paper';
+import {ref} from 'yup';
+import {useApp} from '../context/AppContext';
+import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { login, VerifyOTP, authenticateUser } from '../services/auth';
-import { getPatientProfile, getRegions, getBranches } from '../services/common';
-import { ToastService } from '../utils/ToastService';
-import { getCurrentCoordinates } from '../utils/LocationService';
+import {login, VerifyOTP, authenticateUser} from '../services/auth';
+import {getPatientProfile, getRegions, getBranches} from '../services/common';
+import {ToastService} from '../utils/ToastService';
+import {getCurrentCoordinates} from '../utils/LocationService';
 import {
   findNearestBranch,
   findNearestRegion,
 } from '../services/Region/location';
-import { fetchBranchesByRegionId } from '../services/Region/api';
-import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {fetchBranchesByRegionId} from '../services/Region/api';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Loader from '../components/Loader';
-import { AuthStackParamList, MainStackParamList } from '../navigation/types';
-import { useAuth } from '../context/AuthContext';
+import {AuthStackParamList, MainStackParamList} from '../navigation/types';
+import {useAuth} from '../context/AuthContext';
+import {pallette} from '../Constants/Constant';
 
 const CELL_COUNT = 6;
 
 const Otp: React.FC = () => {
-  type CombinedNavigationProp = CompositeNavigationProp<NativeStackNavigationProp<AuthStackParamList>, NativeStackNavigationProp<MainStackParamList>>;
+  type CombinedNavigationProp = CompositeNavigationProp<
+    NativeStackNavigationProp<AuthStackParamList>,
+    NativeStackNavigationProp<MainStackParamList>
+  >;
   const navigation = useNavigation<CombinedNavigationProp>();
   const [timer, setTimer] = useState(30);
   const [resendDisabled, setResendDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
-  const { updateMrn, updateProfile } = useApp();
+  const {updateMrn, updateProfile} = useApp();
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const { updateBranch, updateAllBranch, updateRegion } = useApp();
+  const {updateBranch, updateAllBranch, updateRegion} = useApp();
   const [value, setValue] = useState('');
-  const { setLoggedIn } = useAuth();
-  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
+  const {setLoggedIn} = useAuth();
+  const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
@@ -82,7 +86,7 @@ const Otp: React.FC = () => {
     try {
       setTimer(30);
       setResendDisabled(true);
-      const response = await login({ number: phoneNumber });
+      const response = await login({number: phoneNumber});
       if (response.status == 200 && response.success == true) {
         setLoading(false);
         ToastService.success('Success', 'Otp sent successfully');
@@ -107,7 +111,7 @@ const Otp: React.FC = () => {
   }, [value]);
 
   const formik = useFormik({
-    initialValues: { otp: '' },
+    initialValues: {otp: ''},
     validationSchema: Yup.object({
       otp: Yup.string()
         .matches(/^\d{6}$/, 'Enter a valid 6-digit OTP')
@@ -124,10 +128,13 @@ const Otp: React.FC = () => {
 
         const response = await VerifyOTP(payload);
         if (response && response.status === 200) {
-          ToastService.success('Success', response.data.message || 'OTP verified successfully');
+          ToastService.success(
+            'Success',
+            response.data.message || 'OTP verified successfully',
+          );
           let authResponse;
           try {
-            authResponse = await authenticateUser({ MobileNo: phoneNumber });
+            authResponse = await authenticateUser({MobileNo: phoneNumber});
           } catch (err: any) {
             authResponse = err.response; // Axios puts the 4xx/5xx response here
           }
@@ -136,7 +143,7 @@ const Otp: React.FC = () => {
             await AsyncStorage.multiSet([
               ['accessToken', token],
               ['refreshToken', token],
-              ['tokenExpiry', response.data.expiryTime],   // in UTC ISO string
+              ['tokenExpiry', response.data.expiryTime], // in UTC ISO string
             ]);
             if (!token) {
               throw new Error('Token not found in response');
@@ -164,7 +171,10 @@ const Otp: React.FC = () => {
           }
         } else {
           setLoading(false);
-          ToastService.error('Error', response?.data.message || 'Error verifying OTP');
+          ToastService.error(
+            'Error',
+            response?.data.message || 'Error verifying OTP',
+          );
         }
       } catch (error) {
         setLoading(false);
@@ -205,9 +215,7 @@ const Otp: React.FC = () => {
     }
   };
   if (loading) {
-    return (
-      <Loader />
-    );
+    return <Loader />;
   }
   return (
     <ScrollView style={styles.container}>
@@ -253,7 +261,7 @@ const Otp: React.FC = () => {
           rootStyle={styles.codeFieldRoot}
           keyboardType="number-pad"
           textContentType="oneTimeCode"
-          renderCell={({ index, symbol, isFocused }) => (
+          renderCell={({index, symbol, isFocused}) => (
             <View
               key={index}
               style={[styles.cell, isFocused && styles.focusCell]}
@@ -271,7 +279,10 @@ const Otp: React.FC = () => {
         <View style={styles.timeContainer}>
           <TouchableOpacity disabled={resendDisabled} onPress={handleResend}>
             <Text
-              style={[styles.resendText, resendDisabled && { color: '#aaa' }]}>
+              style={[
+                styles.resendText,
+                resendDisabled && {color: pallette.light_grey},
+              ]}>
               Resend
             </Text>
           </TouchableOpacity>
@@ -297,7 +308,7 @@ const w = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: h * 0.03
+    paddingVertical: h * 0.03,
   },
   logoImage: {
     marginHorizontal: 'auto',
@@ -309,7 +320,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    color: '#00B3AE',
+    color: pallette.app_green,
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: -12,
@@ -322,13 +333,13 @@ const styles = StyleSheet.create({
   labelText: {
     fontSize: 13,
     fontWeight: 'normal',
-    color: '#000',
+    color: pallette.black,
     marginBottom: 5,
     fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'center',
   },
   errorMessage: {
-    color: '#FFACAC',
+    color: pallette.red,
     marginTop: 0,
     marginBottom: 5,
     fontSize: 13,
@@ -353,7 +364,7 @@ const styles = StyleSheet.create({
     borderColor: '#A7AAAC',
     borderRadius: 4,
     textAlign: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
   },
   primaryBt: {
     width: '100%',
@@ -365,7 +376,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   primaryBtText: {
-    color: '#fff',
+    color: pallette.white,
     fontSize: 14,
     fontWeight: 'normal',
     textAlign: 'center',
@@ -383,14 +394,14 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingLeft: 15,
     paddingRight: 10,
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     borderRadius: 10,
   },
-  textbeforeDot: { position: 'relative' },
+  textbeforeDot: {position: 'relative'},
   imgTextTitle: {
     fontSize: 15,
     fontWeight: 'normal',
-    color: '#fff',
+    color: pallette.white,
     textAlign: 'center',
   },
 
@@ -400,10 +411,10 @@ const styles = StyleSheet.create({
     left: '42%',
     width: 30,
     height: 30,
-    backgroundColor: '#00B3AE',
+    backgroundColor: pallette.app_green,
     borderRadius: 50,
     borderWidth: 7,
-    borderColor: '#fff',
+    borderColor: pallette.white,
   },
   otpImg: {
     height: Dimensions.get('window').height * 0.4,
@@ -426,7 +437,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontSize: 12,
     fontWeight: 'normal',
-    color: '#000',
+    color: pallette.black,
     fontFamily: 'ProximaNovaA-Regular',
     paddingHorizontal: 0,
   },
@@ -445,18 +456,18 @@ const styles = StyleSheet.create({
     borderColor: '#8a3ab9',
     borderRadius: 8,
     marginRight: 10,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowColor: pallette.black,
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
   },
   cellText: {
     fontSize: 20,
-    color: '#000',
+    color: pallette.black,
     textAlign: 'center',
   },
   focusCell: {

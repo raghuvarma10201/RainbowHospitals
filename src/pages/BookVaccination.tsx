@@ -1,35 +1,46 @@
-import { Dimensions, Image, ScrollView, StyleSheet,TouchableOpacity, View, } from 'react-native'
-import React, { useState } from 'react';
-import {Text, Banner,  Modal, Portal, } from 'react-native-paper';
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useState} from 'react';
+import {Text, Banner, Modal, Portal} from 'react-native-paper';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../navigation/types';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {MainStackParamList} from '../navigation/types';
+import {pallette} from '../Constants/Constant';
 
 const BookVaccination: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const navigateTo = (path: keyof MainStackParamList, params: any) => {
     navigation.navigate(path, params);
   };
 
-
   return (
-  <View style={styles.mainContainer}>
-        <Header showLocation title={undefined} />
-    <ScrollView contentContainerStyle={styles.scrollContent}>
+    <View style={styles.mainContainer}>
+      <Header showLocation title={undefined} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.container}>
+          <View>
+            <Image
+              source={require('../../assets/images/vaccine-img.jpg')}
+              style={styles.vaccinationImg}
+            />
+          </View>
 
-    <View style={styles.container}>
-  
-<View>
-<Image source={require('../../assets/images/vaccine-img.jpg')} style={styles.vaccinationImg} />
-</View>
-  
-<View style={styles.vaccinationActions}>
-          <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('VaccinesAdult', undefined)}>
+          <View style={styles.vaccinationActions}>
+            <TouchableOpacity
+              style={styles.actionItem}
+              onPress={() => navigateTo('VaccinesAdult', undefined)}>
               <View style={styles.activeActionItemIcon}>
                 <Image
                   source={require('../../assets/images/adult-vaccination-icon.png')}
@@ -38,8 +49,10 @@ const BookVaccination: React.FC = () => {
               </View>
               <Text style={styles.actionText}> Adult Vaccination</Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.actionItem} onPress={() => navigateTo('VaccinesPediatric', undefined)}>
+
+            <TouchableOpacity
+              style={styles.actionItem}
+              onPress={() => navigateTo('VaccinesPediatric', undefined)}>
               <View style={styles.actionItemIcon}>
                 <Image
                   source={require('../../assets/images/pediatric-vaccination-icon.png')}
@@ -48,53 +61,43 @@ const BookVaccination: React.FC = () => {
               </View>
               <Text style={styles.actionText}>Pediatric Vaccination</Text>
             </TouchableOpacity>
-</View>
-
-</View> 
-</ScrollView>
-<Footer />
-</View>
-   
-
+          </View>
+        </View>
+      </ScrollView>
+      <Footer />
+    </View>
   );
-}
+};
 
-export default BookVaccination
+export default BookVaccination;
 
 const styles = StyleSheet.create({
-   
-  mainContainer:{
-    backgroundColor:'#fff',
+  mainContainer: {
+    backgroundColor: pallette.white,
+    flex: 1,
+  },
+
+  scrollContent: {
+    padding: 0,
+    paddingBottom: 100,
+  },
+
+  container: {
     flex: 1,
 
-},
-
-scrollContent: {
-    padding:0,
-    paddingBottom: 100, 
+    paddingTop: 0,
   },
 
-container:{
-    flex:1,
-  
-    paddingTop:0,
-   
+  vaccinationImg: {
+    width: '100%',
+    height: Dimensions.get('window').height * 0.6,
+    resizeMode: 'cover',
+
+    marginLeft: 'auto',
+    marginRight: 'auto',
   },
 
- 
-  vaccinationImg:{
-    width:'100%',
-    height:Dimensions.get('window').height * 0.6,
-    resizeMode:'cover',
-  
-    marginLeft:'auto',
-    marginRight:'auto',
-  },
-
-
-
-
-  vaccinationActions:{
+  vaccinationActions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
@@ -102,50 +105,48 @@ container:{
     alignSelf: 'center',
   },
 
-  
   actionItem: {
     alignItems: 'center',
     width: 100,
     marginBottom: 5,
-    marginHorizontal:'5%',
+    marginHorizontal: '5%',
   },
 
   actionItemIcon: {
     backgroundColor: '#939598',
-    borderRadius:20,
-    padding:10,   
+    borderRadius: 20,
+    padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 0,
-    borderWidth:4,
-    borderColor:'#fff',
+    borderWidth: 4,
+    borderColor: pallette.white,
   },
 
   activeActionItemIcon: {
-    backgroundColor: '#3C2871',
-    borderRadius:20,
-    padding:10,   
+    backgroundColor: pallette.app_purple,
+    borderRadius: 20,
+    padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 0,
-    borderWidth:4,
-    borderColor:'#fff',
+    borderWidth: 4,
+    borderColor: pallette.white,
   },
 
   iconAction: {
-    width:80,
-    height:80,
-    resizeMode:'contain',
+    width: 80,
+    height: 80,
+    resizeMode: 'contain',
   },
 
   actionText: {
-    fontSize:13,
+    fontSize: 13,
     textAlign: 'center',
     marginTop: 4,
-    fontFamily:'ProximaNovaA-Regular',
-    color:'#000',
-    width:'100%',
-    paddingVertical:5,
+    fontFamily: 'ProximaNovaA-Regular',
+    color: pallette.black,
+    width: '100%',
+    paddingVertical: 5,
   },
-
-})    
+});

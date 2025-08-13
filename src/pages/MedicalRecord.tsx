@@ -1,13 +1,30 @@
-import { Dimensions, Image, ScrollView, StyleSheet,TouchableOpacity, View, } from 'react-native'
-import React, { useState } from 'react';
-import {Card, Searchbar , TextInput, Icon,  Banner,Text,  Modal, Portal, } from 'react-native-paper';
-import { Dropdown } from 'react-native-element-dropdown';
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Card,
+  Searchbar,
+  TextInput,
+  Icon,
+  Banner,
+  Text,
+  Modal,
+  Portal,
+} from 'react-native-paper';
+import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import { MainStackParamList } from '../navigation/types';
+import {MainStackParamList} from '../navigation/types';
+import {pallette} from '../Constants/Constant';
 
 const local_data = [
   {
@@ -21,24 +38,21 @@ const local_data = [
 ];
 
 const MedicalRecord: React.FC = () => {
-
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
 
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const navigateTo = (path: keyof MainStackParamList, params: any) => {
     navigation.navigate(path, params);
   };
 
-
   return (
-<View style={styles.mainContainer}>
-<Header showLocation title={undefined} />
-<ScrollView contentContainerStyle={styles.scrollContent}>
-
-<View style={styles.container}>
-
-<View style={styles.searchLocationWrapp}>
+    <View style={styles.mainContainer}>
+      <Header showLocation title={undefined} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.container}>
+          <View style={styles.searchLocationWrapp}>
             <View style={styles.searchLocationBlock}>
               <View style={styles.searchBlock}>
                 <TextInput
@@ -85,116 +99,164 @@ const MedicalRecord: React.FC = () => {
                 />
               </View>
             </View>
-</View>
+          </View>
 
-   <View style={styles.titleFlex}>
-   <Image source={require('../../assets/images/view-report.png')}
-    style={styles.titleIcon} />
-    <Text style={styles.title}>Medical Records</Text>
-   </View>
+          <View style={styles.titleFlex}>
+            <Image
+              source={require('../../assets/images/view-report.png')}
+              style={styles.titleIcon}
+            />
+            <Text style={styles.title}>Medical Records</Text>
+          </View>
 
+          <View style={styles.selectUserBlock}>
+            <Image
+              source={require('../../assets/images/booked-for-icon.png')}
+              style={styles.iconSelectUser}
+            />
 
-   <View style={styles.selectUserBlock}>
-      <Image source={require('../../assets/images/booked-for-icon.png')}
-      style={styles.iconSelectUser} />
+            <View style={styles.selectUser}>
+              <Text style={styles.textselectUser}>Record of </Text>
+              <Dropdown
+                style={styles.userDopdownSelect}
+                selectedTextStyle={styles.userSelectedText}
+                placeholderStyle={styles.userPlaceholder}
+                maxHeight={200}
+                value={country}
+                data={local_data}
+                valueField="value"
+                labelField="lable"
+                placeholder="Select Location"
+                containerStyle={styles.userDropdownList}
+                activeColor="#E5F9F8"
+                onChange={e => setCountry(e.value)}
+              />
+            </View>
+          </View>
 
-              <View style={styles.selectUser}>
-  <Text style={styles.textselectUser}>Record of </Text>
-                <Dropdown
-                  style={styles.userDopdownSelect}
-                  selectedTextStyle={styles.userSelectedText}
-                  placeholderStyle={styles.userPlaceholder}
-                  maxHeight={200}
-                  value={country}
-                  data={local_data}
-                  valueField="value"
-                  labelField="lable"
-                  placeholder="Select Location"
-                  containerStyle={styles.userDropdownList}
-                  activeColor="#E5F9F8"
-                  onChange={e => setCountry(e.value)}
-                />
+          <View style={[styles.dateFlex, {marginTop: 10}]}>
+            <Text style={[styles.formLabel, {marginRight: 10}]}>From</Text>
+            <TextInput style={styles.formInput} />
+            <Text style={[styles.formLabel, {marginLeft: 10, marginRight: 10}]}>
+              To
+            </Text>
+            <TextInput style={styles.formInput} />
+          </View>
 
+          <View style={{marginTop: 20}}>
+            <Card.Content style={[styles.cardList, {elevation: 0}]}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: 'ProximaNovaA-Semibold',
+                  color: pallette.black,
+                  marginBottom: 2,
+                }}>
+                Dr. Ramesh Konanki
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontFamily: 'ProximaNovaA-Semibold',
+                  color: pallette.black,
+                  marginBottom: 5,
+                }}>
+                Pediatric Neurologist
+              </Text>
+
+              <View style={styles.row}>
+                <View style={styles.leftCardCont}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontFamily: 'ProximaNovaA-Regular',
+                      color: pallette.black,
+                    }}>
+                    15 July 2025
+                  </Text>
+                </View>
+                <View style={styles.rightCardCont}>
+                  <TouchableOpacity style={styles.textBtnBorder}>
+                    <Text style={styles.textBtn}>View Report</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <Text style={styles.textBtn}>Download</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
+            </Card.Content>
 
+            <Card.Content style={[styles.cardList, {elevation: 0}]}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: 'ProximaNovaA-Semibold',
+                  color: pallette.black,
+                  marginBottom: 2,
+                }}>
+                Dr. Ramesh Konanki
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontFamily: 'ProximaNovaA-Semibold',
+                  color: pallette.black,
+                  marginBottom: 5,
+                }}>
+                Pediatric Neurologist
+              </Text>
+
+              <View style={styles.row}>
+                <View style={styles.leftCardCont}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontFamily: 'ProximaNovaA-Regular',
+                      color: pallette.black,
+                    }}>
+                    15 July 2025
+                  </Text>
+                </View>
+                <View style={styles.rightCardCont}>
+                  <TouchableOpacity style={styles.textBtnBorder}>
+                    <Text style={styles.textBtn}>View Report</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <Text style={styles.textBtn}>Download</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Card.Content>
+          </View>
+        </View>
+      </ScrollView>
+      <Footer />
     </View>
- 
-<View style={[styles.dateFlex, {marginTop:10}]}>
-<Text style={[styles.formLabel, {marginRight:10}]}>From</Text>
-  <TextInput style={styles.formInput} />
-  <Text style={[styles.formLabel, {marginLeft:10, marginRight:10}]}>To</Text>
-  <TextInput style={styles.formInput} />
-</View>
-
-   <View style={{marginTop:20, }}>
-
-      <Card.Content style={[styles.cardList, { elevation: 0, }]}>
-      <Text style={{fontSize:14, fontFamily:'ProximaNovaA-Semibold', color:'#000', marginBottom:2}}>Dr. Ramesh Konanki</Text>
-      <Text style={{fontSize:12, fontFamily:'ProximaNovaA-Semibold', color:'#000', marginBottom:5}}>Pediatric Neurologist</Text>
-
-            <View style={styles.row}>
-              <View style={styles.leftCardCont}>
-                    <Text style={{fontSize:13, fontFamily:'ProximaNovaA-Regular', color:'#000',}}>15 July 2025</Text>
-              </View>
-              <View style={styles.rightCardCont}>           
-                 <TouchableOpacity style={styles.textBtnBorder}><Text style={styles.textBtn}>View Report</Text></TouchableOpacity>
-                 <TouchableOpacity><Text style={styles.textBtn}>Download</Text></TouchableOpacity>
-              </View>
-            </View>
-      </Card.Content>
-
-      <Card.Content style={[styles.cardList, { elevation: 0, }]}>
-      <Text style={{fontSize:14, fontFamily:'ProximaNovaA-Semibold', color:'#000', marginBottom:2}}>Dr. Ramesh Konanki</Text>
-      <Text style={{fontSize:12, fontFamily:'ProximaNovaA-Semibold', color:'#000', marginBottom:5}}>Pediatric Neurologist</Text>
-
-            <View style={styles.row}>
-              <View style={styles.leftCardCont}>
-                    <Text style={{fontSize:13, fontFamily:'ProximaNovaA-Regular', color:'#000',}}>15 July 2025</Text>
-              </View>
-              <View style={styles.rightCardCont}>           
-                 <TouchableOpacity style={styles.textBtnBorder}><Text style={styles.textBtn}>View Report</Text></TouchableOpacity>
-                 <TouchableOpacity><Text style={styles.textBtn}>Download</Text></TouchableOpacity>
-              </View>
-            </View>
-      </Card.Content>
-
-
-
-    </View> 
-
-</View> 
-</ScrollView>
-<Footer />
-</View>
-   
-
   );
-}
+};
 
-export default MedicalRecord
+export default MedicalRecord;
 
 const styles = StyleSheet.create({
-   
-  mainContainer:{
-    backgroundColor:'#fff',
+  mainContainer: {
+    backgroundColor: pallette.white,
     flex: 1,
-
-},
-
-scrollContent: {
-    padding:0,
-    paddingBottom: 100, 
   },
 
-container:{
-    flex:1,
-    paddingBottom:10,
-    paddingTop:0,
-    paddingHorizontal:10,
+  scrollContent: {
+    padding: 0,
+    paddingBottom: 100,
+  },
+
+  container: {
+    flex: 1,
+    paddingBottom: 10,
+    paddingTop: 0,
+    paddingHorizontal: 10,
   },
 
   // imgTextGroup
- 
+
   searchLocationWrapp: {
     backgroundColor: 'transparent',
     borderRadius: 10,
@@ -216,7 +278,7 @@ container:{
     marginTop: 0,
     fontSize: 15,
     fontWeight: 400,
-    color: '#fff',
+    color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
   },
 
@@ -229,7 +291,7 @@ container:{
     marginTop: 0,
     fontSize: 13,
     fontWeight: 400,
-    color: '#fff',
+    color: pallette.white,
     backgroundColor: 'transparent',
     fontFamily: 'ProximaNovaA-Regular',
     width: Dimensions.get('window').width * 0.43,
@@ -241,93 +303,88 @@ container:{
     position: 'absolute',
     top: 14,
     left: 10,
-    tintColor: '#fff',
+    tintColor: pallette.white,
   },
-// ---
+  // ---
 
-dropdownSelect: {
-  height: 30,
-  paddingHorizontal: 10,
-  paddingLeft: 30,
-  marginTop: 5,
-  color: '#fff',
-  width: Dimensions.get('window').width * 0.43,
-},
-
-placeholderCountry: {
-  fontFamily: 'ProximaNovaA-Regular',
-  fontSize: 13,
-  color: '#fff',
-},
-selectedTextContry: {
-  fontSize: 13,
-  color: '#fff',
-},
-
-dropdownList: {
-  fontFamily: 'ProximaNovaA-Regular',
-  fontSize: 13,
-  marginLeft: 0,
-  marginRight: 5,
-  padding: 0,
-  textAlign: 'left',
-},
-//---
-titleFlex: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginTop: 30,
-  justifyContent: 'center',
-  alignSelf: 'center',
-  width: '100%',
-  marginBottom: 30,
-},
-titleIcon: {
-  width: 40,
-  height:40,
-  marginRight: 10,
-},
-title: {
-  fontSize:22,
-  fontFamily: 'ProximaNovaA-Semibold',
-  color: '#000',
-
-},
-
-    //---
-
-selectUserBlock:{ flexDirection: 'row',},
-iconSelectUser:{
-  width: 35,
-  height:35,
-  marginRight: 10,},
-
-  selectUser:{
-
+  dropdownSelect: {
+    height: 30,
+    paddingHorizontal: 10,
+    paddingLeft: 30,
+    marginTop: 5,
+    color: pallette.white,
+    width: Dimensions.get('window').width * 0.43,
   },
-  textselectUser:{
+
+  placeholderCountry: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize:14,
-    marginBottom:5,
-    
+    fontSize: 13,
+    color: pallette.white,
+  },
+  selectedTextContry: {
+    fontSize: 13,
+    color: pallette.white,
   },
 
-userDopdownSelect:{
-backgroundColor:'#B7E1E0',
-paddingHorizontal:15,
-paddingVertical:7,
-width:200,
-borderRadius:2,
-  } ,
+  dropdownList: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: 13,
+    marginLeft: 0,
+    marginRight: 5,
+    padding: 0,
+    textAlign: 'left',
+  },
+  //---
+  titleFlex: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 30,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    width: '100%',
+    marginBottom: 30,
+  },
+  titleIcon: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
+  },
+  title: {
+    fontSize: 22,
+    fontFamily: 'ProximaNovaA-Semibold',
+    color: pallette.black,
+  },
+
+  //---
+
+  selectUserBlock: {flexDirection: 'row'},
+  iconSelectUser: {
+    width: 35,
+    height: 35,
+    marginRight: 10,
+  },
+
+  selectUser: {},
+  textselectUser: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: 14,
+    marginBottom: 5,
+  },
+
+  userDopdownSelect: {
+    backgroundColor: '#B7E1E0',
+    paddingHorizontal: 15,
+    paddingVertical: 7,
+    width: 200,
+    borderRadius: 2,
+  },
 
   userPlaceholder: {
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: 13,
-  
   },
   userSelectedText: {
     fontSize: 13,
-  
   },
 
   userDropdownList: {
@@ -339,64 +396,59 @@ borderRadius:2,
     textAlign: 'left',
   },
 
+  //---
+  dateFlex: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  formLabel: {
+    fontSize: 12,
+    fontFamily: 'ProximaNovaA-Regular',
+    color: pallette.black,
+    marginBottom: 5,
+  },
+
+  formInput: {
+    height: 40,
+    width: 120,
+    borderWidth: 0,
+    borderColor: 'transparent',
+    borderRadius: 2,
+    backgroundColor: '#C7E8E7',
+  },
 
   //---
-  dateFlex:{
-    flexDirection:'row',
-    alignItems:'center',
-
-  },
-  formLabel:{
-    fontSize:12,
-    fontFamily:'ProximaNovaA-Regular',
-    color:'#000',
-    marginBottom:5,
-  },
-
-  formInput:{
-    height:40,
-    width:120, 
-    borderWidth:0,
-    borderColor:'transparent',
-    borderRadius:2,   
-    backgroundColor:'#C7E8E7',
-  },
-
-//---
   cardList: {
     flex: 1,
     paddingHorizontal: 10,
-    paddingVertical:12,
+    paddingVertical: 12,
     borderRadius: 12,
     backgroundColor: 'transparent',
     marginHorizontal: 2,
     elevation: 0,
     borderBottomWidth: 1,
     borderBottomColor: '#D1D3D4',
-
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent:'space-between',
+    justifyContent: 'space-between',
   },
 
-  leftCardCont:{},
-  rightCardCont:{
+  leftCardCont: {},
+  rightCardCont: {
     flexDirection: 'row',
   },
 
-  textBtn:{
-    fontFamily:'ProximaNovaA-Regular',
-    fontSize:11,
-    color:'#000',
-    
+  textBtn: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: 11,
+    color: pallette.black,
   },
-  textBtnBorder:{
-    borderRightWidth:1,
-    borderColor:'#000',
-    paddingRight:6,
-    marginRight:6,
-  }
-
-})    
+  textBtnBorder: {
+    borderRightWidth: 1,
+    borderColor: pallette.black,
+    paddingRight: 6,
+    marginRight: 6,
+  },
+});

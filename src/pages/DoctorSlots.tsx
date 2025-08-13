@@ -30,6 +30,7 @@ import ShortInfoText from '../components/ShortInfoText';
 import {MainStackParamList} from '../navigation/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {routes} from '../utils/enums';
+import {pallette} from '../Constants/Constant';
 
 const DoctorSlots: React.FC<any> = ({route}) => {
   const navigation =
@@ -331,7 +332,7 @@ const DoctorSlots: React.FC<any> = ({route}) => {
                     fontFamily: 'ProximaNovaA-Regular',
                     fontSize: 14,
                     borderBottomWidth: 1,
-                    borderBottomColor: '#fff',
+                    borderBottomColor: pallette.white,
                     paddingBottom: 5,
                     textAlign: 'center',
                     marginHorizontal: 'auto',
@@ -349,7 +350,7 @@ const DoctorSlots: React.FC<any> = ({route}) => {
                     fontFamily: 'ProximaNovaA-Regular',
                     fontSize: 14,
                     borderBottomWidth: 1,
-                    borderBottomColor: '#fff',
+                    borderBottomColor: pallette.white,
                     width: 90,
                     paddingBottom: 5,
                     textAlign: 'center',
@@ -366,7 +367,7 @@ const DoctorSlots: React.FC<any> = ({route}) => {
           onPress={() => proceedPayment()}
           style={[
             styles.formButton,
-            {backgroundColor: selectedSlot ? '#3C2871' : 'grey'},
+            {backgroundColor: selectedSlot ? pallette.app_purple : 'grey'},
           ]}>
           <Text style={styles.formButtonText}>
             {appointmentnumber ? 'Confirm Reschedule' : 'Proceed To Confirm'}
@@ -386,7 +387,7 @@ const w = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     flex: 1,
   },
 
@@ -396,7 +397,7 @@ const styles = StyleSheet.create({
     minHeight: h,
   },
   doctorDetailsContainer: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     paddingTop: h * 0.1,
     paddingHorizontal: w * 0.02,
     width: '90%',
@@ -408,7 +409,7 @@ const styles = StyleSheet.create({
   doctorImgContainer: {
     height: h * 0.2,
     width: h * 0.2,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     position: 'absolute',
     borderRadius: h * 0.1,
     top: -(h * 0.1),
@@ -429,7 +430,7 @@ const styles = StyleSheet.create({
     height: w * 0.05,
     width: w * 0.05,
     borderRadius: w * 0.1,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     position: 'absolute',
     right: w * 0.02,
     top: h * 0.15,
@@ -452,12 +453,12 @@ const styles = StyleSheet.create({
   },
   doctorDetails: {
     padding: 8,
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     width: '100%',
   },
   docName: {
     fontSize: 20,
-    color: '#fff',
+    color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
   },
   consultBtnsContainer: {
@@ -475,7 +476,7 @@ const styles = StyleSheet.create({
   },
   consultBtnTxt: {
     fontSize: 11,
-    color: '#000',
+    color: pallette.black,
     textAlign: 'left',
     fontFamily: 'ProximaNovaA-Regular',
     paddingLeft: 32,
@@ -507,7 +508,7 @@ const styles = StyleSheet.create({
   },
 
   timeTxt: {
-    color: '#000',
+    color: pallette.black,
     lineHeight: 20,
     fontSize: 13,
     fontFamily: 'ProximaNovaA-Regular',
@@ -522,10 +523,10 @@ const styles = StyleSheet.create({
 
   timeActive: {
     backgroundColor: '#4CC2BF',
-    color: '#fff',
+    color: pallette.white,
   },
   centeredTxt: {
-    color: '#3C2871',
+    color: pallette.app_purple,
     textAlign: 'center',
     fontSize: 15,
     fontFamily: 'ProximaNovaA-Semibold',
@@ -548,7 +549,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   formButtonText: {
-    color: '#fff',
+    color: pallette.white,
     textAlign: 'center',
     fontSize: 14,
     fontFamily: 'ProximaNovaA-Bold',

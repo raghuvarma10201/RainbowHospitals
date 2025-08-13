@@ -3,6 +3,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useEffect, useMemo, useState} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {MainStackParamList} from '../navigation/types';
+import {pallette} from '../Constants/Constant';
 
 interface FooterProps {
   activeIcon?: string;
@@ -22,7 +23,7 @@ const Footer: React.FC<FooterProps> = ({activeIcon}) => {
   };
 
   const getTintColor = (iconName: string) => {
-    return activeIcon === iconName ? '#3C2871' : '#fff'; // optional: adjust if active has a different color
+    return activeIcon === iconName ? pallette.app_purple : pallette.white; // optional: adjust if active has a different color
   };
 
   return (
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   actionItemIcon: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     borderRadius: 10,
     padding: 15,
     paddingTop: 15,
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
   },
 
   activeActionItem: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     borderRadius: 10,
     padding: 10,
     paddingTop: 15,
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
   },
 
   activeActionText: {
-    color: '#fff',
+    color: pallette.white,
     fontSize: 11,
     textAlign: 'center',
     marginTop: 4,
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
   activeIconAction: {
     width: 40,
     height: 40,
-    tintColor: '#fff',
+    tintColor: pallette.white,
   },
 
   //   footer
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
 
   footerButtonContainer: {
     paddingVertical: 10,
-    backgroundColor: '#00B3AE',
+    backgroundColor: pallette.app_green,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
   footerButtonIcon: {
     width: 28,
     height: 28,
-    tintColor: '#fff',
+    tintColor: pallette.white,
   },
 
   activeFooterButtonIcon: {

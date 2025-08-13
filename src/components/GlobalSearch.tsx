@@ -6,6 +6,7 @@ import { MainStackParamList, useAuth } from '../../App';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useApp } from '../context/AppContext';
 import { Dimensions, View, Image, StyleSheet } from 'react-native';
+import { pallette } from '../Constants/Constant';
 
 interface FooterProps {
     locations?: string;
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
         marginTop: 0,
         fontSize: 15,
         fontWeight: 400,
-        color: '#fff',
+        color: pallette.white,
         fontFamily: 'ProximaNovaA-Regular',
       },
     
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
         marginTop: 0,
         fontSize: 13,
         fontWeight: 400,
-        color: '#fff',
+        color: pallette.white,
         backgroundColor: 'transparent',
         fontFamily: 'ProximaNovaA-Regular',
         width: Dimensions.get('window').width * 0.43,
@@ -132,25 +133,25 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 14,
         left: 10,
-        tintColor: '#fff',
+        tintColor: pallette.white,
       },
         dropdownSelect: {
           height: 30,
           paddingHorizontal: 10,
           paddingLeft: 30,
           marginTop: 5,
-          color: '#fff',
+          color: pallette.white,
           width: Dimensions.get('window').width * 0.43,
         },
       
         placeholderCountry: {
           fontFamily: 'ProximaNovaA-Regular',
           fontSize: 13,
-          color: '#fff',
+          color: pallette.white,
         },
         selectedTextContry: {
           fontSize: 13,
-          color: '#fff',
+          color: pallette.white,
         },
       
         dropdownList: {

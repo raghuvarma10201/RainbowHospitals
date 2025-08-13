@@ -18,6 +18,8 @@ import {bookAppointment} from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useApp} from '../context/AppContext';
 import {ToastService} from '../utils/ToastService';
+import {pallette} from '../Constants/Constant';
+import Loader from '../components/Loader';
 
 const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
@@ -204,7 +206,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   OrganisationID: appointmentData?.OrganisationUID,
                 })
               }
-              style={[styles.payBtn, {backgroundColor: '#3C2871'}]}>
+              style={[styles.payBtn, {backgroundColor: pallette.app_purple}]}>
               <Text style={styles.payBtnTxt}>Reschedule</Text>
             </TouchableOpacity>
           </View>
@@ -337,7 +339,7 @@ const h = Dimensions.get('window').height;
 const w = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     flex: 1,
   },
 
@@ -355,7 +357,7 @@ const styles = StyleSheet.create({
 
   //---
   doctorDetailsContainer: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
 
     paddingHorizontal: 15,
     alignSelf: 'center',
@@ -367,7 +369,7 @@ const styles = StyleSheet.create({
   doctorImgContainer: {
     width: 100,
     height: 100,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     borderRadius: h * 0.1,
     marginHorizontal: 'auto',
     borderWidth: 0.3,
@@ -387,7 +389,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 100,
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     position: 'absolute',
     right: 0,
     bottom: 0,
@@ -402,12 +404,12 @@ const styles = StyleSheet.create({
   },
   doctorDetails: {
     padding: 8,
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     width: '100%',
   },
   docName: {
     fontSize: 20,
-    color: '#fff',
+    color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'center',
   },
@@ -425,7 +427,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
     fontFamily: 'ProximaNovaA-Bold',
-    color: '#3C2871',
+    color: pallette.app_purple,
     textAlign: 'left',
   },
 
@@ -443,7 +445,7 @@ const styles = StyleSheet.create({
   locationText: {
     fontSize: 13,
     fontFamily: 'ProximaNovaA-Semibold',
-    color: '#fff',
+    color: pallette.white,
     textAlign: 'left',
   },
 
@@ -474,7 +476,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 2,
     fontSize: 11,
-    color: '#000',
+    color: pallette.black,
     fontFamily: 'ProximaNovaA-Regular',
     marginBottom: 10,
   },
@@ -517,13 +519,13 @@ const styles = StyleSheet.create({
   },
   payBtnTxt: {
     fontSize: 13,
-    color: '#fff',
+    color: pallette.white,
     fontFamily: 'ProximaNovaA-Semibold',
   },
 
   //--
   modalWrapp: {
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     paddingHorizontal: 15,
     paddingVertical: 20,
     borderRadius: 10,
@@ -541,19 +543,19 @@ const styles = StyleSheet.create({
     marginTop: 0,
     fontFamily: 'ProximaNovaA-Bold',
     fontWeight: 'bold',
-    color: '#000',
+    color: pallette.black,
     marginBottom: 5,
   },
   formSubTitle: {
     fontSize: 13,
     fontFamily: 'ProximaNovaA-Regular',
-    color: '#000',
+    color: pallette.black,
     marginBottom: 10,
     textAlign: 'center',
   },
 
   formContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: pallette.white,
     borderRadius: 10,
     padding: 10,
     marginTop: 10,
@@ -566,7 +568,7 @@ const styles = StyleSheet.create({
   formLabel: {
     fontSize: 13,
     fontFamily: 'ProximaNovaA-Regular',
-    color: '#000',
+    color: pallette.black,
     marginBottom: 5,
   },
 
@@ -586,14 +588,14 @@ const styles = StyleSheet.create({
   },
 
   formButton: {
-    backgroundColor: '#3C2871',
+    backgroundColor: pallette.app_purple,
     borderRadius: 10,
     padding: 10,
     marginTop: 10,
     width: '45%',
   },
   formButtonText: {
-    color: '#fff',
+    color: pallette.white,
     textAlign: 'center',
     fontSize: 14,
     fontFamily: 'ProximaNovaA-Bold',
@@ -603,7 +605,7 @@ const styles = StyleSheet.create({
   },
 
   chatBtn: {
-    backgroundColor: '#00B3AE',
+    backgroundColor: pallette.app_green,
     borderRadius: 100,
     width: 62,
     height: 62,
