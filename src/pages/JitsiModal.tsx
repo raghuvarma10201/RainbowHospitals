@@ -144,17 +144,6 @@ const JitsiModal = ({visible, options, onClose}: any) => {
         </TouchableOpacity>
       )}
 
-      {!minimized && (
-        <TouchableOpacity
-          onPress={() => ScreenShareModule.toggleScreenShare()}
-          style={styles.shareButton}>
-          <Image
-            source={require('../../assets/images/share-icon.png')}
-            style={styles.shareIcon}
-          />
-        </TouchableOpacity>
-      )}
-
       {minimized && (
         <TouchableOpacity
           onPress={() => setMinimized(false)}
@@ -182,6 +171,8 @@ const JitsiModal = ({visible, options, onClose}: any) => {
                 'overflowmenu',
                 'hangup',
                 'toggle-camera',
+                'desktop',
+                'switch-camera',
               ],
             }}
             eventListeners={{
@@ -196,6 +187,8 @@ const JitsiModal = ({visible, options, onClose}: any) => {
               'welcomepage.enabled': false,
               'recording.enabled': true,
               'live-streaming.enabled': true,
+              'videoMute.enabled': true,
+              'camera.enabled': true,
             }}
             ref={jitsiMeeting}
             token={options.token}
