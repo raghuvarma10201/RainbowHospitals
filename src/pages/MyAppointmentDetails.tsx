@@ -62,7 +62,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       }
     } catch (error) {
       setLoading(false);
-      console.error('Failed to load Doctors:', error);
+      console.error('Failed to cancel:', error);
     } finally {
       setLoading(false);
     }
@@ -198,8 +198,10 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate('DoctorSlots', {
-                  doctorId: 1,
-                  appointmentType: 'video',
+                  doctorId: appointmentData?.id,
+                  appointmentType: appointmentData?.AppointmentType,
+                  appointmentnumber: appointmentData?.appointmentnumber,
+                  OrganisationID: appointmentData?.OrganisationUID,
                 })
               }
               style={[styles.payBtn, {backgroundColor: '#3C2871'}]}>

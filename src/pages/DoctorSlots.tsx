@@ -13,8 +13,9 @@ import CommonHeader from '../components/Header';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Footer from '../components/Footer';
 import {DynamicWeekWithMonth} from '../components/WeeklyCalender';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import {
+  bookAppointment,
   getDoctorDetail,
   getDoctors,
   getDoctorSessions,
@@ -27,11 +28,14 @@ import Loader from '../components/Loader';
 import {useTimer} from '../context/TimeContext';
 import ShortInfoText from '../components/ShortInfoText';
 import {MainStackParamList} from '../navigation/types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {routes} from '../utils/enums';
 
 const DoctorSlots: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {doctorId, appointmentType} = route.params;
+  const {doctorId, appointmentType, OrganisationID, appointmentnumber} =
+    route.params;
   const {branch, appointment, updateAppointment} = useApp();
   const [doctorDetail, setDoctorDetail] = useState<any>({});
   const [doctorSessions, setDoctorSessions] = useState<any>([]);
@@ -57,7 +61,7 @@ const DoctorSlots: React.FC<any> = ({route}) => {
     try {
       setLoading(true);
       const response = await getDoctorDetail(doctorId);
-      ////console.log(response.data);
+      console.log('doctor details', response);
       if (response && response.status == 200) {
         setLoading(false);
         setDoctorDetail(response.data);
@@ -83,19 +87,25 @@ const DoctorSlots: React.FC<any> = ({route}) => {
   };
 
   const getSessions = async (docData: any) => {
-    console.log(branch?.organisation.organisationid);
     try {
       setLoading(true);
       const payload = {
         CareproviderCode: docData.new_doctor_UID, //'500004',
-        OrganisationUID: branch?.organisation.organisationid, //2,
+        OrganisationUID: OrganisationID, //2,
         AppointmentType: appointmentType,
         noofdays: '30',
       };
       const response = await getDoctorSessions(payload);
+      console.log(response, payload);
+
       if (response && response.status == 200) {
+        const uniqueSessions = response.data.filter(
+          (session: any, index: number, self: any[]) =>
+            index ===
+            self.findIndex(s => s.SessionDate === session.SessionDate),
+        );
         setLoading(false);
-        setDoctorSessions(response.data);
+        setDoctorSessions(uniqueSessions);
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -143,22 +153,60 @@ const DoctorSlots: React.FC<any> = ({route}) => {
     return `${hours}:${minutes}`;
   }
   const proceedPayment = async () => {
-    startTimer();
-    await updateAppointment({
-      status: 'BOOKING',
-      comment: appointment?.comment ?? '',
-      mrn: appointment?.mrn ?? '',
-      OrganisationUID: '2',
-      AppointmentType: appointmentType ?? '',
-      slotid: selectedSlot,
-      date: selectedDate, // Provide default or actual value
-      time: selectedTime, // Provide default or actual value
-      transaction_id: appointment?.transaction_id ?? '', // Provide default or actual value
-      price: appointment?.price ?? 0, // Provide default or actual value
-      payment_type: appointment?.payment_type ?? 'CASH', // Provide default or actual value
-    });
-
-    navigation.navigate('SlotConfirmation', {doctor: doctorDetail});
+    if (appointmentnumber) {
+      const obj = {
+        status: 'RESCHEDULE',
+        appointmentnumber: appointmentnumber,
+        slotid: selectedSlot,
+        date: selectedDate, // Provide default or actual value
+        time: selectedTime, // Provide default or actual value
+        comment: '',
+        mrn: await AsyncStorage.getItem('mrn'),
+        OrganisationUID: OrganisationID,
+        AppointmentType: appointmentType,
+      };
+      console.log(obj);
+      try {
+        const response = await bookAppointment(obj);
+        if (response?.status == 200 && response?.success) {
+          setLoading(false);
+          ToastService.success(
+            'Success',
+            'Appointment Resheduled Successfully',
+          );
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: routes.Dashboard}],
+            }),
+          );
+        } else {
+          setLoading(false);
+          ToastService.error('Error', response.message);
+        }
+      } catch (error) {
+        setLoading(false);
+        console.error('Failed to reschedule:', error);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      startTimer();
+      await updateAppointment({
+        status: 'BOOKING',
+        comment: appointment?.comment ?? '',
+        mrn: appointment?.mrn ?? '',
+        OrganisationUID: '2',
+        AppointmentType: appointmentType ?? '',
+        slotid: selectedSlot,
+        date: selectedDate, // Provide default or actual value
+        time: selectedTime, // Provide default or actual value
+        transaction_id: appointment?.transaction_id ?? '', // Provide default or actual value
+        price: appointment?.price ?? 0, // Provide default or actual value
+        payment_type: appointment?.payment_type ?? 'CASH', // Provide default or actual value
+      });
+      navigation.navigate('SlotConfirmation', {doctor: doctorDetail});
+    }
   };
   return (
     <View style={styles.mainContainer}>
@@ -168,7 +216,7 @@ const DoctorSlots: React.FC<any> = ({route}) => {
           <View style={styles.doctorImgContainer}>
             <Image
               source={
-                doctorDetail.small_image
+                doctorDetail?.small_image
                   ? {uri: `${IMG_BASE_URL}${doctorDetail.small_image}`}
                   : {
                       uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
@@ -320,7 +368,9 @@ const DoctorSlots: React.FC<any> = ({route}) => {
             styles.formButton,
             {backgroundColor: selectedSlot ? '#3C2871' : 'grey'},
           ]}>
-          <Text style={styles.formButtonText}>Proceed To Confirm</Text>
+          <Text style={styles.formButtonText}>
+            {appointmentnumber ? 'Confirm Reschedule' : 'Proceed To Confirm'}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
       <Footer />

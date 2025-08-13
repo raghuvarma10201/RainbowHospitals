@@ -316,4 +316,5 @@ export type upcomingApointment = {
   VisitType: string;
   appointmentnumber: string;
   image: ImageProps;
+  id: number;
 };

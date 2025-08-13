@@ -1,36 +1,40 @@
-import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
+import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
   Login: undefined;
   Splash: undefined;
-  Topup: { amount?: number } | undefined;
+  Topup: {amount?: number} | undefined;
 };
 
 export type AuthStackParamList = {
   Login: undefined;
   Otp: undefined;
   Registration: undefined;
-
 };
 
 export type MainStackParamList = {
   Splash: undefined;
   Dashboard: undefined;
-  Specialities: {appointmentType: string };
+  Specialities: {appointmentType: string};
   AppointmentConfirmed: undefined;
-  DoctorSlots: { doctorId: number, appointmentType: string };
-  DoctorsList: { specialityId: number, appointmentType: string };
+  DoctorSlots: {
+    doctorId: number;
+    appointmentType: string;
+    OrganisationID: string;
+    appointmentnumber?: string;
+  };
+  DoctorsList: {specialityId: number; appointmentType: string};
   BookVaccination: undefined;
   VaccinesAdult: undefined;
   VaccinesPediatric: undefined;
   BookScan: undefined;
   MedicalRecord: undefined;
-  SlotConfirmation: { doctor: any };
+  SlotConfirmation: {doctor: any};
   Home: undefined;
   MyAppointments: undefined;
-  MyAppointmentDetails: {appointmentData : any, cancel?: boolean};
-  AppointmentChat: {bookingId : any, doctor: any};
-  JitsiCall: { roomName: string };
+  MyAppointmentDetails: {appointmentData: any; cancel?: boolean};
+  AppointmentChat: {bookingId: any; doctor: any};
+  JitsiCall: {roomName: string};
   PayUWebView: {
     finalPayload: any;
     txnId: string;
@@ -39,4 +43,4 @@ export type MainStackParamList = {
   };
 };
 
-export const screenOptions: NativeStackNavigationOptions = { headerShown: false };
+export const screenOptions: NativeStackNavigationOptions = {headerShown: false};

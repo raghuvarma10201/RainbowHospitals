@@ -9,13 +9,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Card, Searchbar, TextInput, Icon, Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Banners from '../components/Slider';
 import moment from 'moment';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
 import {getAppointments} from '../services/common';
@@ -57,12 +57,15 @@ const Dashboard: React.FC = () => {
     const pageIndex = Math.round(event.nativeEvent.contentOffset.x / (w * 0.8));
     setCurrentPage(pageIndex);
   };
-  useEffect(() => {
-    const today = new Date();
-    const formattedToday = moment(today).format('YYYY-MM-DD');
-    setSelectedDate(today);
-    fetchMyAppointments(formattedToday);
-  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const today = new Date();
+      const formattedToday = moment(today).format('YYYY-MM-DD');
+      setSelectedDate(today);
+      fetchMyAppointments(formattedToday);
+    }, []),
+  );
 
   const navigateTo = (path: keyof MainStackParamList, data?: any) => {
     navigation.navigate(path as any, data);
@@ -87,6 +90,8 @@ const Dashboard: React.FC = () => {
         const bTime = moment(b.SlotStartDttm).valueOf();
         return aTime - bTime;
       });
+      console.log(sortedAppointments);
+
       setAppointments(sortedAppointments);
       console.log('---------', sortedAppointments);
     } catch (error) {
@@ -265,8 +270,10 @@ const Dashboard: React.FC = () => {
                         <TouchableOpacity
                           onPress={() =>
                             navigation.navigate('DoctorSlots', {
-                              doctorId: 1,
-                              appointmentType: 'video',
+                              doctorId: appointment?.id,
+                              appointmentType: appointment?.AppointmentType,
+                              appointmentnumber: appointment?.appointmentnumber,
+                              OrganisationID: appointment?.OrganisationUID,
                             })
                           }>
                           <Text
@@ -281,13 +288,7 @@ const Dashboard: React.FC = () => {
                             Reschedule
                           </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() =>
-                            navigation.navigate('MyAppointmentDetails', {
-                              appointmentData: appointment,
-                              cancel: true,
-                            })
-                          }>
+                        <TouchableOpacity>
                           <Text
                             style={{
                               fontFamily: 'ProximaNovaA-Regular',
@@ -306,19 +307,14 @@ const Dashboard: React.FC = () => {
               ),
             )}
           </ScrollView>
-          {appointments?.length > 1 && (
-            <View style={styles.paginationContainer}>
-              {appointments.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.dot,
-                    currentPage === index && styles.activeDot,
-                  ]}
-                />
-              ))}
-            </View>
-          )}
+          <View style={styles.paginationContainer}>
+            {upcomingData.map((_, index) => (
+              <View
+                key={index}
+                style={[styles.dot, currentPage === index && styles.activeDot]}
+              />
+            ))}
+          </View>
 
           <View style={styles.quickActions}>
             <TouchableOpacity

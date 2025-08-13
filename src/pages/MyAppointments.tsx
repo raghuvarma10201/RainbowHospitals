@@ -40,10 +40,10 @@ const MyAppointments: React.FC = () => {
   const {showJitsi} = useJitsi();
 
   useFocusEffect(
-  useCallback(() => {
-    loadAppointments();
-  }, [])
-);
+    useCallback(() => {
+      loadAppointments();
+    }, []),
+  );
 
   const startVideoCall = () => {
     showJitsi({
