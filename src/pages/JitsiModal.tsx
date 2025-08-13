@@ -1,35 +1,49 @@
 // File: JitsiModal.tsx
 
-import React, {useCallback, useRef, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
-  Text,
+  Image,
   Animated,
   PanResponder,
   Dimensions,
   View,
-  TouchableWithoutFeedback,
   BackHandler,
   Platform,
-  Image,
-  NativeModules,
-  NativeEventEmitter,
+  StatusBar,
 } from 'react-native';
 import {JitsiMeeting} from '@jitsi/react-native-sdk';
 
-const {ScreenShareModule} = NativeModules;
-
-const screen = Dimensions.get('window');
+// === Constants (kept module-scoped to avoid re-allocations per render) ===
 const CORNER_MARGIN = 10;
 const SNAP_WIDTH = 160;
 const SNAP_HEIGHT = 100;
 
+const initialScreen = Dimensions.get('window');
+
+// Component
 const JitsiModal = ({visible, options, onClose}: any) => {
   const jitsiMeeting = useRef<any>(null);
   const [minimized, setMinimized] = useState(false);
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [conferenceActive, setConferenceActive] = useState(false);
+  const [pipMode, setPipMode] = useState(false);
 
+  // Track dimensions in case of rotation; updates only when dimension changes
+  const [screen, setScreen] = useState(initialScreen);
+  useEffect(() => {
+    const listener = ({window}: {window: any}) => setScreen(window);
+    const sub = Dimensions.addEventListener('change', listener);
+    return () => {
+      // RN >=0.65 returns subscription with remove, >=0.71 uses remove method on returned object
+      // @ts-ignore
+      if (typeof sub?.remove === 'function') sub.remove();
+      // @ts-ignore (older RN versions)
+      else Dimensions.removeEventListener?.('change', listener);
+    };
+  }, []);
+
+  // Position (for minimized draggable view)
   const position = useRef(
     new Animated.ValueXY({
       x: CORNER_MARGIN,
@@ -37,12 +51,53 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     }),
   ).current;
 
+  // Keep position within screen on rotate
+  useEffect(() => {
+    Animated.spring(position, {
+      toValue: {
+        x: Math.min(
+          Math.max(position.x.__getValue?.() ?? CORNER_MARGIN, CORNER_MARGIN),
+          Math.max(screen.width - SNAP_WIDTH - CORNER_MARGIN, CORNER_MARGIN),
+        ),
+        y: Math.min(
+          Math.max(position.y.__getValue?.() ?? CORNER_MARGIN, CORNER_MARGIN),
+          Math.max(screen.height - SNAP_HEIGHT - CORNER_MARGIN, CORNER_MARGIN),
+        ),
+      },
+      useNativeDriver: false,
+    }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen.width, screen.height]);
+
+  // Reset pip/conference flags when modal hides
+  useEffect(() => {
+    if (!visible) {
+      setConferenceActive(false);
+      setPipMode(false);
+      setMinimized(false);
+      // Ensure we free Jitsi resources
+      jitsiMeeting.current?.close?.();
+    }
+  }, [visible]);
+
   const onReadyToClose = useCallback(() => {
     jitsiMeeting.current?.close?.();
     onClose?.();
   }, [onClose]);
 
-  // Back button minimization
+  // Jitsi event listeners (memoized to avoid re-renders)
+  const eventListeners = useMemo(
+    () => ({
+      onReadyToClose,
+      onConferenceJoined: () => setConferenceActive(true),
+      onConferenceTerminated: () => setConferenceActive(false),
+      onEnterPip: () => setPipMode(true), // fixed: was `nEnterPip`
+      onExitPip: () => setPipMode(false),
+    }),
+    [onReadyToClose],
+  );
+
+  // Back button -> minimize (Android only)
   useEffect(() => {
     const onBackPress = () => {
       if (visible && !minimized) {
@@ -55,7 +110,6 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     if (Platform.OS === 'android') {
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
     }
-
     return () => {
       if (Platform.OS === 'android') {
         BackHandler.removeEventListener('hardwareBackPress', onBackPress);
@@ -63,18 +117,12 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     };
   }, [visible, minimized]);
 
-  // Reset state when closing modal
-  useEffect(() => {
-    if (!visible) {
-      setMinimized(false);
-      setIsScreenSharing(false);
-      jitsiMeeting.current?.close?.();
-    }
-  }, [visible]);
-
   // Snap minimized video to nearest corner
-  const snapToNearestCorner = () => {
-    const {x, y} = position.__getValue();
+  const snapToNearestCorner = useCallback(() => {
+    const currentX = position.x.__getValue?.() ?? CORNER_MARGIN;
+    const currentY =
+      position.y.__getValue?.() ?? screen.height - SNAP_HEIGHT - CORNER_MARGIN;
+
     const corners = [
       {x: CORNER_MARGIN, y: CORNER_MARGIN},
       {x: screen.width - SNAP_WIDTH - CORNER_MARGIN, y: CORNER_MARGIN},
@@ -88,33 +136,39 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     let closest = corners[0];
     let minDistance = Infinity;
 
-    corners.forEach(corner => {
-      const dist = Math.hypot(corner.x - x, corner.y - y);
+    for (const c of corners) {
+      const dx = c.x - currentX;
+      const dy = c.y - currentY;
+      const dist = Math.hypot(dx, dy);
       if (dist < minDistance) {
-        closest = corner;
         minDistance = dist;
+        closest = c;
       }
-    });
+    }
 
     Animated.spring(position, {
       toValue: closest,
       useNativeDriver: false,
     }).start();
-  };
+  }, [position, screen.height, screen.width]);
 
+  // Pan responder (constructed once)
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
+        // setOffset uses current values to avoid jump
         position.setOffset({
-          x: position.x._value,
-          y: position.y._value,
+          x: (position as any).x._value,
+          y: (position as any).y._value,
         });
         position.setValue({x: 0, y: 0});
       },
       onPanResponderMove: Animated.event(
         [null, {dx: position.x, dy: position.y}],
-        {useNativeDriver: false},
+        {
+          useNativeDriver: false,
+        },
       ),
       onPanResponderRelease: () => {
         position.flattenOffset();
@@ -123,7 +177,16 @@ const JitsiModal = ({visible, options, onClose}: any) => {
     }),
   ).current;
 
+  // Avoid rendering when not needed
   if (!visible || !options?.roomName) return null;
+
+  // Derived sizes for icons based on current width
+  const iconSize = Math.max(24, Math.round(screen.width * 0.07));
+  const miniIconSize = Math.max(16, Math.round(screen.width * 0.05));
+
+  // Stable handlers
+  const handleMinimize = useCallback(() => setMinimized(true), []);
+  const handleExpand = useCallback(() => setMinimized(false), []);
 
   return (
     <Animated.View
@@ -131,26 +194,32 @@ const JitsiModal = ({visible, options, onClose}: any) => {
         styles.jitsiWrapper,
         minimized ? styles.jitsiMinimized : styles.jitsiFull,
         minimized && {transform: position.getTranslateTransform()},
+        Platform.OS === 'android' && {paddingTop: StatusBar.currentHeight || 0},
       ]}
       pointerEvents="box-none">
-      {!minimized && (
+      {conferenceActive && !pipMode && !minimized && (
         <TouchableOpacity
-          onPress={() => setMinimized(true)}
-          style={styles.minimizeButton}>
+          onPress={handleMinimize}
+          style={[
+            styles.minimizeButton,
+            {top: (StatusBar.currentHeight || 0) * 3},
+          ]}>
           <Image
             source={require('../../assets/images/compress-icon.png')}
-            style={styles.compressIcon}
+            style={{height: iconSize, width: iconSize, resizeMode: 'cover'}}
           />
         </TouchableOpacity>
       )}
 
-      {minimized && (
-        <TouchableOpacity
-          onPress={() => setMinimized(false)}
-          style={styles.expandOverlay}>
+      {conferenceActive && !pipMode && minimized && (
+        <TouchableOpacity onPress={handleExpand} style={styles.expandOverlay}>
           <Image
             source={require('../../assets/images/expand-icon.png')}
-            style={styles.expandIcon}
+            style={{
+              height: miniIconSize,
+              width: miniIconSize,
+              resizeMode: 'cover',
+            }}
           />
         </TouchableOpacity>
       )}
@@ -159,52 +228,44 @@ const JitsiModal = ({visible, options, onClose}: any) => {
         <View style={styles.dragHandle} {...panResponder.panHandlers} />
       )}
 
-      <TouchableWithoutFeedback>
-        <View style={{flex: 1}}>
-          <JitsiMeeting
-            config={{
-              hideConferenceTimer: true,
-              toolbarButtons: [
-                'microphone',
-                'camera',
-                'toggle-share-screen',
-                'overflowmenu',
-                'hangup',
-                'toggle-camera',
-                'desktop',
-                'switch-camera',
-              ],
-            }}
-            eventListeners={{
-              onReadyToClose,
-            }}
-            flags={{
-              'audioMute.enabled': true,
-              'fullscreen.enabled': false,
-              'android.screensharing.enabled': true,
-              'pip.enabled': true,
-              'ios.screensharing.enabled': true,
-              'welcomepage.enabled': false,
-              'recording.enabled': true,
-              'live-streaming.enabled': true,
-              'videoMute.enabled': true,
-              'camera.enabled': true,
-            }}
-            ref={jitsiMeeting}
-            token={options.token}
-            room={options.roomName}
-            serverURL={options.serverURL || 'https://meet.jit.si'}
-            style={{flex: 1}}
-          />
-        </View>
-      </TouchableWithoutFeedback>
+      <View style={{flex: 1}}>
+        <JitsiMeeting
+          ref={jitsiMeeting}
+          token={options.token}
+          room={options.roomName}
+          serverURL={options.serverURL || 'https://meet.jit.si'}
+          style={{flex: 1}}
+          config={{
+            hideConferenceTimer: true,
+            toolbarButtons: [
+              'microphone',
+              'camera',
+              'toggle-share-screen',
+              'switch-camera',
+              'overflowmenu',
+              'hangup',
+              'desktop',
+            ],
+          }}
+          eventListeners={eventListeners}
+          flags={{
+            'audioMute.enabled': true,
+            'fullscreen.enabled': false,
+            'android.screensharing.enabled': true,
+            'ios.screensharing.enabled': true,
+            'pip.enabled': true,
+            'welcomepage.enabled': false,
+            'recording.enabled': true,
+            'live-streaming.enabled': true,
+            'videoMute.enabled': true,
+          }}
+        />
+      </View>
     </Animated.View>
   );
 };
 
-const h = Dimensions.get('window').height;
-const w = Dimensions.get('window').width;
-
+// Styles (static for perf)
 const styles = StyleSheet.create({
   jitsiWrapper: {
     position: 'absolute',
@@ -229,32 +290,11 @@ const styles = StyleSheet.create({
   },
   minimizeButton: {
     position: 'absolute',
-    top: h * 0.06,
-    right: w * 0.015,
+    right: Math.round(initialScreen.width * 0.015),
     zIndex: 1001,
     backgroundColor: '#000',
     padding: 8,
     borderRadius: 10,
-  },
-  shareButton: {
-    position: 'absolute',
-    top: h * 0.15,
-    right: w * 0.015,
-    zIndex: 1001,
-    backgroundColor: '#000',
-    padding: 8,
-    borderRadius: 10,
-  },
-  compressIcon: {
-    height: w * 0.07,
-    width: w * 0.07,
-    resizeMode: 'cover',
-  },
-  shareIcon: {
-    height: w * 0.07,
-    width: w * 0.07,
-    resizeMode: 'cover',
-    tintColor: '#fff',
   },
   expandOverlay: {
     position: 'absolute',
@@ -265,11 +305,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 4,
   },
-  expandIcon: {
-    height: w * 0.05,
-    width: w * 0.05,
-    resizeMode: 'cover',
-  },
   dragHandle: {
     position: 'absolute',
     top: 0,
@@ -278,21 +313,6 @@ const styles = StyleSheet.create({
     height: '100%',
     zIndex: 1000,
     backgroundColor: 'transparent',
-  },
-  screenShareButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#1e90ff',
-    borderRadius: 8,
-    zIndex: 1001,
-  },
-  screenShareText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 14,
   },
 });
 
