@@ -1,8 +1,14 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import type { NavigationProp } from '@react-navigation/native';
-import { fetchSettings } from '../services/common';
-import { SettingsResponse } from '../utils/types';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import type {NavigationProp} from '@react-navigation/native';
+import {fetchSettings} from '../services/common';
+import {SettingsResponse} from '../utils/types';
 
 type TimerContextType = {
   secondsLeft: number;
@@ -15,12 +21,14 @@ type TimerContextType = {
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined);
 
-export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
+export const TimerProvider = ({children}: {children: React.ReactNode}) => {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [physicalInterval, setPhysicalInterval] = useState<number | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [joinEnableOffsetSeconds, setJoinEnableOffsetSeconds] = useState<number | null>(null);
+  const [joinEnableOffsetSeconds, setJoinEnableOffsetSeconds] = useState<
+    number | null
+  >(null);
   const navigation = useNavigation<NavigationProp<any>>();
 
   const startTimer = async () => {
@@ -29,14 +37,10 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     const settings = await getSettings();
 
     if (settings) {
-      const { joinEnableOffsetSeconds, physicalBookingInterval } = settings;
-
-      console.log('✅ Settings fetched:', settings);
-
+      const {joinEnableOffsetSeconds, physicalBookingInterval} = settings;
       if (joinEnableOffsetSeconds) {
         setJoinEnableOffsetSeconds(joinEnableOffsetSeconds);
       }
-
       if (physicalBookingInterval && physicalBookingInterval > 0) {
         setPhysicalInterval(physicalBookingInterval);
         setSecondsLeft(physicalBookingInterval);
@@ -61,18 +65,17 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     const settings = await fetchSettings();
 
     if (settings && settings.status == 200) {
-
       const physicalInterval = settings.data.find(
-        (item: { key: string }) =>
+        (item: {key: string}) =>
           item.key === 'physical_appointment_booking_slot_interval',
       )?.value;
 
       const joinOffset = settings.data.find(
-        (item: { key: string }) => item.key === 'join_enable_offset_seconds',
+        (item: {key: string}) => item.key === 'join_enable_offset_seconds',
       )?.value;
 
       const doctorSessionCount = settings.data.find(
-        (item: { key: string }) => item.key === 'doctor_sessions_count',
+        (item: {key: string}) => item.key === 'doctor_sessions_count',
       )?.value;
 
       return {
@@ -83,7 +86,7 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     } else {
       console.error('❌ Failed to fetch settings.');
     }
-  }
+  };
 
   const clearTimers = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -101,8 +104,14 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <TimerContext.Provider
-      value={{ secondsLeft, startTimer, clearTimers, physicalInterval, setPhysicalInterval, joinEnableOffsetSeconds, }}
-    >
+      value={{
+        secondsLeft,
+        startTimer,
+        clearTimers,
+        physicalInterval,
+        setPhysicalInterval,
+        joinEnableOffsetSeconds,
+      }}>
       {children}
     </TimerContext.Provider>
   );

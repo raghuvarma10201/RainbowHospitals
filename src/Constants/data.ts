@@ -1,4 +1,4 @@
-import {upcomingApointment} from '../utils/types';
+import {ActionItem, upcomingApointment} from '../utils/types';
 
 const doctorData = {
   Cardiology: [

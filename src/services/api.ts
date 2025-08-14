@@ -3,8 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import dayjs from 'dayjs';
 import RNFS from 'react-native-fs';
 
-import { API_BASE_URL } from '../utils/environment';
-import { ENABLE_API_LOGGING } from '../utils/environment';
+import {API_BASE_URL} from '../utils/environment';
+import {ENABLE_API_LOGGING} from '../utils/environment';
 
 const downloadApiLog = async (msg: string) => {
   if (!ENABLE_API_LOGGING) return;
@@ -13,15 +13,13 @@ const downloadApiLog = async (msg: string) => {
     const logText = `${timestamp}  ${msg}\n`;
 
     const fileName = `aber-api-log-${dayjs().format('YYYY-MM-DD')}.txt`;
-    const filePath = RNFS.DownloadDirectoryPath + '/' +fileName;
+    const filePath = RNFS.DownloadDirectoryPath + '/' + fileName;
     const exists = await RNFS.exists(filePath);
-     if (!exists) {
+    if (!exists) {
       await RNFS.writeFile(filePath, logText, 'utf8');
-     }
-      else {
+    } else {
       await RNFS.appendFile(filePath, logText, 'utf8');
     }
-    //console.log('Log written to:', filePath);
   } catch (e) {
     console.warn('Failed to download log:', e);
   }
@@ -38,7 +36,7 @@ const refreshToken = async () => {
   if (!rt) return null;
 
   try {
-    const { data } = await axios.post(`${API_BASE_URL}/login/refresh`, {
+    const {data} = await axios.post(`${API_BASE_URL}/login/refresh`, {
       refreshToken: rt,
     });
 
@@ -50,7 +48,6 @@ const refreshToken = async () => {
 
     return data.AccessToken;
   } catch (err: any) {
-    //console.log('[TOKEN REFRESH FAILED]', err?.response?.data);
     await AsyncStorage.clear();
     return null;
   }
@@ -58,13 +55,12 @@ const refreshToken = async () => {
 
 /* -------- 2. Request interceptor -------- */
 api.interceptors.request.use(async config => {
-  (config as any).metadata = { start: Date.now() };
+  (config as any).metadata = {start: Date.now()};
   let accessToken = await AsyncStorage.getItem('accessToken');
-  const expiry     = await AsyncStorage.getItem('tokenExpiry');
+  const expiry = await AsyncStorage.getItem('tokenExpiry');
 
   /* 🔄 Expired? Try refresh right before the request */
   if (expiry && dayjs().isAfter(dayjs(expiry))) {
-    //console.log('[🔁] AccessToken expired → refreshing');
     accessToken = await refreshToken();
   }
 
@@ -77,22 +73,26 @@ api.interceptors.request.use(async config => {
 /* -------- 3. Response interceptor -------- */
 api.interceptors.response.use(
   async response => {
-    const { config } = response;
+    const {config} = response;
     const ms = Date.now() - (config as any).metadata.start;
-    const msg = `[OK] ${config.method?.toUpperCase()} ${config.url} ${response.status} ${ms}ms`;
+    const msg = `[OK] ${config.method?.toUpperCase()} ${config.url} ${
+      response.status
+    } ${ms}ms`;
 
     downloadApiLog(msg); // 👈 auto-download to Downloads
     return response;
   },
   async error => {
-    const { config } = error;
+    const {config} = error;
     const ms = Date.now() - (config as any).metadata?.start;
     const status = error.response?.status ?? 'ERR';
-    const msg = `[FAIL] ${config?.method?.toUpperCase()} ${config?.url} ${status} ${ms}ms`;
+    const msg = `[FAIL] ${config?.method?.toUpperCase()} ${
+      config?.url
+    } ${status} ${ms}ms`;
 
     downloadApiLog(msg); // 👈 still download even if it fails
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

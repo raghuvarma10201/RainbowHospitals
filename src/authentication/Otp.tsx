@@ -7,7 +7,6 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
-  Dimensions,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -35,9 +34,8 @@ import {useAuth} from '../context/AuthContext';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList, MainStackParamList} from '../navigation/types';
-import {pallette} from '../Constants/Constant';
+import {h, pallette} from '../Constants/Constant';
 
-const {height: h, width: w} = Dimensions.get('window');
 const CELL_COUNT = 6;
 
 const Otp: React.FC = () => {
@@ -54,20 +52,17 @@ const Otp: React.FC = () => {
     updateRegion,
   } = useApp();
   const {setLoggedIn} = useAuth();
-
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState('');
   const [timer, setTimer] = useState(30);
   const [resendDisabled, setResendDisabled] = useState(true);
-
   const codeFieldRef = useBlurOnFulfill({value, cellCount: CELL_COUNT});
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
 
-  // Load phone number from storage
   useEffect(() => {
     const fetchPhoneNumber = async () => {
       const storedNumber = await AsyncStorage.getItem('mobileNumber');
@@ -76,7 +71,6 @@ const Otp: React.FC = () => {
     fetchPhoneNumber();
   }, []);
 
-  // Timer for OTP resend
   useEffect(() => {
     if (resendDisabled && timer > 0) {
       const interval = setInterval(() => setTimer(prev => prev - 1), 1000);
@@ -106,34 +100,31 @@ const Otp: React.FC = () => {
     }
   }, [phoneNumber, resendDisabled]);
 
-  const loadDetails = useCallback(
-    async (token: string) => {
-      try {
-        const regions = await getRegions();
-        const location = await getCurrentCoordinates();
-        if (!location) return;
+  const loadDetails = useCallback(async () => {
+    try {
+      const regions = await getRegions();
+      const location = await getCurrentCoordinates();
+      if (!location) return;
 
-        const nearestRegion = findNearestRegion(
-          regions,
-          location.latitude,
-          location.longitude,
-        );
-        if (!nearestRegion) return;
-        updateRegion(nearestRegion);
+      const nearestRegion = findNearestRegion(
+        regions,
+        location.latitude,
+        location.longitude,
+      );
+      if (!nearestRegion) return;
+      updateRegion(nearestRegion);
 
-        const allBranches = await getBranches(nearestRegion.region_id);
-        updateAllBranch(allBranches);
+      const allBranches = await getBranches(nearestRegion.region_id);
+      updateAllBranch(allBranches);
 
-        const nearestBranch = findNearestBranch(
-          allBranches,
-          location.latitude,
-          location.longitude,
-        );
-        if (nearestBranch) updateBranch(nearestBranch);
-      } catch {}
-    },
-    [updateBranch, updateAllBranch, updateRegion],
-  );
+      const nearestBranch = findNearestBranch(
+        allBranches,
+        location.latitude,
+        location.longitude,
+      );
+      if (nearestBranch) updateBranch(nearestBranch);
+    } catch {}
+  }, [updateBranch, updateAllBranch, updateRegion]);
 
   const formik = useFormik({
     initialValues: {otp: ''},
@@ -152,7 +143,6 @@ const Otp: React.FC = () => {
           otp: value,
           fcmToken,
         });
-
         if (response?.status !== 200) {
           ToastService.error(
             'Error',
@@ -160,12 +150,10 @@ const Otp: React.FC = () => {
           );
           return;
         }
-
         ToastService.success(
           'Success',
           response.data.message || 'OTP verified successfully',
         );
-
         const authResponse = await authenticateUser({MobileNo: phoneNumber});
         if (authResponse.status !== 200) {
           navigation.navigate('Registration');
@@ -175,21 +163,16 @@ const Otp: React.FC = () => {
           );
           return;
         }
-
         const token = response.data.token;
         if (!token) throw new Error('Token missing in response');
-
         await AsyncStorage.multiSet([
           ['accessToken', token],
           ['refreshToken', token],
           ['tokenExpiry', response.data.expiryTime],
         ]);
-
-        await loadDetails(token);
-
+        await loadDetails();
         updateMrn(authResponse.data.LoginName);
         await AsyncStorage.setItem('mrn', authResponse.data.LoginName);
-
         const profileData = await getPatientProfile({
           mrn: authResponse.data.LoginName,
         });
@@ -222,7 +205,6 @@ const Otp: React.FC = () => {
           style={styles.logo}
           resizeMode="contain"
         />
-
         <View style={styles.taglineWrapper}>
           <View style={styles.taglineBox}>
             <View style={styles.beforeDot} />
@@ -231,17 +213,14 @@ const Otp: React.FC = () => {
             </Text>
           </View>
         </View>
-
         <Image
           source={require('../../assets/images/otp-img.png')}
           style={styles.otpImg}
           resizeMode="cover"
         />
-
         <View style={styles.otpContainer}>
           <Text style={styles.title}>ENTER OTP</Text>
           <Text style={styles.label}>OTP Code sent on +91 {phoneNumber}</Text>
-
           <CodeField
             ref={codeFieldRef as React.RefObject<TextInput>}
             {...props}
@@ -262,11 +241,9 @@ const Otp: React.FC = () => {
               </View>
             )}
           />
-
           {formik.errors.otp && formik.touched.otp && (
             <Text style={styles.error}>{formik.errors.otp}</Text>
           )}
-
           <View style={styles.timeContainer}>
             {!resendDisabled && (
               <TouchableOpacity
@@ -287,7 +264,6 @@ const Otp: React.FC = () => {
               </Text>
             )}
           </View>
-
           <TouchableOpacity
             style={styles.primaryButton}
             onPress={() => formik.handleSubmit()}>
@@ -342,7 +318,7 @@ const styles = StyleSheet.create({
   },
   otpImg: {
     width: '100%',
-    height: h * 0.4,
+    height: h * 0.38,
     marginBottom: 20,
   },
   otpContainer: {
@@ -370,7 +346,7 @@ const styles = StyleSheet.create({
     width: '14%',
     height: h * 0.06,
     borderWidth: 1,
-    borderColor: '#8a3ab9',
+    borderColor: pallette.app_light_purple,
     borderRadius: 8,
     marginRight: 10,
     backgroundColor: pallette.white,
@@ -378,7 +354,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   focusCell: {
-    borderColor: '#6200ee',
+    borderColor: pallette.highlighting_purple,
   },
   cellText: {
     fontSize: 20,
@@ -397,7 +373,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   resendText: {
-    color: '#8a3ab9',
+    color: pallette.app_light_purple,
     fontWeight: 'bold',
     textAlign: 'right',
   },
@@ -408,7 +384,7 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     width: '100%',
-    backgroundColor: '#818385',
+    backgroundColor: pallette.dark_grey,
     padding: 10,
     borderRadius: 40,
     marginTop: 10,

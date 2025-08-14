@@ -7,7 +7,6 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
-  Dimensions,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -21,9 +20,7 @@ import {ToastService} from '../utils/ToastService';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList} from '../navigation/types';
-import {pallette} from '../Constants/Constant';
-
-const {height: h, width: w} = Dimensions.get('window');
+import {h, pallette, w} from '../Constants/Constant';
 
 const local_data = [
   {value: '1', lable: '+91'},
@@ -56,7 +53,6 @@ const Login: React.FC = () => {
           navigation.navigate('Otp');
         }
       } catch (e) {
-        console.log('Login failed', e);
         ToastService.error('Invalid credentials', 'Please try again');
         setErrors({mobileNumber: 'Invalid credentials'});
       } finally {

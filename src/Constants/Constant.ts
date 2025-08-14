@@ -1,3 +1,5 @@
+import {Dimensions} from 'react-native';
+
 export const googleApiKey = 'AIzaSyClA5mcjLwpFO0O7aSGR5NRICmjH7hBWT4';
 //Colors
 export const purpuleColor = '#7E3A93';
@@ -25,6 +27,11 @@ export const pallette = {
   light_grey: '#E6E7E8',
   dark_grey: '#818385',
   app_green: '#00B3AE',
+  app_medium_green: '#4CC2BF',
   app_light_green: '#C7E8E7',
   app_purple: '#3C2871',
+  app_light_purple: '#8a3ab9',
+  highlighting_purple: '#6200ee',
 };
+
+export const {height: h, width: w} = Dimensions.get('window');

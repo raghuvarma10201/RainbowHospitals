@@ -22,10 +22,9 @@ const SpecialtySlider = ({
   activeIndex: number;
   onLeftPress: () => void;
   onRightPress: () => void;
-  onTabPress: (index: number,specialityId : number) => void;
+  onTabPress: (index: number, specialityId: number) => void;
 }) => {
   const flatListRef = useRef<FlatList>(null);
-  //console.log(specialties);
   useEffect(() => {
     if (flatListRef.current) {
       flatListRef.current.scrollToIndex({
@@ -37,7 +36,9 @@ const SpecialtySlider = ({
   }, [activeIndex]);
 
   const renderItem = ({item, index}: {item: any; index: number}) => (
-    <TouchableOpacity key={item.speciality_id} onPress={() => onTabPress(index,item.speciality_id)}>
+    <TouchableOpacity
+      key={item.speciality_id}
+      onPress={() => onTabPress(index, item.speciality_id)}>
       <Text
         style={[styles.tabText, index === activeIndex && styles.activeTabText]}>
         {item.name}
@@ -50,13 +51,12 @@ const SpecialtySlider = ({
       <TouchableOpacity onPress={onLeftPress}>
         <Text style={styles.arrow}>{'<<'}</Text>
       </TouchableOpacity>
-      
 
       <FlatList
         ref={flatListRef}
         data={specialties}
         scrollEnabled={true}
-        keyExtractor={(item, index) => 'cqq'+''+index.toString()}
+        keyExtractor={(item, index) => 'cqq' + '' + index.toString()}
         renderItem={renderItem}
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -83,11 +83,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
   },
-  listContent: {
-
-  },
+  listContent: {},
   arrow: {
-    fontSize:15,
+    fontSize: 15,
     color: '#00A2A2',
     fontWeight: 'bold',
     paddingHorizontal: 10,

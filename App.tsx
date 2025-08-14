@@ -51,7 +51,6 @@ const App: React.FC = () => {
     const requestUserPermissions = async () => {
       await requestUserPermission();
       const FcmTtoken = await getMessaging().getToken();
-      console.log('FCM Token:', FcmTtoken);
       await AsyncStorage.setItem('FcmTtoken', FcmTtoken);
     };
     requestUserPermissions();

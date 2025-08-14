@@ -61,7 +61,6 @@ const SlotConfirmation: React.FC = ({route}: any) => {
       if (response && response.status == 200) {
         setLoading(false);
         setFamilyMembers(response.data);
-        console.log('Family-----------------------------------', response.data);
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -75,7 +74,6 @@ const SlotConfirmation: React.FC = ({route}: any) => {
   };
   const getConsultationFee = async (mrn: any) => {
     try {
-      console.log(mrn);
       setLoading(true);
       const payload = {
         orgcode: branch?.organisation.code
@@ -88,7 +86,6 @@ const SlotConfirmation: React.FC = ({route}: any) => {
         DoctorId: doctor.new_doctor_UID ?? '',
       };
       const response = await fetchConsultationFee(payload);
-      console.log(response);
       if (response && response.status == 200) {
         setConsultationFee(
           response.data.ConsultationFee
@@ -132,7 +129,6 @@ const SlotConfirmation: React.FC = ({route}: any) => {
         payuUrl: 'https://test.payu.in/_payment', // For Production
       });
     } catch (e) {
-      console.log(e);
       ToastService.error('Could not start payment, please try again.');
     } finally {
       setLoading(false); // End loader

@@ -124,7 +124,6 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
       if (!nearestBranch) throw new Error('No nearby branch found');
       updateBranch(nearestBranch);
     } catch (err: any) {
-      //console.log(err);
     } finally {
     }
   };
@@ -196,7 +195,6 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
     if (selectedBranch && selectedRegion) {
       updateBranch(selectedBranch);
       updateRegion(selectedRegion);
-      //console.log(selectedBranch)
       setCurrentLocation(`${selectedBranch.name}, ${selectedRegion.name}`);
       setLocationModalVisible(false);
     }

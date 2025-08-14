@@ -73,9 +73,7 @@ const AppointmentChat: React.FC<any> = ({route}) => {
           grants['android.permission.CAMERA'] ===
             PermissionsAndroid.RESULTS.GRANTED
         ) {
-          console.log('Permissions granted');
         } else {
-          console.log('All required permissions not granted');
         }
       } catch (err) {
         console.warn(err);

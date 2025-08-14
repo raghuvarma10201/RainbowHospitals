@@ -1,13 +1,12 @@
 import {
-  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useRef, useState} from 'react';
-import {Card, TextInput, Text} from 'react-native-paper';
+import React, {useCallback, useState} from 'react';
+import {TextInput, Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../components/Header';
 import Banners from '../components/Slider';
@@ -18,83 +17,62 @@ import {MainStackParamList} from '../navigation/types';
 import {getAppointments} from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {upcomingApointment} from '../utils/types';
-import {formatAppointmentDate, formatAppointmentTime} from '../utils/dateTime';
-import {pallette} from '../Constants/Constant';
+import {h, pallette, w} from '../Constants/Constant';
+import QuickActions from '../components/QuickActions';
+import UpcomingAppointmentCard from '../components/UpcomingAppointmentCard';
+import {useApp} from '../context/AppContext';
+import {ToastService} from '../utils/ToastService';
+
 const local_data = [
-  {
-    value: '1',
-    lable: 'location',
-  },
-  {
-    value: '2',
-    lable: 'location2',
-  },
+  {value: '1', lable: 'location'},
+  {value: '2', lable: 'location2'},
 ];
+
+const images = {
+  banner: require('../../assets/images/slide1.png'),
+  search: require('../../assets/images/search-icon.png'),
+  location: require('../../assets/images/map-icon.png'),
+  call: require('../../assets/images/call-icon.png'),
+};
+const banners = Array(3).fill(images.banner);
 
 const Dashboard: React.FC = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
-  const scrollRef = useRef(null);
-  const [currentPage, setCurrentPage] = useState(0);
   const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
-  const banners = [
-    require('../../assets/images/slide1.png'),
-    require('../../assets/images/slide1.png'),
-    require('../../assets/images/slide1.png'),
-  ];
-  const [loading, setLoading] = useState<boolean>(false);
+  const {profile} = useApp();
   const [activeindex, setActiveindex] = useState(0);
-  const w = Dimensions.get('window').width;
-  const h = Dimensions.get('window').height;
 
   useFocusEffect(
     useCallback(() => {
-      const today = new Date();
-      const formattedToday = moment(today).format('YYYY-MM-DD');
-      fetchMyAppointments(formattedToday);
+      fetchMyAppointments(moment().format('YYYY-MM-DD'));
     }, []),
   );
 
-  const navigateTo = (path: keyof MainStackParamList, data?: any) => {
-    navigation.navigate(path as any, data);
-  };
-
   const fetchMyAppointments = async (date: string) => {
     try {
-      setLoading(true);
-      const payload = {
-        mrn: await AsyncStorage.getItem('mrn'),
-        date: date,
-      };
-      const response = await getAppointments(payload);
-      console.log('---------', response);
-      const filtered = response.data.filter((item: any) => {
-        const slotDate = moment(item.SlotStartDttm).format('YYYY-MM-DD');
-        return slotDate >= date;
-      });
-
-      const sortedAppointments = filtered.sort((a: any, b: any) => {
-        const aTime = moment(a.SlotStartDttm).valueOf();
-        const bTime = moment(b.SlotStartDttm).valueOf();
-        return aTime - bTime;
-      });
-      console.log(sortedAppointments);
-
-      setAppointments(sortedAppointments);
-      console.log('---------', sortedAppointments);
-    } catch (error) {
-      console.error('❌ Error fetching appointments:', error);
+      const mrn = await AsyncStorage.getItem('mrn');
+      const {data = []} = await getAppointments({mrn, date});
+      setAppointments(
+        data
+          .filter((item: upcomingApointment) =>
+            moment(item.SlotStartDttm).isSameOrAfter(date, 'day'),
+          )
+          .sort((a: upcomingApointment, b: upcomingApointment) =>
+            moment(a.SlotStartDttm).diff(moment(b.SlotStartDttm)),
+          ),
+      );
+    } catch {
+      ToastService.error('Error', 'Unable to fetch upcoming appointments');
       setAppointments([]);
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <View style={styles.mainContainer}>
-      <Header showLocation showBack={false} title={'home'} />
+      <Header showLocation showBack={false} title="home" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <View style={styles.helloCard}>
@@ -102,11 +80,11 @@ const Dashboard: React.FC = () => {
               <View style={styles.searchBlock}>
                 <TextInput
                   mode="flat"
-                  style={[styles.searchFormInput, {color: 'white'}]}
+                  style={styles.searchFormInput}
                   placeholder="search"
                   value={search}
                   onChangeText={setSearch}
-                  placeholderTextColor="#fff"
+                  placeholderTextColor={pallette.white}
                   underlineColor="transparent"
                   activeUnderlineColor="transparent"
                   theme={{
@@ -117,10 +95,7 @@ const Dashboard: React.FC = () => {
                     },
                   }}
                 />
-                <Image
-                  source={require('../../assets/images/search-icon.png')}
-                  style={styles.formInputIcon}
-                />
+                <Image source={images.search} style={styles.formInputIcon} />
               </View>
               <View style={styles.searchBlock}>
                 <Dropdown
@@ -137,285 +112,55 @@ const Dashboard: React.FC = () => {
                   activeColor={pallette.white}
                   onChange={e => setCountry(e.value)}
                 />
-                <Image
-                  source={require('../../assets/images/map-icon.png')}
-                  style={styles.formInputIcon}
-                />
+                <Image source={images.location} style={styles.formInputIcon} />
               </View>
             </View>
-
             <View style={styles.textHelloCard}>
-              <Text
-                style={{
-                  fontFamily: 'ProximaNovaA-Regular',
-                  fontSize: 16,
-                  color: pallette.white,
-                }}>
-                Hello,
-              </Text>
-              <Text
-                style={{
-                  fontFamily: 'ProximaNovaA-Semibold',
-                  fontSize: 20,
-                  color: pallette.white,
-                }}>
-                Amberwati
-              </Text>
-              <Text
-                style={{
-                  fontFamily: 'ProximaNovaA-Regular',
-                  fontSize: 11,
-                  color: pallette.white,
-                }}>
-                We are here to help!{' '}
-              </Text>
+              <Text style={styles.helloSmall}>Hello,</Text>
+              <Text style={styles.helloName}>{profile?.PatientName}</Text>
+              <Text style={styles.helloSmall}>We are here to help!</Text>
             </View>
           </View>
           <ScrollView
-            ref={scrollRef}
             horizontal
             showsHorizontalScrollIndicator={false}
             pagingEnabled>
-            {appointments.map(
-              (appointment: upcomingApointment, index: number) => (
-                <Card.Content
-                  style={[styles.upcomingAppBlockcard, {elevation: 0}]}>
-                  <View style={styles.row}>
-                    <Image
-                      source={
-                        appointment?.image
-                          ? {uri: `${appointment?.image}`}
-                          : {
-                              uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
-                            }
-                      }
-                      style={styles.docImage}
-                    />
-
-                    <View style={styles.upcomingAppBlockcontent}>
-                      <Text style={styles.upcomingAppTitle}>
-                        Upcoming Appointment
-                      </Text>
-                      <Text
-                        style={{
-                          fontFamily: 'ProximaNovaA-Regular',
-                          fontSize: 12,
-                          color: '#3C2469',
-                        }}>
-                        {appointment?.CareProviderTitle}{' '}
-                        {appointment?.CareProviderName}
-                      </Text>
-                      <Text
-                        style={{
-                          fontFamily: 'ProximaNovaA-Regular',
-                          fontSize: 8,
-                          color: '#3C2469',
-                        }}>
-                        {appointment?.SpecialtyName}
-                      </Text>
-                      <Text style={styles.upcomingTime}>
-                        {formatAppointmentDate(appointment?.SlotStartDttm)}{' '}
-                        {formatAppointmentTime(appointment?.SlotStartDttm)}
-                      </Text>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'flex-start',
-                          alignItems: 'center',
-                          marginLeft: 2,
-                        }}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginRight: 15,
-                          }}>
-                          <Image
-                            source={require('../../assets/images/user-icon.png')}
-                            style={{width: 11, height: 11, marginRight: 1}}
-                          />
-                          <Text
-                            style={{
-                              fontFamily: 'ProximaNovaA-Regular',
-                              fontSize: 11,
-                              color: '#3C2469',
-                            }}>
-                            {' '}
-                            {appointment?.AppointmentType}
-                          </Text>
-                        </View>
-                        <Text
-                          style={{
-                            fontFamily: 'ProximaNovaA-Regular',
-                            fontSize: 11,
-                            color: '#3C2469',
-                          }}>
-                          {' '}
-                          #{appointment?.appointmentnumber}
-                        </Text>
-                      </View>
-
-                      <View style={styles.bottomUABlock}>
-                        <TouchableOpacity
-                          onPress={() =>
-                            navigation.navigate('DoctorSlots', {
-                              doctorId: appointment?.id,
-                              appointmentType: appointment?.AppointmentType,
-                              appointmentnumber: appointment?.appointmentnumber,
-                              OrganisationID: appointment?.OrganisationUID,
-                            })
-                          }>
-                          <Text
-                            style={[
-                              styles.rescheduleBt,
-                              {
-                                fontFamily: 'ProximaNovaA-Regular',
-                                fontSize: 11,
-                                color: pallette.white,
-                              },
-                            ]}>
-                            Reschedule
-                          </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                          <Text
-                            style={{
-                              fontFamily: 'ProximaNovaA-Regular',
-                              fontSize: 11,
-                              color: pallette.white,
-                              paddingLeft: 5,
-                            }}>
-                            {' '}
-                            Cancel
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
-                </Card.Content>
-              ),
-            )}
-          </ScrollView>
-          {appointments.length > 1 && (
-            <View style={styles.paginationContainer}>
-              {appointments.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.dot,
-                    currentPage === index && styles.activeDot,
-                  ]}
-                />
-              ))}
-            </View>
-          )}
-
-          <View style={styles.quickActions}>
-            <TouchableOpacity
-              style={styles.actionItem}
-              onPress={() =>
-                navigateTo('Specialities', {appointmentType: 'Physical'})
-              }>
-              <Image
-                source={require('../../assets/images/physical-consultation-icon.png')}
-                style={styles.iconAction}
-              />
-              <Text style={styles.actionText}>Book Physical Consultation</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionItem}
-              onPress={() =>
-                navigateTo('AppointmentConfirmed', {appointmentType: 'Video'})
-              }>
-              <Image
-                source={require('../../assets/images/video-consultation-icon.png')}
-                style={styles.iconAction}
-              />
-              <Text style={styles.actionText}> Book Video Consultation</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionItem}
-              onPress={() => navigateTo('BookVaccination')}>
-              <Image
-                source={require('../../assets/images/vaccine-icon.png')}
-                style={styles.iconAction}
-              />
-              <Text style={styles.actionText}> Book Vaccination</Text>
-            </TouchableOpacity>
-
-            {/* <TouchableOpacity style={styles.activeActionItem}>
-              <Image source={require('../../assets/images/physical-consultation-icon.png')} style={styles.activeIconAction} />
-              <Text style={styles.activeActionText}> Book Vaccination</Text>
-            </TouchableOpacity> */}
-          </View>
-
-          <View
-            style={[
-              styles.quickActions,
-              {justifyContent: 'center', marginTop: 5},
-            ]}>
-            <TouchableOpacity
-              style={[styles.actionItem, {marginRight: '5.5%'}]}
-              onPress={() => navigateTo('BookScan')}>
-              <Image
-                source={require('../../assets/images/book-scan.png')}
-                style={styles.iconAction}
-              />
-              <Text style={styles.actionText}> Book Scan</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionItem}
-              onPress={() => navigateTo('MedicalRecord')}>
-              <Image
-                source={require('../../assets/images/view-report.png')}
-                style={styles.iconAction}
-              />
-              <Text style={styles.actionText}> View Report </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <>
-          <Banners
-            images={banners}
-            activeindex={activeindex}
-            setActiveindex={setActiveindex}
-            height={h * 0.2}
-            resizeMode="cover"
-            width={w * 0.95}
-            marginVertical={w * 0.01}
-          />
-          <View
-            style={{
-              flexDirection: 'row',
-              alignSelf: 'center',
-              marginTop: h * 0.02,
-            }}>
-            {banners?.map((banner, index) => (
-              <View
-                style={{
-                  height: 8,
-                  width: 8,
-                  borderRadius: 5,
-                  backgroundColor: index == activeindex ? pallette.app_green : 'grey',
-                  marginHorizontal: w * 0.01,
-                }}
+            {appointments.map((appointment, index) => (
+              <UpcomingAppointmentCard
                 key={index}
+                appointment={appointment}
+                navigation={navigation}
               />
             ))}
-          </View>
-        </>
+          </ScrollView>
+          <QuickActions navigation />
+        </View>
+        <Banners
+          images={banners}
+          activeindex={activeindex}
+          setActiveindex={setActiveindex}
+          height={h * 0.2}
+          resizeMode="cover"
+          width={w * 0.95}
+          marginVertical={w * 0.01}
+        />
+        <View style={styles.bannerDots}>
+          {banners.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                index === activeindex && {backgroundColor: pallette.app_green},
+              ]}
+            />
+          ))}
+        </View>
       </ScrollView>
-
       <View style={styles.footerCall}>
         <TouchableOpacity style={styles.footerCallButton}>
           <View style={styles.footerCallButtonIcon}>
             <Image
-              source={require('../../assets/images/call-icon.png')}
+              source={images.call}
               style={styles.footerCallButtonIconImage}
             />
           </View>
@@ -432,96 +177,42 @@ const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: pallette.white,
     flex: 1,
-    // marginTop: StatusBar.currentHeight
   },
-
   scrollContent: {
-    padding: 0,
-    paddingBottom: 100, // space so content doesn't hide behind footer
+    paddingBottom: 100,
   },
-
   container: {
     flex: 1,
     paddingBottom: 10,
-    paddingTop: 0,
     paddingHorizontal: 10,
   },
-
-  //Header
-  header: {
-    backgroundColor: pallette.app_purple,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-  },
-
-  profileIconBlock: {
-    width: 40,
-    height: 40,
-    backgroundColor: pallette.white,
-    borderRadius: 100,
-    borderWidth: 3,
-    borderColor: pallette.white,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  headerText: {
-    color: pallette.white,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  //Header End
-
   helloCard: {
     backgroundColor: pallette.app_green,
     borderRadius: 10,
     paddingVertical: 20,
     paddingHorizontal: 10,
-
     marginTop: 10,
   },
-
   searchLocationBlock: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
   searchBlock: {
     height: 44,
-    backgroundColor: '#4CC2BF',
-    borderRadius: 100,
+    backgroundColor: pallette.app_medium_green,
+    borderRadius: w * 0.1,
     paddingRight: 10,
-    marginTop: 0,
-    fontSize: 15,
-    fontWeight: 400,
-    color: pallette.white,
-    fontFamily: 'ProximaNovaA-Regular',
   },
-
   searchFormInput: {
     height: 44,
-    borderWidth: 0,
     borderRadius: 100,
-    paddingRight: 20,
     paddingLeft: 15,
-    marginTop: 0,
     fontSize: 13,
-    fontWeight: 400,
     color: pallette.white,
     backgroundColor: 'transparent',
     fontFamily: 'ProximaNovaA-Regular',
-    width: Dimensions.get('window').width * 0.4,
+    width: w * 0.4,
   },
-
   formInputIcon: {
     width: 16,
     height: 16,
@@ -530,18 +221,12 @@ const styles = StyleSheet.create({
     left: 10,
     tintColor: pallette.white,
   },
-
-  //
-
   dropdownSelect: {
     height: 30,
-    paddingHorizontal: 10,
     paddingLeft: 30,
     marginTop: 5,
-    color: pallette.white,
-    width: Dimensions.get('window').width * 0.4,
+    width: w * 0.4,
   },
-
   placeholderCountry: {
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: 13,
@@ -551,7 +236,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: pallette.white,
   },
-
   dropdownList: {
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: 13,
@@ -560,191 +244,36 @@ const styles = StyleSheet.create({
     padding: 0,
     textAlign: 'left',
   },
-
   textHelloCard: {
     marginTop: 15,
     paddingHorizontal: 20,
   },
-
-  // upcomingAppBlockcard
-
-  // upcomingAppBlock:{
-  //     flex:1,
-
-  //        marginTop:10,
-  //        backgroundColor:'#E2DEEF',
-  //        borderRadius:10,
-  //        paddingHorizontal:10,
-  //        paddingBottom:10,
-
-  //      },
-  leftUABlock: {
-    width: 110,
-    height: 110,
-    backgroundColor: pallette.white,
-    borderRadius: 100,
-    overflow: 'hidden',
-    marginTop: 40,
-    marginBottom: -50,
-    marginRight: 10,
-  },
-  rightUABlock: {},
-
-  rightUABlockInner: {
-    width: Dimensions.get('window').width * 0.75,
-    backgroundColor: 'red',
-  },
-  bottomUABlock: {
-    width: '95%',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: pallette.app_purple,
-    padding: 7,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    marginTop: 10,
-    marginBottom: -50,
-    textAlign: 'center',
-    marginHorizontal: 10,
-  },
-
-  upcomingAppTitle: {
+  helloSmall: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 10,
+    fontSize: 16,
     color: pallette.white,
-    backgroundColor: pallette.app_purple,
-    padding: 10,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 0,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 0,
-    marginTop: -10,
-    marginBottom: 7,
-    textAlign: 'center',
   },
-
-  upcomingTime: {
-    fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 11,
-    backgroundColor: pallette.white,
-    color: '#3C2469',
-    textAlign: 'center',
-    padding: 4,
-    marginVertical: 7,
-    borderRadius: 4,
-  },
-
-  upcomingAppBlockcard: {
-    flex: 1,
-    marginTop: 16,
-    marginBottom: 32,
-    padding: 10,
-    borderRadius: 12,
-    backgroundColor: '#EFEAF6',
-    marginHorizontal: 10,
-    elevation: 0,
-    borderWidth: 0,
-    minWidth: Dimensions.get('window').width * 0.9,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  docImage: {
-    width: 110,
-    height: 110,
-    borderRadius: 100,
-    marginRight: 12,
-    marginTop: 40,
-    marginBottom: -40,
-  },
-  upcomingAppBlockcontent: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingBottom: 7,
-  },
-
-  rescheduleBt: {borderRightWidth: 1, borderColor: '#4CC2BF', paddingEnd: 10},
-  // upcomingAppBlockcard End
-
-  quickActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginTop: 30,
-  },
-
-  actionItem: {
-    backgroundColor: '#B7E1E0',
-    borderRadius: 10,
-    padding: 10,
-    paddingTop: 15,
-    alignItems: 'center',
-    width: '30%',
-    marginVertical: 10,
-  },
-
-  iconAction: {
-    width: 40,
-    height: 40,
-  },
-
-  actionText: {
-    fontSize: 11,
-    textAlign: 'center',
-    marginTop: 4,
-  },
-
-  activeActionItem: {
-    backgroundColor: pallette.app_purple,
-    borderRadius: 10,
-    padding: 10,
-    paddingTop: 15,
-    alignItems: 'center',
-    width: '30%',
-    marginVertical: 10,
-  },
-
-  activeActionText: {
+  helloName: {
+    fontFamily: 'ProximaNovaA-Semibold',
+    fontSize: 20,
     color: pallette.white,
-    fontSize: 11,
-    textAlign: 'center',
-    marginTop: 4,
   },
-  activeIconAction: {
-    width: 40,
-    height: 40,
-    tintColor: pallette.white,
-  },
-  //   footer
   footerCall: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 0,
+    justifyContent: 'center',
   },
   footerCallButton: {
-    position: 'relative',
-    color: pallette.white,
     alignItems: 'center',
     paddingVertical: 10,
     width: 100,
     height: 45,
     backgroundColor: pallette.app_green,
-
     borderTopEndRadius: 10,
     borderTopStartRadius: 10,
-    textAlign: 'center',
-    fontSize: 12,
-    fontFamily: 'ProximaNovaA-Regular',
-    fontWeight: 'bold',
   },
   footerCallButtonText: {
     color: pallette.white,
@@ -754,7 +283,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     paddingTop: 8,
   },
-
   footerCallButtonIcon: {
     backgroundColor: pallette.app_purple,
     borderRadius: 100,
@@ -765,7 +293,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -15,
     left: 35,
-
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -773,19 +300,16 @@ const styles = StyleSheet.create({
     width: 15,
     height: 15,
   },
-  paginationContainer: {
+  bannerDots: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginVertical: 20,
+    alignSelf: 'center',
+    marginTop: h * 0.02,
   },
   dot: {
-    width: 8,
     height: 8,
-    borderRadius: 4,
-    backgroundColor: '#ccc',
-    marginHorizontal: 4,
-  },
-  activeDot: {
-    backgroundColor: '#4527a0',
+    width: 8,
+    borderRadius: 5,
+    backgroundColor: pallette.dark_grey,
+    marginHorizontal: w * 0.01,
   },
 });

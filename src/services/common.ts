@@ -1,11 +1,11 @@
-import { Alert } from 'react-native';
+import {Alert} from 'react-native';
 import api from './api';
 import axios from 'axios';
-import { AppointmentPayload } from '../types/Appointment';
+import {AppointmentPayload} from '../types/Appointment';
 
-export const getPatientProfile = async (payload : any) => {
+export const getPatientProfile = async (payload: any) => {
   try {
-    const response = await api.post('/getPatientProfile',payload);
+    const response = await api.post('/getPatientProfile', payload);
     return response.data;
   } catch (error) {
     throw error;
@@ -19,9 +19,9 @@ export const getRegions = async () => {
     throw error;
   }
 };
-export const getBranches = async (regionId : number) => {
+export const getBranches = async (regionId: number) => {
   try {
-    const response = await api.get('/getBranches/'+regionId);
+    const response = await api.get('/getBranches/' + regionId);
     return response.data.data;
   } catch (error) {
     throw error;
@@ -35,16 +35,24 @@ export const getSpecialities = async () => {
     throw error;
   }
 };
-export const getDoctors = async (name :string, speciality_id : any,branch_id : any, category_id : any, appointment_type : number,page : number,pageSize : number) => {
+export const getDoctors = async (
+  name: string,
+  speciality_id: any,
+  branch_id: any,
+  category_id: any,
+  appointment_type: number,
+  page: number,
+  pageSize: number,
+) => {
   const params = {
-    name : name,
-    speciality_id : speciality_id,
-    branch_id : branch_id,
-    category_id : category_id,
-    appointment_type : appointment_type,
-    page : page,
-    pageSize : pageSize
-  }
+    name: name,
+    speciality_id: speciality_id,
+    branch_id: branch_id,
+    category_id: category_id,
+    appointment_type: appointment_type,
+    page: page,
+    pageSize: pageSize,
+  };
   try {
     const response = await api.get('/getDoctors', {params});
     return response.data;
@@ -52,16 +60,16 @@ export const getDoctors = async (name :string, speciality_id : any,branch_id : a
     throw error;
   }
 };
-export const getDoctorDetail = async (doctorId :number) => {
+export const getDoctorDetail = async (doctorId: number) => {
   try {
-    const response = await api.get('/getDoctor/'+doctorId);
+    const response = await api.get('/getDoctor/' + doctorId);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const getDoctorSessions = async (payload : any) => {
+export const getDoctorSessions = async (payload: any) => {
   try {
     const response = await api.post('/getSessionsByDoctor', payload);
     return response.data;
@@ -70,7 +78,7 @@ export const getDoctorSessions = async (payload : any) => {
   }
 };
 
-export const getDoctorSlots = async (payload : any) => {
+export const getDoctorSlots = async (payload: any) => {
   try {
     const response = await api.post('/getSlotsBySession', payload);
     return response.data;
@@ -79,7 +87,7 @@ export const getDoctorSlots = async (payload : any) => {
   }
 };
 
-export const fetchConsultationFee = async (payload : any): Promise<any> => {
+export const fetchConsultationFee = async (payload: any): Promise<any> => {
   try {
     const response = await api.post('/getConsultationFee', payload);
     return response.data;
@@ -88,8 +96,7 @@ export const fetchConsultationFee = async (payload : any): Promise<any> => {
   }
 };
 
-export const bookAppointment = async (payload : AppointmentPayload) => {
-  
+export const bookAppointment = async (payload: AppointmentPayload) => {
   try {
     const response = await api.post('/bookAppointment', payload);
     return response.data;
@@ -98,7 +105,7 @@ export const bookAppointment = async (payload : AppointmentPayload) => {
   }
 };
 
-export const generateHash = async (payload : any) => {
+export const generateHash = async (payload: any) => {
   try {
     const response = await api.post('/generate-hash', payload);
     return response.data;
@@ -107,7 +114,7 @@ export const generateHash = async (payload : any) => {
   }
 };
 
-export const fetchFamilyMembers = async (payload : any) => {
+export const fetchFamilyMembers = async (payload: any) => {
   try {
     const response = await api.post('/getPatientProfile', payload);
     return response.data;
@@ -116,17 +123,17 @@ export const fetchFamilyMembers = async (payload : any) => {
   }
 };
 
-export const getAppointments = async (payload : any) => {
+export const getAppointments = async (payload: any) => {
   try {
-    const response = await api.post('/getAppointmentForPatient',payload);
+    const response = await api.post('/getAppointmentForPatient', payload);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
-export const fetchAppointmentChat = async (BookingId : any) => {
+export const fetchAppointmentChat = async (BookingId: any) => {
   try {
-    const response = await api.get('/appointmentChat/'+BookingId);
+    const response = await api.get('/appointmentChat/' + BookingId);
     return response.data;
   } catch (error) {
     throw error;
@@ -153,9 +160,8 @@ export const fetchSettings = async () => {
   }
 };
 
-export const registerUser = async (payload:any) => {
+export const registerUser = async (payload: any) => {
   try {
-    console.log(payload);
     const response = await api.post('/registerNewPatient', payload);
     return response.data;
   } catch (error) {

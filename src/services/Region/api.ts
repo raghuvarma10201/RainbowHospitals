@@ -21,9 +21,9 @@ export type Branch = {
   mobile_image: string;
   address: string;
   walk_through: string;
-  UID:string
-  branch_id:number
-  organisation : any
+  UID: string;
+  branch_id: number;
+  organisation: any;
 };
 
 export type Setting = {
@@ -45,15 +45,14 @@ export const fetchRegions = async (token: string): Promise<Region[]> => {
   }
 
   const data = await response.json();
- // //console.log('Fetched region data:', data);
   return data.data;
 };
 
-
 export const fetchBranchesByRegionId = async (
-  regionId: number,token:string
+  regionId: number,
+  token: string,
 ): Promise<Branch[]> => {
- const response = await fetch(`${API_BASE_URL}/api/getBranches/${regionId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/getBranches/${regionId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -61,7 +60,5 @@ export const fetchBranchesByRegionId = async (
     },
   });
   const data = await response.json();
- // //console.log(data);
-
   return data.data || [];
 };

@@ -62,7 +62,6 @@ const DoctorSlots: React.FC<any> = ({route}) => {
     try {
       setLoading(true);
       const response = await getDoctorDetail(doctorId);
-      console.log('doctor details', response);
       if (response && response.status == 200) {
         setLoading(false);
         setDoctorDetail(response.data);
@@ -97,8 +96,6 @@ const DoctorSlots: React.FC<any> = ({route}) => {
         noofdays: '30',
       };
       const response = await getDoctorSessions(payload);
-      console.log(response, payload);
-
       if (response && response.status == 200) {
         const uniqueSessions = response.data.filter(
           (session: any, index: number, self: any[]) =>
@@ -166,7 +163,6 @@ const DoctorSlots: React.FC<any> = ({route}) => {
         OrganisationUID: OrganisationID,
         AppointmentType: appointmentType,
       };
-      console.log(obj);
       try {
         const response = await bookAppointment(obj);
         if (response?.status == 200 && response?.success) {

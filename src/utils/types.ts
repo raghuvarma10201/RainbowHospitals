@@ -1,4 +1,4 @@
-import {ImageProps} from 'react-native';
+import {ImageProps, ImageSourcePropType} from 'react-native';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -317,4 +317,10 @@ export type upcomingApointment = {
   appointmentnumber: string;
   image: ImageProps;
   id: number;
+};
+
+export type ActionItem = {
+  icon: ImageSourcePropType; // You can replace 'any' with ImageSourcePropType if you import it from 'react-native'
+  label: string;
+  onPress: () => void;
 };

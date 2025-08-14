@@ -163,7 +163,6 @@ const Registration: React.FC = () => {
           MobileNo: mobileNumber,
         });
 
-        console.log('Registration response', response);
         if (response.status == 200 && response.success == true) {
           await AsyncStorage.multiSet([
             ['foreName', values.foreName],
@@ -383,7 +382,6 @@ const Registration: React.FC = () => {
               containerStyle={styles.dropdownList}
               activeColor="#fff"
               onChange={e => formik.setFieldValue('bloodgroup', e.value)}
-              //onChange={e => console.log(e.value)}
             />
           </View>
 
@@ -402,7 +400,6 @@ const Registration: React.FC = () => {
               containerStyle={styles.dropdownList}
               activeColor="#fff"
               onChange={e => formik.setFieldValue('rhfactor', e.value)}
-              //onChange={e => console.log(e.value)}
             />
           </View>
 
