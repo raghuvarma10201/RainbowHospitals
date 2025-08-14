@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   homeBlock: {
-    backgroundColor: '#BFE2E0',
+    backgroundColor: pallette.app_light_green,
     padding: 20,
     marginBottom: 10,
     borderRadius: 30,
