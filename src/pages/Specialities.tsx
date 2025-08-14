@@ -1,113 +1,105 @@
-import {Dimensions, ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Highlight from '../components/HighlightingSlider';
 import SpecialtySlider from '../components/SpecialitySlider';
-import {doctorData} from '../Constants/data';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import PaginatedGrid from '../components/GridComponent';
 import {ToastService} from '../utils/ToastService';
 import {getDoctors, getSpecialities} from '../services/common';
 import Loader from '../components/Loader';
 import {MainStackParamList} from '../navigation/types';
-import {pallette} from '../Constants/Constant';
+import {h, pallette} from '../Constants/Constant';
 import {useApp} from '../context/AppContext';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const Specialities: React.FC = ({route}: any) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentType} = route.params;
   const {branch} = useApp();
-  const [specialities, setSpecialities] = useState<any>([]);
-  const specialties = Object.keys(doctorData) as Array<keyof typeof doctorData>;
-  const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1);
-  const [activeDocIndex, setActiveDocIndex] = useState(2);
+  const [specialities, setSpecialities] = useState<any[]>([]);
+  const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(0);
+  const [activeDocIndex, setActiveDocIndex] = useState(0);
   const [doctors, setDoctors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    loadSpecialities();
-  }, []);
 
   const navigateTo = (path: keyof MainStackParamList, params: any) => {
     navigation.navigate(path, params);
   };
 
+  useEffect(() => {
+    loadSpecialities();
+  }, []);
+
   const loadSpecialities = async () => {
-    try {
-      setLoading(true);
-      const response = await getSpecialities();
-      if (response && response.status == 200) {
-        setLoading(false);
-        setSpecialities(response.data);
+    await fetchData(
+      getSpecialities,
+      data => {
+        setSpecialities(data);
         loadDoctors('', appointmentType);
-      } else {
-        setLoading(false);
-        ToastService.error('Error', response.message);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error('Failed to load regions:', error);
-    } finally {
-      setLoading(false);
-    }
+      },
+      'specialities',
+    );
   };
+
   const loadDoctors = async (specialityId: any, appointmentType: any) => {
+    await fetchData(
+      () => getDoctors('', specialityId, '', '', appointmentType, 1, 10),
+      data => setDoctors(data.doctors),
+      'doctors',
+    );
+  };
+
+  const fetchData = async (
+    apiCall: () => Promise<any>,
+    onSuccess: (data: any) => void,
+    label: string,
+  ) => {
     try {
       setLoading(true);
-      const response = await getDoctors(
-        '',
-        specialityId,
-        '', //branch?.branch_id,
-        '',
-        appointmentType,
-        1,
-        10,
-      );
-      if (response && response.status == 200) {
-        setLoading(false);
-        setDoctors(response.data.doctors);
-      } else {
-        setLoading(false);
-        ToastService.error('Error', response.message);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error('Failed to load Doctors:', error);
+      const res = await apiCall();
+      res?.status === 200
+        ? onSuccess(res.data)
+        : ToastService.error(
+            'Error',
+            res?.message || `Failed to fetch ${label}`,
+          );
+    } catch (e) {
+      console.error(`Failed to load ${label}:`, e);
+      ToastService.error('Error', `Unable to fetch ${label}`);
     } finally {
       setLoading(false);
     }
   };
+
   const handleLeft = () => {
     setActiveSpecialtyIndex(prev =>
-      prev === 0 ? specialties.length - 1 : prev - 1,
+      prev === 0 ? specialities.length - 1 : prev - 1,
     );
     setActiveDocIndex(0);
   };
 
   const handleRight = () => {
     setActiveSpecialtyIndex(prev =>
-      prev === specialties.length - 1 ? 0 : prev + 1,
+      prev === specialities.length - 1 ? 0 : prev + 1,
     );
     setActiveDocIndex(0);
   };
 
-  if (loading) {
-    return <Loader />;
-  }
+  if (loading) return <Loader />;
 
   return (
     <View style={styles.mainContainer}>
-      <Header showLocation title={undefined} />
+      <Header showLocation />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <View style={styles.quickActions}>
             <PaginatedGrid items={specialities} />
           </View>
         </View>
-        {specialities?.length > 0 && (
+        {specialities.length > 0 && (
           <>
             <SpecialtySlider
               specialties={specialities}
@@ -128,12 +120,11 @@ const Specialities: React.FC = ({route}: any) => {
               autoScrollEnabled={false}
               type={appointmentType}
               organizationId={branch?.id}
-              nav={navigateTo}
+              nav={navigation}
             />
           </>
         )}
       </ScrollView>
-      {loading && <Loader />}
       <Footer />
     </View>
   );
@@ -141,144 +132,19 @@ const Specialities: React.FC = ({route}: any) => {
 
 export default Specialities;
 
-const h = Dimensions.get('window').height;
-
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: pallette.white,
     flex: 1,
   },
-
   scrollContent: {
-    padding: 0,
     paddingBottom: 100,
   },
-
   container: {
     flex: 1,
+    paddingHorizontal: 10,
     paddingBottom: 10,
-    paddingTop: 0,
-    paddingHorizontal: 10,
   },
-
-  //Header
-  header: {
-    backgroundColor: pallette.app_purple,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-  },
-
-  profileIconBlock: {
-    width: 40,
-    height: 40,
-    backgroundColor: pallette.white,
-    borderRadius: 100,
-    borderWidth: 3,
-    borderColor: pallette.white,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  headerText: {
-    color: pallette.white,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  //Header End
-
-  helloCard: {
-    backgroundColor: 'transparent',
-    borderRadius: 10,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-    marginTop: 20,
-  },
-
-  searchLocationBlock: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  searchBlock: {
-    height: 44,
-    backgroundColor: '#4CC2BF',
-    borderRadius: 100,
-    paddingRight: 10,
-    marginTop: 0,
-    fontSize: 15,
-    fontWeight: 400,
-    color: pallette.white,
-    fontFamily: 'ProximaNovaA-Regular',
-  },
-
-  searchFormInput: {
-    height: 44,
-    borderWidth: 0,
-    borderRadius: 100,
-    paddingRight: 20,
-    paddingLeft: 15,
-    marginTop: 0,
-    fontSize: 13,
-    fontWeight: 400,
-    color: pallette.white,
-    backgroundColor: 'transparent',
-    fontFamily: 'ProximaNovaA-Regular',
-    width: Dimensions.get('window').width * 0.43,
-  },
-
-  formInputIcon: {
-    width: 16,
-    height: 16,
-    position: 'absolute',
-    top: 14,
-    left: 10,
-    tintColor: pallette.white,
-  },
-
-  //
-
-  dropdownSelect: {
-    height: 30,
-    paddingHorizontal: 10,
-    paddingLeft: 30,
-    marginTop: 5,
-    color: pallette.white,
-    width: Dimensions.get('window').width * 0.43,
-  },
-
-  placeholderCountry: {
-    fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 13,
-    color: pallette.white,
-  },
-  selectedTextContry: {
-    fontSize: 13,
-    color: pallette.white,
-  },
-
-  dropdownList: {
-    fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 13,
-    marginLeft: 0,
-    marginRight: 5,
-    padding: 0,
-    textAlign: 'left',
-  },
-
-  textHelloCard: {
-    marginTop: 15,
-    paddingHorizontal: 20,
-  },
-
   quickActions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -286,53 +152,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignSelf: 'center',
     width: '100%',
-  },
-
-  actionItem: {
-    alignItems: 'center',
-    width: '33%',
-    marginBottom: 5,
-  },
-  actionItemIcon: {
-    backgroundColor: pallette.app_purple,
-    borderRadius: 10,
-    padding: 15,
-    paddingTop: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 0,
-  },
-
-  iconAction: {
-    width: 35,
-    height: 35,
-  },
-
-  actionText: {
-    fontSize: 11,
-    textAlign: 'center',
-    marginTop: 4,
-  },
-
-  activeActionItem: {
-    backgroundColor: pallette.app_purple,
-    borderRadius: 10,
-    padding: 10,
-    paddingTop: 15,
-    alignItems: 'center',
-    width: '30%',
-    marginVertical: 10,
-  },
-
-  activeActionText: {
-    color: pallette.white,
-    fontSize: 11,
-    textAlign: 'center',
-    marginTop: 4,
-  },
-  activeIconAction: {
-    width: 40,
-    height: 40,
-    tintColor: pallette.white,
   },
 });

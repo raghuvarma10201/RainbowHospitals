@@ -17,8 +17,13 @@ import {
 } from '../pages';
 import {Login, Otp, Registration} from '../authentication';
 import AppointmentChat from '../pages/AppointmentChat';
+import {CompositeNavigationProp} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AuthStackParamList, MainStackParamList} from '../navigation/types';
 
-export const routes = {
+type CombinedRouteNames = keyof AuthStackParamList | keyof MainStackParamList;
+
+export const routes: Record<CombinedRouteNames, CombinedRouteNames> = {
   Login: 'Login',
   Otp: 'Otp',
   Registration: 'Registration',
@@ -37,7 +42,7 @@ export const routes = {
   Home: 'Home',
   MyAppointments: 'MyAppointments',
   MyAppointmentDetails: 'MyAppointmentDetails',
-  AppointmentChat : 'AppointmentChat',
+  AppointmentChat: 'AppointmentChat',
   JitsiCall: 'JitsiCall',
   PayUWebView: 'PayUWebView',
 };

@@ -5,5 +5,7 @@ export const navigateTo = (
   path: keyof MainStackParamList,
   data?: any,
 ) => {
+  console.log(navigation);
+
   navigation.navigate(path as any, data);
 };

@@ -2,7 +2,6 @@ import React, {useRef, useState} from 'react';
 import {
   View,
   Text,
-  FlatList,
   StyleSheet,
   Dimensions,
   Image,
@@ -13,14 +12,14 @@ import {gridData} from '../Constants/data';
 import {IMG_BASE_URL} from '../utils/environment';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import { MainStackParamList } from '../navigation/types';
+import {MainStackParamList} from '../navigation/types';
 
 const {width} = Dimensions.get('window');
 const ITEMS_PER_PAGE = 9;
 
 const data = gridData;
 
-interface ItemsProps {
+export interface ItemsProps {
   items: [];
 }
 const PaginatedGrid: React.FC<ItemsProps> = ({items}) => {
@@ -55,7 +54,9 @@ const PaginatedGrid: React.FC<ItemsProps> = ({items}) => {
   const renderPage = (page: any, pageIndex: any) => (
     <View key={pageIndex} style={styles.page}>
       {page.map((item: any) => (
-        <TouchableOpacity key={item.icon_image}  onPress={() => navigateToDoctors(item.id)}>
+        <TouchableOpacity
+          key={item.icon_image}
+          onPress={() => navigateToDoctors(item.id)}>
           <View style={styles.itemContainer}>
             <View
               style={[styles.iconBox, item.isSpecial && styles.specialItem]}>
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     width: width * 0.95,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around', 
+    justifyContent: 'space-around',
   },
   itemContainer: {
     width: width / 4,
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
   paginationContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop:5,
+    marginTop: 5,
     marginBottom: 20,
   },
   dot: {

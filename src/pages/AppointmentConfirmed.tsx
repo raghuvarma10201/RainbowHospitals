@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Card,
   Searchbar,
@@ -22,11 +22,22 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Banners from '../components/Slider';
 import {pallette} from '../Constants/Constant';
+import {navigateTo} from '../utils/commonFunctions';
+import {
+  CommonActions,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {MainStackParamList} from '../navigation/types';
+import {routes} from '../utils/enums';
 
 const AppointmentConfirmed: React.FC = () => {
   const [activeindex, setActiveindex] = useState(0);
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
 
   const [visible, setVisible] = React.useState(false);
   const showModal = () => setVisible(true);
@@ -37,6 +48,21 @@ const AppointmentConfirmed: React.FC = () => {
     require('../../assets/images/slide1.png'),
     require('../../assets/images/slide1.png'),
   ];
+
+  useFocusEffect(
+    useCallback(() => {
+      console.log('called');
+
+      setTimeout(() => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: routes.Dashboard}],
+          }),
+        );
+      }, 3000);
+    }, []),
+  );
 
   return (
     <View style={styles.mainContainer}>

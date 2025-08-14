@@ -14,6 +14,8 @@ import {IMG_BASE_URL} from '../utils/environment';
 import FastImage from 'react-native-fast-image';
 import {pallette} from '../Constants/Constant';
 import {routes} from '../utils/enums';
+import {navigateTo} from '../utils/commonFunctions';
+import {MainStackParamList} from '../navigation/types';
 
 const {width: screenWidth} = Dimensions.get('window');
 const ITEM_WIDTH = screenWidth * 0.4;
@@ -91,7 +93,7 @@ const Highlight = ({
       <Animated.View style={[{transform: [{scale}], opacity}]}>
         <TouchableOpacity
           onPress={() =>
-            nav(routes.DoctorSlots, {
+            navigateTo(nav, routes.DoctorSlots as keyof MainStackParamList, {
               doctorId: item.id,
               appointmentType: type,
               OrganisationID: organizationId,

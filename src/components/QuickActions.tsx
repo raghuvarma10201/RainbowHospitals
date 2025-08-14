@@ -36,6 +36,8 @@ const QuickActionButton: React.FC<ActionItem & {style?: object}> = ({
 );
 
 const QuickActions: React.FC<QuickActionsProps> = ({navigation}) => {
+  console.log(navigation);
+
   // Array of quick action items
   const actionItems: ActionItem[] = [
     {

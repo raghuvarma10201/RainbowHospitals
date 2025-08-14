@@ -133,7 +133,7 @@ const Dashboard: React.FC = () => {
               />
             ))}
           </ScrollView>
-          <QuickActions navigation />
+          <QuickActions navigation={navigation} />
         </View>
         <Banners
           images={banners}
