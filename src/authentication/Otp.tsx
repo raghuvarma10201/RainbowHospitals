@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   StyleSheet,
   View,
@@ -15,9 +15,7 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import {Button, Text, Checkbox} from 'react-native-paper';
-import {ref} from 'yup';
-import {useApp} from '../context/AppContext';
+import {Text} from 'react-native-paper';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,14 +27,15 @@ import {
   findNearestBranch,
   findNearestRegion,
 } from '../services/Region/location';
-import {fetchBranchesByRegionId} from '../services/Region/api';
+import Loader from '../components/Loader';
+import {useApp} from '../context/AppContext';
+import {useAuth} from '../context/AuthContext';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import Loader from '../components/Loader';
 import {AuthStackParamList, MainStackParamList} from '../navigation/types';
-import {useAuth} from '../context/AuthContext';
 import {pallette} from '../Constants/Constant';
 
+const {height: h, width: w} = Dimensions.get('window');
 const CELL_COUNT = 6;
 
 const Otp: React.FC = () => {
@@ -45,23 +44,29 @@ const Otp: React.FC = () => {
     NativeStackNavigationProp<MainStackParamList>
   >;
   const navigation = useNavigation<CombinedNavigationProp>();
+  const {
+    updateMrn,
+    updateProfile,
+    updateBranch,
+    updateAllBranch,
+    updateRegion,
+  } = useApp();
+  const {setLoggedIn} = useAuth();
+
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState('');
   const [timer, setTimer] = useState(30);
   const [resendDisabled, setResendDisabled] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const {updateMrn, updateProfile} = useApp();
-  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const {updateBranch, updateAllBranch, updateRegion} = useApp();
-  const [value, setValue] = useState('');
-  const {setLoggedIn} = useAuth();
-  const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
+
+  const codeFieldRef = useBlurOnFulfill({value, cellCount: CELL_COUNT});
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
 
+  // Load phone number from storage
   useEffect(() => {
-    const FcmToken = AsyncStorage.getItem('FcmTtoken');
-    console.log('FCM Token:', FcmToken);
     const fetchPhoneNumber = async () => {
       const storedNumber = await AsyncStorage.getItem('mobileNumber');
       setPhoneNumber(storedNumber);
@@ -69,46 +74,64 @@ const Otp: React.FC = () => {
     fetchPhoneNumber();
   }, []);
 
+  // Timer for OTP resend
   useEffect(() => {
     if (resendDisabled && timer > 0) {
-      const interval = setInterval(() => {
-        setTimer(prev => prev - 1);
-      }, 1000);
+      const interval = setInterval(() => setTimer(prev => prev - 1), 1000);
       return () => clearInterval(interval);
     } else if (timer === 0) {
       setResendDisabled(false);
     }
   }, [timer, resendDisabled]);
 
-  const handleResend = async () => {
-    if (resendDisabled) return;
-    setLoading(true);
+  const handleResend = useCallback(async () => {
+    if (!phoneNumber || !resendDisabled) return;
     try {
+      setLoading(true);
       setTimer(30);
       setResendDisabled(true);
+
       const response = await login({number: phoneNumber});
-      if (response.status == 200 && response.success == true) {
-        setLoading(false);
-        ToastService.success('Success', 'Otp sent successfully');
+      if (response.status === 200 && response.success) {
+        ToastService.success('Success', 'OTP sent successfully');
       } else {
-        setLoading(false);
-        ToastService.error('Error', response.message);
+        ToastService.error('Error', response.message || 'Failed to resend OTP');
       }
-    } catch (error) {
-      setLoading(false);
-      console.error('Resend error:', error);
-      ToastService.error('Failed to resend OTP.');
+    } catch (err) {
+      ToastService.error('Error', 'Failed to resend OTP');
     } finally {
       setLoading(false);
     }
-  };
+  }, [phoneNumber, resendDisabled]);
 
-  useEffect(() => {
-    formik.setFieldValue('otp', value);
-    if (value.length === CELL_COUNT && !formik.isSubmitting) {
-      //formik.handleSubmit();
-    }
-  }, [value]);
+  const loadDetails = useCallback(
+    async (token: string) => {
+      try {
+        const regions = await getRegions();
+        const location = await getCurrentCoordinates();
+        if (!location) return;
+
+        const nearestRegion = findNearestRegion(
+          regions,
+          location.latitude,
+          location.longitude,
+        );
+        if (!nearestRegion) return;
+        updateRegion(nearestRegion);
+
+        const allBranches = await getBranches(nearestRegion.region_id);
+        updateAllBranch(allBranches);
+
+        const nearestBranch = findNearestBranch(
+          allBranches,
+          location.latitude,
+          location.longitude,
+        );
+        if (nearestBranch) updateBranch(nearestBranch);
+      } catch {}
+    },
+    [updateBranch, updateAllBranch, updateRegion],
+  );
 
   const formik = useFormik({
     initialValues: {otp: ''},
@@ -117,68 +140,63 @@ const Otp: React.FC = () => {
         .matches(/^\d{6}$/, 'Enter a valid 6-digit OTP')
         .required('OTP is required'),
     }),
-    onSubmit: async values => {
+    onSubmit: async () => {
+      if (!phoneNumber) return;
       setLoading(true);
       try {
-        const payload = {
+        const fcmToken = (await AsyncStorage.getItem('FcmTtoken')) || '';
+        const response = await VerifyOTP({
           number: phoneNumber,
           otp: value,
-          fcmToken: (await AsyncStorage.getItem('FcmTtoken')) || 'adsdsad',
-        };
+          fcmToken,
+        });
 
-        const response = await VerifyOTP(payload);
-        if (response && response.status === 200) {
-          ToastService.success(
-            'Success',
-            response.data.message || 'OTP verified successfully',
-          );
-          let authResponse;
-          try {
-            authResponse = await authenticateUser({MobileNo: phoneNumber});
-          } catch (err: any) {
-            authResponse = err.response; // Axios puts the 4xx/5xx response here
-          }
-          if (authResponse && authResponse.status == 200) {
-            const token = response?.data?.token;
-            await AsyncStorage.multiSet([
-              ['accessToken', token],
-              ['refreshToken', token],
-              ['tokenExpiry', response.data.expiryTime], // in UTC ISO string
-            ]);
-            if (!token) {
-              throw new Error('Token not found in response');
-            }
-            await loadDetails(token);
-            setLoading(false);
-            updateMrn(authResponse.data.LoginName);
-            await AsyncStorage.setItem('mrn', authResponse.data.LoginName);
-            const data = await getPatientProfile({
-              mrn: authResponse.data.LoginName,
-            });
-            if (data.data[0] && data.data[0].PatientID) {
-              setLoggedIn(true);
-              updateProfile(data.data[0]);
-              navigation.navigate('Dashboard');
-            }
-          } else if (authResponse.status == 500) {
-            setLoading(false);
-            ToastService.error('Error', authResponse.message);
-            navigation.navigate('Registration');
-          } else {
-            setLoading(false);
-            navigation.navigate('Registration');
-            ToastService.error('Error', authResponse?.error);
-          }
-        } else {
-          setLoading(false);
+        if (response?.status !== 200) {
           ToastService.error(
             'Error',
-            response?.data.message || 'Error verifying OTP',
+            response?.data?.message || 'OTP verification failed',
           );
+          return;
         }
-      } catch (error) {
-        setLoading(false);
-        console.error('Verification failed:', error);
+
+        ToastService.success(
+          'Success',
+          response.data.message || 'OTP verified successfully',
+        );
+
+        const authResponse = await authenticateUser({MobileNo: phoneNumber});
+        if (authResponse.status !== 200) {
+          navigation.navigate('Registration');
+          ToastService.error(
+            'Error',
+            authResponse?.error || 'Authentication failed',
+          );
+          return;
+        }
+
+        const token = response.data.token;
+        if (!token) throw new Error('Token missing in response');
+
+        await AsyncStorage.multiSet([
+          ['accessToken', token],
+          ['refreshToken', token],
+          ['tokenExpiry', response.data.expiryTime],
+        ]);
+
+        await loadDetails(token);
+
+        updateMrn(authResponse.data.LoginName);
+        await AsyncStorage.setItem('mrn', authResponse.data.LoginName);
+
+        const profileData = await getPatientProfile({
+          mrn: authResponse.data.LoginName,
+        });
+        if (profileData.data?.[0]) {
+          setLoggedIn(true);
+          updateProfile(profileData.data[0]);
+          navigation.navigate('Dashboard');
+        }
+      } catch (err) {
         ToastService.error('Error', 'Failed to verify OTP');
       } finally {
         setLoading(false);
@@ -186,77 +204,44 @@ const Otp: React.FC = () => {
     },
   });
 
-  const loadDetails = async (token: string) => {
-    try {
-      const regions = await getRegions();
-      const location = await getCurrentCoordinates();
-      if (!location) throw new Error('Location unavailable');
-      const nearestRegion = findNearestRegion(
-        regions,
-        location.latitude,
-        location.longitude,
-      );
-      if (!nearestRegion) throw new Error('No region found nearby');
-      updateRegion(nearestRegion);
-      const allBranches = await getBranches(nearestRegion.region_id);
-      if (!allBranches.length) throw new Error('No branch data found');
-      updateAllBranch(allBranches);
-      const nearestBranch = findNearestBranch(
-        allBranches,
-        location.latitude,
-        location.longitude,
-      );
-      if (!nearestBranch) throw new Error('No nearby branch found');
-      updateBranch(nearestBranch);
-    } catch (err: any) {
-      //console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  if (loading) {
-    return <Loader />;
-  }
+  useEffect(() => {
+    formik.setFieldValue('otp', value);
+  }, [value]);
+
+  if (loading) return <Loader />;
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <ImageBackground
         source={require('../../assets/images/logo.png')}
-        style={styles.logoImage}
+        style={styles.logo}
         resizeMode="contain"
       />
-      <View style={styles.imgTextGroup}>
-        <View style={styles.imgTextBox}>
-          <View style={styles.textbeforeDot}>
-            <View style={styles.beforeDot} />
-            <Text style={styles.imgTextTitle}>
-              {' '}
-              Comprehensive Care for Women & Child
-            </Text>
-          </View>
+
+      <View style={styles.taglineWrapper}>
+        <View style={styles.taglineBox}>
+          <View style={styles.beforeDot} />
+          <Text style={styles.taglineText}>
+            Comprehensive Care for Women & Child
+          </Text>
         </View>
       </View>
+
       <Image
         source={require('../../assets/images/otp-img.png')}
         style={styles.otpImg}
         resizeMode="cover"
       />
+
       <View style={styles.otpContainer}>
-        <Text variant="headlineMedium" style={styles.title}>
-          ENTER OTP
-        </Text>
-        <Text style={styles.labelText}>
-          {' '}
-          OTP Code sent on +91 {phoneNumber}
-        </Text>
+        <Text style={styles.title}>ENTER OTP</Text>
+        <Text style={styles.label}>OTP Code sent on +91 {phoneNumber}</Text>
+
         <CodeField
-          ref={ref as React.RefObject<TextInput>}
-          InputComponent={TextInput}
+          ref={codeFieldRef as React.RefObject<TextInput>}
           {...props}
           value={value}
-          onChangeText={text => {
-            const onlyNumbers = text.replace(/[^0-9]/g, '');
-            setValue(onlyNumbers);
-          }}
+          onChangeText={text => setValue(text.replace(/[^0-9]/g, ''))}
           cellCount={CELL_COUNT}
           rootStyle={styles.codeFieldRoot}
           keyboardType="number-pad"
@@ -274,27 +259,32 @@ const Otp: React.FC = () => {
         />
 
         {formik.errors.otp && formik.touched.otp && (
-          <Text style={styles.errorMessage}>{formik.errors.otp}</Text>
+          <Text style={styles.error}>{formik.errors.otp}</Text>
         )}
+
         <View style={styles.timeContainer}>
-          <TouchableOpacity disabled={resendDisabled} onPress={handleResend}>
-            <Text
-              style={[
-                styles.resendText,
-                resendDisabled && {color: pallette.light_grey},
-              ]}>
-              Resend
+          {!resendDisabled && (
+            <TouchableOpacity disabled={resendDisabled} onPress={handleResend}>
+              <Text
+                style={[
+                  styles.resendText,
+                  resendDisabled && {color: pallette.light_grey},
+                ]}>
+                Resend
+              </Text>
+            </TouchableOpacity>
+          )}
+          {resendDisabled && (
+            <Text style={styles.timer}>
+              00:{timer < 10 ? `0${timer}` : timer}
             </Text>
-          </TouchableOpacity>
-          <Text style={styles.timeText}>
-            {resendDisabled ? `  00:${timer < 10 ? `0${timer}` : timer}` : ''}
-          </Text>
+          )}
         </View>
 
         <TouchableOpacity
-          style={styles.primaryBt}
+          style={styles.primaryButton}
           onPress={() => formik.handleSubmit()}>
-          <Text style={styles.primaryBtText}> Continue</Text>
+          <Text style={styles.primaryButtonText}>Continue</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -302,113 +292,34 @@ const Otp: React.FC = () => {
 };
 
 export default Otp;
-const h = Dimensions.get('window').height;
-const w = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     paddingVertical: h * 0.03,
   },
-  logoImage: {
-    marginHorizontal: 'auto',
+  logo: {
+    width: '100%',
+    height: h * 0.1,
     marginTop: '7%',
     marginBottom: '8%',
-    width: '100%',
-    height: Dimensions.get('window').height * 0.11,
-    justifyContent: 'space-between',
   },
-
-  title: {
-    color: pallette.app_green,
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: -12,
-    textAlign: 'center',
-    textTransform: 'uppercase',
-    marginBottom: 5,
-    fontFamily: 'ProximaNovaA-Bold',
-  },
-
-  labelText: {
-    fontSize: 13,
-    fontWeight: 'normal',
-    color: pallette.black,
-    marginBottom: 5,
-    fontFamily: 'ProximaNovaA-Regular',
-    textAlign: 'center',
-  },
-  errorMessage: {
-    color: pallette.red,
-    marginTop: 0,
-    marginBottom: 5,
-    fontSize: 13,
-    fontWeight: 400,
-  },
-  formViewGroup: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 0,
-    paddingHorizontal: 20,
-  },
-  formInput: {
-    height: 40,
-    width: 40,
-    fontSize: 16,
-    paddingHorizontal: '7.6%',
-    paddingVertical: 0,
-    marginHorizontal: 4,
-    marginTop: 10,
-    borderWidth: 2,
-    borderColor: '#A7AAAC',
-    borderRadius: 4,
-    textAlign: 'center',
-    backgroundColor: pallette.white,
-  },
-  primaryBt: {
-    width: '100%',
-    alignSelf: 'center',
-    borderRadius: 40,
-    backgroundColor: '#818385',
-    marginTop: 10,
-    marginBottom: 20,
-    padding: 10,
-  },
-  primaryBtText: {
-    color: pallette.white,
-    fontSize: 14,
-    fontWeight: 'normal',
-    textAlign: 'center',
-  },
-  imgTextGroup: {
+  taglineWrapper: {
     paddingHorizontal: 20,
     position: 'relative',
     zIndex: 1,
   },
-
-  imgTextBox: {
+  taglineBox: {
     width: '100%',
-    marginTop: 5,
-    paddingTop: 15,
-    paddingBottom: 20,
-    paddingLeft: 15,
-    paddingRight: 10,
+    padding: 15,
     backgroundColor: pallette.app_purple,
     borderRadius: 10,
+    marginBottom: 20,
   },
-  textbeforeDot: {position: 'relative'},
-  imgTextTitle: {
-    fontSize: 15,
-    fontWeight: 'normal',
-    color: pallette.white,
-    textAlign: 'center',
-  },
-
   beforeDot: {
     position: 'absolute',
-    bottom: -35,
-    left: '42%',
+    bottom: -h * 0.02,
+    left: '50%',
     width: 30,
     height: 30,
     backgroundColor: pallette.app_green,
@@ -416,42 +327,40 @@ const styles = StyleSheet.create({
     borderWidth: 7,
     borderColor: pallette.white,
   },
+  taglineText: {
+    color: pallette.white,
+    textAlign: 'center',
+    fontSize: 15,
+  },
   otpImg: {
-    height: Dimensions.get('window').height * 0.4,
     width: '100%',
-    marginTop: -20,
+    height: h * 0.4,
     marginBottom: 20,
   },
-
   otpContainer: {
     paddingHorizontal: 20,
   },
-
-  timeContainer: {
-    paddingHorizontal: 0,
-    marginTop: 3,
-    display: 'flex',
+  title: {
+    color: pallette.app_green,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 5,
   },
-
-  timeText: {
-    textAlign: 'right',
-    fontSize: 12,
-    fontWeight: 'normal',
+  label: {
+    fontSize: 13,
     color: pallette.black,
-    fontFamily: 'ProximaNovaA-Regular',
-    paddingHorizontal: 0,
+    textAlign: 'center',
+    marginBottom: 5,
   },
   codeFieldRoot: {
     marginTop: 10,
-    width: '100%',
-    //paddingHorizontal: 20,
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-around',
   },
-
   cell: {
-    width: '13.75%',
-    height: 55,
+    width: '14%',
+    height: h * 0.06,
     borderWidth: 1,
     borderColor: '#8a3ab9',
     borderRadius: 8,
@@ -459,23 +368,47 @@ const styles = StyleSheet.create({
     backgroundColor: pallette.white,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: pallette.black,
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-  },
-  cellText: {
-    fontSize: 20,
-    color: pallette.black,
-    textAlign: 'center',
   },
   focusCell: {
     borderColor: '#6200ee',
+  },
+  cellText: {
+    fontSize: 20,
+    textAlign: 'center',
+    color: pallette.black,
+  },
+  error: {
+    color: pallette.red,
+    fontSize: 13,
+    marginTop: 5,
+    textAlign: 'center',
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 5,
   },
   resendText: {
     color: '#8a3ab9',
     fontWeight: 'bold',
     textAlign: 'right',
+  },
+  timer: {
+    textAlign: 'right',
+    fontSize: 12,
+    color: pallette.black,
+  },
+  primaryButton: {
+    width: '100%',
+    backgroundColor: '#818385',
+    padding: 10,
+    borderRadius: 40,
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  primaryButtonText: {
+    color: pallette.white,
+    fontSize: 14,
+    textAlign: 'center',
   },
 });
