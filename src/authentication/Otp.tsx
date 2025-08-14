@@ -8,6 +8,8 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {
   CodeField,
@@ -211,83 +213,89 @@ const Otp: React.FC = () => {
   if (loading) return <Loader />;
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <ImageBackground
-        source={require('../../assets/images/logo.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-
-      <View style={styles.taglineWrapper}>
-        <View style={styles.taglineBox}>
-          <View style={styles.beforeDot} />
-          <Text style={styles.taglineText}>
-            Comprehensive Care for Women & Child
-          </Text>
-        </View>
-      </View>
-
-      <Image
-        source={require('../../assets/images/otp-img.png')}
-        style={styles.otpImg}
-        resizeMode="cover"
-      />
-
-      <View style={styles.otpContainer}>
-        <Text style={styles.title}>ENTER OTP</Text>
-        <Text style={styles.label}>OTP Code sent on +91 {phoneNumber}</Text>
-
-        <CodeField
-          ref={codeFieldRef as React.RefObject<TextInput>}
-          {...props}
-          value={value}
-          onChangeText={text => setValue(text.replace(/[^0-9]/g, ''))}
-          cellCount={CELL_COUNT}
-          rootStyle={styles.codeFieldRoot}
-          keyboardType="number-pad"
-          textContentType="oneTimeCode"
-          renderCell={({index, symbol, isFocused}) => (
-            <View
-              key={index}
-              style={[styles.cell, isFocused && styles.focusCell]}
-              onLayout={getCellOnLayoutHandler(index)}>
-              <Text style={styles.cellText}>
-                {symbol || (isFocused ? <Cursor /> : null)}
-              </Text>
-            </View>
-          )}
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <ImageBackground
+          source={require('../../assets/images/logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
         />
 
-        {formik.errors.otp && formik.touched.otp && (
-          <Text style={styles.error}>{formik.errors.otp}</Text>
-        )}
-
-        <View style={styles.timeContainer}>
-          {!resendDisabled && (
-            <TouchableOpacity disabled={resendDisabled} onPress={handleResend}>
-              <Text
-                style={[
-                  styles.resendText,
-                  resendDisabled && {color: pallette.light_grey},
-                ]}>
-                Resend
-              </Text>
-            </TouchableOpacity>
-          )}
-          {resendDisabled && (
-            <Text style={styles.timer}>
-              00:{timer < 10 ? `0${timer}` : timer}
+        <View style={styles.taglineWrapper}>
+          <View style={styles.taglineBox}>
+            <View style={styles.beforeDot} />
+            <Text style={styles.taglineText}>
+              Comprehensive Care for Women & Child
             </Text>
-          )}
+          </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.primaryButton}
-          onPress={() => formik.handleSubmit()}>
-          <Text style={styles.primaryButtonText}>Continue</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        <Image
+          source={require('../../assets/images/otp-img.png')}
+          style={styles.otpImg}
+          resizeMode="cover"
+        />
+
+        <View style={styles.otpContainer}>
+          <Text style={styles.title}>ENTER OTP</Text>
+          <Text style={styles.label}>OTP Code sent on +91 {phoneNumber}</Text>
+
+          <CodeField
+            ref={codeFieldRef as React.RefObject<TextInput>}
+            {...props}
+            value={value}
+            onChangeText={text => setValue(text.replace(/[^0-9]/g, ''))}
+            cellCount={CELL_COUNT}
+            rootStyle={styles.codeFieldRoot}
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            renderCell={({index, symbol, isFocused}) => (
+              <View
+                key={index}
+                style={[styles.cell, isFocused && styles.focusCell]}
+                onLayout={getCellOnLayoutHandler(index)}>
+                <Text style={styles.cellText}>
+                  {symbol || (isFocused ? <Cursor /> : null)}
+                </Text>
+              </View>
+            )}
+          />
+
+          {formik.errors.otp && formik.touched.otp && (
+            <Text style={styles.error}>{formik.errors.otp}</Text>
+          )}
+
+          <View style={styles.timeContainer}>
+            {!resendDisabled && (
+              <TouchableOpacity
+                disabled={resendDisabled}
+                onPress={handleResend}>
+                <Text
+                  style={[
+                    styles.resendText,
+                    resendDisabled && {color: pallette.light_grey},
+                  ]}>
+                  Resend
+                </Text>
+              </TouchableOpacity>
+            )}
+            {resendDisabled && (
+              <Text style={styles.timer}>
+                00:{timer < 10 ? `0${timer}` : timer}
+              </Text>
+            )}
+          </View>
+
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={() => formik.handleSubmit()}>
+            <Text style={styles.primaryButtonText}>Continue</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
