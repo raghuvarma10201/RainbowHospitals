@@ -13,6 +13,7 @@ import {
 import {IMG_BASE_URL} from '../utils/environment';
 import FastImage from 'react-native-fast-image';
 import {pallette} from '../Constants/Constant';
+import {routes} from '../utils/enums';
 
 const {width: screenWidth} = Dimensions.get('window');
 const ITEM_WIDTH = screenWidth * 0.4;
@@ -26,6 +27,8 @@ const Highlight = ({
   height,
   autoScrollEnabled = true,
   nav,
+  type,
+  organizationId,
 }: {
   doctors: any;
   activeindex: number;
@@ -33,6 +36,8 @@ const Highlight = ({
   height: number;
   autoScrollEnabled?: boolean;
   nav: any;
+  type: string;
+  organizationId: string | undefined;
 }) => {
   const flatListRef = useRef<FlatList>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -88,7 +93,11 @@ const Highlight = ({
       <Animated.View style={[{transform: [{scale}], opacity}]}>
         <TouchableOpacity
           onPress={() =>
-            nav('DoctorSlots', {doctorId: item.id, appointmentType: 'video'})
+            nav(routes.DoctorSlots, {
+              doctorId: item.id,
+              appointmentType: type,
+              OrganisationID: organizationId,
+            })
           }
           style={styles.itemContainer}>
           <FastImage

@@ -13,11 +13,13 @@ import {getDoctors, getSpecialities} from '../services/common';
 import Loader from '../components/Loader';
 import {MainStackParamList} from '../navigation/types';
 import {pallette} from '../Constants/Constant';
+import {useApp} from '../context/AppContext';
 
 const Specialities: React.FC = ({route}: any) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentType} = route.params;
+  const {branch} = useApp();
   const [specialities, setSpecialities] = useState<any>([]);
   const specialties = Object.keys(doctorData) as Array<keyof typeof doctorData>;
   const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(1);
@@ -124,6 +126,8 @@ const Specialities: React.FC = ({route}: any) => {
               setActiveindex={setActiveDocIndex}
               height={h * 0.175}
               autoScrollEnabled={false}
+              type={appointmentType}
+              organizationId={branch?.id}
               nav={navigateTo}
             />
           </>

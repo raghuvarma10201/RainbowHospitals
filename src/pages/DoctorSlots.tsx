@@ -92,7 +92,7 @@ const DoctorSlots: React.FC<any> = ({route}) => {
       setLoading(true);
       const payload = {
         CareproviderCode: docData.new_doctor_UID, //'500004',
-        OrganisationUID: OrganisationID, //2,
+        OrganisationUID: OrganisationID.toString(), //2,
         AppointmentType: appointmentType,
         noofdays: '30',
       };
