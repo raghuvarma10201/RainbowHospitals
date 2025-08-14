@@ -25,5 +25,6 @@ export const pallette = {
   light_grey: '#E6E7E8',
   dark_grey: '#818385',
   app_green: '#00B3AE',
+  app_light_green: '#C7E8E7',
   app_purple: '#3C2871',
 };

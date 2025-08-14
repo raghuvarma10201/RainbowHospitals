@@ -264,10 +264,10 @@ const styles = StyleSheet.create({
     height: 40,
     flex: 1,
     borderWidth: 1,
-    borderColor: '#C7E8E7',
+    borderColor: pallette.app_light_green,
     borderRadius: 10,
     padding: 10,
-    backgroundColor: '#C7E8E7',
+    backgroundColor: pallette.app_light_green,
   },
 
   formButton: {

@@ -577,7 +577,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderColor: 'transparent',
     borderRadius: 6,
-    backgroundColor: '#C7E8E7',
+    backgroundColor: pallette.app_light_green,
   },
 
   formRowBtn: {

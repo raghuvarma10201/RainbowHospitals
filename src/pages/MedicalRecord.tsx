@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderColor: 'transparent',
     borderRadius: 2,
-    backgroundColor: '#C7E8E7',
+    backgroundColor: pallette.app_light_green,
   },
 
   //---
