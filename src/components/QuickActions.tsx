@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '30%',
     marginVertical: 10,
+    minHeight: h * 0.12,
   },
   iconAction: {
     width: w * 0.15,
