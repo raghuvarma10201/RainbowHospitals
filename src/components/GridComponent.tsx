@@ -3,24 +3,22 @@ import {
   View,
   Text,
   StyleSheet,
-  Dimensions,
   Image,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {gridData} from '../Constants/data';
 import {IMG_BASE_URL} from '../utils/environment';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
+import PaginationDots from './PaginationDots';
+import {adjust} from '../utils/commonFunctions';
+import {pallette, w} from '../Constants/Constant';
 
-const {width} = Dimensions.get('window');
 const ITEMS_PER_PAGE = 9;
 
-const data = gridData;
-
 export interface ItemsProps {
-  items: [];
+  items: any[];
 }
 const PaginatedGrid: React.FC<ItemsProps> = ({items}) => {
   type AppNavigationProp = NativeStackNavigationProp<
@@ -46,7 +44,7 @@ const PaginatedGrid: React.FC<ItemsProps> = ({items}) => {
 
   const handleScroll = (event: any) => {
     const pageIndex = Math.round(
-      event.nativeEvent.contentOffset.x / (width * 0.8),
+      event.nativeEvent.contentOffset.x / (w * 0.95),
     );
     setCurrentPage(pageIndex);
   };
@@ -89,36 +87,28 @@ const PaginatedGrid: React.FC<ItemsProps> = ({items}) => {
         showsHorizontalScrollIndicator={false}>
         {pages.map((page, index) => renderPage(page, index))}
       </ScrollView>
-
       {/* Pagination dots */}
-      <View style={styles.paginationContainer}>
-        {pages.map((_, index) => (
-          <View
-            key={index}
-            style={[styles.dot, currentPage === index && styles.activeDot]}
-          />
-        ))}
-      </View>
+      <PaginationDots data={pages} activeIndex={currentPage} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   page: {
-    width: width * 0.95,
+    width: w * 0.95,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
   },
   itemContainer: {
-    width: width / 4,
+    width: w * 0.25,
     alignItems: 'center',
     marginVertical: 10,
   },
   iconBox: {
-    width: 60,
-    height: 60,
-    backgroundColor: '#4527a0',
+    width: w * 0.15,
+    height: w * 0.15,
+    backgroundColor: pallette.app_purple,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
@@ -134,8 +124,8 @@ const styles = StyleSheet.create({
   itemText: {
     marginTop: 6,
     textAlign: 'center',
-    fontSize: 12,
-    color: '#333',
+    fontSize: adjust(10),
+    color: pallette.black,
     width: '100%',
   },
   paginationContainer: {
@@ -143,16 +133,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 5,
     marginBottom: 20,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#ccc',
-    marginHorizontal: 4,
-  },
-  activeDot: {
-    backgroundColor: '#4527a0',
   },
 });
 

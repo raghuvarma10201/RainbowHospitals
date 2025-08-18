@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {
   TouchableOpacity,
   View,
@@ -7,9 +7,12 @@ import {
   StyleSheet,
   ImageSourcePropType,
 } from 'react-native';
-import {navigateTo} from '../utils/commonFunctions';
-import {pallette, w} from '../Constants/Constant';
+import {adjust, navigateTo} from '../utils/commonFunctions';
+import {h, pallette, w} from '../Constants/Constant';
 
+//
+// ---------- Types ----------
+//
 interface HomeMenuItemProps {
   title: string;
   icon: ImageSourcePropType;
@@ -17,29 +20,43 @@ interface HomeMenuItemProps {
 }
 
 interface MenuItemsProps {
-  navigation: any;
-  logout: any;
+  navigation: any; // You can strongly type this with React Navigation if desired
+  logout: () => void;
 }
 
-const HomeMenuItem: React.FC<HomeMenuItemProps> = ({title, icon, onPress}) => {
-  return (
-    <TouchableOpacity style={styles.row} onPress={onPress}>
-      <View style={styles.leftHomeBlock}>
-        <View style={styles.iconLeft}>
-          <Image source={icon} style={styles.homeBlockIcon} />
+//
+// ---------- Reusable Menu Item Component ----------
+//
+const HomeMenuItem: React.FC<HomeMenuItemProps> = memo(
+  ({title, icon, onPress}) => {
+    return (
+      <TouchableOpacity style={styles.row} onPress={onPress}>
+        {/* Left block with icon + title */}
+        <View style={styles.leftHomeBlock}>
+          <View style={styles.iconLeft}>
+            <Image source={icon} style={styles.homeBlockIcon} />
+          </View>
+          <Text style={styles.homeBlockTitle}>{title}</Text>
         </View>
-        <Text style={styles.homeBlockTitle}>{title}</Text>
-      </View>
-      <Image
-        source={require('../../assets/images/right-arrow.png')}
-        style={styles.rightArrow}
-      />
-    </TouchableOpacity>
-  );
-};
 
+        {/* Right arrow indicator */}
+        <Image
+          source={require('../../assets/images/right-arrow.png')}
+          style={styles.rightArrow}
+        />
+      </TouchableOpacity>
+    );
+  },
+);
+
+HomeMenuItem.displayName = 'HomeMenuItem';
+
+//
+// ---------- Menu List Component ----------
+//
 export const MenuItems: React.FC<MenuItemsProps> = ({navigation, logout}) => {
-  const menuItems = [
+  // Define all available menu items in one place
+  const menuItems: HomeMenuItemProps[] = [
     {
       title: 'My Appointments',
       icon: require('../../assets/images/home-appointments.png'),
@@ -84,14 +101,15 @@ export const MenuItems: React.FC<MenuItemsProps> = ({navigation, logout}) => {
     {
       title: 'Logout',
       icon: require('../../assets/images/home-logout.png'),
-      onPress: () => logout(),
+      onPress: logout,
     },
   ];
+
   return (
     <>
       {menuItems.map((item, index) => (
         <HomeMenuItem
-          key={index}
+          key={index.toString()}
           title={item.title}
           icon={item.icon}
           onPress={item.onPress}
@@ -101,13 +119,16 @@ export const MenuItems: React.FC<MenuItemsProps> = ({navigation, logout}) => {
   );
 };
 
+//
+// ---------- Styles ----------
+//
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingVertical: h * 0.015,
+    paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: pallette.white,
   },
@@ -116,21 +137,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconLeft: {
-    backgroundColor: pallette.app_green,
-    borderRadius: w * 0.1,
     width: w * 0.08,
     height: w * 0.08,
     marginRight: 10,
-    flexDirection: 'row',
+    borderRadius: w * 0.1,
+    backgroundColor: pallette.app_green,
     alignItems: 'center',
     justifyContent: 'center',
   },
   homeBlockIcon: {
     width: w * 0.04,
     height: w * 0.04,
+    resizeMode: 'contain',
   },
   homeBlockTitle: {
-    fontSize: 14,
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Semibold',
   },
   rightArrow: {

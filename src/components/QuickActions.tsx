@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import {adjust, navigateTo} from '../utils/commonFunctions';
-import {h, w} from '../Constants/Constant';
+import {h, pallette, w} from '../Constants/Constant';
 
 // Type for a single action item
 type ActionItem = {
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     marginBottom: h * 0.01,
   },
   actionItem: {
-    backgroundColor: '#B7E1E0',
+    backgroundColor: pallette.app_light_green,
     borderRadius: 10,
     padding: 10,
     paddingTop: 15,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   },
   iconAction: {
     width: w * 0.15,
-    height: w * 0.15,
+    height: w * 0.13,
     marginBottom: 5,
   },
   actionText: {

@@ -181,7 +181,11 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
             style={styles.backArrowBlock}>
             <Image
               source={images.arrow}
-              style={{width: 18, height: 18, tintColor: pallette.white}}
+              style={{
+                width: w * 0.05,
+                height: w * 0.05,
+                tintColor: pallette.white,
+              }}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -189,7 +193,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
           <View style={styles.profileIconBlock}>
             <Image
               source={images.profile}
-              style={{width: 30, height: 30}}
+              style={{width: w * 0.08, height: w * 0.08}}
               resizeMode="contain"
             />
           </View>
@@ -206,7 +210,12 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
               <View style={styles.locationInfo}>
                 <Image
                   source={images.map}
-                  style={{width: 12, height: 12, marginRight: 3, marginTop: 3}}
+                  style={{
+                    width: w * 0.03,
+                    height: w * 0.03,
+                    marginRight: 3,
+                    marginTop: 3,
+                  }}
                 />
                 <Text style={styles.regionText}>{region?.name ?? ''}</Text>
               </View>
@@ -221,7 +230,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
         <TouchableOpacity>
           <Image
             source={images.services}
-            style={{width: 26, height: 26, marginRight: 10}}
+            style={{width: w * 0.07, height: w * 0.07}}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -229,18 +238,19 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
         <TouchableOpacity>
           <Image
             source={images.wallet}
-            style={{width: 26, height: 26, marginRight: 10}}
+            style={{width: w * 0.065, height: w * 0.065}}
             resizeMode="contain"
           />
         </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <Image
-            source={images.filter}
-            style={{width: 22, height: 22}}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
+        {title != 'menu' && (
+          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <Image
+              source={images.filter}
+              style={{width: w * 0.06, height: w * 0.06}}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Location Modal */}
@@ -380,6 +390,7 @@ const styles = StyleSheet.create({
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: w * 0.03,
   },
   dropdownIcon: {
     marginLeft: 0,
