@@ -6,8 +6,9 @@ import {
   Text,
   StyleSheet,
   ListRenderItem,
+  Dimensions,
 } from 'react-native';
-import {navigateTo} from '../utils/commonFunctions';
+import {adjust, navigateTo} from '../utils/commonFunctions';
 import {h, w} from '../Constants/Constant';
 
 // Type for a single action item
@@ -114,9 +115,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   actionText: {
-    fontSize: 12,
+    fontSize: adjust(12),
     textAlign: 'center',
   },
 });
 
-export default QuickActions;
+export default React.memo(QuickActions);

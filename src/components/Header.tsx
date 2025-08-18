@@ -30,6 +30,7 @@ import {
 } from '../services/Region/location';
 import {getCurrentCoordinates} from '../utils/LocationService';
 import {pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 interface CommonHeaderProps {
   title?: string;
@@ -230,7 +231,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
             <View style={{marginLeft: 6}}>
               <Text
                 style={{
-                  fontSize: 12,
+                  fontSize: adjust(12),
                   color: pallette.white,
                   fontFamily: 'ProximaNovaA-Regular',
                 }}>
@@ -238,16 +239,19 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
                 {branch?.name || 'Fetching location...'}
               </Text>
               <View
-                style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                }}>
                 <Image
                   source={require('../../assets/images/map-icon.png')}
                   style={{width: 12, height: 12, marginRight: 3, marginTop: 3}}
                 />
                 <Text
                   style={{
-                    fontSize: 10,
+                    fontSize: adjust(10),
                     color: pallette.white,
-                    fontWeight: 'normal',
                     marginTop: 0,
                     fontFamily: 'ProximaNovaA-Regular',
                   }}>
@@ -454,7 +458,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: 'white',
-    fontSize: 16,
+    fontSize: adjust(16),
     fontWeight: '600',
     paddingStart: 10,
   },

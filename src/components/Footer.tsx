@@ -4,6 +4,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {MainStackParamList} from '../navigation/types';
 import {pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 interface FooterProps {
   activeIcon?: string;
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
   },
 
   actionText: {
-    fontSize: 11,
+    fontSize: adjust(11),
     textAlign: 'center',
     marginTop: 4,
   },
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
 
   activeActionText: {
     color: pallette.white,
-    fontSize: 11,
+    fontSize: adjust(11),
     textAlign: 'center',
     marginTop: 4,
   },

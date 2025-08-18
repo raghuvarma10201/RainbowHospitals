@@ -1,28 +1,34 @@
+import React, {useCallback, useState} from 'react';
 import {
   Image,
-  ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
+  FlatList,
+  ScrollView,
 } from 'react-native';
-import React, {useCallback, useState} from 'react';
 import {TextInput, Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
+
 import Header from '../components/Header';
 import Banners from '../components/Slider';
-import moment from 'moment';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../navigation/types';
-import {getAppointments} from '../services/common';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {upcomingApointment} from '../utils/types';
-import {h, pallette, w} from '../Constants/Constant';
 import QuickActions from '../components/QuickActions';
 import UpcomingAppointmentCard from '../components/UpcomingAppointmentCard';
+import PaginationDots from '../components/PaginationDots';
+
+import {getAppointments} from '../services/common';
 import {useApp} from '../context/AppContext';
 import {ToastService} from '../utils/ToastService';
+import {upcomingApointment} from '../utils/types';
+import {h, pallette, w} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {MainStackParamList} from '../navigation/types';
 
+// ---------- STATIC DATA OUTSIDE COMPONENT ----------
 const local_data = [
   {value: '1', lable: 'location'},
   {value: '2', lable: 'location2'},
@@ -34,27 +40,27 @@ const images = {
   location: require('../../assets/images/map-icon.png'),
   call: require('../../assets/images/call-icon.png'),
 };
+
 const banners = Array(3).fill(images.banner);
 
+// ---------- COMPONENT ----------
 const Dashboard: React.FC = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const {profile} = useApp();
+
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
   const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
-  const {profile} = useApp();
   const [activeindex, setActiveindex] = useState(0);
+  const [activeAppointmentIndex, setActiveAppointmentIndex] = useState(0);
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchMyAppointments(moment().format('YYYY-MM-DD'));
-    }, []),
-  );
-
-  const fetchMyAppointments = async (date: string) => {
+  // ---------- CALLBACKS ----------
+  const fetchMyAppointments = useCallback(async (date: string) => {
     try {
       const mrn = await AsyncStorage.getItem('mrn');
       const {data = []} = await getAppointments({mrn, date});
+
       setAppointments(
         data
           .filter((item: upcomingApointment) =>
@@ -64,19 +70,39 @@ const Dashboard: React.FC = () => {
             moment(a.SlotStartDttm).diff(moment(b.SlotStartDttm)),
           ),
       );
-    } catch {
+    } catch (err) {
+      console.error('Error fetching appointments:', err);
       ToastService.error('Error', 'Unable to fetch upcoming appointments');
       setAppointments([]);
     }
-  };
+  }, []);
 
+  const handleLocationChange = useCallback((e: any) => {
+    setCountry(e.value);
+  }, []);
+
+  const handleScrollEnd = useCallback((event: any) => {
+    const newIndex = Math.round(event.nativeEvent.contentOffset.x / w);
+    setActiveAppointmentIndex(newIndex);
+  }, []);
+
+  // ---------- LIFECYCLE ----------
+  useFocusEffect(
+    useCallback(() => {
+      fetchMyAppointments(moment().format('YYYY-MM-DD'));
+    }, [fetchMyAppointments]),
+  );
+
+  // ---------- RENDER ----------
   return (
     <View style={styles.mainContainer}>
       <Header showLocation showBack={false} title="home" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
+          {/* GREETING CARD */}
           <View style={styles.helloCard}>
             <View style={styles.searchLocationBlock}>
+              {/* SEARCH */}
               <View style={styles.searchBlock}>
                 <TextInput
                   mode="flat"
@@ -97,6 +123,8 @@ const Dashboard: React.FC = () => {
                 />
                 <Image source={images.search} style={styles.formInputIcon} />
               </View>
+
+              {/* LOCATION DROPDOWN */}
               <View style={styles.searchBlock}>
                 <Dropdown
                   style={styles.dropdownSelect}
@@ -110,31 +138,45 @@ const Dashboard: React.FC = () => {
                   placeholder="Select Location"
                   containerStyle={styles.dropdownList}
                   activeColor={pallette.white}
-                  onChange={e => setCountry(e.value)}
+                  onChange={handleLocationChange}
                 />
                 <Image source={images.location} style={styles.formInputIcon} />
               </View>
             </View>
+
+            {/* GREETING TEXT */}
             <View style={styles.textHelloCard}>
               <Text style={styles.helloSmall}>Hello,</Text>
               <Text style={styles.helloName}>{profile?.PatientName}</Text>
               <Text style={styles.helloSmall}>We are here to help!</Text>
             </View>
           </View>
-          <ScrollView
+
+          {/* UPCOMING APPOINTMENTS */}
+          <FlatList
+            data={appointments}
             horizontal
+            pagingEnabled
             showsHorizontalScrollIndicator={false}
-            pagingEnabled>
-            {appointments.map((appointment, index) => (
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({item}) => (
               <UpcomingAppointmentCard
-                key={index}
-                appointment={appointment}
+                appointment={item}
                 navigation={navigation}
               />
-            ))}
-          </ScrollView>
+            )}
+            onMomentumScrollEnd={handleScrollEnd}
+          />
+          <PaginationDots
+            data={appointments}
+            activeIndex={activeAppointmentIndex}
+          />
+
+          {/* QUICK ACTIONS */}
           <QuickActions navigation={navigation} />
         </View>
+
+        {/* BANNERS */}
         <Banners
           images={banners}
           activeindex={activeindex}
@@ -144,18 +186,10 @@ const Dashboard: React.FC = () => {
           width={w * 0.95}
           marginVertical={w * 0.01}
         />
-        <View style={styles.bannerDots}>
-          {banners.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.dot,
-                index === activeindex && {backgroundColor: pallette.app_green},
-              ]}
-            />
-          ))}
-        </View>
+        <PaginationDots data={banners} activeIndex={activeindex} />
       </ScrollView>
+
+      {/* FOOTER CALL BUTTON */}
       <View style={styles.footerCall}>
         <TouchableOpacity style={styles.footerCallButton}>
           <View style={styles.footerCallButtonIcon}>
@@ -173,6 +207,7 @@ const Dashboard: React.FC = () => {
 
 export default Dashboard;
 
+// ---------- STYLES ----------
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: pallette.white,
@@ -207,7 +242,7 @@ const styles = StyleSheet.create({
     height: h * 0.05,
     borderRadius: w * 0.1,
     paddingLeft: w * 0.03,
-    fontSize: 13,
+    fontSize: adjust(12),
     color: pallette.white,
     backgroundColor: 'transparent',
     fontFamily: 'ProximaNovaA-Regular',
@@ -227,16 +262,16 @@ const styles = StyleSheet.create({
   },
   placeholderCountry: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 13,
+    fontSize: adjust(12),
     color: pallette.white,
   },
   selectedTextContry: {
-    fontSize: 13,
+    fontSize: adjust(12),
     color: pallette.white,
   },
   dropdownList: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 13,
+    fontSize: adjust(12),
     marginLeft: 0,
     marginRight: 5,
     padding: 0,
@@ -248,12 +283,12 @@ const styles = StyleSheet.create({
   },
   helloSmall: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 16,
+    fontSize: adjust(14),
     color: pallette.white,
   },
   helloName: {
     fontFamily: 'ProximaNovaA-Semibold',
-    fontSize: 20,
+    fontSize: adjust(18),
     color: pallette.white,
   },
   footerCall: {
@@ -275,7 +310,7 @@ const styles = StyleSheet.create({
   },
   footerCallButtonText: {
     color: pallette.white,
-    fontSize: 13,
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Regular',
     fontWeight: 'bold',
     textTransform: 'uppercase',
@@ -296,17 +331,5 @@ const styles = StyleSheet.create({
   footerCallButtonIconImage: {
     width: w * 0.05,
     height: w * 0.05,
-  },
-  bannerDots: {
-    flexDirection: 'row',
-    alignSelf: 'center',
-    marginTop: h * 0.02,
-  },
-  dot: {
-    height: 8,
-    width: 8,
-    borderRadius: 5,
-    backgroundColor: pallette.dark_grey,
-    marginHorizontal: w * 0.01,
   },
 });

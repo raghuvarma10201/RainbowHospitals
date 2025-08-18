@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   StyleSheet,
   View,
@@ -9,23 +9,32 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
 } from 'react-native';
 import {Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
-import {login} from '../services/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ToastService} from '../utils/ToastService';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
+import {login} from '../services/auth';
+import {ToastService} from '../utils/ToastService';
 import {AuthStackParamList} from '../navigation/types';
 import {h, pallette, w} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
+// ---------- STATIC DATA ----------
 const local_data = [
   {value: '1', lable: '+91'},
   {value: '2', lable: '+92'},
 ];
+
+const images = {
+  logo: require('../../assets/images/logo.png'),
+  login: require('../../assets/images/login-img.png'),
+};
 
 const LoginSchema = Yup.object({
   mobileNumber: Yup.string()
@@ -33,6 +42,7 @@ const LoginSchema = Yup.object({
     .matches(/^[0-9]{10}$/, 'Mobile number must be 10 digits'),
 });
 
+// ---------- COMPONENT ----------
 const Login: React.FC = () => {
   type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
   const navigation = useNavigation<NavigationProp>();
@@ -40,6 +50,7 @@ const Login: React.FC = () => {
   const [country, setCountry] = useState('1');
   const [loading, setLoading] = useState(false);
 
+  // ---------- FORM SETUP ----------
   const formik = useFormik({
     initialValues: {mobileNumber: ''},
     validationSchema: LoginSchema,
@@ -53,6 +64,7 @@ const Login: React.FC = () => {
           navigation.navigate('Otp');
         }
       } catch (e) {
+        console.error('Login error:', e);
         ToastService.error('Invalid credentials', 'Please try again');
         setErrors({mobileNumber: 'Invalid credentials'});
       } finally {
@@ -62,6 +74,33 @@ const Login: React.FC = () => {
     },
   });
 
+  // ---------- CALLBACKS ----------
+  const handleCountryChange = useCallback((e: any) => {
+    setCountry(e.value);
+  }, []);
+
+  const handleNumberChange = useCallback(
+    (text: string) => formik.handleChange('mobileNumber')(text),
+    [formik],
+  );
+
+  const handleNumberBlur = useCallback(
+    () => formik.handleBlur('mobileNumber'),
+    [formik],
+  );
+
+  const handleSubmit = useCallback(() => {
+    formik.handleSubmit();
+  }, [formik]);
+
+  // ---------- EFFECTS ----------
+  useEffect(() => {
+    if (formik.values.mobileNumber.length === 10) {
+      Keyboard.dismiss();
+    }
+  }, [formik.values.mobileNumber]);
+
+  // ---------- RENDER ----------
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
@@ -70,12 +109,14 @@ const Login: React.FC = () => {
       <ScrollView
         contentContainerStyle={{flexGrow: 1, paddingBottom: h * 0.05}}
         keyboardShouldPersistTaps="handled">
+        {/* LOGO */}
         <ImageBackground
-          source={require('../../assets/images/logo.png')}
+          source={images.logo}
           style={styles.logo}
           resizeMode="contain"
         />
 
+        {/* TAGLINE & IMAGE */}
         <View style={styles.taglineWrapper}>
           <View style={styles.taglineBox}>
             <View style={styles.beforeDot} />
@@ -85,18 +126,20 @@ const Login: React.FC = () => {
             </Text>
           </View>
           <Image
-            source={require('../../assets/images/login-img.png')}
+            source={images.login}
             style={styles.loginImg}
             resizeMode="contain"
           />
         </View>
 
+        {/* FORM */}
         <View style={styles.formContainer}>
           <Text variant="headlineMedium" style={styles.title}>
             SIGN IN
           </Text>
           <Text style={styles.label}>Mobile Number</Text>
 
+          {/* INPUT GROUP */}
           <View style={styles.inputGroup}>
             <Dropdown
               style={styles.dropdown}
@@ -108,27 +151,37 @@ const Login: React.FC = () => {
               valueField="value"
               labelField="lable"
               placeholder="Select country"
-              onChange={e => setCountry(e.value)}
+              onChange={handleCountryChange}
             />
             <TextInput
               keyboardType="numeric"
               maxLength={10}
               style={styles.input}
               placeholder="Enter Mobile Number"
-              onChangeText={formik.handleChange('mobileNumber')}
-              onBlur={formik.handleBlur('mobileNumber')}
+              onChangeText={handleNumberChange}
+              onBlur={handleNumberBlur}
               value={formik.values.mobileNumber}
             />
           </View>
 
+          {/* ERROR */}
           {formik.touched.mobileNumber && formik.errors.mobileNumber && (
             <Text style={styles.error}>{formik.errors.mobileNumber}</Text>
           )}
 
+          {/* SUBMIT BUTTON */}
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => formik.handleSubmit()}
-            disabled={loading}>
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  formik.values.mobileNumber.length < 10 || loading
+                    ? pallette.dark_grey
+                    : pallette.app_purple,
+              },
+            ]}
+            onPress={handleSubmit}
+            disabled={formik.values.mobileNumber.length < 10 || loading}>
             <Text style={styles.buttonText}>
               {loading ? 'Sending...' : 'Get OTP'}
             </Text>
@@ -141,6 +194,7 @@ const Login: React.FC = () => {
 
 export default Login;
 
+// ---------- STYLES ----------
 const styles = StyleSheet.create({
   logo: {
     alignSelf: 'center',
@@ -170,7 +224,7 @@ const styles = StyleSheet.create({
     borderColor: pallette.white,
   },
   tagline: {
-    fontSize: h * 0.024,
+    fontSize: adjust(18),
     color: pallette.white,
     paddingBottom: h * 0.025,
   },
@@ -186,13 +240,13 @@ const styles = StyleSheet.create({
   },
   title: {
     color: pallette.app_green,
-    fontSize: h * 0.025,
+    fontSize: adjust(18),
     textAlign: 'center',
     marginBottom: h * 0.01,
     fontFamily: 'ProximaNovaA-Bold',
   },
   label: {
-    fontSize: h * 0.018,
+    fontSize: adjust(16),
     color: pallette.black,
     marginBottom: h * 0.012,
     textAlign: 'center',
@@ -207,7 +261,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: h * 0.018,
+    fontSize: adjust(14),
     paddingHorizontal: w * 0.025,
   },
   dropdown: {
@@ -219,17 +273,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: w * 0.025,
   },
   dropdownText: {
-    fontSize: h * 0.018,
+    fontSize: adjust(14),
     color: pallette.black,
   },
   error: {
     color: pallette.red,
     marginBottom: h * 0.007,
-    fontSize: h * 0.016,
+    fontSize: adjust(12),
   },
   button: {
     borderRadius: h * 0.05,
-    backgroundColor: pallette.dark_grey,
     paddingVertical: h * 0.015,
     width: w * 0.5,
     alignSelf: 'center',
@@ -237,7 +290,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: pallette.white,
-    fontSize: h * 0.018,
+    fontSize: adjust(14),
     textAlign: 'center',
   },
 });

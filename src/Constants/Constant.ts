@@ -34,4 +34,4 @@ export const pallette = {
   highlighting_purple: '#6200ee',
 };
 
-export const {height: h, width: w} = Dimensions.get('window');
+export const {height: h, width: w, fontScale: div} = Dimensions.get('window');

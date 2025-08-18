@@ -14,11 +14,9 @@ import {
   MyAppointmentDetails,
   VaccinesPediatric,
   AppointmentConfirmed,
+  AppointmentChat,
 } from '../pages';
 import {Login, Otp, Registration} from '../authentication';
-import AppointmentChat from '../pages/AppointmentChat';
-import {CompositeNavigationProp} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList, MainStackParamList} from '../navigation/types';
 
 type CombinedRouteNames = keyof AuthStackParamList | keyof MainStackParamList;

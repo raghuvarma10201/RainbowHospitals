@@ -4,6 +4,7 @@ import {Card} from 'react-native-paper';
 import {upcomingApointment} from '../utils/types';
 import {formatAppointmentDate, formatAppointmentTime} from '../utils/dateTime';
 import {pallette, w} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 interface Props {
   appointment: upcomingApointment;
@@ -33,7 +34,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
           <Text
             style={{
               fontFamily: 'ProximaNovaA-Regular',
-              fontSize: 12,
+              fontSize: adjust(12),
               color: pallette.app_purple,
             }}>
             {appointment?.CareProviderTitle} {appointment?.CareProviderName}
@@ -41,7 +42,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
           <Text
             style={{
               fontFamily: 'ProximaNovaA-Regular',
-              fontSize: 8,
+              fontSize: adjust(8),
               color: pallette.app_purple,
             }}>
             {appointment?.SpecialtyName}
@@ -71,7 +72,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
               <Text
                 style={{
                   fontFamily: 'ProximaNovaA-Regular',
-                  fontSize: 11,
+                  fontSize: adjust(10),
                   color: pallette.app_purple,
                 }}>
                 {' '}
@@ -81,7 +82,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
             <Text
               style={{
                 fontFamily: 'ProximaNovaA-Regular',
-                fontSize: 11,
+                fontSize: adjust(10),
                 color: pallette.app_purple,
               }}>
               {' '}
@@ -103,16 +104,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity>
-              <Text
-                style={{
-                  fontFamily: 'ProximaNovaA-Regular',
-                  fontSize: 11,
-                  color: pallette.white,
-                  paddingLeft: 5,
-                }}>
-                {' '}
-                Cancel
-              </Text>
+              <Text style={styles.cancelBtn}> Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -154,7 +146,7 @@ const styles = StyleSheet.create({
   },
   upcomingAppTitle: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 10,
+    fontSize: adjust(10),
     color: pallette.white,
     backgroundColor: pallette.app_purple,
     padding: 10,
@@ -166,12 +158,18 @@ const styles = StyleSheet.create({
   },
   providerText: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 12,
+    fontSize: adjust(12),
   },
   rescheduleBt: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 11,
+    fontSize: adjust(10),
     color: pallette.white,
+  },
+  cancelBtn: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: adjust(10),
+    color: pallette.white,
+    paddingLeft: 5,
   },
   divider: {
     height: '100%',
@@ -180,7 +178,7 @@ const styles = StyleSheet.create({
   },
   upcomingTime: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 11,
+    fontSize: adjust(10),
     backgroundColor: pallette.white,
     color: pallette.app_purple,
     textAlign: 'center',
@@ -204,4 +202,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UpcomingAppointmentCard;
+export default React.memo(UpcomingAppointmentCard);

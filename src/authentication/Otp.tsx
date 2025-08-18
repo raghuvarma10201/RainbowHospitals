@@ -35,14 +35,21 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList, MainStackParamList} from '../navigation/types';
 import {h, pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 const CELL_COUNT = 6;
+
+const images = {
+  logo: require('../../assets/images/logo.png'),
+  otp: require('../../assets/images/otp-img.png'),
+};
 
 const Otp: React.FC = () => {
   type CombinedNavigationProp = CompositeNavigationProp<
     NativeStackNavigationProp<AuthStackParamList>,
     NativeStackNavigationProp<MainStackParamList>
   >;
+
   const navigation = useNavigation<CombinedNavigationProp>();
   const {
     updateMrn,
@@ -52,25 +59,28 @@ const Otp: React.FC = () => {
     updateRegion,
   } = useApp();
   const {setLoggedIn} = useAuth();
+
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState('');
   const [timer, setTimer] = useState(30);
   const [resendDisabled, setResendDisabled] = useState(true);
+
   const codeFieldRef = useBlurOnFulfill({value, cellCount: CELL_COUNT});
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
 
+  /** Fetch phone number from storage */
   useEffect(() => {
-    const fetchPhoneNumber = async () => {
+    (async () => {
       const storedNumber = await AsyncStorage.getItem('mobileNumber');
       setPhoneNumber(storedNumber);
-    };
-    fetchPhoneNumber();
+    })();
   }, []);
 
+  /** Handle resend timer */
   useEffect(() => {
     if (resendDisabled && timer > 0) {
       const interval = setInterval(() => setTimer(prev => prev - 1), 1000);
@@ -80,6 +90,7 @@ const Otp: React.FC = () => {
     }
   }, [timer, resendDisabled]);
 
+  /** Resend OTP */
   const handleResend = useCallback(async () => {
     if (!phoneNumber || !resendDisabled) return;
     try {
@@ -93,13 +104,14 @@ const Otp: React.FC = () => {
       } else {
         ToastService.error('Error', response.message || 'Failed to resend OTP');
       }
-    } catch (err) {
+    } catch {
       ToastService.error('Error', 'Failed to resend OTP');
     } finally {
       setLoading(false);
     }
   }, [phoneNumber, resendDisabled]);
 
+  /** Load region & branch details */
   const loadDetails = useCallback(async () => {
     try {
       const regions = await getRegions();
@@ -123,9 +135,12 @@ const Otp: React.FC = () => {
         location.longitude,
       );
       if (nearestBranch) updateBranch(nearestBranch);
-    } catch {}
+    } catch {
+      // Silent fail - handled gracefully
+    }
   }, [updateBranch, updateAllBranch, updateRegion]);
 
+  /** Formik OTP Validation */
   const formik = useFormik({
     initialValues: {otp: ''},
     validationSchema: Yup.object({
@@ -136,6 +151,7 @@ const Otp: React.FC = () => {
     onSubmit: async () => {
       if (!phoneNumber) return;
       setLoading(true);
+
       try {
         const fcmToken = (await AsyncStorage.getItem('FcmTtoken')) || '';
         const response = await VerifyOTP({
@@ -143,6 +159,7 @@ const Otp: React.FC = () => {
           otp: value,
           fcmToken,
         });
+
         if (response?.status !== 200) {
           ToastService.error(
             'Error',
@@ -150,10 +167,12 @@ const Otp: React.FC = () => {
           );
           return;
         }
+
         ToastService.success(
           'Success',
           response.data.message || 'OTP verified successfully',
         );
+
         const authResponse = await authenticateUser({MobileNo: phoneNumber});
         if (authResponse.status !== 200) {
           navigation.navigate('Registration');
@@ -163,25 +182,30 @@ const Otp: React.FC = () => {
           );
           return;
         }
+
         const token = response.data.token;
         if (!token) throw new Error('Token missing in response');
+
         await AsyncStorage.multiSet([
           ['accessToken', token],
           ['refreshToken', token],
           ['tokenExpiry', response.data.expiryTime],
         ]);
+
         await loadDetails();
         updateMrn(authResponse.data.LoginName);
         await AsyncStorage.setItem('mrn', authResponse.data.LoginName);
+
         const profileData = await getPatientProfile({
           mrn: authResponse.data.LoginName,
         });
+
         if (profileData.data?.[0]) {
           setLoggedIn(true);
           updateProfile(profileData.data[0]);
           navigation.navigate('Dashboard');
         }
-      } catch (err) {
+      } catch {
         ToastService.error('Error', 'Failed to verify OTP');
       } finally {
         setLoading(false);
@@ -189,6 +213,7 @@ const Otp: React.FC = () => {
     },
   });
 
+  /** Sync input value with Formik */
   useEffect(() => {
     formik.setFieldValue('otp', value);
   }, [value]);
@@ -200,11 +225,14 @@ const Otp: React.FC = () => {
       style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={styles.container}>
+        {/* Logo */}
         <ImageBackground
-          source={require('../../assets/images/logo.png')}
+          source={images.logo}
           style={styles.logo}
           resizeMode="contain"
         />
+
+        {/* Tagline */}
         <View style={styles.taglineWrapper}>
           <View style={styles.taglineBox}>
             <View style={styles.beforeDot} />
@@ -213,14 +241,16 @@ const Otp: React.FC = () => {
             </Text>
           </View>
         </View>
-        <Image
-          source={require('../../assets/images/otp-img.png')}
-          style={styles.otpImg}
-          resizeMode="cover"
-        />
+
+        {/* OTP Image */}
+        <Image source={images.otp} style={styles.otpImg} resizeMode="cover" />
+
+        {/* OTP Section */}
         <View style={styles.otpContainer}>
           <Text style={styles.title}>ENTER OTP</Text>
           <Text style={styles.label}>OTP Code sent on +91 {phoneNumber}</Text>
+
+          {/* Code Input */}
           <CodeField
             ref={codeFieldRef as React.RefObject<TextInput>}
             {...props}
@@ -244,28 +274,31 @@ const Otp: React.FC = () => {
           {formik.errors.otp && formik.touched.otp && (
             <Text style={styles.error}>{formik.errors.otp}</Text>
           )}
+
+          {/* Timer / Resend */}
           <View style={styles.timeContainer}>
-            {!resendDisabled && (
-              <TouchableOpacity
-                disabled={resendDisabled}
-                onPress={handleResend}>
-                <Text
-                  style={[
-                    styles.resendText,
-                    resendDisabled && {color: pallette.light_grey},
-                  ]}>
-                  Resend
-                </Text>
+            {!resendDisabled ? (
+              <TouchableOpacity onPress={handleResend}>
+                <Text style={styles.resendText}>Resend</Text>
               </TouchableOpacity>
-            )}
-            {resendDisabled && (
+            ) : (
               <Text style={styles.timer}>
                 00:{timer < 10 ? `0${timer}` : timer}
               </Text>
             )}
           </View>
+
+          {/* Continue Button */}
           <TouchableOpacity
-            style={styles.primaryButton}
+            style={[
+              styles.primaryButton,
+              {
+                backgroundColor:
+                  formik.values.otp.length < 6
+                    ? pallette.dark_grey
+                    : pallette.app_purple,
+              },
+            ]}
             onPress={() => formik.handleSubmit()}>
             <Text style={styles.primaryButtonText}>Continue</Text>
           </TouchableOpacity>
@@ -314,7 +347,7 @@ const styles = StyleSheet.create({
   taglineText: {
     color: pallette.white,
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: adjust(14),
   },
   otpImg: {
     width: '100%',
@@ -326,13 +359,13 @@ const styles = StyleSheet.create({
   },
   title: {
     color: pallette.app_green,
-    fontSize: 20,
+    fontSize: adjust(18),
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 5,
   },
   label: {
-    fontSize: 13,
+    fontSize: adjust(14),
     color: pallette.black,
     textAlign: 'center',
     marginBottom: 5,
@@ -348,7 +381,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: pallette.app_light_purple,
     borderRadius: 8,
-    marginRight: 10,
     backgroundColor: pallette.white,
     justifyContent: 'center',
     alignItems: 'center',
@@ -357,13 +389,13 @@ const styles = StyleSheet.create({
     borderColor: pallette.highlighting_purple,
   },
   cellText: {
-    fontSize: 20,
+    fontSize: adjust(18),
     textAlign: 'center',
     color: pallette.black,
   },
   error: {
     color: pallette.red,
-    fontSize: 13,
+    fontSize: adjust(12),
     marginTop: 5,
     textAlign: 'center',
   },
@@ -373,26 +405,25 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   resendText: {
+    fontSize: adjust(12),
     color: pallette.app_light_purple,
     fontWeight: 'bold',
     textAlign: 'right',
   },
   timer: {
     textAlign: 'right',
-    fontSize: 12,
+    fontSize: adjust(12),
     color: pallette.black,
   },
   primaryButton: {
     width: '100%',
-    backgroundColor: pallette.dark_grey,
-    padding: 10,
-    borderRadius: 40,
-    marginTop: 10,
-    marginBottom: 20,
+    paddingVertical: h * 0.015,
+    borderRadius: h * 0.05,
+    marginTop: h * 0.01,
   },
   primaryButtonText: {
     color: pallette.white,
-    fontSize: 14,
+    fontSize: adjust(14),
     textAlign: 'center',
   },
 });
