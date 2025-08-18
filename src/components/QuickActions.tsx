@@ -37,8 +37,6 @@ const QuickActionButton: React.FC<ActionItem & {style?: object}> = ({
 );
 
 const QuickActions: React.FC<QuickActionsProps> = ({navigation}) => {
-  console.log(navigation);
-
   // Array of quick action items
   const actionItems: ActionItem[] = [
     {
@@ -110,8 +108,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   iconAction: {
-    width: 50,
-    height: 50,
+    width: w * 0.15,
+    height: w * 0.15,
     marginBottom: 5,
   },
   actionText: {

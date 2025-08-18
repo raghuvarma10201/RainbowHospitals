@@ -51,8 +51,6 @@ const AppointmentConfirmed: React.FC = () => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log('called');
-
       setTimeout(() => {
         navigation.dispatch(
           CommonActions.reset({

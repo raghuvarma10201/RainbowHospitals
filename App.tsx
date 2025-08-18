@@ -31,8 +31,7 @@ import {
   setupNotificationListeners,
 } from './src/utils/firebaseNotificationHandler';
 import notifee, {AndroidImportance} from '@notifee/react-native';
-import {initializeApp} from '@react-native-firebase/app';
-import {getMessaging} from '@react-native-firebase/messaging';
+import {getMessaging, getToken} from '@react-native-firebase/messaging';
 import {fetchSettings} from './src/services/common';
 import {pallette, whiteColor} from './src/Constants/Constant';
 
@@ -50,7 +49,9 @@ const App: React.FC = () => {
   useEffect(() => {
     const requestUserPermissions = async () => {
       await requestUserPermission();
-      const FcmTtoken = await getMessaging().getToken();
+      const messaging = getMessaging();
+      const FcmTtoken = await getToken(messaging);
+      // const FcmTtoken = await getMessaging().getToken();
       await AsyncStorage.setItem('FcmTtoken', FcmTtoken);
     };
     requestUserPermissions();
