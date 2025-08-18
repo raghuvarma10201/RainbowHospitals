@@ -25,10 +25,6 @@ const Specialities: React.FC = ({route}: any) => {
   const [doctors, setDoctors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const navigateTo = (path: keyof MainStackParamList, params: any) => {
-    navigation.navigate(path, params);
-  };
-
   useEffect(() => {
     loadSpecialities();
   }, []);
@@ -38,7 +34,7 @@ const Specialities: React.FC = ({route}: any) => {
       getSpecialities,
       data => {
         setSpecialities(data);
-        loadDoctors('', appointmentType);
+        loadDoctors(data[0]?.speciality_id, appointmentType);
       },
       'specialities',
     );
