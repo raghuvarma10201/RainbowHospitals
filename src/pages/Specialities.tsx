@@ -2,7 +2,7 @@ import {ScrollView, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Highlight from '../components/HighlightingSlider';
+import DoctorSlider from '../components/DoctorSlider';
 import SpecialtySlider from '../components/SpecialitySlider';
 import PaginatedGrid from '../components/GridComponent';
 import {ToastService} from '../utils/ToastService';
@@ -108,7 +108,7 @@ const Specialities: React.FC = ({route}: any) => {
                 loadDoctors(specialityId, appointmentType);
               }}
             />
-            <Highlight
+            <DoctorSlider
               doctors={doctors}
               activeindex={activeDocIndex}
               setActiveindex={setActiveDocIndex}

@@ -22,7 +22,7 @@ const ITEM_WIDTH = screenWidth * 0.4;
 const SPACER_WIDTH = (screenWidth - ITEM_WIDTH) / 2;
 const AUTO_SCROLL_INTERVAL = 3000;
 
-const Highlight = ({
+const DoctorSlider = ({
   doctors,
   activeindex,
   setActiveindex,
@@ -157,7 +157,7 @@ const Highlight = ({
   );
 };
 
-export default Highlight;
+export default DoctorSlider;
 
 const styles = StyleSheet.create({
   itemContainer: {

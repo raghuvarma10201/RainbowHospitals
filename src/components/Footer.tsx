@@ -3,7 +3,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useEffect, useMemo, useState} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {MainStackParamList} from '../navigation/types';
-import {pallette} from '../Constants/Constant';
+import {h, pallette} from '../Constants/Constant';
 import {adjust} from '../utils/commonFunctions';
 
 interface FooterProps {
@@ -136,13 +136,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
 
   footerButtonContainer: {
     paddingVertical: 10,
+    paddingBottom: h * 0.025,
     backgroundColor: pallette.app_green,
     flexDirection: 'row',
     justifyContent: 'space-around',

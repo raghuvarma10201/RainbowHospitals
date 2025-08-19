@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 
 const {width: screenWidth} = Dimensions.get('window');
-const ITEM_WIDTH = screenWidth * 0.4; // width of each text item
-const SPACER_WIDTH = (screenWidth - ITEM_WIDTH) / 2; // half remaining width for perfect centering
+const ITEM_WIDTH = screenWidth * 0.3; // width of each text item
+const SPACER_WIDTH = (screenWidth - ITEM_WIDTH) / 2.5; // half remaining width for perfect centering
 
 const SpecialtyHighlight = ({
   specialties,
@@ -111,6 +111,8 @@ const SpecialtyHighlight = ({
             adjustedIndex === activeIndex && styles.activeItemContainer,
           ]}>
           <Text
+            adjustsFontSizeToFit
+            numberOfLines={1}
             style={[
               styles.tabText,
               adjustedIndex === activeIndex && styles.activeTabText,
@@ -140,6 +142,7 @@ const SpecialtyHighlight = ({
         snapToInterval={ITEM_WIDTH}
         decelerationRate="fast"
         bounces={false}
+        scrollEnabled={false}
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {x: scrollX}}}],
           {useNativeDriver: true},
@@ -176,8 +179,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
