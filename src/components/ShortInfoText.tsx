@@ -1,27 +1,59 @@
-import React, {useState, useMemo} from 'react';
-import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
+import React, {useState, useMemo, useCallback} from 'react';
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
 import {pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
-const ShortInfoText: React.FC<{text: string}> = ({text}) => {
+// ---------- TYPES ----------
+interface ShortInfoTextProps {
+  text: string; // raw text that may contain HTML tags
+  maxChars?: number; // max characters before showing "Read more"
+  containerStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
+}
+
+// ---------- COMPONENT ----------
+const ShortInfoText: React.FC<ShortInfoTextProps> = ({
+  text,
+  maxChars = 80,
+  containerStyle,
+  textStyle,
+}) => {
   const [expanded, setExpanded] = useState(false);
 
-  // Clean the HTML tags using regex
-  const cleanText = useMemo(() => {
+  // ✅ Clean text (remove HTML + collapse spaces) only when `text` changes
+  const cleanText = useMemo<string>(() => {
     return text
-      ?.replace(/<[^>]*>/g, '') // remove HTML tags
+      .replace(/<[^>]*>/g, '') // remove HTML tags
       .replace(/\s+/g, ' ') // collapse multiple spaces
       .trim(); // trim leading/trailing spaces
   }, [text]);
 
-  const toggleExpanded = () => setExpanded(prev => !prev);
+  // ✅ Memoized toggle to prevent re-creation on re-render
+  const toggleExpanded = useCallback(() => {
+    setExpanded(prev => !prev);
+  }, []);
+
+  // ✅ Only show "Read more" if text exceeds threshold
+  const shouldShowToggle = cleanText.length > maxChars;
 
   return (
-    <View>
-      <Text style={styles.docName} numberOfLines={expanded ? undefined : 2}>
+    <View style={containerStyle}>
+      <Text
+        style={[styles.docName, textStyle]}
+        numberOfLines={expanded ? undefined : 2}>
         {cleanText}
       </Text>
-      {cleanText.length > 80 && ( // only show toggle if long text
-        <TouchableOpacity onPress={toggleExpanded}>
+
+      {shouldShowToggle && (
+        <TouchableOpacity onPress={toggleExpanded} activeOpacity={0.7}>
           <Text style={styles.readMore}>
             {expanded ? 'Read less' : 'Read more'}
           </Text>
@@ -31,17 +63,17 @@ const ShortInfoText: React.FC<{text: string}> = ({text}) => {
   );
 };
 
+// ---------- STYLES ----------
 const styles = StyleSheet.create({
   docName: {
-    fontSize: 12,
+    fontSize: adjust(10),
     color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'justify',
   },
   readMore: {
     color: pallette.white,
-    marginTop: 4,
-    fontSize: 12,
+    fontSize: adjust(10),
     fontWeight: 'bold',
     textAlign: 'right',
   },

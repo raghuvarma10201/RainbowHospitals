@@ -29,7 +29,7 @@ export type MainStackParamList = {
   VaccinesPediatric: undefined;
   BookScan: undefined;
   MedicalRecord: undefined;
-  SlotConfirmation: {doctor: any};
+  SlotConfirmation: {doctor: any; doctorSpecialitites: any};
   Home: undefined;
   MyAppointments: undefined;
   MyAppointmentDetails: {appointmentData: any; cancel?: boolean};

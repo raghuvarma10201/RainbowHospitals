@@ -16,6 +16,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
 import {pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 const BookVaccination: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
   },
 
   actionText: {
-    fontSize: 13,
+    fontSize: adjust(12),
     textAlign: 'center',
     marginTop: 4,
     fontFamily: 'ProximaNovaA-Regular',

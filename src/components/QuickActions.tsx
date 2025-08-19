@@ -49,9 +49,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({navigation}) => {
       icon: require('../../assets/images/video-consultation-icon.png'),
       label: 'Book Video Consultation',
       onPress: () =>
-        navigateTo(navigation, 'AppointmentConfirmed', {
-          appointmentType: 'Video',
-        }),
+        navigateTo(navigation, 'Specialities', {appointmentType: 'Video'}),
     },
     {
       icon: require('../../assets/images/vaccine-icon.png'),

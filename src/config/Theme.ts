@@ -1,11 +1,12 @@
 // src/config/theme.ts
 import {DefaultTheme} from 'react-native-paper';
+import {pallette} from '../Constants/Constant';
 
 export const AppTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#FF5400',
-    background: '#f6f6f6',
+    primary: pallette.app_purple,
+    background: pallette.white,
   },
 } as const;

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 const local_data = [
   {
@@ -67,11 +68,11 @@ const styles = StyleSheet.create({
     color: pallette.white,
   },
   placeholderCountry: {
-    fontSize: 14,
+    fontSize: adjust(12),
     color: pallette.white,
   },
   selectedTextContry: {
-    fontSize: 12,
+    fontSize: adjust(10),
     marginLeft: 8,
     color: pallette.white,
   },
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
   },
   inputSearchCountry: {
     height: 40,
-    fontSize: 16,
+    fontSize: adjust(14),
     backgroundColor: pallette.black,
   },
 

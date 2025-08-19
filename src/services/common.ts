@@ -40,7 +40,7 @@ export const getDoctors = async (
   speciality_id: any,
   branch_id: any,
   category_id: any,
-  appointment_type: number,
+  appointment_type: string,
   page: number,
   pageSize: number,
 ) => {

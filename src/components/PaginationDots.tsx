@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
     marginTop: h * 0.02,
   },
   dot: {
-    height: 8,
-    width: 8,
+    height: 6,
+    width: 6,
     borderRadius: 5,
     backgroundColor: pallette.dark_grey,
     marginHorizontal: w * 0.01,

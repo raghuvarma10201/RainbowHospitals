@@ -22,7 +22,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Banners from '../components/Slider';
 import {pallette} from '../Constants/Constant';
-import {navigateTo} from '../utils/commonFunctions';
+import {adjust, navigateTo} from '../utils/commonFunctions';
 import {
   CommonActions,
   useFocusEffect,
@@ -54,8 +54,8 @@ const AppointmentConfirmed: React.FC = () => {
       setTimeout(() => {
         navigation.dispatch(
           CommonActions.reset({
-            index: 0,
-            routes: [{name: routes.Dashboard}],
+            index: 1,
+            routes: [{name: routes.Dashboard}, {name: routes.MyAppointments}],
           }),
         );
       }, 3000);
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   },
   textbeforeDot: {position: 'relative'},
   imgTextTitle: {
-    fontSize: 12,
+    fontSize: adjust(10),
     lineHeight: 18,
     fontWeight: 'normal',
     color: pallette.white,
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   },
 
   acTitle: {
-    fontSize: 20,
+    fontSize: adjust(18),
     fontWeight: 'bold',
     color: pallette.black,
     textAlign: 'center',
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     marginBottom: '10%',
   },
   acSubTitle: {
-    fontSize: 13,
+    fontSize: adjust(12),
     color: pallette.black,
     textAlign: 'center',
     marginTop: 0,

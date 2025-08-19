@@ -14,7 +14,7 @@ import {IMG_BASE_URL} from '../utils/environment';
 import FastImage from 'react-native-fast-image';
 import {pallette} from '../Constants/Constant';
 import {routes} from '../utils/enums';
-import {navigateTo} from '../utils/commonFunctions';
+import {adjust, navigateTo} from '../utils/commonFunctions';
 import {MainStackParamList} from '../navigation/types';
 
 const {width: screenWidth} = Dimensions.get('window');
@@ -109,18 +109,18 @@ const DoctorSlider = ({
                     priority: 'high',
                   }
             }
-            style={[styles.banner, {height, width: ITEM_WIDTH}]}
+            style={[styles.banner, {height}]}
             resizeMode="cover"
           />
           <View style={styles.doctorDetails}>
             <Text style={styles.docName}>{item?.name}</Text>
-            <Text style={[styles.docName, {fontSize: 12}]}>
+            <Text style={[styles.docName, {fontSize: adjust(10)}]}>
               {item?.designation}
             </Text>
             <Text
               style={[
                 styles.docName,
-                {fontSize: 10, fontFamily: 'ProximaNovaA-Regular'},
+                {fontSize: adjust(9), fontFamily: 'ProximaNovaA-Regular'},
               ]}>
               {item?.speciality}
             </Text>
@@ -169,14 +169,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 10,
   },
-  banner: {},
+  banner: {
+    width: ITEM_WIDTH,
+  },
   doctorDetails: {
     padding: 8,
     backgroundColor: pallette.app_purple,
     width: ITEM_WIDTH,
   },
   docName: {
-    fontSize: 14,
+    fontSize: adjust(12),
     color: pallette.white,
     fontFamily: 'ProximaNovaA-Semibold',
   },

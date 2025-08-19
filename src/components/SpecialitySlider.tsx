@@ -8,6 +8,8 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+import {adjust} from '../utils/commonFunctions';
+import {pallette} from '../Constants/Constant';
 
 const {width: screenWidth} = Dimensions.get('window');
 const ITEM_WIDTH = screenWidth * 0.3; // width of each text item
@@ -182,26 +184,25 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: pallette.light_grey,
     justifyContent: 'center',
     alignItems: 'center',
   },
   activeItemContainer: {
-    borderColor: '#00A2A2',
-    backgroundColor: '#e6fafa',
+    backgroundColor: pallette.app_light_green,
   },
   tabText: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: adjust(12),
+    color: pallette.dark_grey,
   },
   activeTabText: {
-    color: '#00A2A2',
+    color: pallette.app_green,
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
   arrow: {
-    fontSize: 18,
-    color: '#00A2A2',
+    fontSize: adjust(16),
+    color: pallette.app_green,
     fontWeight: 'bold',
     paddingHorizontal: 10,
   },

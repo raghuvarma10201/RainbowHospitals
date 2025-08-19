@@ -2,6 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useTimer} from '../context/TimeContext';
 import {pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 const TimerBanner = () => {
   const {secondsLeft} = useTimer();
@@ -35,13 +36,13 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   heading: {
-    fontSize: 16,
+    fontSize: adjust(14),
     fontWeight: '600',
     color: '#f57c00',
     marginBottom: 4,
   },
   text: {
-    fontSize: 14,
+    fontSize: adjust(12),
     color: '#6d4c41',
     textAlign: 'center',
   },

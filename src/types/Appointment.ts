@@ -1,4 +1,4 @@
-export type BookingStatus = 'BOOKING' | 'Rescheduled' | 'Cancel';
+export type BookingStatus = 'BOOKING' | 'RESCHEDULE' | 'CANCEL';
 export type AppointmentType = 'Video' | 'Physical';
 export type PaymentType = 'ONLINE' | 'CASH'; // extend as needed
 

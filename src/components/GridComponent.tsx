@@ -19,8 +19,9 @@ const ITEMS_PER_PAGE = 9;
 
 export interface ItemsProps {
   items: any[];
+  type: string;
 }
-const PaginatedGrid: React.FC<ItemsProps> = ({items}) => {
+const PaginatedGrid: React.FC<ItemsProps> = ({items, type}) => {
   type AppNavigationProp = NativeStackNavigationProp<
     MainStackParamList,
     'DoctorsList'
@@ -38,7 +39,7 @@ const PaginatedGrid: React.FC<ItemsProps> = ({items}) => {
   const navigateToDoctors = async (specialityId: number) => {
     navigation.navigate('DoctorsList', {
       specialityId: specialityId,
-      appointmentType: 'video',
+      appointmentType: type,
     });
   };
 

@@ -13,13 +13,6 @@ export const skyBlueColor = '#54C1DE';
 export const litepurpleColor = 'rgba(126, 58, 147, 0.3)';
 export const litepurpleColo24r = 'rgba(126, 58, 147, 0.7)';
 
-//Fonts Size
-export const headingSize24 = 24;
-export const headingSize20 = 20;
-export const headingSize14 = 14;
-export const fontSize16 = 16;
-export const fontSize18 = 18;
-export const fontSize20 = 20;
 export const pallette = {
   white: '#FFFFFF',
   black: '#000000',

@@ -25,6 +25,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
 import {pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 const local_data = [
   {
@@ -147,7 +148,7 @@ const MedicalRecord: React.FC = () => {
             <Card.Content style={[styles.cardList, {elevation: 0}]}>
               <Text
                 style={{
-                  fontSize: 14,
+                  fontSize: adjust(12),
                   fontFamily: 'ProximaNovaA-Semibold',
                   color: pallette.black,
                   marginBottom: 2,
@@ -156,7 +157,7 @@ const MedicalRecord: React.FC = () => {
               </Text>
               <Text
                 style={{
-                  fontSize: 12,
+                  fontSize: adjust(10),
                   fontFamily: 'ProximaNovaA-Semibold',
                   color: pallette.black,
                   marginBottom: 5,
@@ -168,7 +169,7 @@ const MedicalRecord: React.FC = () => {
                 <View style={styles.leftCardCont}>
                   <Text
                     style={{
-                      fontSize: 13,
+                      fontSize: adjust(12),
                       fontFamily: 'ProximaNovaA-Regular',
                       color: pallette.black,
                     }}>
@@ -189,7 +190,7 @@ const MedicalRecord: React.FC = () => {
             <Card.Content style={[styles.cardList, {elevation: 0}]}>
               <Text
                 style={{
-                  fontSize: 14,
+                  fontSize: adjust(12),
                   fontFamily: 'ProximaNovaA-Semibold',
                   color: pallette.black,
                   marginBottom: 2,
@@ -198,7 +199,7 @@ const MedicalRecord: React.FC = () => {
               </Text>
               <Text
                 style={{
-                  fontSize: 12,
+                  fontSize: adjust(10),
                   fontFamily: 'ProximaNovaA-Semibold',
                   color: pallette.black,
                   marginBottom: 5,
@@ -210,7 +211,7 @@ const MedicalRecord: React.FC = () => {
                 <View style={styles.leftCardCont}>
                   <Text
                     style={{
-                      fontSize: 13,
+                      fontSize: adjust(12),
                       fontFamily: 'ProximaNovaA-Regular',
                       color: pallette.black,
                     }}>
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     paddingRight: 10,
     marginTop: 0,
-    fontSize: 15,
+    fontSize: adjust(14),
     fontWeight: 400,
     color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingLeft: 15,
     marginTop: 0,
-    fontSize: 13,
+    fontSize: adjust(12),
     fontWeight: 400,
     color: pallette.white,
     backgroundColor: 'transparent',
@@ -318,17 +319,17 @@ const styles = StyleSheet.create({
 
   placeholderCountry: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 13,
+    fontSize: adjust(12),
     color: pallette.white,
   },
   selectedTextContry: {
-    fontSize: 13,
+    fontSize: adjust(12),
     color: pallette.white,
   },
 
   dropdownList: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 13,
+    fontSize: adjust(12),
     marginLeft: 0,
     marginRight: 5,
     padding: 0,
@@ -350,7 +351,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   title: {
-    fontSize: 22,
+    fontSize: adjust(20),
     fontFamily: 'ProximaNovaA-Semibold',
     color: pallette.black,
   },
@@ -367,7 +368,7 @@ const styles = StyleSheet.create({
   selectUser: {},
   textselectUser: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 14,
+    fontSize: adjust(12),
     marginBottom: 5,
   },
 
@@ -381,15 +382,15 @@ const styles = StyleSheet.create({
 
   userPlaceholder: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 13,
+    fontSize: adjust(12),
   },
   userSelectedText: {
-    fontSize: 13,
+    fontSize: adjust(12),
   },
 
   userDropdownList: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 13,
+    fontSize: adjust(12),
     marginLeft: 0,
     marginRight: 5,
     padding: 0,
@@ -402,7 +403,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   formLabel: {
-    fontSize: 12,
+    fontSize: adjust(10),
     fontFamily: 'ProximaNovaA-Regular',
     color: pallette.black,
     marginBottom: 5,
@@ -442,7 +443,7 @@ const styles = StyleSheet.create({
 
   textBtn: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 11,
+    fontSize: adjust(10),
     color: pallette.black,
   },
   textBtnBorder: {

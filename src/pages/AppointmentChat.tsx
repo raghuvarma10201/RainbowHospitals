@@ -27,6 +27,7 @@ import {ToastService} from '../utils/ToastService';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
 import CommonHeader from '../components/Header';
+import {adjust} from '../utils/commonFunctions';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 const screen_height = Dimensions.get('window').height;
@@ -434,7 +435,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   messageText: {
-    fontSize: 16,
+    fontSize: adjust(14),
     textAlign: 'right',
     marginVertical: 5,
   },
@@ -482,7 +483,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     marginRight: 10,
-    fontSize: 16,
+    fontSize: adjust(14),
     width: '65%',
   },
   iconContainer: {
@@ -533,7 +534,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   previewFileName: {
-    fontSize: 14,
+    fontSize: adjust(12),
     maxWidth: 150,
   },
   removePreview: {

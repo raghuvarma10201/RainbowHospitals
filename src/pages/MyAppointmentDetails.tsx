@@ -20,17 +20,23 @@ import {useApp} from '../context/AppContext';
 import {ToastService} from '../utils/ToastService';
 import {pallette} from '../Constants/Constant';
 import Loader from '../components/Loader';
+import {adjust} from '../utils/commonFunctions';
+import {useJitsi} from '../context/JitsiContext';
+import {AppointmentPayload} from '../types/Appointment';
 
 const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel} = route.params;
+  console.log(appointmentData);
+
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
 
   const [visible, setVisible] = React.useState(cancel || false);
   const [loading, setLoading] = useState(false);
   const {branch} = useApp();
+  const {showJitsi} = useJitsi();
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   const [bank_details, setBank_details] = useState({
@@ -42,11 +48,11 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   });
 
   const cancelAppointment = async () => {
-    const obj = {
+    const obj: AppointmentPayload = {
       status: 'CANCEL',
       appointmentnumber: appointmentData?.BookingUID,
       comment: '',
-      mrn: await AsyncStorage.getItem('mrn'),
+      mrn: (await AsyncStorage.getItem('mrn')) || '',
       OrganisationUID: appointmentData?.OrganisationUID,
       AppointmentType: appointmentData?.AppointmentType,
       bank_details,
@@ -67,6 +73,17 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const startVideoCall = () => {
+    showJitsi({
+      roomName: appointmentData?.BookingUID || 'SampleJitsiCall',
+      token: '',
+      serverURL: 'https://dev.rb.vc.demos.im/', // room url - https://dev.rb.vc.demos.im/SampleJitsiCall
+      userInfo: {
+        displayName: appointmentData?.PatientName || 'Test User',
+      },
+    });
   };
 
   return (
@@ -95,14 +112,15 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                 style={[
                   styles.docName,
                   {
-                    fontSize: 16,
+                    fontSize: adjust(14),
                     color: '#4CC2BF',
                     fontFamily: 'ProximaNovaA-Semibold',
                   },
                 ]}>
                 {appointmentData?.CareProviderName ?? 'Doctor Name'}
               </Text>
-              <Text style={[styles.docName, {fontSize: 12, marginTop: 3}]}>
+              <Text
+                style={[styles.docName, {fontSize: adjust(10), marginTop: 3}]}>
                 {appointmentData?.SpecialtyName ?? 'Specialization'}
               </Text>
 
@@ -129,7 +147,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                 <View>
                   <Text
                     style={{
-                      fontSize: 13,
+                      fontSize: adjust(12),
                       color: '#6651AF',
                       fontFamily: 'ProximaNovaA-Bold',
                       marginBottom: 2,
@@ -138,7 +156,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   </Text>
                   <Text
                     style={{
-                      fontSize: 15,
+                      fontSize: adjust(14),
                       color: '#6651AF',
                       fontFamily: 'ProximaNovaA-Semibold',
                       marginBottom: 6,
@@ -163,7 +181,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                 />
                 <Text
                   style={{
-                    fontSize: 14,
+                    fontSize: adjust(12),
                     color: '#6651AF',
                     fontFamily: 'ProximaNovaA-Semibold',
                     marginBottom: 2,
@@ -179,7 +197,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   />
                   <Text
                     style={{
-                      fontSize: 14,
+                      fontSize: adjust(12),
                       color: '#6651AF',
                       fontFamily: 'ProximaNovaA-Semibold',
                       marginBottom: 2,
@@ -211,6 +229,14 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           </View>
           <TouchableOpacity
             style={styles.chatBtn}
+            onPress={() => startVideoCall()}>
+            <Image
+              source={require('../../assets/images/videocall-icon.png')}
+              style={styles.chatIcon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.vcBtn}
             onPress={() =>
               navigation.navigate('AppointmentChat', {
                 bookingId: appointmentData.appointmentnumber,
@@ -407,7 +433,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   docName: {
-    fontSize: 20,
+    fontSize: adjust(18),
     color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'center',
@@ -423,7 +449,7 @@ const styles = StyleSheet.create({
   },
 
   patientInfoHeaderText: {
-    fontSize: 16,
+    fontSize: adjust(14),
     marginTop: 10,
     fontFamily: 'ProximaNovaA-Bold',
     color: pallette.app_purple,
@@ -442,7 +468,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   locationText: {
-    fontSize: 13,
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Semibold',
     color: pallette.white,
     textAlign: 'left',
@@ -474,7 +500,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 2,
-    fontSize: 11,
+    fontSize: adjust(10),
     color: pallette.black,
     fontFamily: 'ProximaNovaA-Regular',
     marginBottom: 10,
@@ -517,7 +543,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Regular',
   },
   payBtnTxt: {
-    fontSize: 13,
+    fontSize: adjust(12),
     color: pallette.white,
     fontFamily: 'ProximaNovaA-Semibold',
   },
@@ -537,7 +563,7 @@ const styles = StyleSheet.create({
   //---
 
   formTitle: {
-    fontSize: 18,
+    fontSize: adjust(16),
     textAlign: 'center',
     marginTop: 0,
     fontFamily: 'ProximaNovaA-Bold',
@@ -546,7 +572,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   formSubTitle: {
-    fontSize: 13,
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Regular',
     color: pallette.black,
     marginBottom: 10,
@@ -565,7 +591,7 @@ const styles = StyleSheet.create({
   },
 
   formLabel: {
-    fontSize: 13,
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Regular',
     color: pallette.black,
     marginBottom: 5,
@@ -596,7 +622,7 @@ const styles = StyleSheet.create({
   formButtonText: {
     color: pallette.white,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Bold',
     fontWeight: 'bold',
     padding: 5,
@@ -612,7 +638,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     position: 'absolute',
-    bottom: -40,
+    bottom: -(h * 0.04),
     right: 18,
     zIndex: 2,
     borderWidth: 3,
@@ -623,5 +649,21 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
     resizeMode: 'contain',
+  },
+
+  vcBtn: {
+    backgroundColor: pallette.app_green,
+    borderRadius: 100,
+    width: 62,
+    height: 62,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    position: 'absolute',
+    bottom: -(h * 0.04),
+    left: 18,
+    zIndex: 2,
+    borderWidth: 3,
+    borderColor: '#00A69E',
   },
 });

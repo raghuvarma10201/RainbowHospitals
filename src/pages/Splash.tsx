@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, View, ImageBackground, ScrollView} from 'react-native';
 import {Text} from 'react-native-paper';
 import {pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 const Splash: React.FC = () => {
   return (
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 20,
+    fontSize: adjust(18),
     textAlign: 'left',
     marginTop: 0,
     marginBottom: 0,

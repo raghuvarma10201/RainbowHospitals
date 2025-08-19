@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import {pallette} from '../../Constants/Constant';
+import {adjust} from '../../utils/commonFunctions';
 
 // Define type for route params
 type ChangeLocationParams = {
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: pallette.white,
   },
   title: {
-    fontSize: 20,
+    fontSize: adjust(18),
     fontWeight: 'bold',
     marginBottom: 20,
     alignSelf: 'center',
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     borderColor: 'purple',
   },
   text: {
-    fontSize: 16,
+    fontSize: adjust(14),
     color: '#333',
   },
   button: {

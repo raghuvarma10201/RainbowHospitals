@@ -7,8 +7,7 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
-import {TextInput, Text} from 'react-native-paper';
-import {Dropdown} from 'react-native-element-dropdown';
+import {Text} from 'react-native-paper';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
@@ -27,12 +26,9 @@ import {h, pallette, w} from '../Constants/Constant';
 import {adjust} from '../utils/commonFunctions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
+import SearchLocationBlock from '../components/SearchLocationBlock';
 
 // ---------- STATIC DATA OUTSIDE COMPONENT ----------
-const local_data = [
-  {value: '1', lable: 'location'},
-  {value: '2', lable: 'location2'},
-];
 
 const images = {
   banner: require('../../assets/images/slide1.png'),
@@ -49,8 +45,6 @@ const Dashboard: React.FC = () => {
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {profile} = useApp();
 
-  const [search, setSearch] = useState('');
-  const [country, setCountry] = useState('1');
   const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
   const [activeindex, setActiveindex] = useState(0);
   const [activeAppointmentIndex, setActiveAppointmentIndex] = useState(0);
@@ -77,10 +71,6 @@ const Dashboard: React.FC = () => {
     }
   }, []);
 
-  const handleLocationChange = useCallback((e: any) => {
-    setCountry(e.value);
-  }, []);
-
   const handleScrollEnd = useCallback((event: any) => {
     const newIndex = Math.round(event.nativeEvent.contentOffset.x / w);
     setActiveAppointmentIndex(newIndex);
@@ -101,49 +91,8 @@ const Dashboard: React.FC = () => {
         <View style={styles.container}>
           {/* GREETING CARD */}
           <View style={styles.helloCard}>
-            <View style={styles.searchLocationBlock}>
-              {/* SEARCH */}
-              <View style={styles.searchBlock}>
-                <TextInput
-                  mode="flat"
-                  style={styles.searchFormInput}
-                  placeholder="search"
-                  value={search}
-                  onChangeText={setSearch}
-                  placeholderTextColor={pallette.white}
-                  underlineColor="transparent"
-                  activeUnderlineColor="transparent"
-                  theme={{
-                    colors: {
-                      text: 'white',
-                      placeholder: 'white',
-                      background: 'transparent',
-                    },
-                  }}
-                />
-                <Image source={images.search} style={styles.formInputIcon} />
-              </View>
-
-              {/* LOCATION DROPDOWN */}
-              <View style={styles.searchBlock}>
-                <Dropdown
-                  style={styles.dropdownSelect}
-                  selectedTextStyle={styles.selectedTextContry}
-                  placeholderStyle={styles.placeholderCountry}
-                  maxHeight={200}
-                  value={country}
-                  data={local_data}
-                  valueField="value"
-                  labelField="lable"
-                  placeholder="Select Location"
-                  containerStyle={styles.dropdownList}
-                  activeColor={pallette.white}
-                  onChange={handleLocationChange}
-                />
-                <Image source={images.location} style={styles.formInputIcon} />
-              </View>
-            </View>
-
+            {/* Search Location Block Component */}
+            <SearchLocationBlock style={styles.searchLocationBlock} />
             {/* GREETING TEXT */}
             <View style={styles.textHelloCard}>
               <Text style={styles.helloSmall}>Hello,</Text>

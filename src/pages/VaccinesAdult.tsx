@@ -13,6 +13,7 @@ import {Text, Banner, Modal, Portal} from 'react-native-paper';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import {pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 const VaccinesAdult: React.FC = () => {
   return (
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
   },
 
   subTitle: {
-    fontSize: 14,
+    fontSize: adjust(12),
     textAlign: 'center',
     marginTop: '10%',
     fontFamily: 'ProximaNovaA-Regular',
@@ -223,7 +224,7 @@ const styles = StyleSheet.create({
   },
 
   actionText: {
-    fontSize: 11,
+    fontSize: adjust(10),
     textAlign: 'center',
     marginTop: 4,
     fontFamily: 'ProximaNovaA-Regular',
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
   },
 
   formTitle: {
-    fontSize: 18,
+    fontSize: adjust(16),
     textAlign: 'center',
     marginTop: 0,
     fontFamily: 'ProximaNovaA-Bold',
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
   },
 
   formLabel: {
-    fontSize: 12,
+    fontSize: adjust(10),
     fontFamily: 'ProximaNovaA-Regular',
     color: pallette.black,
     marginBottom: 5,
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
   formButtonText: {
     color: pallette.white,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Bold',
     fontWeight: 'bold',
     padding: 5,
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
   },
 
   vaccinesDesTitle: {
-    fontSize: 15,
+    fontSize: adjust(14),
     textAlign: 'center',
     marginTop: 0,
     fontFamily: 'ProximaNovaA-Bold',
@@ -307,7 +308,7 @@ const styles = StyleSheet.create({
   },
 
   vaccinesDesText: {
-    fontSize: 12,
+    fontSize: adjust(10),
     textAlign: 'center',
     marginTop: 0,
     fontFamily: 'ProximaNovaA-Regular',

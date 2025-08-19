@@ -25,6 +25,7 @@ import {formatAppointmentDateTime} from '../utils/dateTime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MainStackParamList} from '../navigation/types';
 import {pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 const MyAppointments: React.FC = () => {
   const w = Dimensions.get('window').width;
@@ -38,7 +39,6 @@ const MyAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const {branch} = useApp();
-  const {showJitsi} = useJitsi();
 
   useFocusEffect(
     useCallback(() => {
@@ -46,18 +46,6 @@ const MyAppointments: React.FC = () => {
     }, []),
   );
 
-  const startVideoCall = () => {
-    showJitsi({
-      roomName: 'DemoRoom123',
-      token: '', // Optional if not using JWT auth
-      serverURL: 'https://dev.rb.vc.demos.im/', // Optional (defaults if not passed) // room url - https://dev.rb.vc.demos.im/DemoRoom123
-      userInfo: {
-        displayName: 'Sunny',
-        email: 'sunny@example.com',
-        // avatar: 'https://yourdomain.com/avatar.png',
-      },
-    });
-  };
   const loadAppointments = async () => {
     try {
       const payload = {
@@ -79,14 +67,6 @@ const MyAppointments: React.FC = () => {
       setLoading(false);
     }
   };
-  const startSharing = async () => {
-    try {
-      const res = await ScreenShare.startScreenShare();
-      Alert.alert('Success', res);
-    } catch (err: any) {
-      Alert.alert('Error', err.message);
-    }
-  };
   return (
     <View style={styles.mainContainer}>
       <Header showLocation title={undefined} />
@@ -97,13 +77,12 @@ const MyAppointments: React.FC = () => {
               <TouchableOpacity
                 key={index}
                 style={styles.doctorItem}
-                // onPress={() =>
-                //   navigation.navigate('MyAppointmentDetails', {
-                //     appointmentData: appointment,
-                //   })
-                // }
-                onPress={() => startVideoCall()}
-                // onPress={() => startSharing()}
+                onPress={() =>
+                  navigation.navigate('MyAppointmentDetails', {
+                    appointmentData: appointment,
+                  })
+                }
+                // onPress={() => startVideoCall()}
               >
                 <Image
                   source={
@@ -120,7 +99,7 @@ const MyAppointments: React.FC = () => {
                     style={[
                       styles.docName,
                       {
-                        fontSize: 11,
+                        fontSize: adjust(10),
                         color: pallette.app_purple,
                         fontFamily: 'ProximaNovaA-Semibold',
                         marginBottom: 2,
@@ -133,7 +112,7 @@ const MyAppointments: React.FC = () => {
                     style={[
                       styles.docName,
                       {
-                        fontSize: 14,
+                        fontSize: adjust(12),
                         color: '#4CC2BF',
                         fontFamily: 'ProximaNovaA-Bold',
                         marginBottom: 2,
@@ -146,7 +125,7 @@ const MyAppointments: React.FC = () => {
                     style={[
                       styles.docName,
                       {
-                        fontSize: 11,
+                        fontSize: adjust(10),
                         color: pallette.black,
                         fontFamily: 'ProximaNovaA-Regular',
                         marginBottom: 5,
@@ -168,7 +147,7 @@ const MyAppointments: React.FC = () => {
                         styles.docName,
                         {
                           color: pallette.black,
-                          fontSize: 12,
+                          fontSize: adjust(10),
                           fontFamily: 'ProximaNovaA-Semibold',
                           marginBottom: 2,
                         },
@@ -235,7 +214,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   docName: {
-    fontSize: 11,
+    fontSize: adjust(10),
     color: pallette.black,
     width: w * 0.7,
   },
@@ -249,7 +228,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   payBtnTxt: {
-    fontSize: 12,
+    fontSize: adjust(10),
     color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
   },
@@ -273,7 +252,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 3,
-    fontSize: 12,
+    fontSize: adjust(10),
     color: pallette.black,
     width: 'auto',
     fontFamily: 'ProximaNovaA-Regular',

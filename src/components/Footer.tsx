@@ -1,13 +1,14 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useEffect, useMemo, useState} from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import React from 'react';
+import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {MainStackParamList} from '../navigation/types';
 import {h, pallette} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+
+type FooterIcon = 'home' | 'calendar' | 'call' | 'reports';
 
 interface FooterProps {
-  activeIcon?: string;
+  activeIcon?: FooterIcon;
 }
 
 const Footer: React.FC<FooterProps> = ({activeIcon}) => {
@@ -17,120 +18,53 @@ const Footer: React.FC<FooterProps> = ({activeIcon}) => {
   >;
   const navigation = useNavigation<AppNavigationProp>();
 
-  const getIconStyle = (iconName: string) => {
-    return activeIcon === iconName
-      ? styles.activeFooterButtonIcon
-      : styles.footerButtonIcon;
-  };
-
-  const getTintColor = (iconName: string) => {
-    return activeIcon === iconName ? pallette.app_purple : pallette.white; // optional: adjust if active has a different color
-  };
+  const buttons: {icon: FooterIcon; onPress?: () => void; source: any}[] = [
+    {
+      icon: 'home',
+      onPress: () => navigation.navigate('Dashboard'),
+      source: require('../../assets/images/footer-home-icon.png'),
+    },
+    {
+      icon: 'calendar',
+      onPress: () =>
+        navigation.navigate('Specialities', {appointmentType: 'Physical'}),
+      source: require('../../assets/images/footer-calendar-icon.png'),
+    },
+    {
+      icon: 'call',
+      source: require('../../assets/images/footer-call-icon.png'),
+    },
+    {
+      icon: 'reports',
+      source: require('../../assets/images/footer-reports-icon.png'),
+    },
+  ];
 
   return (
     <View style={styles.footer}>
       <View style={styles.footerButtonContainer}>
-        <TouchableOpacity
-          style={styles.footerButton}
-          onPress={() => navigation.navigate('Dashboard')}>
-          <Image
-            source={require('../../assets/images/footer-home-icon.png')}
-            style={[getIconStyle('home'), {tintColor: getTintColor('home')}]}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.footerButton}
-          onPress={() =>
-            navigation.navigate('Specialities', {appointmentType: 'Physical'})
-          }>
-          <Image
-            source={require('../../assets/images/footer-calendar-icon.png')}
-            style={[
-              getIconStyle('calendar'),
-              {tintColor: getTintColor('calendar')},
-            ]}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.footerButton}>
-          <Image
-            source={require('../../assets/images/footer-call-icon.png')}
-            style={[getIconStyle('call'), {tintColor: getTintColor('call')}]}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.footerButton}>
-          <Image
-            source={require('../../assets/images/footer-reports-icon.png')}
-            style={[
-              getIconStyle('reports'),
-              {tintColor: getTintColor('reports')},
-            ]}
-          />
-        </TouchableOpacity>
+        {buttons.map(({icon, onPress, source}) => (
+          <TouchableOpacity
+            key={icon}
+            style={styles.footerButton}
+            onPress={onPress}>
+            <Image
+              source={source}
+              style={{
+                width: 28,
+                height: 28,
+                tintColor:
+                  activeIcon === icon ? pallette.app_purple : pallette.white,
+              }}
+            />
+          </TouchableOpacity>
+        ))}
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  quickActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginTop: 30,
-  },
-
-  actionItem: {
-    alignItems: 'center',
-    width: '30%',
-    marginBottom: 5,
-  },
-  actionItemIcon: {
-    backgroundColor: pallette.app_purple,
-    borderRadius: 10,
-    padding: 15,
-    paddingTop: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 0,
-  },
-
-  iconAction: {
-    width: 35,
-    height: 35,
-  },
-
-  actionText: {
-    fontSize: adjust(11),
-    textAlign: 'center',
-    marginTop: 4,
-  },
-
-  activeActionItem: {
-    backgroundColor: pallette.app_purple,
-    borderRadius: 10,
-    padding: 10,
-    paddingTop: 15,
-    alignItems: 'center',
-    width: '30%',
-    marginVertical: 10,
-  },
-
-  activeActionText: {
-    color: pallette.white,
-    fontSize: adjust(11),
-    textAlign: 'center',
-    marginTop: 4,
-  },
-  activeIconAction: {
-    width: 40,
-    height: 40,
-    tintColor: pallette.white,
-  },
-
-  //   footer
   footer: {
     position: 'absolute',
     bottom: 0,
@@ -139,7 +73,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
-
   footerButtonContainer: {
     paddingVertical: 10,
     paddingBottom: h * 0.025,
@@ -152,21 +85,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
-
   footerButton: {
     alignItems: 'center',
-  },
-
-  footerButtonIcon: {
-    width: 28,
-    height: 28,
-    tintColor: pallette.white,
-  },
-
-  activeFooterButtonIcon: {
-    alignItems: 'center',
-    width: 28,
-    height: 28,
   },
 });
 

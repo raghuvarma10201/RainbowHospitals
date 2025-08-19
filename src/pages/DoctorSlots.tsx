@@ -1,14 +1,13 @@
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   Dimensions,
   FlatList,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
 import CommonHeader from '../components/Header';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Footer from '../components/Footer';
@@ -17,159 +16,220 @@ import {CommonActions, useNavigation} from '@react-navigation/native';
 import {
   bookAppointment,
   getDoctorDetail,
-  getDoctors,
   getDoctorSessions,
   getDoctorSlots,
 } from '../services/common';
 import {ToastService} from '../utils/ToastService';
-import {IMG_BASE_URL} from '../utils/environment';
 import {useApp} from '../context/AppContext';
 import Loader from '../components/Loader';
 import {useTimer} from '../context/TimeContext';
-import ShortInfoText from '../components/ShortInfoText';
 import {MainStackParamList} from '../navigation/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {routes} from '../utils/enums';
-import {pallette} from '../Constants/Constant';
+import {h, pallette, w} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
+import {AppointmentPayload, AppointmentType} from '../types/Appointment';
+import DoctorDetailsCard from '../components/DoctorDetailsCard';
 
-const DoctorSlots: React.FC<any> = ({route}) => {
+/**
+ * Types
+ */
+interface DoctorSlotsProps {
+  route: {
+    params: {
+      doctorId: number;
+      appointmentType: AppointmentType;
+      OrganisationID: string;
+      appointmentnumber?: string;
+    };
+  };
+}
+
+interface DoctorSession {
+  SessionDate: string;
+  SessionDefinitionUID1: string;
+}
+
+interface Slot {
+  SlotID: string;
+  SessionStartDttm: string;
+}
+
+const DoctorSlots: React.FC<DoctorSlotsProps> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+
   const {doctorId, appointmentType, OrganisationID, appointmentnumber} =
     route.params;
+
   const {branch, appointment, updateAppointment} = useApp();
+  const {startTimer} = useTimer();
+
   const [doctorDetail, setDoctorDetail] = useState<any>({});
-  const [doctorSessions, setDoctorSessions] = useState<any>([]);
-  const [doctorSlots, setDoctorSlots] = useState<any>({});
-  const [doctorSpecialitites, setDoctorSpecialitites] = useState<string>('');
-  const {startTimer, secondsLeft, clearTimers} = useTimer();
+  const [doctorSessions, setDoctorSessions] = useState<DoctorSession[]>([]);
+  const [doctorSlots, setDoctorSlots] = useState<Slot[]>([]);
+  const [doctorSpecialities, setDoctorSpecialities] = useState<string>('');
   const [selectedSlot, setSelectedSlot] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
-  const [consultationFee, setConsultationFee] = useState<string>('');
+  const [viewAll, setViewAll] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const [loading, setLoading] = useState(false);
-
+  /**
+   * Fetch doctor details on mount
+   */
   useEffect(() => {
     loadDoctor();
   }, []);
 
-  const navigateTo = (path: keyof MainStackParamList, params: any) => {
-    navigation.navigate(path, params);
-  };
-
+  /**
+   * Fetch doctor details & sessions
+   */
   const loadDoctor = async () => {
     try {
       setLoading(true);
       const response = await getDoctorDetail(doctorId);
-      if (response && response.status == 200) {
-        setLoading(false);
-        setDoctorDetail(response.data);
-        await getSessions(response.data);
-        //await getConsultationFee(response.data);
 
-        const specialityNames = response.data.doctor_specialities
+      if (response?.status === 200 && response?.data) {
+        const detail = response.data;
+        setDoctorDetail(detail);
+
+        // Extract specialities as comma-separated string
+        const specialityNames = detail.doctor_specialities
           .map((item: any) => item.speciality?.name)
-          .filter(Boolean) // optional: removes undefined/null
+          .filter(Boolean)
           .join(', ');
-        setDoctorSpecialitites(specialityNames);
-        doctorDetail.specialities = specialityNames;
+        setDoctorSpecialities(specialityNames);
+
+        await getSessions(detail);
       } else {
-        setLoading(false);
-        ToastService.error('Error', response.message);
+        ToastService.error(
+          'Error',
+          response?.message || 'Failed to load doctor',
+        );
       }
     } catch (error) {
-      setLoading(false);
-      console.error('Failed to load Doctors:', error);
+      console.error('Failed to load doctor:', error);
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Fetch doctor sessions
+   */
   const getSessions = async (docData: any) => {
     try {
       setLoading(true);
       const payload = {
-        CareproviderCode: docData.new_doctor_UID, //'500004',
-        OrganisationUID: OrganisationID.toString(), //2,
+        CareproviderCode: docData.new_doctor_UID,
+        OrganisationUID: branch?.id?.toString(),
         AppointmentType: appointmentType,
         noofdays: '30',
       };
+
       const response = await getDoctorSessions(payload);
-      if (response && response.status == 200) {
+
+      if (response?.status === 200 && response.data?.length) {
+        // Deduplicate by SessionDate
         const uniqueSessions = response.data.filter(
-          (session: any, index: number, self: any[]) =>
+          (session: DoctorSession, index: number, self: DoctorSession[]) =>
             index ===
             self.findIndex(s => s.SessionDate === session.SessionDate),
         );
-        setLoading(false);
+
         setDoctorSessions(uniqueSessions);
+
+        // Load first session slots
+        if (uniqueSessions?.length) {
+          getSlots(
+            uniqueSessions[0].SessionDate,
+            uniqueSessions[0].SessionDefinitionUID1,
+          );
+        }
       } else {
-        setLoading(false);
-        ToastService.error('Error', response.message);
+        setDoctorSessions([]);
+        ToastService.error('Error', 'No Sessions Available');
       }
     } catch (error) {
-      setLoading(false);
-      console.error('Failed to load Sessions:', error);
+      console.error('Failed to load sessions:', error);
     } finally {
       setLoading(false);
     }
   };
-  const getSlots = async (sessionDate: any, sessionId: string) => {
+
+  /**
+   * Fetch slots for a given session
+   */
+  const getSlots = async (sessionDate: string, sessionId: string) => {
     setDoctorSlots([]);
     setSelectedSlot('');
     setSelectedTime('');
-    sessionDate = new Date(sessionDate).toISOString().split('T')[0];
-    setSelectedDate(sessionDate);
+    setViewAll(false);
+
+    const formattedDate = new Date(sessionDate).toISOString().split('T')[0];
+    setSelectedDate(formattedDate);
+
     try {
       setLoading(true);
       const payload = {
         SessionDefinitionUID: sessionId,
-        AppointmentDate: sessionDate,
-        OrganisationUID: '2', //branch?.organisation.organisationid,
-        AppointmentType: 'Physical',
+        AppointmentDate: formattedDate,
+        OrganisationUID: branch?.id?.toString(),
+        AppointmentType: appointment,
       };
+
       const response = await getDoctorSlots(payload);
-      if (response && response.status == 200) {
-        setLoading(false);
+
+      if (response?.status === 200 && response.data) {
         setDoctorSlots(response.data);
       } else {
-        setLoading(false);
-        ToastService.error('Error', response.message);
+        ToastService.error('Error', response?.message || 'No slots found');
       }
     } catch (error) {
-      setLoading(false);
-      console.error('Failed to load Sessions:', error);
+      console.error('Failed to load slots:', error);
     } finally {
       setLoading(false);
     }
   };
-  function formatTime24Hour(dateTimeString: string): string {
+
+  /**
+   * Convert datetime to HH:mm format
+   */
+  const formatTime24Hour = (dateTimeString: string): string => {
     const date = new Date(dateTimeString);
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
-  }
+  };
+
+  /**
+   * Handle confirm/reschedule appointment
+   */
   const proceedPayment = async () => {
-    if (appointmentnumber) {
-      const obj = {
-        status: 'RESCHEDULE',
-        appointmentnumber: appointmentnumber,
-        slotid: selectedSlot,
-        date: selectedDate, // Provide default or actual value
-        time: selectedTime, // Provide default or actual value
-        comment: '',
-        mrn: await AsyncStorage.getItem('mrn'),
-        OrganisationUID: OrganisationID,
-        AppointmentType: appointmentType,
-      };
-      try {
+    try {
+      setLoading(true);
+
+      if (appointmentnumber) {
+        // Reschedule case
+        const obj: AppointmentPayload = {
+          status: 'RESCHEDULE',
+          appointmentnumber,
+          slotid: selectedSlot,
+          date: selectedDate,
+          time: selectedTime,
+          comment: '',
+          mrn: (await AsyncStorage.getItem('mrn')) || '',
+          OrganisationUID: OrganisationID,
+          AppointmentType: appointmentType,
+        };
+
         const response = await bookAppointment(obj);
-        if (response?.status == 200 && response?.success) {
-          setLoading(false);
+
+        if (response?.status === 200 && response?.success) {
           ToastService.success(
             'Success',
-            'Appointment Resheduled Successfully',
+            'Appointment Rescheduled Successfully',
           );
           navigation.dispatch(
             CommonActions.reset({
@@ -178,189 +238,122 @@ const DoctorSlots: React.FC<any> = ({route}) => {
             }),
           );
         } else {
-          setLoading(false);
-          ToastService.error('Error', response.message);
+          ToastService.error(
+            'Error',
+            response?.message || 'Failed to reschedule',
+          );
         }
-      } catch (error) {
-        setLoading(false);
-        console.error('Failed to reschedule:', error);
-      } finally {
-        setLoading(false);
+      } else {
+        // Fresh booking case
+        startTimer();
+        await updateAppointment({
+          status: 'BOOKING',
+          comment: appointment?.comment ?? '',
+          mrn: appointment?.mrn ?? '',
+          OrganisationUID: '2',
+          AppointmentType: appointmentType ?? '',
+          slotid: selectedSlot,
+          date: selectedDate,
+          time: selectedTime,
+          transaction_id: appointment?.transaction_id ?? '',
+          price: appointment?.price ?? 0,
+          payment_type: appointment?.payment_type ?? 'CASH',
+        });
+
+        navigation.navigate('SlotConfirmation', {
+          doctor: doctorDetail,
+          doctorSpecialitites: doctorSpecialities,
+        });
       }
-    } else {
-      startTimer();
-      await updateAppointment({
-        status: 'BOOKING',
-        comment: appointment?.comment ?? '',
-        mrn: appointment?.mrn ?? '',
-        OrganisationUID: '2',
-        AppointmentType: appointmentType ?? '',
-        slotid: selectedSlot,
-        date: selectedDate, // Provide default or actual value
-        time: selectedTime, // Provide default or actual value
-        transaction_id: appointment?.transaction_id ?? '', // Provide default or actual value
-        price: appointment?.price ?? 0, // Provide default or actual value
-        payment_type: appointment?.payment_type ?? 'CASH', // Provide default or actual value
-      });
-      navigation.navigate('SlotConfirmation', {doctor: doctorDetail});
+    } catch (error) {
+      console.error('Failed to confirm appointment:', error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  /**
+   * Render slot item
+   */
+  const renderSlot = useCallback(
+    ({item}: {item: Slot}) => {
+      const time = formatTime24Hour(item.SessionStartDttm);
+      const isSelected = selectedTime === time;
+
+      return (
+        <TouchableOpacity
+          style={styles.timeBtn}
+          onPress={() => {
+            setSelectedSlot(item.SlotID);
+            setSelectedTime(time);
+          }}>
+          <Text style={[styles.timeTxt, isSelected && styles.selectedTime]}>
+            {time}
+          </Text>
+        </TouchableOpacity>
+      );
+    },
+    [selectedTime],
+  );
+
   return (
     <View style={styles.mainContainer}>
-      <CommonHeader showLocation title={undefined} />
+      <CommonHeader showLocation />
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.doctorDetailsContainer}>
-          <View style={styles.doctorImgContainer}>
-            <Image
-              source={
-                doctorDetail?.small_image
-                  ? {uri: `${IMG_BASE_URL}${doctorDetail.small_image}`}
-                  : {
-                      uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
-                    }
-              }
-              style={styles.docImg}
-            />
-            <View style={styles.dotContainer}>
-              <View style={styles.dot} />
-            </View>
-          </View>
-          <View style={styles.doctorDetails}>
-            <Text
-              style={[
-                styles.docName,
-                {
-                  fontSize: 16,
-                  color: '#4CC2BF',
-                  fontFamily: 'ProximaNovaA-Semibold',
-                },
-              ]}>
-              {doctorDetail?.name}
-            </Text>
-            <Text style={[styles.docName, {fontSize: 12, marginTop: 3}]}>
-              {doctorDetail?.designation}
-            </Text>
-            <Text style={[styles.docName, {fontSize: 10}]}>
-              {doctorSpecialitites}
-            </Text>
-            <Text
-              style={[
-                styles.docName,
-                {fontSize: 13, color: '#4CC2BF', marginTop: 3, marginBottom: 5},
-              ]}>
-              {`Experience ${doctorDetail?.experience ?? '0'} Years`}
-            </Text>
-            <View style={styles.consultBtnsContainer}>
-              <TouchableOpacity style={styles.consultBtn}>
-                <Text
-                  style={styles.consultBtnTxt}>{`Physical Consultation`}</Text>
-                <View style={styles.iconContainer}>
-                  <Image
-                    source={require('../../assets/images/physical-consultation-icon.png')}
-                    style={styles.consultBtnImg}
-                  />
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.consultBtn}>
-                <Text style={styles.consultBtnTxt}>{`Video Consultation`}</Text>
-                <View style={styles.iconContainer}>
-                  <Image
-                    source={require('../../assets/images/video-consultation-icon.png')}
-                    style={styles.consultBtnImg}
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.divider} />
-            <Text
-              style={[
-                styles.docName,
-                {fontSize: 16, color: '#4CC2BF', marginBottom: 5},
-              ]}>{`About`}</Text>
-            <ShortInfoText text={doctorDetail?.short_info || ''} />
-          </View>
-        </View>
+        {/* Doctor Info Card */}
+        <DoctorDetailsCard
+          doctorDetail={doctorDetail}
+          doctorSpecialitites={doctorSpecialities}
+          about
+        />
+
+        {/* Calendar + Slots */}
         <View style={styles.calenderContainer}>
-          {doctorSessions && (
+          {doctorSessions.length > 0 && (
             <DynamicWeekWithMonth
               sessions={doctorSessions}
-              onDateClick={(sessionDate: any, sessionId: string) => {
-                getSlots(sessionDate, sessionId);
-              }}
+              onDateClick={getSlots}
             />
           )}
-          <View>
-            <Text style={[styles.centeredTxt, {marginBottom: 5}]}>
-              Available Time
-            </Text>
-            {doctorSlots.length ? (
+
+          <Text style={[styles.centeredTxt, {marginVertical: 5}]}>
+            Available Time
+          </Text>
+
+          {doctorSlots.length > 0 ? (
+            <>
               <FlatList
-                data={doctorSlots}
+                data={
+                  doctorSlots.length > 10
+                    ? viewAll
+                      ? doctorSlots
+                      : doctorSlots.slice(0, 10)
+                    : doctorSlots
+                }
                 contentContainerStyle={styles.timeList}
-                keyExtractor={(_, index) => 'rqq' + '' + index.toString()}
-                renderItem={({item, index}) => (
-                  // timeActive for active -- replace timeTxt
-                  <TouchableOpacity
-                    key={item.SlotID}
-                    style={styles.timeBtn}
-                    onPress={() => {
-                      setSelectedSlot(item.SlotID);
-                      setSelectedTime(formatTime24Hour(item.SessionStartDttm));
-                    }}>
-                    <Text
-                      style={[
-                        styles.timeTxt,
-                        selectedTime ===
-                          formatTime24Hour(item.SessionStartDttm) &&
-                          styles.selectedTime,
-                      ]}>
-                      {formatTime24Hour(item.SessionStartDttm)}
-                    </Text>
-                  </TouchableOpacity>
-                )}
+                numColumns={5}
+                keyExtractor={(item, index) => `${item.SlotID}-${index}`}
+                renderItem={renderSlot}
               />
-            ) : (
-              <Text
-                style={[
-                  styles.centeredTxt,
-                  {
-                    marginTop: h * 0.02,
-                    fontFamily: 'ProximaNovaA-Regular',
-                    fontSize: 14,
-                    borderBottomWidth: 1,
-                    borderBottomColor: pallette.white,
-                    paddingBottom: 5,
-                    textAlign: 'center',
-                    marginHorizontal: 'auto',
-                  },
-                ]}>
-                No Slots Available
-              </Text>
-            )}
-            <TouchableOpacity>
-              <Text
-                style={[
-                  styles.centeredTxt,
-                  {
-                    marginTop: h * 0.02,
-                    fontFamily: 'ProximaNovaA-Regular',
-                    fontSize: 14,
-                    borderBottomWidth: 1,
-                    borderBottomColor: pallette.white,
-                    width: 90,
-                    paddingBottom: 5,
-                    textAlign: 'center',
-                    marginHorizontal: 'auto',
-                  },
-                ]}>
-                View More
-              </Text>
-            </TouchableOpacity>
-          </View>
+
+              {doctorSlots.length > 10 && (
+                <TouchableOpacity onPress={() => setViewAll(prev => !prev)}>
+                  <Text style={styles.viewToggle}>
+                    {viewAll ? 'View Less' : 'View More'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </>
+          ) : (
+            <Text style={styles.noSlots}>No Slots Available</Text>
+          )}
         </View>
+
+        {/* Confirm Button */}
         <TouchableOpacity
           disabled={!selectedSlot}
-          onPress={() => proceedPayment()}
+          onPress={proceedPayment}
           style={[
             styles.formButton,
             {backgroundColor: selectedSlot ? pallette.app_purple : 'grey'},
@@ -370,6 +363,7 @@ const DoctorSlots: React.FC<any> = ({route}) => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+
       <Footer />
       {loading && <Loader />}
     </View>
@@ -378,135 +372,33 @@ const DoctorSlots: React.FC<any> = ({route}) => {
 
 export default DoctorSlots;
 
-const h = Dimensions.get('window').height;
-const w = Dimensions.get('window').width;
-
+/**
+ * Styles
+ */
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: pallette.white,
     flex: 1,
   },
-
   scrollContent: {
-    padding: 0,
     paddingBottom: 100,
     minHeight: h,
   },
-  doctorDetailsContainer: {
-    backgroundColor: pallette.app_purple,
-    paddingTop: h * 0.1,
-    paddingHorizontal: w * 0.02,
-    width: '90%',
-    alignSelf: 'center',
-    marginTop: h * 0.12,
-    borderTopLeftRadius: w * 0.1,
-    borderTopRightRadius: w * 0.1,
-  },
-  doctorImgContainer: {
-    height: h * 0.2,
-    width: h * 0.2,
-    backgroundColor: pallette.white,
-    position: 'absolute',
-    borderRadius: h * 0.1,
-    top: -(h * 0.1),
-    left: w * 0.2,
-    borderWidth: 0.3,
-    borderColor: 'grey',
-    padding: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  docImg: {
-    height: h * 0.19,
-    width: h * 0.19,
-    borderRadius: h * 0.1,
-    resizeMode: 'cover',
-  },
-  dotContainer: {
-    height: w * 0.05,
-    width: w * 0.05,
-    borderRadius: w * 0.1,
-    backgroundColor: pallette.white,
-    position: 'absolute',
-    right: w * 0.02,
-    top: h * 0.15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  dot: {
-    height: w * 0.035,
-    width: w * 0.035,
-    borderRadius: w * 0.1,
-    backgroundColor: '#4CC2BF',
-  },
   calenderContainer: {
-    backgroundColor: '#e6e4ef',
+    backgroundColor: pallette.light_grey,
     width: '90%',
     alignSelf: 'center',
     borderBottomLeftRadius: w * 0.1,
     borderBottomRightRadius: w * 0.1,
     paddingBottom: h * 0.03,
   },
-  doctorDetails: {
-    padding: 8,
-    backgroundColor: pallette.app_purple,
-    width: '100%',
-  },
-  docName: {
-    fontSize: 20,
-    color: pallette.white,
-    fontFamily: 'ProximaNovaA-Regular',
-  },
-  consultBtnsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  consultBtn: {
-    paddingVertical: w * 0.03,
-    paddingHorizontal: w * 0.02,
-    justifyContent: 'center',
-    backgroundColor: '#b6e7e6ff',
-    width: '48%',
-  },
-  consultBtnTxt: {
-    fontSize: 11,
-    color: pallette.black,
-    textAlign: 'left',
-    fontFamily: 'ProximaNovaA-Regular',
-    paddingLeft: 32,
-  },
-  iconContainer: {
-    height: Dimensions.get('window').height * 0.08,
-    width: 30,
-    position: 'absolute',
-    backgroundColor: '#4CC2BF',
-    left: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  consultBtnImg: {
-    height: '80%',
-    width: '80%',
-    resizeMode: 'contain',
-    tintColor: 'white',
-  },
-  divider: {
-    height: 1,
-    width: '100%',
-    backgroundColor: '#b6e7e6ff',
-    marginVertical: 10,
-  },
-
   timeBtn: {
     width: 65,
   },
-
   timeTxt: {
     color: pallette.black,
     lineHeight: 20,
-    fontSize: 13,
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Regular',
     marginHorizontal: w * 0.02,
     textAlign: 'center',
@@ -514,40 +406,54 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   selectedTime: {
-    color: '#4CC2BF',
-  },
-
-  timeActive: {
-    backgroundColor: '#4CC2BF',
-    color: pallette.white,
+    color: pallette.app_medium_green,
   },
   centeredTxt: {
     color: pallette.app_purple,
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: adjust(14),
     fontFamily: 'ProximaNovaA-Semibold',
   },
   timeList: {
-    width: '100%',
-    alignItems: 'center',
+    width: '90%',
+    alignItems: 'flex-start',
+    alignSelf: 'center',
     marginVertical: 10,
-    fontFamily: 'ProximaNovaA-Semibold',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    justifyContent: 'center',
+    gap: w * 0.02,
+  },
+  viewToggle: {
+    marginTop: h * 0.02,
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: adjust(12),
+    borderBottomWidth: 1,
+    borderBottomColor: pallette.white,
+    width: 90,
+    paddingBottom: 5,
+    textAlign: 'center',
+    alignSelf: 'center',
+  },
+  noSlots: {
+    marginTop: h * 0.02,
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: adjust(12),
+    borderBottomWidth: 1,
+    borderBottomColor: pallette.white,
+    paddingBottom: 5,
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: pallette.app_purple,
   },
   formButton: {
     borderRadius: 10,
     padding: 10,
     marginTop: 10,
-    width: '90%',
+    width: '80%',
     alignSelf: 'center',
   },
   formButtonText: {
     color: pallette.white,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Bold',
     fontWeight: 'bold',
     padding: 5,

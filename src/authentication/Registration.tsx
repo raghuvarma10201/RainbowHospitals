@@ -24,6 +24,7 @@ import {AuthStackParamList, MainStackParamList} from '../navigation/types';
 import {useAuth} from '../context/AuthContext';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {pallette} from '../Constants/Constant';
+import {adjust} from '../utils/commonFunctions';
 
 const gender_data = [
   {
@@ -493,7 +494,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: pallette.app_green,
-    fontSize: 20,
+    fontSize: adjust(18),
     fontWeight: 'normal',
     textAlign: 'center',
     textTransform: 'uppercase',
@@ -502,7 +503,7 @@ const styles = StyleSheet.create({
   },
 
   labelText: {
-    fontSize: 14,
+    fontSize: adjust(12),
     fontWeight: 'normal',
     color: pallette.black,
     marginBottom: 10,
@@ -521,7 +522,7 @@ const styles = StyleSheet.create({
   },
   primaryBtText: {
     color: pallette.white,
-    fontSize: 14,
+    fontSize: adjust(12),
     fontWeight: 'normal',
     textAlign: 'center',
   },
@@ -529,7 +530,7 @@ const styles = StyleSheet.create({
     color: '#FF0000',
     marginTop: 0,
     marginBottom: 5,
-    fontSize: 13,
+    fontSize: adjust(12),
     fontWeight: 400,
   },
   loginForm: {
@@ -537,7 +538,7 @@ const styles = StyleSheet.create({
   },
   formRow: {marginBottom: 12},
   formLabel: {
-    fontSize: 12,
+    fontSize: adjust(10),
     fontFamily: 'ProximaNovaA-Regular',
     color: pallette.black,
     marginBottom: 5,
@@ -551,7 +552,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: pallette.app_light_green,
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 14,
+    fontSize: adjust(12),
     color: pallette.black,
   },
   formButton: {
@@ -563,7 +564,7 @@ const styles = StyleSheet.create({
   formButtonText: {
     color: pallette.white,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Bold',
     fontWeight: 'bold',
     padding: 5,
@@ -577,7 +578,7 @@ const styles = StyleSheet.create({
   },
   checkBoxlabel: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 13,
+    fontSize: adjust(12),
     flexWrap: 'wrap',
     paddingRight: 20,
   },
@@ -599,7 +600,7 @@ const styles = StyleSheet.create({
   checkmark: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 12,
+    fontSize: adjust(10),
   },
   dropdownSelect: {
     paddingHorizontal: 10,
@@ -612,12 +613,12 @@ const styles = StyleSheet.create({
     backgroundColor: pallette.app_light_green,
   },
   placeholderCountry: {
-    fontSize: 14,
+    fontSize: adjust(12),
     color: pallette.black,
     fontFamily: 'ProximaNovaA-Regular',
   },
   selectedTextContry: {
-    fontSize: 14,
+    fontSize: adjust(12),
     color: pallette.black,
     fontFamily: 'ProximaNovaA-Regular',
   },
@@ -627,11 +628,11 @@ const styles = StyleSheet.create({
     padding: 0,
     textAlign: 'left',
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: 14,
+    fontSize: adjust(12),
     color: pallette.black,
   },
   selectedTextGender: {
-    fontSize: 14,
+    fontSize: adjust(12),
     color: pallette.black,
     fontFamily: 'ProximaNovaA-Regular',
   },

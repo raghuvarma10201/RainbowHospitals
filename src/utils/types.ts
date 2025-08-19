@@ -84,6 +84,7 @@ export type FamilyMember = {
   image: string;
   mrn: string;
   sex: string;
+  PatientID?: string | undefined;
 };
 
 //Get Doctor

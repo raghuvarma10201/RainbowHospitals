@@ -1,5 +1,6 @@
 import React, {useState, useMemo, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {adjust} from '../utils/commonFunctions';
 
 type Session = {
   SessionDate: string;
@@ -121,27 +122,30 @@ export const DynamicWeekWithMonth: React.FC<Props> = ({
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handlePrev} disabled={pageIndex === 0}>
-          <Text style={[styles.arrow, pageIndex === 0 && styles.disabledArrow]}>
-            {'<'}
+      {currentChunk.length > 0 && (
+        <View style={styles.header}>
+          <TouchableOpacity onPress={handlePrev} disabled={pageIndex === 0}>
+            <Text
+              style={[styles.arrow, pageIndex === 0 && styles.disabledArrow]}>
+              {'<'}
+            </Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>
+            {getMonthDisplayForChunk(currentChunk)}
           </Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>
-          {getMonthDisplayForChunk(currentChunk)}
-        </Text>
-        <TouchableOpacity
-          onPress={handleNext}
-          disabled={pageIndex >= chunkedSessions.length - 1}>
-          <Text
-            style={[
-              styles.arrow,
-              pageIndex >= chunkedSessions.length - 1 && styles.disabledArrow,
-            ]}>
-            {'>'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            onPress={handleNext}
+            disabled={pageIndex >= chunkedSessions.length - 1}>
+            <Text
+              style={[
+                styles.arrow,
+                pageIndex >= chunkedSessions.length - 1 && styles.disabledArrow,
+              ]}>
+              {'>'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Sessions Grid */}
       {currentChunk.length > 0 ? (
@@ -165,7 +169,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   arrow: {
-    fontSize: 22,
+    fontSize: adjust(20),
     marginHorizontal: 20,
     color: '#4B3E75',
   },
@@ -173,7 +177,7 @@ const styles = StyleSheet.create({
     color: '#CCC',
   },
   title: {
-    fontSize: 16,
+    fontSize: adjust(14),
     fontFamily: 'ProximaNovaA-Bold',
     color: '#4B3E75',
   },
@@ -189,16 +193,16 @@ const styles = StyleSheet.create({
     width: 45,
   },
   dayText: {
-    fontSize: 12,
+    fontSize: adjust(10),
     fontFamily: 'ProximaNovaA-Bold',
   },
   dateText: {
-    fontSize: 14,
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Bold',
   },
   noSessionsText: {
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: adjust(12),
     color: '#999',
     marginTop: 10,
   },

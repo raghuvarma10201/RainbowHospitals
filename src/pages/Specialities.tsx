@@ -92,7 +92,7 @@ const Specialities: React.FC = ({route}: any) => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <View style={styles.quickActions}>
-            <PaginatedGrid items={specialities} />
+            <PaginatedGrid items={specialities} type={appointmentType} />
           </View>
         </View>
         {specialities.length > 0 && (
