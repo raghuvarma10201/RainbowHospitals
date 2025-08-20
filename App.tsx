@@ -34,6 +34,7 @@ import notifee, {AndroidImportance} from '@notifee/react-native';
 import {getMessaging, getToken} from '@react-native-firebase/messaging';
 import {fetchSettings} from './src/services/common';
 import {pallette} from './src/Constants/Constant';
+import {SettingsProvider} from './src/context/SettingsContext';
 
 // Initialize RTL
 configureRTL();
@@ -133,11 +134,13 @@ const App: React.FC = () => {
         <NavigationContainer ref={navigationRef}>
           <MyStatusBar backgroundColor={pallette.app_purple} />
           <JitsiProvider>
-            <TimerProvider>
-              <AppProvider>
-                {isLoggedIn ? <MainStack /> : <AuthStack />}
-              </AppProvider>
-            </TimerProvider>
+            <SettingsProvider>
+              <TimerProvider>
+                <AppProvider>
+                  {isLoggedIn ? <MainStack /> : <AuthStack />}
+                </AppProvider>
+              </TimerProvider>
+            </SettingsProvider>
           </JitsiProvider>
         </NavigationContainer>
         <Toast />
