@@ -3,6 +3,7 @@ import {fetchSettings} from '../services/common';
 
 type Settings = {
   physicalBookingInterval: number;
+  onlineBookingInterval: number;
   joinEnableOffsetSeconds: number;
   doctorSessionCount: number;
 };
@@ -23,8 +24,11 @@ export const SettingsProvider = ({children}: {children: React.ReactNode}) => {
     const res = await fetchSettings();
     if (res && res.status === 200) {
       const physicalInterval = res.data.find(
-        (item: {key: string}) =>
-          item.key === 'physical_appointment_booking_slot_interval',
+        (item: {key: string}) => item.key === 'pay_hospital_cutoff_time',
+      )?.value;
+
+      const onlineInterval = res.data.find(
+        (item: {key: string}) => item.key === 'pay_online_cutoff_time',
       )?.value;
 
       const joinOffset = res.data.find(
@@ -37,6 +41,7 @@ export const SettingsProvider = ({children}: {children: React.ReactNode}) => {
 
       setSettings({
         physicalBookingInterval: Number(physicalInterval) || 0,
+        onlineBookingInterval: Number(onlineInterval) || 0,
         joinEnableOffsetSeconds: Number(joinOffset) || 0,
         doctorSessionCount: Number(doctorSessionCount) || 0,
       });

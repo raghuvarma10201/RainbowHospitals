@@ -59,23 +59,27 @@ const PayUWebView: React.FC = ({route}: any) => {
   }, []);
 
   const handleNavigationChange = (navState: {url: string}) => {
-    const url = navState.url;
-    if (url === API_BASE_URL + '/payment/success') {
-      setLoading(true);
-      updatePayment(''); // Call your API
-      // navigation.replace('SuccessScreen');
-    }
+    try {
+      const url = navState.url;
+      if (url === API_BASE_URL + '/payment/success') {
+        setLoading(true);
+        updatePayment(''); // Call your API
+        // navigation.replace('SuccessScreen');
+      }
 
-    // Or detect if URL starts with it (in case there are query params)
-    else if (url.startsWith(API_BASE_URL + '/payment/success')) {
-      const urlObj = new URL(url);
-      const mihpayid = urlObj.searchParams.get('mihpayid');
-      setLoading(true);
-      updatePayment(mihpayid);
-    } else if (url.includes('failure')) {
-      ToastService.error('Transaction failed. Please try again.');
-      navigation.navigate('Home');
-      // navigation.replace('FailureScreen');
+      // Or detect if URL starts with it (in case there are query params)
+      else if (url.startsWith(API_BASE_URL + '/payment/success')) {
+        const urlObj = new URL(url);
+        const mihpayid = urlObj.searchParams.get('mihpayid');
+        setLoading(true);
+        updatePayment(mihpayid);
+      } else if (url.includes('failure')) {
+        ToastService.error('Transaction failed. Please try again.');
+        navigation.navigate('Home');
+        // navigation.replace('FailureScreen');
+      }
+    } catch (error) {
+      console.log('payu error', error);
     }
   };
 
@@ -84,7 +88,11 @@ const PayUWebView: React.FC = ({route}: any) => {
       setLoading(true);
       finalPayload.mihpayid = mihpayid;
       finalPayload.transaction_id = txnId;
+      console.log(finalPayload);
+
       const response = await bookAppointment(finalPayload);
+      console.log(response);
+
       if (response && response.status == 200 && response.success == true) {
         navigation.navigate('AppointmentConfirmed');
       } else {
@@ -92,6 +100,8 @@ const PayUWebView: React.FC = ({route}: any) => {
         ToastService.error(response.message);
       }
     } catch (error: any) {
+      console.log(error);
+
       //console.error('Failed to load specialities:', error.message);
     } finally {
       setLoading(false);

@@ -26,6 +26,7 @@ import {FamilyMember} from '../utils/types';
 import {MainStackParamList} from '../navigation/types';
 import {pallette} from '../Constants/Constant';
 import {adjust} from '../utils/commonFunctions';
+import {useSettings} from '../context/SettingsContext';
 
 // Navigation & Route types
 type SlotConfirmationNavigationProp = NativeStackNavigationProp<
@@ -45,6 +46,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
   const {doctor, doctorSpecialitites} = route.params;
 
   const {branch, appointment, updateAppointment} = useApp();
+  const {settings} = useSettings();
 
   // ---------- State ----------
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
@@ -105,7 +107,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
             Visittype: 'First Visit',
             careprovider_code: doctor.new_doctor_UID,
             price: fee,
-            status: appointment.status ?? 'BOOKING',
+            status: appointment.status ?? 'BLOCK',
             comment: appointment.comment ?? null,
           });
         } else {
@@ -124,18 +126,24 @@ const SlotConfirmation: React.FC = ({route}: any) => {
   );
 
   // ---------- Online Payment Navigation ----------
-  const navigateToOnlinePayment = useCallback(() => {
-    if (!appointment) return;
+  const navigateToOnlinePayment = useCallback(
+    (paymenttype: boolean) => {
+      if (!appointment) return;
 
-    const txnid = `TXN_${Date.now()}`;
-
-    navigation.navigate('PayUWebView', {
-      finalPayload: appointment,
-      txnId: txnid,
-      amount: consultationFee.toFixed(2),
-      payuUrl: 'https://test.payu.in/_payment', // TODO: Replace with Production URL
-    });
-  }, [appointment, consultationFee, navigation]);
+      const txnid = `TXN_${Date.now()}`;
+      appointment.expirytime =
+        (paymenttype
+          ? settings?.onlineBookingInterval ?? 0
+          : settings?.physicalBookingInterval ?? 0) / 60;
+      navigation.navigate('PayUWebView', {
+        finalPayload: appointment,
+        txnId: txnid,
+        amount: consultationFee.toFixed(2),
+        payuUrl: 'https://test.payu.in/_payment', // TODO: Replace with Production URL
+      });
+    },
+    [appointment, consultationFee, navigation],
+  );
 
   // ---------- Load on Mount ----------
   useEffect(() => {
@@ -253,7 +261,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               {/* Payment Options */}
               <View style={styles.payBtnsContainer}>
                 <TouchableOpacity
-                  onPress={navigateToOnlinePayment}
+                  onPress={() => navigateToOnlinePayment(true)}
                   style={[
                     styles.payBtn,
                     {backgroundColor: pallette.app_purple},
@@ -261,6 +269,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
                   <Text style={styles.payBtnTxt}>Pay Now</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
+                  onPress={() => navigateToOnlinePayment(false)}
                   style={[styles.payBtn, {backgroundColor: 'grey'}]}>
                   <Text style={styles.payBtnTxt}>Pay At Hospital</Text>
                 </TouchableOpacity>

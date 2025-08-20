@@ -28,4 +28,5 @@ export interface AppointmentPayload {
   payu_response?: any;
   bank_details?: BankDetails;
   expirytime?: number;
+  orgcode?: string;
 }

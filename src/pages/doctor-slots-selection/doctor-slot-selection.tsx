@@ -1,6 +1,6 @@
+// ---------- MODULE IMPORTS ----------
 import React, {useEffect, useState, useCallback} from 'react';
 import {
-  Dimensions,
   FlatList,
   ScrollView,
   StyleSheet,
@@ -8,33 +8,34 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import CommonHeader from '../components/Header';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import Footer from '../components/Footer';
-import {DynamicWeekWithMonth} from '../components/WeeklyCalender';
 import {CommonActions, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// ---------- COMPONENT IMPORTS ----------
+import CommonHeader from '../../components/Header';
+import Footer from '../../components/Footer';
+import {DynamicWeekWithMonth} from '../../components/WeeklyCalender';
+import Loader from '../../components/Loader';
+import DoctorDetailsCard from '../../components/DoctorDetailsCard';
+
+// ---------- OTHER IMPORTS ----------
 import {
   bookAppointment,
   getDoctorDetail,
   getDoctorSessions,
   getDoctorSlots,
-} from '../services/common';
-import {ToastService} from '../utils/ToastService';
-import {useApp} from '../context/AppContext';
-import Loader from '../components/Loader';
-import {useTimer} from '../context/TimeContext';
-import {MainStackParamList} from '../navigation/types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {routes} from '../utils/enums';
-import {h, pallette, w} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
-import {AppointmentPayload, AppointmentType} from '../types/Appointment';
-import DoctorDetailsCard from '../components/DoctorDetailsCard';
+} from '../../services/common';
+import {ToastService} from '../../utils/ToastService';
+import {useApp} from '../../context/AppContext';
+import {useTimer} from '../../context/TimeContext';
+import {MainStackParamList} from '../../navigation/types';
+import {routes} from '../../utils/enums';
+import {h, pallette, w} from '../../Constants/Constant';
+import {adjust} from '../../utils/commonFunctions';
+import {AppointmentPayload} from '../../types/Appointment';
 
-/**
- * Types
- */
-
+// ---------- TYPES ----------
 interface DoctorSession {
   SessionDate: string;
   SessionDefinitionUID1: string;
@@ -45,16 +46,14 @@ interface Slot {
   SessionStartDttm: string;
 }
 
-const DoctorSlots: React.FC = ({route}: any) => {
+// ---------- COMPONENT ----------
+const DoctorSlotSelection: React.FC = ({route}: any) => {
+  // ---------- STATE AND CONTEXT DECLARATION ----------
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-
   const {doctorId, appointmentType, OrganisationID, appointmentnumber} =
     route.params;
-
   const {branch, appointment, updateAppointment} = useApp();
-  const {startTimer} = useTimer();
-
   const [doctorDetail, setDoctorDetail] = useState<any>({});
   const [doctorSessions, setDoctorSessions] = useState<DoctorSession[]>([]);
   const [doctorSlots, setDoctorSlots] = useState<Slot[]>([]);
@@ -65,16 +64,12 @@ const DoctorSlots: React.FC = ({route}: any) => {
   const [viewAll, setViewAll] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  /**
-   * Fetch doctor details on mount
-   */
+  // ---------- LIFECYCLE ----------
   useEffect(() => {
     loadDoctor();
   }, []);
 
-  /**
-   * Fetch doctor details & sessions
-   */
+  // ---------- CALLBACK FUNCTIONS ----------
   const loadDoctor = async () => {
     try {
       setLoading(true);
@@ -83,8 +78,6 @@ const DoctorSlots: React.FC = ({route}: any) => {
       if (response?.status === 200 && response?.data) {
         const detail = response.data;
         setDoctorDetail(detail);
-
-        // Extract specialities as comma-separated string
         const specialityNames = detail.doctor_specialities
           .map((item: any) => item.speciality?.name)
           .filter(Boolean)
@@ -105,9 +98,6 @@ const DoctorSlots: React.FC = ({route}: any) => {
     }
   };
 
-  /**
-   * Fetch doctor sessions
-   */
   const getSessions = async (docData: any) => {
     try {
       setLoading(true);
@@ -117,20 +107,14 @@ const DoctorSlots: React.FC = ({route}: any) => {
         AppointmentType: appointmentType,
         noofdays: '30',
       };
-
       const response = await getDoctorSessions(payload);
-
       if (response?.status === 200 && response.data?.length) {
-        // Deduplicate by SessionDate
         const uniqueSessions = response.data.filter(
           (session: DoctorSession, index: number, self: DoctorSession[]) =>
             index ===
             self.findIndex(s => s.SessionDate === session.SessionDate),
         );
-
         setDoctorSessions(uniqueSessions);
-
-        // Load first session slots
         if (uniqueSessions?.length) {
           getSlots(
             uniqueSessions[0].SessionDate,
@@ -148,18 +132,13 @@ const DoctorSlots: React.FC = ({route}: any) => {
     }
   };
 
-  /**
-   * Fetch slots for a given session
-   */
   const getSlots = async (sessionDate: string, sessionId: string) => {
     setDoctorSlots([]);
     setSelectedSlot('');
     setSelectedTime('');
     setViewAll(false);
-
     const formattedDate = new Date(sessionDate).toISOString().split('T')[0];
     setSelectedDate(formattedDate);
-
     try {
       setLoading(true);
       const payload = {
@@ -168,9 +147,7 @@ const DoctorSlots: React.FC = ({route}: any) => {
         OrganisationUID: branch?.id?.toString(),
         AppointmentType: appointment,
       };
-
       const response = await getDoctorSlots(payload);
-
       if (response?.status === 200 && response.data) {
         setDoctorSlots(response.data);
       } else {
@@ -183,9 +160,7 @@ const DoctorSlots: React.FC = ({route}: any) => {
     }
   };
 
-  /**
-   * Convert datetime to HH:mm format
-   */
+  // ---------- CONVERSION FUNCTION ----------
   const formatTime24Hour = (dateTimeString: string): string => {
     const date = new Date(dateTimeString);
     const hours = date.getHours().toString().padStart(2, '0');
@@ -193,15 +168,11 @@ const DoctorSlots: React.FC = ({route}: any) => {
     return `${hours}:${minutes}`;
   };
 
-  /**
-   * Handle confirm/reschedule appointment
-   */
+  // ---------- EVENT HANDLING FUNCTIONS ----------
   const proceedPayment = async () => {
     try {
       setLoading(true);
-
       if (appointmentnumber) {
-        // Reschedule case
         const obj: AppointmentPayload = {
           status: 'RESCHEDULE',
           appointmentnumber,
@@ -213,9 +184,7 @@ const DoctorSlots: React.FC = ({route}: any) => {
           OrganisationUID: OrganisationID,
           AppointmentType: appointmentType,
         };
-
         const response = await bookAppointment(obj);
-
         if (response?.status === 200 && response?.success) {
           ToastService.success(
             'Success',
@@ -234,8 +203,7 @@ const DoctorSlots: React.FC = ({route}: any) => {
           );
         }
       } else {
-        // Fresh booking case
-        startTimer();
+        console.log(appointment?.payment_type);
         await updateAppointment({
           status: 'BLOCK',
           comment: appointment?.comment ?? '',
@@ -248,9 +216,8 @@ const DoctorSlots: React.FC = ({route}: any) => {
           transaction_id: appointment?.transaction_id ?? '',
           price: appointment?.price ?? 0,
           payment_type: appointment?.payment_type ?? 'CASH',
-          expirytime: 3,
+          orgcode: branch?.organisation?.code || '',
         });
-
         navigation.navigate('SlotConfirmation', {
           doctor: doctorDetail,
           doctorSpecialitites: doctorSpecialities,
@@ -263,9 +230,7 @@ const DoctorSlots: React.FC = ({route}: any) => {
     }
   };
 
-  /**
-   * Render slot item
-   */
+  // ---------- TIME SLOT ----------
   const renderSlot = useCallback(
     ({item}: {item: Slot}) => {
       const time = formatTime24Hour(item.SessionStartDttm);
@@ -287,10 +252,11 @@ const DoctorSlots: React.FC = ({route}: any) => {
     [selectedTime],
   );
 
+  // ---------- RENDER ----------
   return (
     <View style={styles.mainContainer}>
+      {/* Common Header */}
       <CommonHeader showLocation />
-
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Doctor Info Card */}
         <DoctorDetailsCard
@@ -298,7 +264,6 @@ const DoctorSlots: React.FC = ({route}: any) => {
           doctorSpecialitites={doctorSpecialities}
           about
         />
-
         {/* Calendar + Slots */}
         <View style={styles.calenderContainer}>
           {doctorSessions.length > 0 && (
@@ -307,11 +272,9 @@ const DoctorSlots: React.FC = ({route}: any) => {
               onDateClick={getSlots}
             />
           )}
-
           <Text style={[styles.centeredTxt, {marginVertical: 5}]}>
             Available Time
           </Text>
-
           {doctorSlots.length > 0 ? (
             <>
               <FlatList
@@ -327,7 +290,6 @@ const DoctorSlots: React.FC = ({route}: any) => {
                 keyExtractor={(item, index) => `${item.SlotID}-${index}`}
                 renderItem={renderSlot}
               />
-
               {doctorSlots.length > 10 && (
                 <TouchableOpacity onPress={() => setViewAll(prev => !prev)}>
                   <Text style={styles.viewToggle}>
@@ -354,18 +316,17 @@ const DoctorSlots: React.FC = ({route}: any) => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
-
+      {/* COMMON FOOTER */}
       <Footer />
+      {/* LOADER */}
       {loading && <Loader />}
     </View>
   );
 };
 
-export default DoctorSlots;
+export default DoctorSlotSelection;
 
-/**
- * Styles
- */
+// ---------- STYLES ----------
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: pallette.white,

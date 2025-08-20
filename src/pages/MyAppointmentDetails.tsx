@@ -57,6 +57,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       AppointmentType: appointmentData?.AppointmentType,
       bank_details,
     };
+    console.log(obj);
     try {
       const response = await bookAppointment(obj);
       if (response?.status == 200 && response?.success) {

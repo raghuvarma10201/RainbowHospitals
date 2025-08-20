@@ -2,8 +2,8 @@
 export {default as Home} from './Home';
 export {Dashboard} from './dashboard';
 export {Specialities} from './specialities';
-export {default as DoctorsList} from './doctor-list/doctor-list';
-export {default as DoctorSlots} from './DoctorSlots';
+export {DoctorsList} from './doctor-list';
+export {DoctorSlotSelection} from './doctor-slots-selection';
 export {default as BookVaccination} from './BookVaccination';
 export {default as VaccinesAdult} from './VaccinesAdult';
 export {default as BookScan} from './BookScan';
