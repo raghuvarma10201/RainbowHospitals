@@ -1,3 +1,4 @@
+// ---------- MODULE IMPORTS ----------
 import React, {useCallback, useState} from 'react';
 import {
   Image,
@@ -11,40 +12,40 @@ import {Text} from 'react-native-paper';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
-
-import Header from '../components/Header';
-import Banners from '../components/Slider';
-import QuickActions from '../components/QuickActions';
-import UpcomingAppointmentCard from '../components/UpcomingAppointmentCard';
-import PaginationDots from '../components/PaginationDots';
-
-import {getAppointments} from '../services/common';
-import {useApp} from '../context/AppContext';
-import {ToastService} from '../utils/ToastService';
-import {upcomingApointment} from '../utils/types';
-import {h, pallette, w} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../navigation/types';
-import SearchLocationBlock from '../components/SearchLocationBlock';
+
+// ---------- COMPONENT IMPORTS ----------
+import {QuickActions, UpcomingAppointmentCard} from '.';
+import Header from '../../components/Header';
+import Banners from '../../components/Slider';
+import PaginationDots from '../../components/PaginationDots';
+import SearchLocationBlock from '../../components/SearchLocationBlock';
+
+// ---------- OTHER IMPORTS ----------
+import {useApp} from '../../context/AppContext';
+import {h, pallette, w} from '../../Constants/Constant';
+import {getAppointments} from '../../services/common';
+import {MainStackParamList} from '../../navigation/types';
+import {ToastService} from '../../utils/ToastService';
+import {upcomingApointment} from '../../utils/types';
+import {adjust} from '../../utils/commonFunctions';
 
 // ---------- STATIC DATA OUTSIDE COMPONENT ----------
-
 const images = {
-  banner: require('../../assets/images/slide1.png'),
-  search: require('../../assets/images/search-icon.png'),
-  location: require('../../assets/images/map-icon.png'),
-  call: require('../../assets/images/call-icon.png'),
+  banner: require('../../../assets/images/slide1.png'),
+  search: require('../../../assets/images/search-icon.png'),
+  location: require('../../../assets/images/map-icon.png'),
+  call: require('../../../assets/images/call-icon.png'),
 };
 
 const banners = Array(3).fill(images.banner);
 
 // ---------- COMPONENT ----------
 const Dashboard: React.FC = () => {
+  // ---------- STATE AND CONTEXT DECLARATION ----------
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {profile} = useApp();
-
   const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
   const [activeindex, setActiveindex] = useState(0);
   const [activeAppointmentIndex, setActiveAppointmentIndex] = useState(0);
@@ -71,11 +72,6 @@ const Dashboard: React.FC = () => {
     }
   }, []);
 
-  const handleScrollEnd = useCallback((event: any) => {
-    const newIndex = Math.round(event.nativeEvent.contentOffset.x / w);
-    setActiveAppointmentIndex(newIndex);
-  }, []);
-
   // ---------- LIFECYCLE ----------
   useFocusEffect(
     useCallback(() => {
@@ -83,9 +79,16 @@ const Dashboard: React.FC = () => {
     }, [fetchMyAppointments]),
   );
 
+  // ---------- EVENT HANDLERS ----------
+  const handleScrollEnd = useCallback((event: any) => {
+    const newIndex = Math.round(event.nativeEvent.contentOffset.x / w);
+    setActiveAppointmentIndex(newIndex);
+  }, []);
+
   // ---------- RENDER ----------
   return (
     <View style={styles.mainContainer}>
+      {/* COMMON HEADER */}
       <Header showLocation showBack={false} title="home" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
@@ -100,7 +103,6 @@ const Dashboard: React.FC = () => {
               <Text style={styles.helloSmall}>We are here to help!</Text>
             </View>
           </View>
-
           {/* UPCOMING APPOINTMENTS */}
           <FlatList
             data={appointments}
@@ -116,15 +118,14 @@ const Dashboard: React.FC = () => {
             )}
             onMomentumScrollEnd={handleScrollEnd}
           />
+          {/* PAGINATION DOTS COMPONENT */}
           <PaginationDots
             data={appointments}
             activeIndex={activeAppointmentIndex}
           />
-
           {/* QUICK ACTIONS */}
           <QuickActions navigation={navigation} />
         </View>
-
         {/* BANNERS */}
         <Banners
           images={banners}
@@ -135,9 +136,9 @@ const Dashboard: React.FC = () => {
           width={w * 0.95}
           marginVertical={w * 0.01}
         />
+        {/* PAGINATION DOTS COMPONENT */}
         <PaginationDots data={banners} activeIndex={activeindex} />
       </ScrollView>
-
       {/* FOOTER CALL BUTTON */}
       <View style={styles.footerCall}>
         <TouchableOpacity style={styles.footerCallButton}>

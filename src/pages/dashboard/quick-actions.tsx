@@ -8,8 +8,8 @@ import {
   ListRenderItem,
   Dimensions,
 } from 'react-native';
-import {adjust, navigateTo} from '../utils/commonFunctions';
-import {h, pallette, w} from '../Constants/Constant';
+import {adjust, navigateTo} from '../../utils/commonFunctions';
+import {h, pallette, w} from '../../Constants/Constant';
 
 // Type for a single action item
 type ActionItem = {
@@ -40,29 +40,29 @@ const QuickActions: React.FC<QuickActionsProps> = ({navigation}) => {
   // Array of quick action items
   const actionItems: ActionItem[] = [
     {
-      icon: require('../../assets/images/physical-consultation-icon.png'),
+      icon: require('../../../assets/images/physical-consultation-icon.png'),
       label: 'Book Physical Consultation',
       onPress: () =>
         navigateTo(navigation, 'Specialities', {appointmentType: 'Physical'}),
     },
     {
-      icon: require('../../assets/images/video-consultation-icon.png'),
+      icon: require('../../../assets/images/video-consultation-icon.png'),
       label: 'Book Video Consultation',
       onPress: () =>
         navigateTo(navigation, 'Specialities', {appointmentType: 'Video'}),
     },
     {
-      icon: require('../../assets/images/vaccine-icon.png'),
+      icon: require('../../../assets/images/vaccine-icon.png'),
       label: 'Book Vaccination',
       onPress: () => navigateTo(navigation, 'BookVaccination'),
     },
     {
-      icon: require('../../assets/images/book-scan.png'),
+      icon: require('../../../assets/images/book-scan.png'),
       label: 'Book Scan',
       onPress: () => navigateTo(navigation, 'BookScan'),
     },
     {
-      icon: require('../../assets/images/view-report.png'),
+      icon: require('../../../assets/images/view-report.png'),
       label: 'View Report',
       onPress: () => navigateTo(navigation, 'MedicalRecord'),
     },

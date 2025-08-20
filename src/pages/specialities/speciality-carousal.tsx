@@ -8,14 +8,14 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import {adjust} from '../utils/commonFunctions';
-import {pallette} from '../Constants/Constant';
+import {adjust} from '../../utils/commonFunctions';
+import {pallette} from '../../Constants/Constant';
 
 const {width: screenWidth} = Dimensions.get('window');
 const ITEM_WIDTH = screenWidth * 0.3; // width of each text item
 const SPACER_WIDTH = (screenWidth - ITEM_WIDTH) / 2.5; // half remaining width for perfect centering
 
-const SpecialtyHighlight = ({
+const SpecialtyCarousal = ({
   specialties,
   activeIndex,
   onLeftPress,
@@ -167,7 +167,7 @@ const SpecialtyHighlight = ({
   );
 };
 
-export default SpecialtyHighlight;
+export default SpecialtyCarousal;
 
 const styles = StyleSheet.create({
   container: {

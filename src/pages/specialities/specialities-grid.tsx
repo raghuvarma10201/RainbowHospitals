@@ -7,13 +7,13 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {IMG_BASE_URL} from '../utils/environment';
+import {IMG_BASE_URL} from '../../utils/environment';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../navigation/types';
-import PaginationDots from './PaginationDots';
-import {adjust} from '../utils/commonFunctions';
-import {pallette, w} from '../Constants/Constant';
+import {MainStackParamList} from '../../navigation/types';
+import PaginationDots from '../../components/PaginationDots';
+import {adjust} from '../../utils/commonFunctions';
+import {pallette, w} from '../../Constants/Constant';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -21,7 +21,7 @@ export interface ItemsProps {
   items: any[];
   type: string;
 }
-const PaginatedGrid: React.FC<ItemsProps> = ({items, type}) => {
+const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
   type AppNavigationProp = NativeStackNavigationProp<
     MainStackParamList,
     'DoctorsList'
@@ -137,4 +137,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaginatedGrid;
+export default SpecialityGrid;

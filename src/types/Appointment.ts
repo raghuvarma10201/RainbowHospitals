@@ -1,4 +1,4 @@
-export type BookingStatus = 'BOOKING' | 'RESCHEDULE' | 'CANCEL';
+export type BookingStatus = 'BLOCK' | 'RESCHEDULE' | 'CANCEL';
 export type AppointmentType = 'Video' | 'Physical';
 export type PaymentType = 'ONLINE' | 'CASH'; // extend as needed
 
@@ -27,4 +27,5 @@ export interface AppointmentPayload {
   payment_type?: PaymentType;
   payu_response?: any;
   bank_details?: BankDetails;
+  expirytime?: number;
 }

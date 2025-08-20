@@ -1,20 +1,25 @@
+// ---------- MODULE IMPORTS ----------
 import {ScrollView, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import DoctorSlider from '../components/DoctorSlider';
-import SpecialtySlider from '../components/SpecialitySlider';
-import PaginatedGrid from '../components/GridComponent';
-import {ToastService} from '../utils/ToastService';
-import {getDoctors, getSpecialities} from '../services/common';
-import Loader from '../components/Loader';
-import {MainStackParamList} from '../navigation/types';
-import {h, pallette} from '../Constants/Constant';
-import {useApp} from '../context/AppContext';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
+// ---------- COMPONENT IMPORTS ----------
+import {DoctorCarousal, SpecialityGrid, SpecialtyCarousal} from '.';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import Loader from '../../components/Loader';
+
+// ---------- OTHER IMPORTS ----------
+import {ToastService} from '../../utils/ToastService';
+import {getDoctors, getSpecialities} from '../../services/common';
+import {MainStackParamList} from '../../navigation/types';
+import {h, pallette} from '../../Constants/Constant';
+import {useApp} from '../../context/AppContext';
+
+// ---------- COMPONENT ----------
 const Specialities: React.FC = ({route}: any) => {
+  // ---------- STATE AND CONTEXT DECLARATION ----------
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentType} = route.params;
@@ -25,10 +30,12 @@ const Specialities: React.FC = ({route}: any) => {
   const [doctors, setDoctors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // ---------- LIFECYCLE ----------
   useEffect(() => {
     loadSpecialities();
   }, []);
 
+  // ---------- CALLBACK FUNCTIONS ----------
   const loadSpecialities = async () => {
     await fetchData(
       getSpecialities,
@@ -70,6 +77,7 @@ const Specialities: React.FC = ({route}: any) => {
     }
   };
 
+  // ---------- EVENT HANDLERS ----------
   const handleLeft = () => {
     setActiveSpecialtyIndex(prev =>
       prev === 0 ? specialities.length - 1 : prev - 1,
@@ -84,20 +92,23 @@ const Specialities: React.FC = ({route}: any) => {
     setActiveDocIndex(0);
   };
 
+  // ---------- LOADER ----------
   if (loading) return <Loader />;
 
+  // ---------- RENDER ----------
   return (
     <View style={styles.mainContainer}>
+      {/* COMMON HEADER */}
       <Header showLocation />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <View style={styles.quickActions}>
-            <PaginatedGrid items={specialities} type={appointmentType} />
+            <SpecialityGrid items={specialities} type={appointmentType} />
           </View>
         </View>
         {specialities.length > 0 && (
           <>
-            <SpecialtySlider
+            <SpecialtyCarousal
               specialties={specialities}
               activeIndex={activeSpecialtyIndex}
               onLeftPress={handleLeft}
@@ -108,7 +119,7 @@ const Specialities: React.FC = ({route}: any) => {
                 loadDoctors(specialityId, appointmentType);
               }}
             />
-            <DoctorSlider
+            <DoctorCarousal
               doctors={doctors}
               activeindex={activeDocIndex}
               setActiveindex={setActiveDocIndex}

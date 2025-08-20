@@ -1,8 +1,8 @@
 // src/pages/index.ts
 export {default as Home} from './Home';
-export {default as Dashboard} from './Dashboard';
-export {default as Specialities} from './Specialities';
-export {default as DoctorsList} from './DoctorsList';
+export {Dashboard} from './dashboard';
+export {Specialities} from './specialities';
+export {default as DoctorsList} from './doctor-list/doctor-list';
 export {default as DoctorSlots} from './DoctorSlots';
 export {default as BookVaccination} from './BookVaccination';
 export {default as VaccinesAdult} from './VaccinesAdult';

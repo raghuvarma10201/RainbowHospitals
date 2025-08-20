@@ -1,10 +1,13 @@
 import React from 'react';
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import {Card} from 'react-native-paper';
-import {upcomingApointment} from '../utils/types';
-import {formatAppointmentDate, formatAppointmentTime} from '../utils/dateTime';
-import {pallette, w} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+import {upcomingApointment} from '../../utils/types';
+import {
+  formatAppointmentDate,
+  formatAppointmentTime,
+} from '../../utils/dateTime';
+import {pallette, w} from '../../Constants/Constant';
+import {adjust} from '../../utils/commonFunctions';
 
 interface Props {
   appointment: upcomingApointment;
@@ -66,7 +69,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                 marginRight: 15,
               }}>
               <Image
-                source={require('../../assets/images/user-icon.png')}
+                source={require('../../../assets/images/user-icon.png')}
                 style={{width: 11, height: 11, marginRight: 1}}
               />
               <Text

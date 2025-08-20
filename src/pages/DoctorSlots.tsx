@@ -34,16 +34,6 @@ import DoctorDetailsCard from '../components/DoctorDetailsCard';
 /**
  * Types
  */
-interface DoctorSlotsProps {
-  route: {
-    params: {
-      doctorId: number;
-      appointmentType: AppointmentType;
-      OrganisationID: string;
-      appointmentnumber?: string;
-    };
-  };
-}
 
 interface DoctorSession {
   SessionDate: string;
@@ -55,7 +45,7 @@ interface Slot {
   SessionStartDttm: string;
 }
 
-const DoctorSlots: React.FC<DoctorSlotsProps> = ({route}) => {
+const DoctorSlots: React.FC = ({route}: any) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
 
@@ -247,7 +237,7 @@ const DoctorSlots: React.FC<DoctorSlotsProps> = ({route}) => {
         // Fresh booking case
         startTimer();
         await updateAppointment({
-          status: 'BOOKING',
+          status: 'BLOCK',
           comment: appointment?.comment ?? '',
           mrn: appointment?.mrn ?? '',
           OrganisationUID: '2',
@@ -258,6 +248,7 @@ const DoctorSlots: React.FC<DoctorSlotsProps> = ({route}) => {
           transaction_id: appointment?.transaction_id ?? '',
           price: appointment?.price ?? 0,
           payment_type: appointment?.payment_type ?? 'CASH',
+          expirytime: 3,
         });
 
         navigation.navigate('SlotConfirmation', {

@@ -38,13 +38,9 @@ type SlotConfirmationRouteProp = RouteProp<
   'SlotConfirmation'
 >;
 
-type Props = {
-  route: SlotConfirmationRouteProp;
-};
-
 const {height: h, width: w} = Dimensions.get('window');
 
-const SlotConfirmation: React.FC<Props> = ({route}) => {
+const SlotConfirmation: React.FC = ({route}: any) => {
   const navigation = useNavigation<SlotConfirmationNavigationProp>();
   const {doctor, doctorSpecialitites} = route.params;
 

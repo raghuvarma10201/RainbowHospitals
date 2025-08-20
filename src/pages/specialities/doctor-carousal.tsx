@@ -10,19 +10,19 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import {IMG_BASE_URL} from '../utils/environment';
+import {IMG_BASE_URL} from '../../utils/environment';
 import FastImage from 'react-native-fast-image';
-import {pallette} from '../Constants/Constant';
-import {routes} from '../utils/enums';
-import {adjust, navigateTo} from '../utils/commonFunctions';
-import {MainStackParamList} from '../navigation/types';
+import {pallette} from '../../Constants/Constant';
+import {routes} from '../../utils/enums';
+import {adjust, navigateTo} from '../../utils/commonFunctions';
+import {MainStackParamList} from '../../navigation/types';
 
 const {width: screenWidth} = Dimensions.get('window');
 const ITEM_WIDTH = screenWidth * 0.4;
 const SPACER_WIDTH = (screenWidth - ITEM_WIDTH) / 2;
 const AUTO_SCROLL_INTERVAL = 3000;
 
-const DoctorSlider = ({
+const DoctorCarousal = ({
   doctors,
   activeindex,
   setActiveindex,
@@ -157,7 +157,7 @@ const DoctorSlider = ({
   );
 };
 
-export default DoctorSlider;
+export default DoctorCarousal;
 
 const styles = StyleSheet.create({
   itemContainer: {
