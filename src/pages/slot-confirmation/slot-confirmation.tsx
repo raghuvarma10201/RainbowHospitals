@@ -1,6 +1,6 @@
+// ---------- MODULE IMPORTS ----------
 import React, {useEffect, useState, useCallback} from 'react';
 import {
-  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
@@ -8,48 +8,39 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useNavigation, RouteProp} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Dropdown} from 'react-native-element-dropdown';
 
-import CommonHeader from '../components/Header';
-import Footer from '../components/Footer';
-import TimerBanner from '../components/TimmerBanner';
-import Loader from '../components/Loader';
-import DoctorDetailsCard from '../components/DoctorDetailsCard';
+// ---------- COMPONENT IMPORTS ----------
+import CommonHeader from '../../components/header';
+import Footer from '../../components/footer';
+import Loader from '../../components/Loader';
+import DoctorDetailsCard from '../../components/doctor-details-card';
 
-import {useApp} from '../context/AppContext';
-import {fetchConsultationFee, fetchFamilyMembers} from '../services/common';
-import {ToastService} from '../utils/ToastService';
-import {FamilyMember} from '../utils/types';
-import {MainStackParamList} from '../navigation/types';
-import {pallette} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
-import {useSettings} from '../context/SettingsContext';
+// ---------- OTHER IMPORTS ----------
+import {useApp} from '../../context/AppContext';
+import {fetchConsultationFee, fetchFamilyMembers} from '../../services/common';
+import {ToastService} from '../../utils/ToastService';
+import {FamilyMember} from '../../utils/types';
+import {MainStackParamList} from '../../navigation/types';
+import {h, pallette, w} from '../../Constants/Constant';
+import {adjust} from '../../utils/commonFunctions';
+import {useSettings} from '../../context/SettingsContext';
 
-// Navigation & Route types
-type SlotConfirmationNavigationProp = NativeStackNavigationProp<
-  MainStackParamList,
-  'SlotConfirmation'
->;
-
-type SlotConfirmationRouteProp = RouteProp<
-  MainStackParamList,
-  'SlotConfirmation'
->;
-
-const {height: h, width: w} = Dimensions.get('window');
-
+// ---------- COMPONENT ----------
 const SlotConfirmation: React.FC = ({route}: any) => {
-  const navigation = useNavigation<SlotConfirmationNavigationProp>();
+  // ---------- STATE AND CONTEXT DECLARATION ----------
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {doctor, doctorSpecialitites} = route.params;
-
   const {branch, appointment, updateAppointment} = useApp();
   const {settings} = useSettings();
-
-  // ---------- State ----------
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const [appointmentType, setAppointmentType] = useState(
+    appointment?.AppointmentType || '',
+  );
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<string | undefined>(
     '',
@@ -57,7 +48,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
   const [consultationFee, setConsultationFee] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // ---------- Fetch Patient (Family Members) ----------
+  // ---------- CALLBACK FUNCTIONS ----------
   const getFamilyMembers = useCallback(async (mobile: string) => {
     try {
       setLoading(true);
@@ -78,7 +69,6 @@ const SlotConfirmation: React.FC = ({route}: any) => {
     }
   }, []);
 
-  // ---------- Fetch Consultation Fee ----------
   const getConsultationFee = useCallback(
     async (mrn: string | undefined) => {
       if (!branch || !appointment) return;
@@ -125,7 +115,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
     [branch, doctor, appointment, updateAppointment],
   );
 
-  // ---------- Online Payment Navigation ----------
+  // ---------- EVENT HANDLERS ----------
   const navigateToOnlinePayment = useCallback(
     (paymenttype: boolean) => {
       if (!appointment) return;
@@ -139,13 +129,13 @@ const SlotConfirmation: React.FC = ({route}: any) => {
         finalPayload: appointment,
         txnId: txnid,
         amount: consultationFee.toFixed(2),
-        payuUrl: 'https://test.payu.in/_payment', // TODO: Replace with Production URL
+        payuUrl: 'https://test.payu.in/_payment',
       });
     },
     [appointment, consultationFee, navigation],
   );
 
-  // ---------- Load on Mount ----------
+  // ---------- LIFECYCLE ----------
   useEffect(() => {
     (async () => {
       const storedNumber = await AsyncStorage.getItem('mobileNumber');
@@ -156,23 +146,24 @@ const SlotConfirmation: React.FC = ({route}: any) => {
     })();
   }, [getFamilyMembers]);
 
-  // ---------- Render ----------
+  // ---------- RENDER ----------
   return (
     <View style={styles.mainContainer}>
+      {/* COMMON HEADER */}
       <CommonHeader showLocation title={undefined} />
-
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Doctor Details */}
+        {/* DOCTOR DETAILS CARD */}
         <DoctorDetailsCard
           doctorDetail={doctor}
           doctorSpecialitites={doctorSpecialitites}
+          appointmentType={appointmentType}
+          onConsultationPress={setAppointmentType}
         />
-
         <View style={styles.calenderContainer}>
-          {/* Location Info */}
+          {/* BRANCH DETAILS */}
           <View style={styles.flex}>
             <Image
-              source={require('../../assets/images/map-icon.png')}
+              source={require('../../../assets/images/map-icon.png')}
               style={styles.flexImg}
             />
             <View>
@@ -188,11 +179,10 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               </Text>
             </View>
           </View>
-
-          {/* Patient Selection */}
+          {/* PATIENT DROPDOWN */}
           <View style={styles.flex}>
             <Image
-              source={require('../../assets/images/booked-for-icon.png')}
+              source={require('../../../assets/images/booked-for-icon.png')}
               style={styles.flexImg}
             />
             <View>
@@ -214,7 +204,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
                 labelField="PatientName"
                 placeholder="Select Patient"
                 containerStyle={styles.dropdownList}
-                activeColor="#fff"
+                activeColor={pallette.app_light_green}
                 onChange={(item: FamilyMember) => {
                   setSelectedPatient(item.PatientID);
                   getConsultationFee(item.PatientID);
@@ -222,74 +212,74 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               />
             </View>
           </View>
-
-          {/* Payment Summary */}
-          {selectedPatient && (
-            <>
-              <View>
-                <View
-                  style={[styles.paymentBlock, {backgroundColor: '#4CC2BF'}]}>
-                  <Text style={[styles.paymentTxt, {color: pallette.white}]}>
-                    Total Charges
-                  </Text>
-                </View>
-                <View
-                  style={[styles.paymentBlock, {backgroundColor: '#b1e2e1ff'}]}>
-                  <Text
-                    style={[
-                      styles.paymentTxt,
-                      {
-                        color: pallette.black,
-                        fontFamily: 'ProximaNovaA-Semibold',
-                      },
-                    ]}>
-                    Consultation Fee
-                  </Text>
-                  <Text
-                    style={[
-                      styles.paymentTxt,
-                      {
-                        color: pallette.black,
-                        fontFamily: 'ProximaNovaA-Semibold',
-                      },
-                    ]}>
-                    ₹ {consultationFee}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Payment Options */}
-              <View style={styles.payBtnsContainer}>
-                <TouchableOpacity
-                  onPress={() => navigateToOnlinePayment(true)}
-                  style={[
-                    styles.payBtn,
-                    {backgroundColor: pallette.app_purple},
-                  ]}>
-                  <Text style={styles.payBtnTxt}>Pay Now</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => navigateToOnlinePayment(false)}
-                  style={[styles.payBtn, {backgroundColor: 'grey'}]}>
-                  <Text style={styles.payBtnTxt}>Pay At Hospital</Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Disclaimer */}
-              <Text style={[styles.flexHead, {fontSize: adjust(10)}]}>
-                Disclaimer: Please note that waiting times may vary depending on
-                the doctor's schedule and unforeseen circumstances. We
-                appreciate your patience and understanding.
+          {/* PAYMENT SUMMARY */}
+          <View>
+            <View
+              style={[
+                styles.paymentBlock,
+                {backgroundColor: pallette.app_green},
+              ]}>
+              <Text style={[styles.paymentTxt, {color: pallette.white}]}>
+                Total Charges
               </Text>
-            </>
+            </View>
+            <View
+              style={[
+                styles.paymentBlock,
+                {backgroundColor: pallette.app_light_green},
+              ]}>
+              <Text
+                style={[
+                  styles.paymentTxt,
+                  {
+                    color: pallette.black,
+                    fontFamily: 'ProximaNovaA-Semibold',
+                  },
+                ]}>
+                Consultation Fee
+              </Text>
+              <Text
+                style={[
+                  styles.paymentTxt,
+                  {
+                    color: pallette.black,
+                    fontFamily: 'ProximaNovaA-Semibold',
+                  },
+                ]}>
+                ₹ {consultationFee}
+              </Text>
+            </View>
+          </View>
+          {/* PAYMENT BUTTONS */}
+          {selectedPatient && (
+            <View style={styles.payBtnsContainer}>
+              <TouchableOpacity
+                onPress={() => navigateToOnlinePayment(true)}
+                style={[styles.payBtn, {backgroundColor: pallette.app_purple}]}>
+                <Text style={styles.payBtnTxt}>Pay Now</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigateToOnlinePayment(false)}
+                style={[styles.payBtn, {backgroundColor: 'grey'}]}>
+                <Text style={styles.payBtnTxt}>Pay At Hospital</Text>
+              </TouchableOpacity>
+            </View>
           )}
+          {/* DISCLAIMER */}
+          <Text
+            style={[
+              styles.flexHead,
+              {fontSize: adjust(10), marginVertical: h * 0.02},
+            ]}>
+            Disclaimer: Please note that waiting times may vary depending on the
+            doctor's schedule and unforeseen circumstances. We appreciate your
+            patience and understanding.
+          </Text>
         </View>
-
-        {/* <TimerBanner /> */}
       </ScrollView>
-
+      {/* COMMON FOOTER */}
       <Footer />
-
+      {/* LOADER */}
       {loading && <Loader />}
     </View>
   );
@@ -297,7 +287,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
 
 export default SlotConfirmation;
 
-// ---------- Styles ----------
+// ---------- STYLES ----------
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: pallette.white,
@@ -360,7 +350,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Semibold',
   },
   dropdownSelect: {
-    backgroundColor: '#b1e2e1ff',
+    backgroundColor: pallette.app_light_green,
     height: 30,
     marginTop: 5,
     width: w * 0.6,
@@ -378,6 +368,6 @@ const styles = StyleSheet.create({
   dropdownList: {
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: adjust(12),
-    backgroundColor: '#E5F9F8',
+    backgroundColor: pallette.white,
   },
 });

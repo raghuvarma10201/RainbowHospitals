@@ -6,17 +6,16 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Text, Modal, Portal, TextInput} from 'react-native-paper';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../components/header';
+import Footer from '../components/footer';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
 import {formatAppointmentDate, formatAppointmentTime} from '../utils/dateTime';
 import {bookAppointment} from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useApp} from '../context/AppContext';
 import {ToastService} from '../utils/ToastService';
 import {pallette} from '../Constants/Constant';
 import Loader from '../components/Loader';
@@ -30,12 +29,8 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const {appointmentData, cancel} = route.params;
   console.log(appointmentData);
 
-  const w = Dimensions.get('window').width;
-  const h = Dimensions.get('window').height;
-
   const [visible, setVisible] = React.useState(cancel || false);
   const [loading, setLoading] = useState(false);
-  const {branch} = useApp();
   const {showJitsi} = useJitsi();
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);

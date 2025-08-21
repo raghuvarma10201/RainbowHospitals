@@ -18,8 +18,8 @@ import {
   Portal,
 } from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../components/header';
+import Footer from '../components/footer';
 
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';

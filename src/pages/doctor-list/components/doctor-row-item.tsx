@@ -1,12 +1,12 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {h, pallette, w} from '../../Constants/Constant';
-import {adjust, navigateTo} from '../../utils/commonFunctions';
+import {h, pallette, w} from '../../../Constants/Constant';
+import {adjust, navigateTo} from '../../../utils/commonFunctions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../navigation/types';
+import {MainStackParamList} from '../../../navigation/types';
 import {memo} from 'react';
-import {routes} from '../../utils/enums';
+import {routes} from '../../../utils/enums';
 import FastImage from 'react-native-fast-image';
-import {IMG_BASE_URL} from '../../utils/environment';
+import {IMG_BASE_URL} from '../../../utils/environment';
 
 interface DoctorSpeciality {
   speciality: {name: string};

@@ -6,8 +6,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 // ---------- COMPONENT IMPORTS ----------
 import {DoctorRow} from '.';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import Header from '../../components/header';
+import Footer from '../../components/footer';
 import SearchLocationBlock from '../../components/SearchLocationBlock';
 
 // ---------- OTHER IMPORTS ----------

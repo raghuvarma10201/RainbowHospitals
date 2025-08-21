@@ -9,8 +9,8 @@ import {
 import React, {useState} from 'react';
 import {Text, Banner, Modal, Portal} from 'react-native-paper';
 
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../components/header';
+import Footer from '../components/footer';
 
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';

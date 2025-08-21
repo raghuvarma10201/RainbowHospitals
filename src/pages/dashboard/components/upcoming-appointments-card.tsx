@@ -1,13 +1,15 @@
 import React from 'react';
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import {Card} from 'react-native-paper';
-import {upcomingApointment} from '../../utils/types';
+import {upcomingApointment} from '../../../utils/types';
 import {
   formatAppointmentDate,
   formatAppointmentTime,
-} from '../../utils/dateTime';
-import {pallette, w} from '../../Constants/Constant';
-import {adjust} from '../../utils/commonFunctions';
+} from '../../../utils/dateTime';
+import {pallette, w} from '../../../Constants/Constant';
+import {adjust, navigateTo} from '../../../utils/commonFunctions';
+import {routes} from '../../../utils/enums';
+import {MainStackParamList} from '../../../navigation/types';
 
 interface Props {
   appointment: upcomingApointment;
@@ -69,7 +71,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                 marginRight: 15,
               }}>
               <Image
-                source={require('../../../assets/images/user-icon.png')}
+                source={require('../../../../assets/images/user-icon.png')}
                 style={{width: 11, height: 11, marginRight: 1}}
               />
               <Text
@@ -96,17 +98,31 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
           <View style={styles.bottomUABlock}>
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate('DoctorSlots', {
-                  doctorId: appointment?.id,
-                  appointmentType: appointment?.AppointmentType,
-                  appointmentnumber: appointment?.appointmentnumber,
-                  OrganisationID: appointment?.OrganisationUID,
-                })
+                navigateTo(
+                  navigation,
+                  routes.DoctorSlots as keyof MainStackParamList,
+                  {
+                    doctorId: appointment?.id,
+                    appointmentType: appointment?.AppointmentType,
+                    appointmentnumber: appointment?.appointmentnumber,
+                    OrganisationID: appointment?.OrganisationUID,
+                  },
+                )
               }>
               <Text style={styles.rescheduleBt}>Reschedule</Text>
             </TouchableOpacity>
             <View style={styles.divider} />
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigateTo(
+                  navigation,
+                  routes.MyAppointmentDetails as keyof MainStackParamList,
+                  {
+                    appointmentData: appointment,
+                    cancel: true,
+                  },
+                )
+              }>
               <Text style={styles.cancelBtn}> Cancel</Text>
             </TouchableOpacity>
           </View>

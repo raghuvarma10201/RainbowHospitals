@@ -6,8 +6,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 // ---------- COMPONENT IMPORTS ----------
 import {DoctorCarousal, SpecialityGrid, SpecialtyCarousal} from '.';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import Header from '../../components/header';
+import Footer from '../../components/footer';
 import Loader from '../../components/Loader';
 
 // ---------- OTHER IMPORTS ----------
@@ -48,9 +48,23 @@ const Specialities: React.FC = ({route}: any) => {
   };
 
   const loadDoctors = async (specialityId: any, appointmentType: any) => {
+    console.log(appointmentType);
+
     await fetchData(
-      () => getDoctors('', specialityId, '', '', appointmentType, 1, 10),
-      data => setDoctors(data.doctors),
+      () =>
+        getDoctors(
+          '',
+          specialityId,
+          branch?.id.toString(),
+          // '',
+          '',
+          appointmentType,
+          1,
+          10,
+        ),
+      data => {
+        setDoctors(data.doctors);
+      },
       'doctors',
     );
   };

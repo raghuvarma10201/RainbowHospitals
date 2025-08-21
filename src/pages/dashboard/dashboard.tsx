@@ -16,7 +16,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 // ---------- COMPONENT IMPORTS ----------
 import {QuickActions, UpcomingAppointmentCard} from '.';
-import Header from '../../components/Header';
+import Header from '../../components/header';
 import Banners from '../../components/Slider';
 import PaginationDots from '../../components/PaginationDots';
 import SearchLocationBlock from '../../components/SearchLocationBlock';

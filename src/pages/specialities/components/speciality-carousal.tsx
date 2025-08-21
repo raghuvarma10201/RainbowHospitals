@@ -8,12 +8,11 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import {adjust} from '../../utils/commonFunctions';
-import {pallette} from '../../Constants/Constant';
+import {adjust} from '../../../utils/commonFunctions';
+import {pallette} from '../../../Constants/Constant';
 
 const {width: screenWidth} = Dimensions.get('window');
-const ITEM_WIDTH = screenWidth * 0.3; // width of each text item
-const SPACER_WIDTH = (screenWidth - ITEM_WIDTH) / 2.5; // half remaining width for perfect centering
+const ITEM_WIDTH = screenWidth * 0.3;
 
 const SpecialtyCarousal = ({
   specialties,
@@ -34,29 +33,28 @@ const SpecialtyCarousal = ({
 
   const [data, setData] = useState<any>([]);
 
-  // Add spacers for center snapping
   useEffect(() => {
-    setData([{key: 'left-spacer'}, ...specialties, {key: 'right-spacer'}]);
+    if (specialties.length > 0) {
+      setData([{key: 'left-spacer'}, ...specialties, {key: 'right-spacer'}]);
+    }
   }, [specialties]);
 
-  // Scroll to the current active index when it changes
   useEffect(() => {
-    if (flatListRef.current && specialties.length > 0) {
-      flatListRef.current.scrollToOffset({
-        offset: (activeIndex + 1) * ITEM_WIDTH - SPACER_WIDTH,
+    if (flatListRef.current && specialties.length > 0 && data.length > 0) {
+      flatListRef.current.scrollToIndex({
+        index: activeIndex,
         animated: true,
       });
       scrollIndex.current = activeIndex;
     }
-  }, [activeIndex]);
+  }, [activeIndex, specialties, data]);
 
-  // Handle left arrow click
   const handleLeftPress = () => {
     if (scrollIndex.current > 0) {
       const newIndex = scrollIndex.current - 1;
       scrollIndex.current = newIndex;
-      flatListRef.current?.scrollToOffset({
-        offset: (newIndex + 1) * ITEM_WIDTH - SPACER_WIDTH,
+      flatListRef.current?.scrollToIndex({
+        index: newIndex,
         animated: true,
       });
       onLeftPress();
@@ -64,13 +62,12 @@ const SpecialtyCarousal = ({
     }
   };
 
-  // Handle right arrow click
   const handleRightPress = () => {
     if (scrollIndex.current < specialties.length - 1) {
       const newIndex = scrollIndex.current + 1;
       scrollIndex.current = newIndex;
-      flatListRef.current?.scrollToOffset({
-        offset: (newIndex + 1) * ITEM_WIDTH - SPACER_WIDTH,
+      flatListRef.current?.scrollToIndex({
+        index: newIndex,
         animated: true,
       });
       onRightPress();
@@ -80,7 +77,7 @@ const SpecialtyCarousal = ({
 
   const renderItem = ({item, index}: {item: any; index: number}) => {
     if (!item || item.key === 'left-spacer' || item.key === 'right-spacer') {
-      return <View key={item.key} style={{width: SPACER_WIDTH}} />;
+      return <View key={item.key} style={{width: ITEM_WIDTH}} />;
     }
 
     const inputRange = [
@@ -101,7 +98,7 @@ const SpecialtyCarousal = ({
       extrapolate: 'clamp',
     });
 
-    const adjustedIndex = index - 1; // because of left spacer
+    const adjustedIndex = index - 1;
 
     return (
       <Animated.View
@@ -113,8 +110,6 @@ const SpecialtyCarousal = ({
             adjustedIndex === activeIndex && styles.activeItemContainer,
           ]}>
           <Text
-            adjustsFontSizeToFit
-            numberOfLines={1}
             style={[
               styles.tabText,
               adjustedIndex === activeIndex && styles.activeTabText,
@@ -144,7 +139,11 @@ const SpecialtyCarousal = ({
         snapToInterval={ITEM_WIDTH}
         decelerationRate="fast"
         bounces={false}
-        scrollEnabled={false}
+        getItemLayout={(_, index) => ({
+          length: ITEM_WIDTH,
+          offset: ITEM_WIDTH * index,
+          index,
+        })}
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {x: scrollX}}}],
           {useNativeDriver: true},
@@ -155,7 +154,14 @@ const SpecialtyCarousal = ({
           );
           const adjustedIndex = Math.max(0, index - 1); // adjust for left spacer
           scrollIndex.current = adjustedIndex;
-          // onTabPress(adjustedIndex, specialties[adjustedIndex].speciality_id);
+        }}
+        onScrollToIndexFailed={info => {
+          setTimeout(() => {
+            flatListRef.current?.scrollToIndex({
+              index: info.index,
+              animated: true,
+            });
+          }, 100);
         }}
       />
 

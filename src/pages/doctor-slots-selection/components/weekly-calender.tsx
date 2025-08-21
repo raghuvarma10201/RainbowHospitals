@@ -1,6 +1,6 @@
 import React, {useState, useMemo, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {adjust} from '../utils/commonFunctions';
+import {adjust} from '../../../utils/commonFunctions';
 
 type Session = {
   SessionDate: string;
@@ -42,10 +42,7 @@ function getMonthDisplayForChunk(chunk: SessionDay[]): string {
   }
 }
 
-export const DynamicWeekWithMonth: React.FC<Props> = ({
-  sessions,
-  onDateClick,
-}) => {
+const WeeklyCalendar: React.FC<Props> = ({sessions, onDateClick}) => {
   const sortedSessions = useMemo(() => {
     return [...sessions]
       .filter(s => s.SessionDate && !isNaN(new Date(s.SessionDate).getTime()))
@@ -156,6 +153,8 @@ export const DynamicWeekWithMonth: React.FC<Props> = ({
     </View>
   );
 };
+
+export default WeeklyCalendar;
 
 const styles = StyleSheet.create({
   container: {

@@ -1,4 +1,4 @@
 export {default as Specialities} from './specialities';
-export {default as SpecialityGrid} from './specialities-grid';
-export {default as DoctorCarousal} from './doctor-carousal';
-export {default as SpecialtyCarousal} from './speciality-carousal';
+export {default as SpecialityGrid} from './components/specialities-grid';
+export {default as DoctorCarousal} from './components/doctor-carousal';
+export {default as SpecialtyCarousal} from './components/speciality-carousal';

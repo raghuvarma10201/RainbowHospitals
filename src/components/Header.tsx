@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../navigation/types';
@@ -25,6 +25,11 @@ import {
 import {getCurrentCoordinates} from '../utils/LocationService';
 import {pallette, w} from '../Constants/Constant';
 import {adjust} from '../utils/commonFunctions';
+
+const STORAGE_KEYS = {
+  BRANCH: 'branch',
+  REGION: 'region',
+};
 
 const images = {
   arrow: require('../../assets/images/back-arrow.png'),
@@ -55,9 +60,9 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
   const [regions, setRegions] = useState<any[]>([]);
   const [branchesForRegion, setBranchesForRegion] = useState<Branch[]>([]);
   const [expandedRegionId, setExpandedRegionId] = useState<string | null>(null);
-  const [branchHeights, setBranchHeights] = useState<{
-    [key: string]: Animated.Value;
-  }>({});
+  const [branchHeights, setBranchHeights] = useState<
+    Record<string, Animated.Value>
+  >({});
 
   const {
     branch,
@@ -68,124 +73,240 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
     updateProfile,
   } = useApp();
 
+  /** Fetch Profile */
   useEffect(() => {
-    loadDetails();
+    const getProfile = async () => {
+      try {
+        const mrn = await AsyncStorage.getItem('mrn');
+        if (!mrn) return;
+        const data = await getPatientProfile({mrn});
+        if (data?.data?.[0]?.PatientID) {
+          updateProfile(data.data[0]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch profile:', err);
+      }
+    };
     getProfile();
+  }, [updateProfile]);
+
+  /** Initial load with persisted region/branch */
+  useEffect(() => {
+    const loadDetails = async () => {
+      try {
+        const savedBranch = await AsyncStorage.getItem(STORAGE_KEYS.BRANCH);
+        const savedRegion = await AsyncStorage.getItem(STORAGE_KEYS.REGION);
+
+        const regionData = await getRegions();
+        const location = await getCurrentCoordinates();
+        if (!location) return;
+
+        let nearestRegion = null;
+
+        if (savedRegion) {
+          nearestRegion = JSON.parse(savedRegion);
+        } else {
+          nearestRegion = findNearestRegion(
+            regionData,
+            location.latitude,
+            location.longitude,
+          );
+        }
+
+        if (!nearestRegion) return;
+
+        updateRegion(nearestRegion);
+
+        const allBranches = await getBranches(nearestRegion.region_id);
+        if (!allBranches.length) return;
+        updateAllBranch(allBranches);
+
+        if (branch) return;
+        if (savedBranch) {
+          updateBranch(JSON.parse(savedBranch));
+        } else {
+          const nearestBranch = findNearestBranch(
+            allBranches,
+            location.latitude,
+            location.longitude,
+          );
+          if (nearestBranch) {
+            updateBranch(nearestBranch);
+            await AsyncStorage.setItem(
+              STORAGE_KEYS.BRANCH,
+              JSON.stringify(nearestBranch),
+            );
+          }
+        }
+      } catch (err) {
+        console.error('Error loading details:', err);
+      }
+    };
+    loadDetails();
+  }, [branch, updateAllBranch, updateBranch, updateRegion]);
+
+  /** Load all regions & pre-initialize Animated.Values */
+  useEffect(() => {
+    getRegions()
+      .then(data => {
+        setRegions(data);
+        const initialHeights: Record<string, Animated.Value> = {};
+        data.forEach((r: any) => {
+          initialHeights[r.region_id] = new Animated.Value(0);
+        });
+        setBranchHeights(initialHeights);
+      })
+      .catch(err => console.error('Failed to load regions:', err));
   }, []);
 
-  const getProfile = async () => {
-    try {
-      const mrn = await AsyncStorage.getItem('mrn');
-      if (!mrn) return;
-      const data = await getPatientProfile({mrn});
-      if (data?.data?.[0]?.PatientID) {
-        updateProfile(data.data[0]);
-      }
-    } catch (err) {
-      console.error('Failed to fetch profile:', err);
-    }
-  };
-
+  /** Sync local selections with context */
   useEffect(() => {
     setSelectedBranch(branch || null);
     setSelectedRegion(region || null);
   }, [branch, region]);
 
-  const loadDetails = async () => {
-    try {
-      const regions = await getRegions();
-      const location = await getCurrentCoordinates();
-      if (!location) return;
-      const nearestRegion = findNearestRegion(
-        regions,
-        location.latitude,
-        location.longitude,
-      );
-      if (!nearestRegion) return;
+  /** Handlers */
+  const handleGoBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
-      updateRegion(nearestRegion);
-      const allBranches = await getBranches(nearestRegion.region_id);
-      if (!allBranches.length) return;
-
-      updateAllBranch(allBranches);
-      const nearestBranch = findNearestBranch(
-        allBranches,
-        location.latitude,
-        location.longitude,
-      );
-      if (nearestBranch) updateBranch(nearestBranch);
-    } catch (err) {
-      console.error('Error loading details:', err);
-    }
-  };
-
-  useEffect(() => {
-    const loadRegions = async () => {
-      try {
-        const regionData = await getRegions();
-        setRegions(regionData);
-      } catch (error) {
-        console.error('Failed to load regions:', error);
-      }
-    };
-    loadRegions();
+  const handleOpenModal = useCallback(() => {
+    setLocationModalVisible(true);
   }, []);
 
-  const toggleRegion = async (regionItem: any) => {
-    const id = regionItem.region_id;
-    const isExpanded = expandedRegionId === id;
+  const handleCloseModal = useCallback(() => {
+    setLocationModalVisible(false);
+  }, []);
 
-    if (expandedRegionId && expandedRegionId !== id) {
-      Animated.timing(branchHeights[expandedRegionId], {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-    }
-
-    if (isExpanded) {
-      Animated.timing(branchHeights[id], {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: false,
-      }).start(() => setExpandedRegionId(null));
-    } else {
-      const branches = await getBranches(id);
-      setBranchesForRegion(branches);
-      if (!branchHeights[id]) {
-        branchHeights[id] = new Animated.Value(0);
-      }
-      setExpandedRegionId(id);
-      Animated.timing(branchHeights[id], {
-        toValue: branches.length * 50,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-    }
-  };
-
-  const handleBranchUpdate = () => {
+  const handleBranchUpdate = useCallback(async () => {
     if (selectedBranch && selectedRegion) {
       updateBranch(selectedBranch);
       updateRegion(selectedRegion);
       setLocationModalVisible(false);
+
+      await AsyncStorage.setItem(
+        STORAGE_KEYS.BRANCH,
+        JSON.stringify(selectedBranch),
+      );
+      await AsyncStorage.setItem(
+        STORAGE_KEYS.REGION,
+        JSON.stringify(selectedRegion),
+      );
     }
-  };
+  }, [selectedBranch, selectedRegion, updateBranch, updateRegion]);
+
+  const toggleRegion = useCallback(
+    async (regionItem: any) => {
+      const id = regionItem.region_id;
+      const isExpanded = expandedRegionId === id;
+
+      if (expandedRegionId && expandedRegionId !== id) {
+        Animated.timing(branchHeights[expandedRegionId], {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: false,
+        }).start();
+      }
+
+      if (isExpanded) {
+        Animated.timing(branchHeights[id], {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: false,
+        }).start(() => setExpandedRegionId(null));
+      } else {
+        const branches = await getBranches(id);
+        setBranchesForRegion(branches);
+        setExpandedRegionId(id);
+        Animated.timing(branchHeights[id], {
+          toValue: branches.length * 50,
+          duration: 300,
+          useNativeDriver: false,
+        }).start();
+      }
+    },
+    [expandedRegionId, branchHeights],
+  );
+
+  /** Memoized modal content */
+  const regionList = useMemo(
+    () =>
+      regions.map(regionItem => {
+        const isExpanded = expandedRegionId === regionItem.region_id;
+        const animatedHeight = branchHeights[regionItem.region_id];
+
+        return (
+          <View key={regionItem.region_id}>
+            <TouchableOpacity
+              style={[
+                styles.locationOption,
+                isExpanded && styles.selectedLocationOption,
+              ]}
+              onPress={() => {
+                toggleRegion(regionItem);
+                setSelectedRegion(regionItem);
+              }}>
+              <View style={styles.regionRow}>
+                <Text
+                  style={[
+                    styles.locationOptionText,
+                    isExpanded && styles.selectedLocationText,
+                  ]}>
+                  {regionItem.name}
+                </Text>
+                <FontAwesome
+                  name={isExpanded ? 'angle-up' : 'angle-down'}
+                  size={20}
+                  color="#888"
+                />
+              </View>
+            </TouchableOpacity>
+
+            <Animated.View style={{height: animatedHeight, overflow: 'hidden'}}>
+              {isExpanded &&
+                branchesForRegion.map((b, idx) => (
+                  <TouchableOpacity
+                    key={b.id}
+                    style={[
+                      styles.locationOption,
+                      selectedBranch?.id === b.id &&
+                        styles.selectedLocationOption,
+                    ]}
+                    onPress={() => setSelectedBranch(b)}>
+                    <Text
+                      style={[
+                        styles.locationOptionText,
+                        selectedBranch?.id === b.id &&
+                          styles.selectedLocationText,
+                      ]}>
+                      {idx + 1}. {b.name}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+            </Animated.View>
+          </View>
+        );
+      }),
+    [
+      regions,
+      expandedRegionId,
+      branchHeights,
+      branchesForRegion,
+      selectedBranch,
+      toggleRegion,
+    ],
+  );
 
   return (
     <View style={styles.header}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      <View style={styles.headerLeft}>
         {showBack ? (
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+            onPress={handleGoBack}
             style={styles.backArrowBlock}>
             <Image
               source={images.arrow}
-              style={{
-                width: w * 0.05,
-                height: w * 0.05,
-                tintColor: pallette.white,
-              }}
+              style={styles.arrowIcon}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -193,7 +314,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
           <View style={styles.profileIconBlock}>
             <Image
               source={images.profile}
-              style={{width: w * 0.08, height: w * 0.08}}
+              style={styles.profileIcon}
               resizeMode="contain"
             />
           </View>
@@ -202,21 +323,13 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
         {showLocation ? (
           <TouchableOpacity
             style={styles.dropdownIcon}
-            onPress={() => setLocationModalVisible(true)}>
+            onPress={handleOpenModal}>
             <View style={{marginLeft: 6}}>
               <Text style={styles.locationText}>
                 {branch?.name || 'Fetching location...'}
               </Text>
               <View style={styles.locationInfo}>
-                <Image
-                  source={images.map}
-                  style={{
-                    width: w * 0.03,
-                    height: w * 0.03,
-                    marginRight: 3,
-                    marginTop: 3,
-                  }}
-                />
+                <Image source={images.map} style={styles.mapIcon} />
                 <Text style={styles.regionText}>{region?.name ?? ''}</Text>
               </View>
             </View>
@@ -230,7 +343,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
         <TouchableOpacity>
           <Image
             source={images.services}
-            style={{width: w * 0.07, height: w * 0.07}}
+            style={styles.serviceIcon}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -238,15 +351,16 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
         <TouchableOpacity>
           <Image
             source={images.wallet}
-            style={{width: w * 0.065, height: w * 0.065}}
+            style={styles.walletIcon}
             resizeMode="contain"
           />
         </TouchableOpacity>
-        {title != 'menu' && (
+
+        {title !== 'menu' && (
           <TouchableOpacity onPress={() => navigation.navigate('Home')}>
             <Image
               source={images.filter}
-              style={{width: w * 0.06, height: w * 0.06}}
+              style={styles.filterIcon}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -258,80 +372,13 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
         animationType="slide"
         transparent
         visible={locationModalVisible}
-        onRequestClose={() => setLocationModalVisible(false)}>
-        <TouchableWithoutFeedback
-          onPress={() => setLocationModalVisible(false)}
-          accessible={false}>
+        onRequestClose={handleCloseModal}>
+        <TouchableWithoutFeedback onPress={handleCloseModal}>
           <View style={styles.modalOverlay}>
-            <TouchableWithoutFeedback onPress={() => {}}>
+            <TouchableWithoutFeedback>
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>📍 Select Region & Branch</Text>
-                <ScrollView style={{maxHeight: 400}}>
-                  {regions.map(regionItem => {
-                    const isExpanded =
-                      expandedRegionId === regionItem.region_id;
-                    const animatedHeight =
-                      branchHeights[regionItem.region_id] ||
-                      new Animated.Value(0);
-
-                    return (
-                      <View key={regionItem.region_id}>
-                        <TouchableOpacity
-                          style={[
-                            styles.locationOption,
-                            isExpanded && styles.selectedLocationOption,
-                          ]}
-                          onPress={() => {
-                            toggleRegion(regionItem);
-                            setSelectedRegion(regionItem);
-                          }}>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                            }}>
-                            <Text
-                              style={[
-                                styles.locationOptionText,
-                                isExpanded && styles.selectedLocationText,
-                              ]}>
-                              {regionItem.name}
-                            </Text>
-                            <FontAwesome
-                              name={isExpanded ? 'angle-up' : 'angle-down'}
-                              size={20}
-                              color="#888"
-                            />
-                          </View>
-                        </TouchableOpacity>
-
-                        <Animated.View
-                          style={{height: animatedHeight, overflow: 'hidden'}}>
-                          {isExpanded &&
-                            branchesForRegion.map((b, idx) => (
-                              <TouchableOpacity
-                                key={b.id}
-                                style={[
-                                  styles.locationOption,
-                                  selectedBranch?.id === b.id &&
-                                    styles.selectedLocationOption,
-                                ]}
-                                onPress={() => setSelectedBranch(b)}>
-                                <Text
-                                  style={[
-                                    styles.locationOptionText,
-                                    selectedBranch?.id === b.id &&
-                                      styles.selectedLocationText,
-                                  ]}>
-                                  {idx + 1}. {b.name}
-                                </Text>
-                              </TouchableOpacity>
-                            ))}
-                        </Animated.View>
-                      </View>
-                    );
-                  })}
-                </ScrollView>
+                <ScrollView style={{maxHeight: 400}}>{regionList}</ScrollView>
 
                 <View style={styles.buttonRow}>
                   <TouchableOpacity
@@ -342,7 +389,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.cancelButton}
-                    onPress={() => setLocationModalVisible(false)}>
+                    onPress={handleCloseModal}>
                     <Text style={styles.cancelButtonText}>Cancel</Text>
                   </TouchableOpacity>
                 </View>
@@ -364,6 +411,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
   },
+  headerLeft: {flexDirection: 'row', alignItems: 'center'},
   profileIconBlock: {
     width: w * 0.1,
     height: w * 0.1,
@@ -374,6 +422,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  profileIcon: {width: w * 0.08, height: w * 0.08},
   backArrowBlock: {
     width: w * 0.08,
     height: w * 0.08,
@@ -382,29 +431,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10,
   },
-  headerTitle: {
-    color: pallette.white,
-    fontSize: adjust(16),
-    paddingStart: 10,
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: w * 0.03,
-  },
-  dropdownIcon: {
-    marginLeft: 0,
-    padding: 4,
-  },
+  arrowIcon: {width: w * 0.05, height: w * 0.05, tintColor: pallette.white},
+  headerTitle: {color: pallette.white, fontSize: adjust(16), paddingStart: 10},
+  headerRight: {flexDirection: 'row', alignItems: 'center', gap: w * 0.03},
+  dropdownIcon: {marginLeft: 0, padding: 4},
   locationText: {
     fontSize: adjust(12),
     color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
   },
-  locationInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
+  locationInfo: {flexDirection: 'row', alignItems: 'center'},
+  mapIcon: {width: w * 0.03, height: w * 0.03, marginRight: 3, marginTop: 3},
   regionText: {
     fontSize: adjust(10),
     color: pallette.white,
@@ -433,40 +470,23 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: pallette.dark_grey,
   },
-  selectedLocationOption: {
-    backgroundColor: pallette.light_grey,
-  },
-  locationOptionText: {
-    fontSize: adjust(14),
-    color: pallette.black,
-  },
-  selectedLocationText: {
-    color: pallette.app_light_purple,
-    fontWeight: 'bold',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 20,
-  },
+  selectedLocationOption: {backgroundColor: pallette.light_grey},
+  locationOptionText: {fontSize: adjust(14), color: pallette.black},
+  selectedLocationText: {color: pallette.app_light_purple, fontWeight: 'bold'},
+  regionRow: {flexDirection: 'row', justifyContent: 'space-between'},
+  buttonRow: {flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20},
   updateButton: {
     backgroundColor: pallette.app_light_purple,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
   },
-  updateButtonText: {
-    color: 'white',
-    fontWeight: '600',
-  },
-  cancelButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-  },
-  cancelButtonText: {
-    color: pallette.dark_grey,
-    fontWeight: '600',
-  },
+  updateButtonText: {color: 'white', fontWeight: '600'},
+  cancelButton: {paddingVertical: 10, paddingHorizontal: 20},
+  cancelButtonText: {color: pallette.dark_grey, fontWeight: '600'},
+  serviceIcon: {width: w * 0.07, height: w * 0.07},
+  walletIcon: {width: w * 0.065, height: w * 0.065},
+  filterIcon: {width: w * 0.06, height: w * 0.06},
 });
 
 export default React.memo(CommonHeader);

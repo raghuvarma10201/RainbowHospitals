@@ -7,9 +7,9 @@ import {
   View,
   ImageSourcePropType,
 } from 'react-native';
-import ShortInfoText from './ShortInfoText';
 import {IMG_BASE_URL} from '../utils/environment';
 import {h, pallette, w} from '../Constants/Constant';
+import ShortInfoText from './ShortInfoText';
 import {adjust} from '../utils/commonFunctions';
 
 /**
@@ -21,22 +21,24 @@ interface DoctorDetail {
   small_image?: string;
   experience?: number;
   short_info?: string;
+  physical_consultation_fee?: string | undefined;
+  video_consultation_fee?: string | undefined;
 }
 
 interface Props {
   doctorDetail: DoctorDetail;
   doctorSpecialitites: string;
+  appointmentType: string;
   about?: boolean;
-  onPhysicalConsultationPress?: () => void;
-  onVideoConsultationPress?: () => void;
+  onConsultationPress: (type: string) => void;
 }
 
 const DoctorDetailsCard: React.FC<Props> = ({
   doctorDetail,
   doctorSpecialitites,
+  appointmentType,
   about = false,
-  onPhysicalConsultationPress,
-  onVideoConsultationPress,
+  onConsultationPress,
 }) => {
   // Fallback doctor profile image
   const doctorImage: ImageSourcePropType = doctorDetail?.small_image
@@ -64,36 +66,96 @@ const DoctorDetailsCard: React.FC<Props> = ({
           {`Experience ${doctorDetail?.experience ?? 0} Years`}
         </Text>
 
-        {/* Consultation Buttons */}
-        <View style={styles.consultBtnsContainer}>
-          <TouchableOpacity
-            style={styles.consultBtn}
-            onPress={onPhysicalConsultationPress}>
-            <Text style={styles.consultBtnTxt}>Physical Consultation</Text>
-            <View style={styles.iconContainer}>
-              <Image
-                source={require('../../assets/images/physical-consultation-icon.png')}
-                style={styles.consultBtnImg}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.consultBtn}
-            onPress={onVideoConsultationPress}>
-            <Text style={styles.consultBtnTxt}>Video Consultation</Text>
-            <View style={styles.iconContainer}>
-              <Image
-                source={require('../../assets/images/video-consultation-icon.png')}
-                style={styles.consultBtnImg}
-              />
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* About Section */}
         {about && (
           <>
+            {/* Consultation Buttons */}
+            <View style={styles.consultBtnsContainer}>
+              <TouchableOpacity
+                disabled={!doctorDetail?.physical_consultation_fee}
+                style={[
+                  styles.consultBtn,
+                  {
+                    backgroundColor: doctorDetail?.physical_consultation_fee
+                      ? appointmentType == 'Physical'
+                        ? pallette.app_green
+                        : pallette.app_light_green
+                      : pallette.dark_grey,
+                  },
+                ]}
+                onPress={() => onConsultationPress('Physical')}>
+                <Text
+                  style={[
+                    styles.consultBtnTxt,
+                    {
+                      color: doctorDetail?.physical_consultation_fee
+                        ? appointmentType == 'Physical'
+                          ? pallette.white
+                          : pallette.black
+                        : pallette.white,
+                    },
+                  ]}>
+                  Physical Consultation
+                </Text>
+                <View
+                  style={[
+                    styles.iconContainer,
+                    {
+                      backgroundColor: doctorDetail?.physical_consultation_fee
+                        ? pallette.app_green
+                        : pallette.dark_grey,
+                    },
+                  ]}>
+                  <Image
+                    source={require('../../assets/images/physical-consultation-icon.png')}
+                    style={styles.consultBtnImg}
+                  />
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                disabled={!doctorDetail?.video_consultation_fee}
+                style={[
+                  styles.consultBtn,
+                  {
+                    backgroundColor: doctorDetail?.video_consultation_fee
+                      ? appointmentType == 'Video'
+                        ? pallette.app_green
+                        : pallette.app_light_green
+                      : pallette.dark_grey,
+                  },
+                ]}
+                onPress={() => onConsultationPress('Video')}>
+                <Text
+                  style={[
+                    styles.consultBtnTxt,
+                    {
+                      color: doctorDetail?.video_consultation_fee
+                        ? appointmentType == 'Video'
+                          ? pallette.white
+                          : pallette.black
+                        : pallette.white,
+                    },
+                  ]}>
+                  Video Consultation
+                </Text>
+                <View
+                  style={[
+                    styles.iconContainer,
+                    {
+                      backgroundColor: doctorDetail?.video_consultation_fee
+                        ? pallette.app_green
+                        : pallette.dark_grey,
+                    },
+                  ]}>
+                  <Image
+                    source={require('../../assets/images/video-consultation-icon.png')}
+                    style={styles.consultBtnImg}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            {/* About Section */}
             <View style={styles.divider} />
             <Text style={styles.aboutTitle}>About</Text>
             <ShortInfoText text={doctorDetail?.short_info || ''} />
@@ -196,7 +258,6 @@ const styles = StyleSheet.create({
     paddingVertical: w * 0.02,
     paddingHorizontal: w * 0.02,
     justifyContent: 'center',
-    backgroundColor: pallette.app_light_green,
     width: '48%',
     marginVertical: h * 0.01,
   },

@@ -10,8 +10,8 @@ import {
 import React, {useState} from 'react';
 import {Text, Banner, Modal, Portal} from 'react-native-paper';
 
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../components/header';
+import Footer from '../components/footer';
 import {pallette} from '../Constants/Constant';
 import {adjust} from '../utils/commonFunctions';
 

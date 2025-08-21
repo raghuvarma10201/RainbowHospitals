@@ -1,8 +1,8 @@
 // AppProvider.tsx
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Branch, Region, Setting } from './../services/Region/api';
-import { DoctorDetailsResponse, PatientProfile } from './../utils/types';
-import { AppointmentPayload } from '../types/Appointment';
+import React, {createContext, useContext, useEffect, useState} from 'react';
+import {Branch, Region, Setting} from './../services/Region/api';
+import {DoctorDetailsResponse, PatientProfile} from './../utils/types';
+import {AppointmentPayload} from '../types/Appointment';
 
 type AppCtx = {
   user: string | null;
@@ -19,8 +19,8 @@ type AppCtx = {
   todayCount: number;
   upcomingCount: number;
   appointment: AppointmentPayload | null;
-  settings : Setting | null; 
-  
+  settings: Setting | null;
+
   updateAppointment: (data: AppointmentPayload | null) => void;
   updateUser: (u: string | null) => void;
   updateBranch: (b: Branch | null) => void;
@@ -45,21 +45,26 @@ export const useApp = () => {
   return ctx;
 };
 
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AppProvider: React.FC<{children: React.ReactNode}> = ({
+  children,
+}) => {
   const [user, setUser] = useState<string | null>(null);
   const [branch, setBranch] = useState<Branch | null>(null);
   const [allbranch, setAllBranch] = useState<Branch[]>([]);
   const [region, setRegion] = useState<Region | null>(null);
   const [mrn, setMrn] = useState<string>('');
   const [profile, setProfile] = useState<PatientProfile | null>(null);
-  const [doctorDetails, setDoctorDetails] = useState<DoctorDetailsResponse | null>(null);
+  const [doctorDetails, setDoctorDetails] =
+    useState<DoctorDetailsResponse | null>(null);
   const [isvideoconsulation, setIsvideoconsulation] = useState<boolean>(false);
   const [consultationType, setConsultationType] = useState<string>('');
   const [sessionStartDttm, SetSessionStartDttm] = useState<string>('');
   const [doctorSessionCount, setDoctorSessionCount] = useState<string>('');
   const [todayCount, setTodayCount] = useState<number>(0);
   const [upcomingCount, setUpcomingCount] = useState<number>(0);
-  const [appointment, setAppointment] = useState<AppointmentPayload | null>(null);
+  const [appointment, setAppointment] = useState<AppointmentPayload | null>(
+    null,
+  );
   const [settings, setSetting] = useState<Setting | null>(null);
   const ctx: AppCtx = {
     user,
@@ -90,8 +95,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     updateSessionCount: setDoctorSessionCount,
     updateTodayCount: setTodayCount,
     updateUpcomingCount: setUpcomingCount,
-    updateAppointment : setAppointment,
-    updateSettings : setSetting
+    updateAppointment: setAppointment,
+    updateSettings: setSetting,
   };
 
   return <AppCtx.Provider value={ctx}>{children}</AppCtx.Provider>;
