@@ -22,7 +22,14 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
 }) => {
   return (
     <Card.Content style={[styles.upcomingAppBlockcard, {elevation: 0}]}>
-      <View style={styles.row}>
+      <TouchableOpacity
+        disabled
+        onPress={() =>
+          navigation.navigate('MyAppointmentDetails', {
+            appointmentData: appointment,
+          })
+        }
+        style={styles.row}>
         <Image
           source={
             appointment?.image
@@ -127,7 +134,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     </Card.Content>
   );
 };

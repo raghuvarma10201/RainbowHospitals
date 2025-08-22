@@ -90,7 +90,7 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
       try {
         const payload = {
           CareproviderCode: docData.new_doctor_UID,
-          OrganisationUID: branch?.id?.toString(),
+          OrganisationUID: branch?.organisation?.organisationid?.toString(),
           AppointmentType: typeOfAppointment,
           noofdays: '30',
         };
@@ -119,7 +119,7 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
         console.error(e);
       }
     },
-    [branch?.id, typeOfAppointment],
+    [branch?.organisation?.organisationid, typeOfAppointment],
   );
 
   const loadSlots = useCallback(
@@ -132,7 +132,7 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
         const payload = {
           SessionDefinitionUID: sessionId,
           AppointmentDate: formattedDate,
-          OrganisationUID: branch?.id?.toString(),
+          OrganisationUID: branch?.organisation?.organisationid?.toString(),
           AppointmentType: typeOfAppointment,
         };
         const response = await getDoctorSlots(payload);
@@ -145,7 +145,7 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
         console.error(e);
       }
     },
-    [branch?.id, typeOfAppointment],
+    [branch?.organisation?.organisationid, typeOfAppointment],
   );
 
   useEffect(() => {

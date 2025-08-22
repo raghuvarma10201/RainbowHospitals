@@ -94,7 +94,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           status: 'BLOCK',
           comment: appointment?.comment ?? '',
           mrn: appointment?.mrn ?? '',
-          OrganisationUID: '2',
+          OrganisationUID: branch?.organisation?.organisationid.toString(),
           transaction_id: appointment?.transaction_id ?? '',
           price: appointment?.price ?? 0,
           payment_type: appointment?.payment_type ?? 'CASH',

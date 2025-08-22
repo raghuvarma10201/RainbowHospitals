@@ -1,6 +1,6 @@
 // ---------- MODULE IMPORTS ----------
 import React, {useEffect, useState, memo, useCallback} from 'react';
-import {Image, ScrollView, StyleSheet, View} from 'react-native';
+import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
@@ -8,14 +8,16 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DoctorRow} from '.';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
-import SearchLocationBlock from '../../components/SearchLocationBlock';
+import SearchLocationBlock from '../../components/search-location-block';
 
 // ---------- OTHER IMPORTS ----------
 import {getDoctors} from '../../services/common';
 import {ToastService} from '../../utils/ToastService';
 import {useApp} from '../../context/AppContext';
 import {MainStackParamList} from '../../navigation/types';
-import {h, pallette} from '../../Constants/Constant';
+import {h, pallette, w} from '../../Constants/Constant';
+import {adjust} from '../../utils/commonFunctions';
+import NotFound from '../../components/empty-text';
 
 // ---------- TYPES ----------
 interface DoctorSpeciality {
@@ -48,12 +50,14 @@ const DoctorsList: React.FC = ({route}: any) => {
       const response = await getDoctors(
         '',
         specialityId,
-        '',
+        branch?.id.toString(),
+        // '',
         '',
         appointmentType,
         1,
         10,
       );
+      console.log(response.data.doctors);
 
       if (response?.status === 200) {
         setDoctors(response.data.doctors ?? []);
@@ -92,16 +96,25 @@ const DoctorsList: React.FC = ({route}: any) => {
           <SearchLocationBlock style={styles.searchLocationBlock} />
           {/* Doctor List */}
           <View style={styles.doctorsListContainer}>
-            {doctors.map(doctor => (
-              // ---------- DOCTOR ROW COMPONENT ----------
-              <DoctorRow
-                key={doctor.id}
-                doctor={doctor}
-                appointmentType={appointmentType}
-                branchId={branch?.id}
-                navigation={navigation}
+            {doctors.length > 0 ? (
+              doctors.map(doctor => (
+                // ---------- DOCTOR ROW COMPONENT ----------
+                <DoctorRow
+                  key={doctor.id}
+                  doctor={doctor}
+                  appointmentType={appointmentType}
+                  branchId={branch?.organisation?.organisationid}
+                  navigation={navigation}
+                />
+              ))
+            ) : (
+              <NotFound
+                text={
+                  'No doctors found in the branch with the selected specialty.'
+                }
+                margin={h * 0.15}
               />
-            ))}
+            )}
           </View>
         </View>
       </ScrollView>

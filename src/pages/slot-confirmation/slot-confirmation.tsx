@@ -77,7 +77,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
         setLoading(true);
         const payload = {
           orgcode: branch.organisation?.code || '11MN',
-          OrganisationUID: branch?.UID?.toString() || '',
+          OrganisationUID: branch?.organisation?.organisationid?.toString(),
           Uhid: mrn || 'MAHTMP-182297',
           Departmentcode: '11MNPAGP',
           VisitDate: appointment.date,

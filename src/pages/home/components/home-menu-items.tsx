@@ -7,8 +7,8 @@ import {
   StyleSheet,
   ImageSourcePropType,
 } from 'react-native';
-import {adjust, navigateTo} from '../utils/commonFunctions';
-import {h, pallette, w} from '../Constants/Constant';
+import {adjust, navigateTo} from '../../../utils/commonFunctions';
+import {h, pallette, w} from '../../../Constants/Constant';
 
 //
 // ---------- Types ----------
@@ -41,7 +41,7 @@ const HomeMenuItem: React.FC<HomeMenuItemProps> = memo(
 
         {/* Right arrow indicator */}
         <Image
-          source={require('../../assets/images/right-arrow.png')}
+          source={require('../../../../assets/images/right-arrow.png')}
           style={styles.rightArrow}
         />
       </TouchableOpacity>
@@ -54,53 +54,53 @@ HomeMenuItem.displayName = 'HomeMenuItem';
 //
 // ---------- Menu List Component ----------
 //
-export const MenuItems: React.FC<MenuItemsProps> = ({navigation, logout}) => {
+const MenuItems: React.FC<MenuItemsProps> = ({navigation, logout}) => {
   // Define all available menu items in one place
   const menuItems: HomeMenuItemProps[] = [
     {
       title: 'My Appointments',
-      icon: require('../../assets/images/home-appointments.png'),
+      icon: require('../../../../assets/images/home-appointments.png'),
       onPress: () => navigateTo(navigation, 'MyAppointments'),
     },
     {
       title: 'My Medical Record',
-      icon: require('../../assets/images/home-medical-record.png'),
+      icon: require('../../../../assets/images/home-medical-record.png'),
     },
     {
       title: 'My Family',
-      icon: require('../../assets/images/home-family.png'),
+      icon: require('../../../../assets/images/home-family.png'),
     },
     {
       title: 'My Pregnancy Journey',
-      icon: require('../../assets/images/home-pregnancy.png'),
+      icon: require('../../../../assets/images/home-pregnancy.png'),
     },
     {
       title: 'My Baby Journey',
-      icon: require('../../assets/images/home-baby.png'),
+      icon: require('../../../../assets/images/home-baby.png'),
     },
     {
       title: 'Calculator',
-      icon: require('../../assets/images/home-calculator.png'),
+      icon: require('../../../../assets/images/home-calculator.png'),
     },
     {
       title: 'Mom & Baby Products',
-      icon: require('../../assets/images/home-products.png'),
+      icon: require('../../../../assets/images/home-products.png'),
     },
     {
       title: 'Notification',
-      icon: require('../../assets/images/home-notification.png'),
+      icon: require('../../../../assets/images/home-notification.png'),
     },
     {
       title: 'Terms & Conditions',
-      icon: require('../../assets/images/home-terms.png'),
+      icon: require('../../../../assets/images/home-terms.png'),
     },
     {
       title: 'Help',
-      icon: require('../../assets/images/home-help.png'),
+      icon: require('../../../../assets/images/home-help.png'),
     },
     {
       title: 'Logout',
-      icon: require('../../assets/images/home-logout.png'),
+      icon: require('../../../../assets/images/home-logout.png'),
       onPress: logout,
     },
   ];
@@ -118,6 +118,8 @@ export const MenuItems: React.FC<MenuItemsProps> = ({navigation, logout}) => {
     </>
   );
 };
+
+export default MenuItems;
 
 //
 // ---------- Styles ----------
@@ -160,5 +162,3 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
-
-export default HomeMenuItem;

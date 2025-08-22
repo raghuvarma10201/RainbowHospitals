@@ -15,3 +15,6 @@ export {default as MyAppointmentDetails} from './MyAppointmentDetails';
 export {default as VaccinesPediatric} from './VaccinesPediatric';
 export {default as AppointmentConfirmed} from './AppointmentConfirmed';
 export {default as AppointmentChat} from './AppointmentChat';
+export {Login} from './login';
+export {Otp} from './otp';
+export {default as Registration} from './Registration';

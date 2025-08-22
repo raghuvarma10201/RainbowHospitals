@@ -1,0 +1,37 @@
+import {Image, StyleProp, StyleSheet, Text, View} from 'react-native';
+import React from 'react';
+import {adjust} from '../utils/commonFunctions';
+import {h, pallette, w} from '../Constants/Constant';
+
+const NotFound = ({text, margin}: {text: string; margin?: any}) => {
+  return (
+    <View style={[styles.container, {marginTop: margin}]}>
+      <Image
+        source={require('../../assets/images/empty.png')}
+        style={styles.icon}
+      />
+      <Text style={[styles.emptyTxt]}>{text}</Text>
+    </View>
+  );
+};
+
+export default NotFound;
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    height: h * 0.05,
+    width: w * 0.1,
+    resizeMode: 'contain',
+  },
+  emptyTxt: {
+    fontSize: adjust(12),
+    width: w * 0.4,
+    alignSelf: 'center',
+    textAlign: 'center',
+    color: pallette.black,
+  },
+});

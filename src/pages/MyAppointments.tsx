@@ -26,6 +26,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MainStackParamList} from '../navigation/types';
 import {pallette} from '../Constants/Constant';
 import {adjust} from '../utils/commonFunctions';
+import NotFound from '../components/empty-text';
 
 const MyAppointments: React.FC = () => {
   const w = Dimensions.get('window').width;
@@ -50,7 +51,9 @@ const MyAppointments: React.FC = () => {
     try {
       const payload = {
         patientId: await AsyncStorage.getItem('mrn'),
+        OrganisationUID: branch?.organisation?.organisationid.toString(),
       };
+
       setLoading(true);
       const response = await getAppointments(payload);
       if (response && response.status == 200) {
@@ -73,95 +76,102 @@ const MyAppointments: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <View style={styles.doctorsListContainer}>
-            {appointments.map((appointment, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.doctorItem}
-                onPress={() =>
-                  navigation.navigate('MyAppointmentDetails', {
-                    appointmentData: appointment,
-                  })
-                }
-                // onPress={() => startVideoCall()}
-              >
-                <Image
-                  source={
-                    appointment.image
-                      ? {uri: `${appointment.image}`}
-                      : {
-                          uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
-                        }
+            {appointments.length > 0 ? (
+              appointments.map((appointment, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.doctorItem}
+                  onPress={() =>
+                    navigation.navigate('MyAppointmentDetails', {
+                      appointmentData: appointment,
+                    })
                   }
-                  style={styles.doctorImg}
-                />
-                <View>
-                  <Text
-                    style={[
-                      styles.docName,
-                      {
-                        fontSize: adjust(10),
-                        color: pallette.app_purple,
-                        fontFamily: 'ProximaNovaA-Semibold',
-                        marginBottom: 2,
-                      },
-                    ]}>
-                    #{appointment?.appointmentnumber ?? 'N/A'}
-                  </Text>
-
-                  <Text
-                    style={[
-                      styles.docName,
-                      {
-                        fontSize: adjust(12),
-                        color: '#4CC2BF',
-                        fontFamily: 'ProximaNovaA-Bold',
-                        marginBottom: 2,
-                      },
-                    ]}>
-                    {appointment?.CareProviderName ?? 'Doctor Name'}
-                  </Text>
-
-                  <Text
-                    style={[
-                      styles.docName,
-                      {
-                        fontSize: adjust(10),
-                        color: pallette.black,
-                        fontFamily: 'ProximaNovaA-Regular',
-                        marginBottom: 5,
-                      },
-                    ]}>
-                    {appointment?.SpecialtyName ?? 'Specialization'}
-                  </Text>
-
-                  <Text
-                    style={[
-                      styles.consultationText,
-                      {fontFamily: 'ProximaNovaA-Semibold'},
-                    ]}>
-                    {appointment?.AppointmentType ?? 'Consultation Type'}
-                  </Text>
-                  <View style={styles.row}>
+                  // onPress={() => startVideoCall()}
+                >
+                  <Image
+                    source={
+                      appointment.image
+                        ? {uri: `${appointment.image}`}
+                        : {
+                            uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                          }
+                    }
+                    style={styles.doctorImg}
+                  />
+                  <View>
                     <Text
                       style={[
                         styles.docName,
                         {
-                          color: pallette.black,
                           fontSize: adjust(10),
+                          color: pallette.app_purple,
                           fontFamily: 'ProximaNovaA-Semibold',
                           marginBottom: 2,
                         },
                       ]}>
-                      {formatAppointmentDateTime(appointment?.SlotStartDttm)}
+                      #{appointment?.appointmentnumber ?? 'N/A'}
                     </Text>
-                    <Image
-                      source={require('../../assets/images/right-arrow.png')}
-                      style={styles.rightArrow}
-                    />
+
+                    <Text
+                      style={[
+                        styles.docName,
+                        {
+                          fontSize: adjust(12),
+                          color: '#4CC2BF',
+                          fontFamily: 'ProximaNovaA-Bold',
+                          marginBottom: 2,
+                        },
+                      ]}>
+                      {appointment?.CareProviderName ?? 'Doctor Name'}
+                    </Text>
+
+                    <Text
+                      style={[
+                        styles.docName,
+                        {
+                          fontSize: adjust(10),
+                          color: pallette.black,
+                          fontFamily: 'ProximaNovaA-Regular',
+                          marginBottom: 5,
+                        },
+                      ]}>
+                      {appointment?.SpecialtyName ?? 'Specialization'}
+                    </Text>
+
+                    <Text
+                      style={[
+                        styles.consultationText,
+                        {fontFamily: 'ProximaNovaA-Semibold'},
+                      ]}>
+                      {appointment?.AppointmentType ?? 'Consultation Type'}
+                    </Text>
+                    <View style={styles.row}>
+                      <Text
+                        style={[
+                          styles.docName,
+                          {
+                            color: pallette.black,
+                            fontSize: adjust(10),
+                            fontFamily: 'ProximaNovaA-Semibold',
+                            marginBottom: 2,
+                          },
+                        ]}>
+                        {formatAppointmentDateTime(appointment?.SlotStartDttm)}
+                      </Text>
+                      <Image
+                        source={require('../../assets/images/right-arrow.png')}
+                        style={styles.rightArrow}
+                      />
+                    </View>
                   </View>
-                </View>
-              </TouchableOpacity>
-            ))}
+                </TouchableOpacity>
+              ))
+            ) : (
+              <NotFound
+                text={'No appointments scheduled in this branch.'}
+                margin={h * 0.35}
+              />
+            )}
           </View>
         </View>
       </ScrollView>

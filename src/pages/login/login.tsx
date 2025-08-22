@@ -1,3 +1,4 @@
+// ---------- MODULE IMPORTS ----------
 import React, {useEffect, useState, useCallback} from 'react';
 import {
   StyleSheet,
@@ -19,11 +20,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-import {login} from '../services/auth';
-import {ToastService} from '../utils/ToastService';
-import {AuthStackParamList} from '../navigation/types';
-import {h, pallette, w} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+// ---------- OTHER IMPORTS ----------
+import {login} from '../../services/auth';
+import {ToastService} from '../../utils/ToastService';
+import {AuthStackParamList} from '../../navigation/types';
+import {h, pallette, w} from '../../Constants/Constant';
+import {adjust} from '../../utils/commonFunctions';
 
 // ---------- STATIC DATA ----------
 const local_data = [
@@ -32,10 +34,11 @@ const local_data = [
 ];
 
 const images = {
-  logo: require('../../assets/images/logo.png'),
-  login: require('../../assets/images/login-img.png'),
+  logo: require('../../../assets/images/logo.png'),
+  login: require('../../../assets/images/login-img.png'),
 };
 
+// ---------- FORMIC SCHEMA ----------
 const LoginSchema = Yup.object({
   mobileNumber: Yup.string()
     .required('Please enter valid mobile number')
@@ -44,13 +47,11 @@ const LoginSchema = Yup.object({
 
 // ---------- COMPONENT ----------
 const Login: React.FC = () => {
+  // ---------- STATE AND CONTEXT DECLARATION ----------
   type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
   const navigation = useNavigation<NavigationProp>();
-
   const [country, setCountry] = useState('1');
   const [loading, setLoading] = useState(false);
-
-  // ---------- FORM SETUP ----------
   const formik = useFormik({
     initialValues: {mobileNumber: ''},
     validationSchema: LoginSchema,
@@ -74,7 +75,7 @@ const Login: React.FC = () => {
     },
   });
 
-  // ---------- CALLBACKS ----------
+  // ---------- EVENT HANDLERS ----------
   const handleCountryChange = useCallback((e: any) => {
     setCountry(e.value);
   }, []);
@@ -93,7 +94,7 @@ const Login: React.FC = () => {
     formik.handleSubmit();
   }, [formik]);
 
-  // ---------- EFFECTS ----------
+  // ---------- LIFECYCLE ----------
   useEffect(() => {
     if (formik.values.mobileNumber.length === 10) {
       Keyboard.dismiss();
@@ -115,7 +116,6 @@ const Login: React.FC = () => {
           style={styles.logo}
           resizeMode="contain"
         />
-
         {/* TAGLINE & IMAGE */}
         <View style={styles.taglineWrapper}>
           <View style={styles.taglineBox}>
@@ -131,14 +131,12 @@ const Login: React.FC = () => {
             resizeMode="contain"
           />
         </View>
-
         {/* FORM */}
         <View style={styles.formContainer}>
           <Text variant="headlineMedium" style={styles.title}>
             SIGN IN
           </Text>
           <Text style={styles.label}>Mobile Number</Text>
-
           {/* INPUT GROUP */}
           <View style={styles.inputGroup}>
             <Dropdown
@@ -163,12 +161,10 @@ const Login: React.FC = () => {
               value={formik.values.mobileNumber}
             />
           </View>
-
           {/* ERROR */}
           {formik.touched.mobileNumber && formik.errors.mobileNumber && (
             <Text style={styles.error}>{formik.errors.mobileNumber}</Text>
           )}
-
           {/* SUBMIT BUTTON */}
           <TouchableOpacity
             style={[

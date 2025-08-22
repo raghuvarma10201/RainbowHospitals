@@ -6,10 +6,9 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ---------- COMPONENT IMPORTS ----------
-import {ProfileItem} from '.';
+import {ProfileItem, MenuItems} from '.';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
-import {MenuItems} from '../../components/HomeMenu';
 
 // ---------- OTHER IMPORTS ----------
 import {AuthStackParamList, MainStackParamList} from '../../navigation/types';

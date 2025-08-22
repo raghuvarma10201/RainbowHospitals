@@ -1,5 +1,5 @@
 // ---------- MODULE IMPORTS ----------
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -14,8 +14,10 @@ import Loader from '../../components/Loader';
 import {ToastService} from '../../utils/ToastService';
 import {getDoctors, getSpecialities} from '../../services/common';
 import {MainStackParamList} from '../../navigation/types';
-import {h, pallette} from '../../Constants/Constant';
+import {h, pallette, w} from '../../Constants/Constant';
 import {useApp} from '../../context/AppContext';
+import {adjust} from '../../utils/commonFunctions';
+import NotFound from '../../components/empty-text';
 
 // ---------- COMPONENT ----------
 const Specialities: React.FC = ({route}: any) => {
@@ -133,16 +135,25 @@ const Specialities: React.FC = ({route}: any) => {
                 loadDoctors(specialityId, appointmentType);
               }}
             />
-            <DoctorCarousal
-              doctors={doctors}
-              activeindex={activeDocIndex}
-              setActiveindex={setActiveDocIndex}
-              height={h * 0.175}
-              autoScrollEnabled={false}
-              type={appointmentType}
-              organizationId={branch?.id}
-              nav={navigation}
-            />
+            {doctors.length > 0 ? (
+              <DoctorCarousal
+                doctors={doctors}
+                activeindex={activeDocIndex}
+                setActiveindex={setActiveDocIndex}
+                height={h * 0.175}
+                autoScrollEnabled={false}
+                type={appointmentType}
+                organizationId={branch?.organisation?.organisationid}
+                nav={navigation}
+              />
+            ) : (
+              <NotFound
+                text={
+                  'No doctors found in the branch with the selected specialty.'
+                }
+                margin={h * 0.05}
+              />
+            )}
           </>
         )}
       </ScrollView>

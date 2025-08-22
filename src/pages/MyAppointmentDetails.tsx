@@ -35,11 +35,11 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   const [bank_details, setBank_details] = useState({
-    bank_name: '',
-    account_number: '',
-    ifsc_code: '',
-    account_holder_name: '',
-    branch_name: '',
+    bank_name: 'T',
+    account_number: 'T',
+    ifsc_code: 'T',
+    account_holder_name: 'T',
+    branch_name: 'T',
   });
 
   const cancelAppointment = async () => {
@@ -137,7 +137,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
             <View>
               <View style={styles.patientItem}>
                 <Image
-                  source={require('../../assets/images/doc-img.png')}
+                  source={require('../../assets/images/user-icon.png')}
                   style={styles.patientImg}
                 />
                 <View>
@@ -223,16 +223,18 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
               <Text style={styles.payBtnTxt}>Reschedule</Text>
             </TouchableOpacity>
           </View>
+          {appointmentData?.AppointmentType == 'Video' && (
+            <TouchableOpacity
+              style={styles.vcBtn}
+              onPress={() => startVideoCall()}>
+              <Image
+                source={require('../../assets/images/videocall-icon.png')}
+                style={styles.chatIcon}
+              />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             style={styles.chatBtn}
-            onPress={() => startVideoCall()}>
-            <Image
-              source={require('../../assets/images/videocall-icon.png')}
-              style={styles.chatIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.vcBtn}
             onPress={() =>
               navigation.navigate('AppointmentChat', {
                 bookingId: appointmentData.appointmentnumber,
@@ -477,12 +479,12 @@ const styles = StyleSheet.create({
   },
 
   patientImg: {
-    height: 70,
-    width: 70,
-    resizeMode: 'cover',
+    height: w * 0.1,
+    width: w * 0.1,
+    resizeMode: 'contain',
     borderRadius: w,
     borderWidth: 1,
-    borderColor: '#E2EDEC',
+    borderColor: pallette.app_purple,
     marginRight: 10,
   },
 

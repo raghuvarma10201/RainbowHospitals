@@ -1,3 +1,4 @@
+// ---------- MODULE IMPORTS ----------
 import React, {useEffect, useState, useCallback} from 'react';
 import {
   StyleSheet,
@@ -20,36 +21,48 @@ import {Text} from 'react-native-paper';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {login, VerifyOTP, authenticateUser} from '../services/auth';
-import {getPatientProfile, getRegions, getBranches} from '../services/common';
-import {ToastService} from '../utils/ToastService';
-import {getCurrentCoordinates} from '../utils/LocationService';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
+// ---------- COMPONENT IMPORTS ----------
+import Loader from '../../components/Loader';
+
+// ---------- OTHER IMPORTS ----------
+import {login, VerifyOTP, authenticateUser} from '../../services/auth';
+import {
+  getPatientProfile,
+  getRegions,
+  getBranches,
+} from '../../services/common';
+import {ToastService} from '../../utils/ToastService';
+import {getCurrentCoordinates} from '../../utils/LocationService';
 import {
   findNearestBranch,
   findNearestRegion,
-} from '../services/Region/location';
-import Loader from '../components/Loader';
-import {useApp} from '../context/AppContext';
-import {useAuth} from '../context/AuthContext';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {AuthStackParamList, MainStackParamList} from '../navigation/types';
-import {h, pallette} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+} from '../../services/Region/location';
+import {useApp} from '../../context/AppContext';
+import {useAuth} from '../../context/AuthContext';
+import {AuthStackParamList, MainStackParamList} from '../../navigation/types';
+import {h, pallette} from '../../Constants/Constant';
+import {adjust} from '../../utils/commonFunctions';
 
+// ---------- STATIC DATA ----------
 const CELL_COUNT = 6;
 
 const images = {
-  logo: require('../../assets/images/logo.png'),
-  otp: require('../../assets/images/otp-img.png'),
+  logo: require('../../../assets/images/logo.png'),
+  otp: require('../../../assets/images/otp-img.png'),
 };
 
-const Otp: React.FC = () => {
-  type CombinedNavigationProp = CompositeNavigationProp<
-    NativeStackNavigationProp<AuthStackParamList>,
-    NativeStackNavigationProp<MainStackParamList>
-  >;
+// ---------- TYPES ----------
+type CombinedNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<AuthStackParamList>,
+  NativeStackNavigationProp<MainStackParamList>
+>;
 
+// ---------- COMPONENT ----------
+const Otp: React.FC = () => {
+  // ---------- STATE AND CONTEXT DECLARATION ----------
   const navigation = useNavigation<CombinedNavigationProp>();
   const {
     updateMrn,
@@ -59,20 +72,18 @@ const Otp: React.FC = () => {
     updateRegion,
   } = useApp();
   const {setLoggedIn} = useAuth();
-
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState('');
   const [timer, setTimer] = useState(30);
   const [resendDisabled, setResendDisabled] = useState(true);
-
   const codeFieldRef = useBlurOnFulfill({value, cellCount: CELL_COUNT});
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
 
-  /** Fetch phone number from storage */
+  // ---------- LIFECYCLE ----------
   useEffect(() => {
     (async () => {
       const storedNumber = await AsyncStorage.getItem('mobileNumber');
@@ -80,7 +91,6 @@ const Otp: React.FC = () => {
     })();
   }, []);
 
-  /** Handle resend timer */
   useEffect(() => {
     if (resendDisabled && timer > 0) {
       const interval = setInterval(() => setTimer(prev => prev - 1), 1000);
@@ -90,7 +100,11 @@ const Otp: React.FC = () => {
     }
   }, [timer, resendDisabled]);
 
-  /** Resend OTP */
+  useEffect(() => {
+    formik.setFieldValue('otp', value);
+  }, [value]);
+
+  // ---------- EVENT HANDLERS ----------
   const handleResend = useCallback(async () => {
     if (!phoneNumber || !resendDisabled) return;
     try {
@@ -111,36 +125,6 @@ const Otp: React.FC = () => {
     }
   }, [phoneNumber, resendDisabled]);
 
-  /** Load region & branch details */
-  const loadDetails = useCallback(async () => {
-    try {
-      const regions = await getRegions();
-      const location = await getCurrentCoordinates();
-      if (!location) return;
-
-      const nearestRegion = findNearestRegion(
-        regions,
-        location.latitude,
-        location.longitude,
-      );
-      if (!nearestRegion) return;
-      updateRegion(nearestRegion);
-
-      const allBranches = await getBranches(nearestRegion.region_id);
-      updateAllBranch(allBranches);
-
-      const nearestBranch = findNearestBranch(
-        allBranches,
-        location.latitude,
-        location.longitude,
-      );
-      if (nearestBranch) updateBranch(nearestBranch);
-    } catch {
-      // Silent fail - handled gracefully
-    }
-  }, [updateBranch, updateAllBranch, updateRegion]);
-
-  /** Formik OTP Validation */
   const formik = useFormik({
     initialValues: {otp: ''},
     validationSchema: Yup.object({
@@ -213,13 +197,37 @@ const Otp: React.FC = () => {
     },
   });
 
-  /** Sync input value with Formik */
-  useEffect(() => {
-    formik.setFieldValue('otp', value);
-  }, [value]);
+  // ---------- CALLBACKS ----------
+  const loadDetails = useCallback(async () => {
+    try {
+      const regions = await getRegions();
+      const location = await getCurrentCoordinates();
+      if (!location) return;
 
+      const nearestRegion = findNearestRegion(
+        regions,
+        location.latitude,
+        location.longitude,
+      );
+      if (!nearestRegion) return;
+      updateRegion(nearestRegion);
+
+      const allBranches = await getBranches(nearestRegion.region_id);
+      updateAllBranch(allBranches);
+
+      const nearestBranch = findNearestBranch(
+        allBranches,
+        location.latitude,
+        location.longitude,
+      );
+      if (nearestBranch) updateBranch(nearestBranch);
+    } catch {}
+  }, [updateBranch, updateAllBranch, updateRegion]);
+
+  // ---------- LOADER ----------
   if (loading) return <Loader />;
 
+  // ---------- RENDER ----------
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
@@ -231,7 +239,6 @@ const Otp: React.FC = () => {
           style={styles.logo}
           resizeMode="contain"
         />
-
         {/* Tagline */}
         <View style={styles.taglineWrapper}>
           <View style={styles.taglineBox}>
@@ -241,15 +248,12 @@ const Otp: React.FC = () => {
             </Text>
           </View>
         </View>
-
         {/* OTP Image */}
         <Image source={images.otp} style={styles.otpImg} resizeMode="cover" />
-
         {/* OTP Section */}
         <View style={styles.otpContainer}>
           <Text style={styles.title}>ENTER OTP</Text>
           <Text style={styles.label}>OTP Code sent on +91 {phoneNumber}</Text>
-
           {/* Code Input */}
           <CodeField
             ref={codeFieldRef as React.RefObject<TextInput>}
@@ -274,7 +278,6 @@ const Otp: React.FC = () => {
           {formik.errors.otp && formik.touched.otp && (
             <Text style={styles.error}>{formik.errors.otp}</Text>
           )}
-
           {/* Timer / Resend */}
           <View style={styles.timeContainer}>
             {!resendDisabled ? (
@@ -287,7 +290,6 @@ const Otp: React.FC = () => {
               </Text>
             )}
           </View>
-
           {/* Continue Button */}
           <TouchableOpacity
             style={[
@@ -310,6 +312,7 @@ const Otp: React.FC = () => {
 
 export default Otp;
 
+// ---------- STYLES ----------
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

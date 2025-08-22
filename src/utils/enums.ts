@@ -15,8 +15,10 @@ import {
   VaccinesPediatric,
   AppointmentConfirmed,
   AppointmentChat,
+  Login,
+  Otp,
+  Registration,
 } from '../pages';
-import {Login, Otp, Registration} from '../authentication';
 import {AuthStackParamList, MainStackParamList} from '../navigation/types';
 
 type CombinedRouteNames = keyof AuthStackParamList | keyof MainStackParamList;

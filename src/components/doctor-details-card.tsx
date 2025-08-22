@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {IMG_BASE_URL} from '../utils/environment';
 import {h, pallette, w} from '../Constants/Constant';
-import ShortInfoText from './ShortInfoText';
+import ShortInfoText from './short-info-text';
 import {adjust} from '../utils/commonFunctions';
 
 /**

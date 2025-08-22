@@ -18,8 +18,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {QuickActions, UpcomingAppointmentCard} from '.';
 import Header from '../../components/header';
 import Banners from '../../components/Slider';
-import PaginationDots from '../../components/PaginationDots';
-import SearchLocationBlock from '../../components/SearchLocationBlock';
+import PaginationDots from '../../components/pagination-dots';
+import SearchLocationBlock from '../../components/search-location-block';
 
 // ---------- OTHER IMPORTS ----------
 import {useApp} from '../../context/AppContext';
@@ -45,32 +45,40 @@ const Dashboard: React.FC = () => {
   // ---------- STATE AND CONTEXT DECLARATION ----------
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {profile} = useApp();
+  const {profile, branch} = useApp();
   const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
   const [activeindex, setActiveindex] = useState(0);
   const [activeAppointmentIndex, setActiveAppointmentIndex] = useState(0);
 
   // ---------- CALLBACKS ----------
-  const fetchMyAppointments = useCallback(async (date: string) => {
-    try {
-      const mrn = await AsyncStorage.getItem('mrn');
-      const {data = []} = await getAppointments({mrn, date});
+  const fetchMyAppointments = useCallback(
+    async (date: string) => {
+      try {
+        const mrn = await AsyncStorage.getItem('mrn');
+        const {data = []} = await getAppointments({
+          mrn,
+          date,
+          OrganisationUID: branch?.organisation?.organisationid.toString(),
+        });
+        console.log(data);
 
-      setAppointments(
-        data
-          .filter((item: upcomingApointment) =>
-            moment(item.SlotStartDttm).isSameOrAfter(date, 'day'),
-          )
-          .sort((a: upcomingApointment, b: upcomingApointment) =>
-            moment(a.SlotStartDttm).diff(moment(b.SlotStartDttm)),
-          ),
-      );
-    } catch (err) {
-      console.error('Error fetching appointments:', err);
-      ToastService.error('Error', 'Unable to fetch upcoming appointments');
-      setAppointments([]);
-    }
-  }, []);
+        setAppointments(
+          data
+            .filter((item: upcomingApointment) =>
+              moment(item.SlotStartDttm).isSameOrAfter(date, 'day'),
+            )
+            .sort((a: upcomingApointment, b: upcomingApointment) =>
+              moment(a.SlotStartDttm).diff(moment(b.SlotStartDttm)),
+            ),
+        );
+      } catch (err) {
+        console.error('Error fetching appointments:', err);
+        ToastService.error('Error', 'Unable to fetch upcoming appointments');
+        setAppointments([]);
+      }
+    },
+    [branch],
+  );
 
   // ---------- LIFECYCLE ----------
   useFocusEffect(
