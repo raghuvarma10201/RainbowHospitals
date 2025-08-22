@@ -18,19 +18,19 @@ import {
   Portal,
 } from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
-import Header from '../components/header';
-import Footer from '../components/footer';
-import Banners from '../components/Slider';
-import {pallette} from '../Constants/Constant';
-import {adjust, navigateTo} from '../utils/commonFunctions';
+import Header from '../../components/header';
+import Footer from '../../components/footer';
+import Banners from '../../components/banners';
+import {pallette} from '../../Constants/Constant';
+import {adjust, navigateTo} from '../../utils/commonFunctions';
 import {
   CommonActions,
   useFocusEffect,
   useNavigation,
 } from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../navigation/types';
-import {routes} from '../utils/enums';
+import {MainStackParamList} from '../../navigation/types';
+import {routes} from '../../utils/enums';
 
 const AppointmentConfirmed: React.FC = () => {
   const [activeindex, setActiveindex] = useState(0);
@@ -44,9 +44,9 @@ const AppointmentConfirmed: React.FC = () => {
   const hideModal = () => setVisible(false);
 
   const banners = [
-    require('../../assets/images/slide1.png'),
-    require('../../assets/images/slide1.png'),
-    require('../../assets/images/slide1.png'),
+    require('../../../assets/images/slide1.png'),
+    require('../../../assets/images/slide1.png'),
+    require('../../../assets/images/slide1.png'),
   ];
 
   useFocusEffect(
@@ -90,7 +90,7 @@ const AppointmentConfirmed: React.FC = () => {
               style={styles.subscribeBlock}
               onPress={() => showModal()}>
               <Image
-                source={require('../../assets/images/subscribe.png')}
+                source={require('../../../assets/images/subscribe.png')}
                 style={styles.subscribeImg}
               />
             </TouchableOpacity>
@@ -143,12 +143,12 @@ const AppointmentConfirmed: React.FC = () => {
             style={styles.closeModal}
             onPress={() => hideModal()}>
             <Image
-              source={require('../../assets/images/close-icon.png')}
+              source={require('../../../assets/images/close-icon.png')}
               style={styles.closeModalIcon}
             />
           </TouchableOpacity>
           <Image
-            source={require('../../assets/images/rewards-points.png')}
+            source={require('../../../assets/images/rewards-points.png')}
             style={styles.modalImage}
           />
         </Modal>

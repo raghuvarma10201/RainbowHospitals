@@ -12,21 +12,21 @@ const {ScreenShare} = NativeModules;
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {Text} from 'react-native-paper';
-import Header from '../components/header';
-import Footer from '../components/footer';
+import Header from '../../components/header';
+import Footer from '../../components/footer';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-import {useJitsi} from '../context/JitsiContext';
-import {useApp} from '../context/AppContext';
-import {getAppointments} from '../services/common';
-import {ToastService} from '../utils/ToastService';
-import {formatAppointmentDateTime} from '../utils/dateTime';
+import {useJitsi} from '../../context/jitsi-context';
+import {useApp} from '../../context/app-context';
+import {getAppointments} from '../../services/common';
+import {ToastService} from '../../utils/ToastService';
+import {formatAppointmentDateTime} from '../../utils/dateTime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {MainStackParamList} from '../navigation/types';
-import {pallette} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
-import NotFound from '../components/empty-text';
+import {MainStackParamList} from '../../navigation/types';
+import {pallette} from '../../Constants/Constant';
+import {adjust} from '../../utils/commonFunctions';
+import NotFound from '../../components/empty-text';
 
 const MyAppointments: React.FC = () => {
   const w = Dimensions.get('window').width;
@@ -159,7 +159,7 @@ const MyAppointments: React.FC = () => {
                         {formatAppointmentDateTime(appointment?.SlotStartDttm)}
                       </Text>
                       <Image
-                        source={require('../../assets/images/right-arrow.png')}
+                        source={require('../../../assets/images/right-arrow.png')}
                         style={styles.rightArrow}
                       />
                     </View>

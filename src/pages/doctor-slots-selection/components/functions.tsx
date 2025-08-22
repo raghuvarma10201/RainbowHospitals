@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useCallback} from 'react';
 import {TouchableOpacity, Text} from 'react-native';
-import {useApp} from '../../../context/AppContext';
+import {useApp} from '../../../context/app-context';
 import {
   getDoctorDetail,
   getDoctorSessions,

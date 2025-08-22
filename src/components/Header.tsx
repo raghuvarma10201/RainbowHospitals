@@ -14,7 +14,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {useApp} from '../context/AppContext';
+import {useApp} from '../context/app-context';
 import {Branch} from '../services/Region/api';
 import {getBranches, getPatientProfile, getRegions} from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -46,7 +46,7 @@ interface CommonHeaderProps {
   showBack?: boolean;
 }
 
-const CommonHeader: React.FC<CommonHeaderProps> = ({
+const Header: React.FC<CommonHeaderProps> = ({
   title,
   showLocation = true,
   showBack = true,
@@ -489,4 +489,4 @@ const styles = StyleSheet.create({
   filterIcon: {width: w * 0.06, height: w * 0.06},
 });
 
-export default React.memo(CommonHeader);
+export default React.memo(Header);

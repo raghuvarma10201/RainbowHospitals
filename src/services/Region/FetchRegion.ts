@@ -5,7 +5,7 @@ import {
   findNearestRegion,
   getCurrentCoordinates,
 } from './location';
-import {useApp} from '../../Context/AppContext';
+import {useApp} from '../../context/app-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const loadDetails = async () => {
@@ -13,8 +13,8 @@ export const loadDetails = async () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   try {
-    const token= await AsyncStorage.getItem('access_token');
-    const regions = await fetchRegions(token??'');
+    const token = await AsyncStorage.getItem('access_token');
+    const regions = await fetchRegions(token ?? '');
     const location = await getCurrentCoordinates();
     if (!location) throw new Error('Location unavailable');
 
@@ -25,7 +25,10 @@ export const loadDetails = async () => {
     );
     if (!nearestRegion) throw new Error('No region found nearby');
     updateRegion(nearestRegion);
-    const allBranches = await fetchBranchesByRegionId(nearestRegion.region_id,token??'');
+    const allBranches = await fetchBranchesByRegionId(
+      nearestRegion.region_id,
+      token ?? '',
+    );
     if (!allBranches.length) throw new Error('No branch data found');
 
     updateAllBranch(allBranches); // ✅ Store centrally

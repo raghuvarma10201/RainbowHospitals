@@ -17,7 +17,7 @@ const SettingsContext = createContext<SettingsContextType | undefined>(
   undefined,
 );
 
-export const SettingsProvider = ({children}: {children: React.ReactNode}) => {
+const SettingsProvider = ({children}: {children: React.ReactNode}) => {
   const [settings, setSettings] = useState<Settings | null>(null);
 
   const loadSettings = async () => {
@@ -60,6 +60,8 @@ export const SettingsProvider = ({children}: {children: React.ReactNode}) => {
     </SettingsContext.Provider>
   );
 };
+
+export default SettingsProvider;
 
 export const useSettings = () => {
   const context = useContext(SettingsContext);

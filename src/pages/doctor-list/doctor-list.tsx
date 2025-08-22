@@ -1,22 +1,19 @@
 // ---------- MODULE IMPORTS ----------
-import React, {useEffect, useState, memo, useCallback} from 'react';
-import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState, useCallback} from 'react';
+import {Image, ScrollView, StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 // ---------- COMPONENT IMPORTS ----------
 import {DoctorRow} from '.';
-import Header from '../../components/header';
-import Footer from '../../components/footer';
-import SearchLocationBlock from '../../components/search-location-block';
+import {Footer, Header, SearchLocationBlock} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
 import {getDoctors} from '../../services/common';
 import {ToastService} from '../../utils/ToastService';
-import {useApp} from '../../context/AppContext';
+import {useApp} from '../../context/app-context';
 import {MainStackParamList} from '../../navigation/types';
-import {h, pallette, w} from '../../Constants/Constant';
-import {adjust} from '../../utils/commonFunctions';
+import {h, pallette} from '../../Constants/Constant';
 import NotFound from '../../components/empty-text';
 
 // ---------- TYPES ----------

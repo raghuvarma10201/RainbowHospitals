@@ -14,20 +14,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Dropdown} from 'react-native-element-dropdown';
 
 // ---------- COMPONENT IMPORTS ----------
-import CommonHeader from '../../components/header';
-import Footer from '../../components/footer';
-import Loader from '../../components/Loader';
-import DoctorDetailsCard from '../../components/doctor-details-card';
+import {Header, Footer, Loader, DoctorDetailsCard} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
-import {useApp} from '../../context/AppContext';
+import {useApp} from '../../context/app-context';
 import {fetchConsultationFee, fetchFamilyMembers} from '../../services/common';
 import {ToastService} from '../../utils/ToastService';
 import {FamilyMember} from '../../utils/types';
 import {MainStackParamList} from '../../navigation/types';
 import {h, pallette, w} from '../../Constants/Constant';
 import {adjust} from '../../utils/commonFunctions';
-import {useSettings} from '../../context/SettingsContext';
+import {useSettings} from '../../context/settings-context';
 
 // ---------- COMPONENT ----------
 const SlotConfirmation: React.FC = ({route}: any) => {
@@ -150,7 +147,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
   return (
     <View style={styles.mainContainer}>
       {/* COMMON HEADER */}
-      <CommonHeader showLocation title={undefined} />
+      <Header showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* DOCTOR DETAILS CARD */}
         <DoctorDetailsCard

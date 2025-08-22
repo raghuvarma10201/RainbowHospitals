@@ -13,14 +13,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ---------- COMPONENT IMPORTS ----------
 import {SlotSelection} from '.';
-import Header from '../../components/header';
-import Footer from '../../components/footer';
-import Loader from '../../components/Loader';
 import {useDoctorSlots} from './components/functions';
+import {Footer, Header, Loader} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
 import {bookAppointment} from '../../services/common';
-import {useApp} from '../../context/AppContext';
+import {useApp} from '../../context/app-context';
 import {ToastService} from '../../utils/ToastService';
 import {MainStackParamList} from '../../navigation/types';
 import {routes} from '../../utils/enums';

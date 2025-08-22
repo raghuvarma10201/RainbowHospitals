@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
-import {useSettings} from './SettingsContext';
+import {useSettings} from './settings-context';
 
 type TimerContextType = {
   secondsLeft: number;
@@ -18,7 +18,7 @@ type TimerContextType = {
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined);
 
-export const TimerProvider = ({children}: {children: React.ReactNode}) => {
+const TimerProvider = ({children}: {children: React.ReactNode}) => {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -72,6 +72,8 @@ export const TimerProvider = ({children}: {children: React.ReactNode}) => {
     </TimerContext.Provider>
   );
 };
+
+export default TimerProvider;
 
 export const useTimer = () => {
   const context = useContext(TimerContext);

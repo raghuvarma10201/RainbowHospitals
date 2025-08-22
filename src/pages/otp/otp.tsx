@@ -25,7 +25,7 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 // ---------- COMPONENT IMPORTS ----------
-import Loader from '../../components/Loader';
+import {Loader} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
 import {login, VerifyOTP, authenticateUser} from '../../services/auth';
@@ -40,8 +40,8 @@ import {
   findNearestBranch,
   findNearestRegion,
 } from '../../services/Region/location';
-import {useApp} from '../../context/AppContext';
-import {useAuth} from '../../context/AuthContext';
+import {useApp} from '../../context/app-context';
+import {useAuth} from '../../context/auth-context';
 import {AuthStackParamList, MainStackParamList} from '../../navigation/types';
 import {h, pallette} from '../../Constants/Constant';
 import {adjust} from '../../utils/commonFunctions';

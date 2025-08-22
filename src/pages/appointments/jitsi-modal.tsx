@@ -14,7 +14,7 @@ import {
   StatusBar,
 } from 'react-native';
 import {JitsiMeeting} from '@jitsi/react-native-sdk';
-import {pallette} from '../Constants/Constant';
+import {pallette} from '../../Constants/Constant';
 
 // === Constants (kept module-scoped to avoid re-allocations per render) ===
 const CORNER_MARGIN = 10;
@@ -206,7 +206,7 @@ const JitsiModal = ({visible, options, onClose}: any) => {
             {top: (StatusBar.currentHeight || 0) * 3},
           ]}>
           <Image
-            source={require('../../assets/images/compress-icon.png')}
+            source={require('../../../assets/images/compress-icon.png')}
             style={{height: iconSize, width: iconSize, resizeMode: 'cover'}}
           />
         </TouchableOpacity>
@@ -215,7 +215,7 @@ const JitsiModal = ({visible, options, onClose}: any) => {
       {conferenceActive && !pipMode && minimized && (
         <TouchableOpacity onPress={handleExpand} style={styles.expandOverlay}>
           <Image
-            source={require('../../assets/images/expand-icon.png')}
+            source={require('../../../assets/images/expand-icon.png')}
             style={{
               height: miniIconSize,
               width: miniIconSize,

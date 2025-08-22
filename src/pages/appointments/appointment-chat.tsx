@@ -14,20 +14,20 @@ import {
   Dimensions,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {pallette, purpuleColor, whiteColor} from '../Constants/Constant';
-import {API_IMG_URL} from '../utils/environment';
+import {pallette, purpuleColor, whiteColor} from '../../Constants/Constant';
+import {API_IMG_URL} from '../../utils/environment';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 import Video from 'react-native-video';
 import {pick, types} from '@react-native-documents/picker';
 import {RecordBackType, PlayBackType} from 'react-native-audio-recorder-player';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import {fetchAppointmentChat, sendAppointmentChat} from '../services/common';
-import {ToastService} from '../utils/ToastService';
+import {fetchAppointmentChat, sendAppointmentChat} from '../../services/common';
+import {ToastService} from '../../utils/ToastService';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../navigation/types';
-import CommonHeader from '../components/header';
-import {adjust} from '../utils/commonFunctions';
+import {MainStackParamList} from '../../navigation/types';
+import CommonHeader from '../../components/header';
+import {adjust} from '../../utils/commonFunctions';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 const screen_height = Dimensions.get('window').height;

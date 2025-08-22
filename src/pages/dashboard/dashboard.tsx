@@ -16,13 +16,15 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 // ---------- COMPONENT IMPORTS ----------
 import {QuickActions, UpcomingAppointmentCard} from '.';
-import Header from '../../components/header';
-import Banners from '../../components/Slider';
-import PaginationDots from '../../components/pagination-dots';
-import SearchLocationBlock from '../../components/search-location-block';
+import {
+  Header,
+  Banners,
+  PaginationDots,
+  SearchLocationBlock,
+} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
-import {useApp} from '../../context/AppContext';
+import {useApp} from '../../context/app-context';
 import {h, pallette, w} from '../../Constants/Constant';
 import {getAppointments} from '../../services/common';
 import {MainStackParamList} from '../../navigation/types';

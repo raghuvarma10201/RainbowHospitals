@@ -11,17 +11,17 @@ import {
 import {sha512} from 'js-sha512';
 import {RouteProp, useNavigation} from '@react-navigation/native';
 import {WebView} from 'react-native-webview';
-import {RootStackParamList} from '../utils/types';
+import {RootStackParamList} from '../../utils/types';
 import {
   API_BASE_URL,
   PAYU_MERCHENT_KEY,
   PAYU_MERCHENT_SALT,
-} from '../utils/environment';
+} from '../../utils/environment';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../navigation/types';
-import {useApp} from '../context/AppContext';
-import {ToastService} from '../utils/ToastService';
-import {bookAppointment} from '../services/common';
+import {MainStackParamList} from '../../navigation/types';
+import {useApp} from '../../context/app-context';
+import {ToastService} from '../../utils/ToastService';
+import {bookAppointment} from '../../services/common';
 
 const PayUWebView: React.FC = ({route}: any) => {
   const navigation =

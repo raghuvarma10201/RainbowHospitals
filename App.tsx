@@ -6,6 +6,8 @@ import Toast from 'react-native-toast-message';
 import {NavigationContainer} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Provider as PaperProvider} from 'react-native-paper';
+import notifee, {AndroidImportance} from '@notifee/react-native';
+import {getMessaging, getToken} from '@react-native-firebase/messaging';
 
 import './src/i18n';
 
@@ -19,22 +21,22 @@ import {MainStack} from './src/navigation/AppNavigation';
 import {AuthStack} from './src/navigation/AuthNavigation';
 
 // Contexts
-import {AppProvider} from './src/context/AppContext';
-import {AuthContext} from './src/context/AuthContext';
-import {TimerProvider} from './src/context/TimeContext';
-import {JitsiProvider} from './src/context/JitsiContext';
+import {
+  AppProvider,
+  AuthContext,
+  TimerProvider,
+  JitsiProvider,
+  SettingsProvider,
+} from './src/context';
 
 // Components
-import MyStatusBar from './src/components/StatusBar';
 import {
   requestUserPermission,
   setupNotificationListeners,
 } from './src/utils/firebaseNotificationHandler';
-import notifee, {AndroidImportance} from '@notifee/react-native';
-import {getMessaging, getToken} from '@react-native-firebase/messaging';
 import {fetchSettings} from './src/services/common';
 import {pallette} from './src/Constants/Constant';
-import {SettingsProvider} from './src/context/SettingsContext';
+import {CustomStatusBar} from './src/components';
 
 // Initialize RTL
 configureRTL();
@@ -132,7 +134,7 @@ const App: React.FC = () => {
     <AuthContext.Provider value={authCtx}>
       <PaperProvider theme={AppTheme}>
         <NavigationContainer ref={navigationRef}>
-          <MyStatusBar backgroundColor={pallette.app_purple} />
+          <CustomStatusBar backgroundColor={pallette.app_purple} />
           <JitsiProvider>
             <SettingsProvider>
               <TimerProvider>

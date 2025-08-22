@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -6,11 +6,23 @@ import {
   View,
   Animated,
   Dimensions,
+  ImageResizeMode,
 } from 'react-native';
 
+interface BannerProps {
+  images: any[];
+  activeindex: number;
+  setActiveindex: (index: number) => void;
+  height: number;
+  width: number;
+  marginVertical?: number;
+  resizeMode?: ImageResizeMode | undefined;
+  autoScrollEnabled?: boolean;
+  itemWidth?: number;
+}
 const AUTO_SCROLL_INTERVAL = 3000; // Auto-scroll every 3 seconds
 
-const Banners = ({
+const Banners: FC<BannerProps> = ({
   images,
   activeindex,
   setActiveindex,
@@ -20,20 +32,9 @@ const Banners = ({
   resizeMode = 'contain',
   autoScrollEnabled = true, // Toggle auto-scroll on/off
   itemWidth,
-}: {
-  images: any[];
-  activeindex: number;
-  setActiveindex: (index: number) => void;
-  height: number;
-  width: number;
-  marginVertical?: number;
-  resizeMode?: string;
-  autoScrollEnabled?: boolean;
-  itemWidth?: number;
 }) => {
   const flatListRef = useRef<FlatList>(null);
   const scrollIndex = useRef(activeindex);
-  const scrollX = useRef(new Animated.Value(0)).current;
   const [currentIndex, setCurrentIndex] = useState(activeindex);
 
   // **Auto-scroll function**
@@ -65,11 +66,13 @@ const Banners = ({
             <View style={[styles.itemContainer, {width}]}>
               <Image
                 source={item}
-                resizeMode={resizeMode}
-                style={[
-                  styles.banner,
-                  {height, width: itemWidth || width * 0.95, marginVertical},
-                ]}
+                style={{
+                  height,
+                  width: itemWidth || width * 0.95,
+                  marginVertical,
+                  resizeMode,
+                  borderRadius: Dimensions.get('window').width * 0.04,
+                }}
               />
             </View>
           ) : null
@@ -107,8 +110,5 @@ const styles = StyleSheet.create({
   itemContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  banner: {
-    borderRadius: Dimensions.get('window').width * 0.04,
   },
 });

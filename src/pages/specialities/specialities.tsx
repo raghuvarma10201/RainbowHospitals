@@ -1,23 +1,19 @@
 // ---------- MODULE IMPORTS ----------
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 // ---------- COMPONENT IMPORTS ----------
 import {DoctorCarousal, SpecialityGrid, SpecialtyCarousal} from '.';
-import Header from '../../components/header';
-import Footer from '../../components/footer';
-import Loader from '../../components/Loader';
+import {Header, Footer, Loader, NotFound} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
 import {ToastService} from '../../utils/ToastService';
 import {getDoctors, getSpecialities} from '../../services/common';
 import {MainStackParamList} from '../../navigation/types';
-import {h, pallette, w} from '../../Constants/Constant';
-import {useApp} from '../../context/AppContext';
-import {adjust} from '../../utils/commonFunctions';
-import NotFound from '../../components/empty-text';
+import {h, pallette} from '../../Constants/Constant';
+import {useApp} from '../../context/app-context';
 
 // ---------- COMPONENT ----------
 const Specialities: React.FC = ({route}: any) => {

@@ -8,20 +8,23 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {Text, Modal, Portal, TextInput} from 'react-native-paper';
-import Header from '../components/header';
-import Footer from '../components/footer';
+import Header from '../../components/header';
+import Footer from '../../components/footer';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../navigation/types';
-import {formatAppointmentDate, formatAppointmentTime} from '../utils/dateTime';
-import {bookAppointment} from '../services/common';
+import {MainStackParamList} from '../../navigation/types';
+import {
+  formatAppointmentDate,
+  formatAppointmentTime,
+} from '../../utils/dateTime';
+import {bookAppointment} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ToastService} from '../utils/ToastService';
-import {pallette} from '../Constants/Constant';
-import Loader from '../components/Loader';
-import {adjust} from '../utils/commonFunctions';
-import {useJitsi} from '../context/JitsiContext';
-import {AppointmentPayload} from '../types/Appointment';
+import {ToastService} from '../../utils/ToastService';
+import {pallette} from '../../Constants/Constant';
+import Loader from '../../components/loader';
+import {adjust} from '../../utils/commonFunctions';
+import {useJitsi} from '../../context/jitsi-context';
+import {AppointmentPayload} from '../../types/Appointment';
 
 const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
@@ -122,7 +125,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
 
               <View style={styles.location}>
                 <Image
-                  source={require('../../assets/images/map-icon.png')}
+                  source={require('../../../assets/images/map-icon.png')}
                   style={{width: 15, height: 15}}
                 />
                 <Text style={styles.locationText}>
@@ -137,7 +140,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
             <View>
               <View style={styles.patientItem}>
                 <Image
-                  source={require('../../assets/images/user-icon.png')}
+                  source={require('../../../assets/images/user-icon.png')}
                   style={styles.patientImg}
                 />
                 <View>
@@ -172,7 +175,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
             <View style={styles.timeDateItem}>
               <View style={styles.timeFlexRow}>
                 <Image
-                  source={require('../../assets/images/footer-calendar-icon.png')}
+                  source={require('../../../assets/images/footer-calendar-icon.png')}
                   style={styles.timeIcon}
                 />
                 <Text
@@ -188,7 +191,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
               <View>
                 <View style={styles.timeFlexRow}>
                   <Image
-                    source={require('../../assets/images/time-icon.png')}
+                    source={require('../../../assets/images/time-icon.png')}
                     style={styles.timeIcon}
                   />
                   <Text
@@ -228,7 +231,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
               style={styles.vcBtn}
               onPress={() => startVideoCall()}>
               <Image
-                source={require('../../assets/images/videocall-icon.png')}
+                source={require('../../../assets/images/videocall-icon.png')}
                 style={styles.chatIcon}
               />
             </TouchableOpacity>
@@ -242,7 +245,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
               })
             }>
             <Image
-              source={require('../../assets/images/chat-icon.png')}
+              source={require('../../../assets/images/chat-icon.png')}
               style={styles.chatIcon}
             />
           </TouchableOpacity>

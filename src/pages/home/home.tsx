@@ -7,13 +7,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ---------- COMPONENT IMPORTS ----------
 import {ProfileItem, MenuItems} from '.';
-import Header from '../../components/header';
-import Footer from '../../components/footer';
+import {Header, Footer} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
 import {AuthStackParamList, MainStackParamList} from '../../navigation/types';
-import {useAuth} from '../../context/AuthContext';
-import {useApp} from '../../context/AppContext';
+import {useAuth} from '../../context/auth-context';
+import {useApp} from '../../context/app-context';
 import {h, pallette} from '../../Constants/Constant';
 
 // ---------- TYPES ----------

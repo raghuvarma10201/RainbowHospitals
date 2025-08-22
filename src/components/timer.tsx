@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {useTimer} from '../context/TimeContext';
+import {useTimer} from '../context/timer-context';
 import {pallette} from '../Constants/Constant';
 import {adjust} from '../utils/commonFunctions';
 
-const TimerBanner = () => {
+const Timer: FC = () => {
   const {secondsLeft} = useTimer();
 
   if (secondsLeft <= 0) return null;
@@ -52,4 +52,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TimerBanner;
+export default Timer;

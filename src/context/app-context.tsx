@@ -1,7 +1,7 @@
 // AppProvider.tsx
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {Branch, Region, Setting} from './../services/Region/api';
-import {DoctorDetailsResponse, PatientProfile} from './../utils/types';
+import {Branch, Region, Setting} from '../services/Region/api';
+import {DoctorDetailsResponse, PatientProfile} from '../utils/types';
 import {AppointmentPayload} from '../types/Appointment';
 
 type AppCtx = {
@@ -45,9 +45,7 @@ export const useApp = () => {
   return ctx;
 };
 
-export const AppProvider: React.FC<{children: React.ReactNode}> = ({
-  children,
-}) => {
+const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [user, setUser] = useState<string | null>(null);
   const [branch, setBranch] = useState<Branch | null>(null);
   const [allbranch, setAllBranch] = useState<Branch[]>([]);
@@ -101,3 +99,5 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
 
   return <AppCtx.Provider value={ctx}>{children}</AppCtx.Provider>;
 };
+
+export default AppProvider;
