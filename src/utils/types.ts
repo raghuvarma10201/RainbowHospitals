@@ -320,14 +320,14 @@ export type upcomingApointment = {
 };
 
 export type ActionItem = {
-  icon: ImageSourcePropType; // You can replace 'any' with ImageSourcePropType if you import it from 'react-native'
+  icon: ImageSourcePropType;
   label: string;
   onPress: () => void;
 };
 
 export type BookingStatus = 'BLOCK' | 'RESCHEDULE' | 'CANCEL';
 export type AppointmentType = 'Video' | 'Physical';
-export type PaymentType = 'ONLINE' | 'CASH'; // extend as needed
+export type PaymentType = 'ONLINE' | 'CASH';
 
 export interface BankDetails {
   bank_name: string | null;

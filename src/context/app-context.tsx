@@ -3,42 +3,9 @@ import React, {createContext, useContext, useState} from 'react';
 import {Branch, Region, Setting} from '../services/Region/api';
 import {DoctorDetailsResponse, PatientProfile} from '../utils/types';
 import {AppointmentPayload} from '../utils/types';
+import {AppContextProps} from '../types/context-types';
 
-type AppCtx = {
-  user: string | null;
-  branch: Branch | null;
-  allbranch: Branch[];
-  region: Region | null;
-  mrn: string;
-  profile: PatientProfile | null;
-  doctorDetails: DoctorDetailsResponse | null;
-  isvideoconsulation: boolean;
-  consultationType: string;
-  sessionStartDttm: string;
-  doctorSessionCount: string;
-  todayCount: number;
-  upcomingCount: number;
-  appointment: AppointmentPayload | null;
-  settings: Setting | null;
-
-  updateAppointment: (data: AppointmentPayload | null) => void;
-  updateUser: (u: string | null) => void;
-  updateBranch: (b: Branch | null) => void;
-  updateAllBranch: (b: Branch[]) => void;
-  updateRegion: (r: Region | null) => void;
-  updateMrn: (m: string) => void;
-  updateProfile: (p: PatientProfile | null) => void;
-  updateDoctorDetails: (d: DoctorDetailsResponse | null) => void;
-  updateVideoConsult: (v: boolean) => void;
-  updateConsultationType: (c: string) => void;
-  updateSessionStart: (s: string) => void;
-  updateSessionCount: (s: string) => void;
-  updateTodayCount: (c: number) => void;
-  updateUpcomingCount: (c: number) => void;
-  updateSettings: (c: Setting) => void;
-};
-
-const AppCtx = createContext<AppCtx | undefined>(undefined);
+const AppCtx = createContext<AppContextProps | undefined>(undefined);
 export const useApp = () => {
   const ctx = useContext(AppCtx);
   if (!ctx) throw new Error('useApp must be used inside AppProvider');
@@ -64,7 +31,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
     null,
   );
   const [settings, setSetting] = useState<Setting | null>(null);
-  const ctx: AppCtx = {
+  const ctx: AppContextProps = {
     user,
     branch,
     allbranch,

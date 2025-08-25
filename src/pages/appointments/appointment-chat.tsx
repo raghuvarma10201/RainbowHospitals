@@ -12,6 +12,7 @@ import {
   PermissionsAndroid,
   Linking,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {pallette} from '../../constants/constants';
@@ -49,6 +50,8 @@ const AppointmentChat: React.FC<any> = ({route}) => {
   const [recordTime, setRecordTime] = useState('');
   const [recordingStarted, setRecordingStarted] = useState(false);
   const [playStarted, setPlayStarted] = useState(false);
+  const [isSending, setIsSending] = useState(false); // loader state
+  const [previewVideoPlaying, setPreviewVideoPlaying] = useState(false); // preview video toggle
 
   useEffect(() => {
     fetchChat();
@@ -58,24 +61,12 @@ const AppointmentChat: React.FC<any> = ({route}) => {
   const requestMediaPermissions = async () => {
     if (Platform.OS === 'android') {
       try {
-        const grants = await PermissionsAndroid.requestMultiple([
+        await PermissionsAndroid.requestMultiple([
           PermissionsAndroid.PERMISSIONS.CAMERA,
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
           PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
         ]);
-        if (
-          grants['android.permission.WRITE_EXTERNAL_STORAGE'] ===
-            PermissionsAndroid.RESULTS.GRANTED &&
-          grants['android.permission.READ_EXTERNAL_STORAGE'] ===
-            PermissionsAndroid.RESULTS.GRANTED &&
-          grants['android.permission.RECORD_AUDIO'] ===
-            PermissionsAndroid.RESULTS.GRANTED &&
-          grants['android.permission.CAMERA'] ===
-            PermissionsAndroid.RESULTS.GRANTED
-        ) {
-        } else {
-        }
       } catch (err) {
         console.warn(err);
       }
@@ -95,6 +86,7 @@ const AppointmentChat: React.FC<any> = ({route}) => {
 
   const sendMessage = async () => {
     try {
+      setIsSending(true);
       let formdata = new FormData();
       formdata.append('sender', 'Patient');
       formdata.append('receiver', 'Doctor');
@@ -107,6 +99,7 @@ const AppointmentChat: React.FC<any> = ({route}) => {
         setInputText('');
         setMediaFile({name: '', uri: '', type: ''});
         setTypeOfMedia('');
+        setPreviewVideoPlaying(false);
         fetchChat();
         scrollViewRef.current?.scrollToEnd({animated: true});
       } else {
@@ -114,45 +107,50 @@ const AppointmentChat: React.FC<any> = ({route}) => {
       }
     } catch (error) {
       console.error('Error sending chat:', error);
+    } finally {
+      setIsSending(false);
     }
   };
 
   const selectMediaType = async (mediaType: string) => {
-    switch (mediaType) {
-      case 'img':
-        ImagePicker.openPicker({mediaType: 'photo'}).then(image => {
-          setMediaFile({
-            uri: image?.path,
-            type: image?.mime,
-            name: 'image.jpg',
+    try {
+      switch (mediaType) {
+        case 'img':
+        case 'vid': {
+          const isPhoto = mediaType === 'img';
+          const picked = await ImagePicker.openPicker({
+            mediaType: isPhoto ? 'photo' : 'video',
           });
-          setTypeOfMedia('');
-        });
-        break;
-      case 'vid':
-        ImagePicker.openPicker({mediaType: 'video'}).then(video => {
           setMediaFile({
-            uri: video?.path,
-            type: video?.mime,
-            name: 'video.mp4',
+            uri: picked?.path,
+            type: picked?.mime,
+            name: isPhoto ? 'image.jpg' : 'video.mp4',
           });
-          setTypeOfMedia('');
-        });
-        break;
-      case 'file':
-        const result = await pick({type: [types.pdf, types.docx, types.doc]});
-        setMediaFile({
-          uri: result[0]?.uri,
-          type: result[0]?.type || '',
-          name: result[0]?.name || 'upload',
-        });
-        break;
-      case 'aud':
-        setRecordingStarted(prev => !prev);
-        onStartRecord();
-        break;
-      default:
-        break;
+          break;
+        }
+        case 'file': {
+          const [result] = await pick({
+            type: [types.pdf, types.docx, types.doc],
+          });
+          if (result) {
+            setMediaFile({
+              uri: result.uri,
+              type: result.type || '',
+              name: result.name || 'upload',
+            });
+          }
+          break;
+        }
+        case 'aud': {
+          setRecordingStarted(prev => !prev);
+          onStartRecord();
+          break;
+        }
+        default:
+          console.warn(`Unsupported media type: ${mediaType}`);
+      }
+    } catch (err) {
+      console.error('Error selecting media:', err);
     }
   };
 
@@ -269,9 +267,7 @@ const AppointmentChat: React.FC<any> = ({route}) => {
                       <TouchableOpacity
                         onPress={() =>
                           playStarted ? onStopPlay() : onStartPlay()
-                        }
-                        // style={styles.playPause}
-                      >
+                        }>
                         <Icon
                           name={playStarted ? 'stop-circle' : 'play'}
                           color={'#00000080'}
@@ -307,23 +303,46 @@ const AppointmentChat: React.FC<any> = ({route}) => {
           {mediaFile.type.startsWith('image') ? (
             <Image source={{uri: mediaFile.uri}} style={styles.previewImage} />
           ) : mediaFile.type.startsWith('video') ? (
-            <Video
-              source={{uri: mediaFile.uri}}
-              style={styles.previewImage}
-              paused={true}
-              resizeMode="cover"
-            />
+            <View>
+              <Video
+                source={{uri: mediaFile.uri}}
+                style={styles.previewImage}
+                paused={!previewVideoPlaying}
+                resizeMode="cover"
+                onEnd={() => setPreviewVideoPlaying(false)}
+              />
+              <TouchableOpacity
+                onPress={() => setPreviewVideoPlaying(p => !p)}
+                style={styles.playPauseIcon}>
+                <Icon
+                  name={!previewVideoPlaying ? 'play-sharp' : 'pause'}
+                  color={'white'}
+                  size={screen_width * 0.03}
+                />
+              </TouchableOpacity>
+              <Text style={styles.previewFileName}>{mediaFile.name}</Text>
+            </View>
           ) : mediaFile.type.startsWith('audio') ? (
             <View style={styles.previewFile}>
-              <Icon name="musical-notes" size={24} color="#000" />
+              <TouchableOpacity
+                onPress={() => (playStarted ? onStopPlay() : onStartPlay())}>
+                <Icon
+                  name={playStarted ? 'stop-circle' : 'play'}
+                  size={28}
+                  color="#000"
+                />
+              </TouchableOpacity>
               <Text style={styles.previewFileName}>{mediaFile.name}</Text>
             </View>
           ) : (
-            <View style={styles.previewFile}>
+            <TouchableOpacity
+              style={styles.previewFile}
+              onPress={() => Linking.openURL(mediaFile.uri)}>
               <Icon name="document" size={24} color="#000" />
               <Text style={styles.previewFileName}>{mediaFile.name}</Text>
-            </View>
+            </TouchableOpacity>
           )}
+
           <TouchableOpacity
             onPress={() => setMediaFile({name: '', uri: '', type: ''})}
             style={styles.removePreview}>
@@ -371,6 +390,7 @@ const AppointmentChat: React.FC<any> = ({route}) => {
           </View>
         </View>
         <TouchableOpacity
+          disabled={isSending}
           onPress={() =>
             inputText || mediaFile.uri
               ? sendMessage()
@@ -378,8 +398,12 @@ const AppointmentChat: React.FC<any> = ({route}) => {
                   'Please enter a message or select a file to send',
                 )
           }
-          style={styles.sendButton}>
-          <Text style={styles.sendText}>Send</Text>
+          style={[styles.sendButton, isSending && {opacity: 0.6}]}>
+          {isSending ? (
+            <ActivityIndicator size="small" color={pallette.white} />
+          ) : (
+            <Text style={styles.sendText}>Send</Text>
+          )}
         </TouchableOpacity>
         {typeOfMedia == 'gallery' && (
           <View style={styles.floatingLabel}>
@@ -513,7 +537,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: screen_width * 0.03,
   },
-  // New preview styles
   previewContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -525,8 +548,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   previewImage: {
-    width: 60,
-    height: 60,
+    width: 120,
+    height: 90,
     borderRadius: 5,
   },
   previewFile: {

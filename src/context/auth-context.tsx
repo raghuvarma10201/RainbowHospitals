@@ -1,11 +1,7 @@
 import {createContext, useContext} from 'react';
+import {AuthContextProps} from '../types/context-types';
 
-type AuthCtx = {
-  isLoggedIn: boolean;
-  setLoggedIn: (val: boolean) => void;
-};
-
-const AuthContext = createContext<AuthCtx | undefined>(undefined);
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used inside its provider');
