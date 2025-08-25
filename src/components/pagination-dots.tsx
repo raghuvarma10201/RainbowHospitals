@@ -1,7 +1,7 @@
 import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {h, pallette, w} from '../constants/constants';
-import {PaginationDotsProps} from './types';
+import {PaginationDotsProps} from '../types/component-types';
 
 const PaginationDots: React.FC<PaginationDotsProps> = ({data, activeIndex}) => {
   return (

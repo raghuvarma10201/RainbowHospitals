@@ -4,7 +4,10 @@ import {TextInput} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import {h, w, pallette} from '../constants/constants';
 import {adjust} from '../utils/common-functions';
-import {LocationOptionsProps, SearchLocationBlockProps} from './types';
+import {
+  LocationOptionsProps,
+  SearchLocationBlockProps,
+} from '../types/component-types';
 
 // ---------- STATIC DATA (memoized outside component) ----------
 const location_options: LocationOptionsProps[] = [

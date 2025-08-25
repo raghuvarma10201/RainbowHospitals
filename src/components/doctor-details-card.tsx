@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 // ---------- TYPE IMPORTS ----------
-import {DoctorDetailsCardProps} from './types';
+import {DoctorDetailsCardProps} from '../types/component-types';
 
 // ---------- COMPONENT IMPORTS ----------
 import ShortInfoText from './short-info-text';

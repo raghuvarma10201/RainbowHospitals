@@ -23,7 +23,7 @@ import {
 import {getCurrentCoordinates} from '../utils/service-handlers';
 import {pallette, w} from '../constants/constants';
 import {adjust, navigateTo} from '../utils/common-functions';
-import {HeaderProps, NavProp} from './types';
+import {HeaderProps, NavProp} from '../types/component-types';
 import {routes} from '../utils';
 import {MainStackParamList} from '../navigation/types';
 

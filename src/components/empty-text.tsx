@@ -2,7 +2,7 @@ import {Image, StyleSheet, Text, View} from 'react-native';
 import React, {FC} from 'react';
 import {adjust} from '../utils/common-functions';
 import {h, pallette, w} from '../constants/constants';
-import {NotFoundProps} from './types';
+import {NotFoundProps} from '../types/component-types';
 
 const NotFound: FC<NotFoundProps> = ({text, margin}) => {
   return (

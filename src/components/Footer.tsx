@@ -4,7 +4,11 @@ import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 // ---------- TYPE IMPORTS ----------
-import {FooterButtonProps, FooterProps, NavProp} from './types';
+import {
+  FooterButtonProps,
+  FooterProps,
+  NavProp,
+} from '../types/component-types';
 import {MainStackParamList} from '../navigation/types';
 
 // ---------- VALUE IMPORTS ----------

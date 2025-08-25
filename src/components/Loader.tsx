@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import {pallette} from '../constants/constants';
-import {LoaderProps} from './types';
+import {LoaderProps} from '../types/component-types';
 
 const theme = {
   colors: {
