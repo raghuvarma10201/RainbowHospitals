@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
-import {pallette} from '../../Constants/Constant';
-import {adjust} from '../../utils/commonFunctions';
+import {pallette} from '../../constants/constants';
+import {adjust} from '../../utils/common-functions';
 
 // Define type for route params
 type ChangeLocationParams = {

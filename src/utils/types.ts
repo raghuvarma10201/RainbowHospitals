@@ -1,7 +1,6 @@
 import {ImageProps, ImageSourcePropType} from 'react-native';
 
 export type RootStackParamList = {
-  Splash: undefined;
   Login: undefined;
   Register: undefined;
   VerifyOTP: {phoneNumber: string};

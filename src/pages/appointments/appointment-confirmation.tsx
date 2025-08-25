@@ -21,8 +21,8 @@ import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
 import Banners from '../../components/banners';
-import {pallette} from '../../Constants/Constant';
-import {adjust, navigateTo} from '../../utils/commonFunctions';
+import {pallette} from '../../constants/constants';
+import {adjust, navigateTo} from '../../utils/common-functions';
 import {
   CommonActions,
   useFocusEffect,

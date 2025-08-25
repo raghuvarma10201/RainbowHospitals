@@ -17,15 +17,14 @@ import Footer from '../../components/footer';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-import {useJitsi} from '../../context/jitsi-context';
 import {useApp} from '../../context/app-context';
 import {getAppointments} from '../../services/common';
-import {ToastService} from '../../utils/ToastService';
-import {formatAppointmentDateTime} from '../../utils/dateTime';
+import {ToastService} from '../../utils/service-handlers';
+import {formatAppointmentDateTime} from '../../utils/common-functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MainStackParamList} from '../../navigation/types';
-import {pallette} from '../../Constants/Constant';
-import {adjust} from '../../utils/commonFunctions';
+import {pallette} from '../../constants/constants';
+import {adjust} from '../../utils/common-functions';
 import NotFound from '../../components/empty-text';
 
 const MyAppointments: React.FC = () => {

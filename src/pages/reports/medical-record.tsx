@@ -18,14 +18,14 @@ import {
   Portal,
 } from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
-import Header from '../components/header';
-import Footer from '../components/footer';
+import Header from '../../components/header';
+import Footer from '../../components/footer';
 
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../navigation/types';
-import {pallette} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+import {MainStackParamList} from '../../navigation/types';
+import {pallette} from '../../constants/constants';
+import {adjust} from '../../utils/common-functions';
 
 const local_data = [
   {
@@ -74,7 +74,7 @@ const MedicalRecord: React.FC = () => {
                   }}
                 />
                 <Image
-                  source={require('../../assets/images/search-icon.png')}
+                  source={require('../../../assets/images/search-icon.png')}
                   style={styles.formInputIcon}
                 />
               </View>
@@ -95,7 +95,7 @@ const MedicalRecord: React.FC = () => {
                   onChange={e => setCountry(e.value)}
                 />
                 <Image
-                  source={require('../../assets/images/map-icon.png')}
+                  source={require('../../../assets/images/map-icon.png')}
                   style={styles.formInputIcon}
                 />
               </View>
@@ -104,7 +104,7 @@ const MedicalRecord: React.FC = () => {
 
           <View style={styles.titleFlex}>
             <Image
-              source={require('../../assets/images/view-report.png')}
+              source={require('../../../assets/images/view-report.png')}
               style={styles.titleIcon}
             />
             <Text style={styles.title}>Medical Records</Text>
@@ -112,7 +112,7 @@ const MedicalRecord: React.FC = () => {
 
           <View style={styles.selectUserBlock}>
             <Image
-              source={require('../../assets/images/booked-for-icon.png')}
+              source={require('../../../assets/images/booked-for-icon.png')}
               style={styles.iconSelectUser}
             />
 

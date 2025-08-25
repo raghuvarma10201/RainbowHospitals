@@ -8,8 +8,8 @@ import {
   TextStyle,
   ViewStyle,
 } from 'react-native';
-import {pallette} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+import {pallette} from '../constants/constants';
+import {adjust} from '../utils/common-functions';
 
 // ---------- TYPES ----------
 interface ShortInfoTextProps {

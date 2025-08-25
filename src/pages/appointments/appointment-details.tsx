@@ -16,13 +16,13 @@ import {MainStackParamList} from '../../navigation/types';
 import {
   formatAppointmentDate,
   formatAppointmentTime,
-} from '../../utils/dateTime';
+} from '../../utils/common-functions';
 import {bookAppointment} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ToastService} from '../../utils/ToastService';
-import {pallette} from '../../Constants/Constant';
+import {ToastService} from '../../utils/service-handlers';
+import {pallette} from '../../constants/constants';
 import Loader from '../../components/loader';
-import {adjust} from '../../utils/commonFunctions';
+import {adjust} from '../../utils/common-functions';
 import {useJitsi} from '../../context/jitsi-context';
 import {AppointmentPayload} from '../../types/Appointment';
 
@@ -75,8 +75,9 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   };
 
   const startVideoCall = () => {
+    console.log(`https://dev.rb.vc.demos.im/${appointmentData?.roomId}`);
     showJitsi({
-      roomName: appointmentData?.BookingUID || 'SampleJitsiCall',
+      roomName: appointmentData?.roomId || 'SampleJitsiCall',
       token: '',
       serverURL: 'https://dev.rb.vc.demos.im/', // room url - https://dev.rb.vc.demos.im/SampleJitsiCall
       userInfo: {

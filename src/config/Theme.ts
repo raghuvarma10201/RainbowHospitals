@@ -1,6 +1,6 @@
 // src/config/theme.ts
 import {DefaultTheme} from 'react-native-paper';
-import {pallette} from '../Constants/Constant';
+import {pallette} from '../constants/constants';
 
 export const AppTheme = {
   ...DefaultTheme,

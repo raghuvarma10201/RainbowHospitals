@@ -22,9 +22,9 @@ import {
   findNearestRegion,
   findNearestBranch,
 } from '../services/Region/location';
-import {getCurrentCoordinates} from '../utils/LocationService';
-import {pallette, w} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+import {getCurrentCoordinates} from '../utils/service-handlers';
+import {pallette, w} from '../constants/constants';
+import {adjust} from '../utils/common-functions';
 
 const STORAGE_KEYS = {
   BRANCH: 'branch',

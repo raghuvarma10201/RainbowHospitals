@@ -19,12 +19,12 @@ import {Footer, Header, Loader} from '../../components';
 // ---------- OTHER IMPORTS ----------
 import {bookAppointment} from '../../services/common';
 import {useApp} from '../../context/app-context';
-import {ToastService} from '../../utils/ToastService';
+import {ToastService} from '../../utils/service-handlers';
 import {MainStackParamList} from '../../navigation/types';
 import {routes} from '../../utils/enums';
 import {AppointmentPayload} from '../../types/Appointment';
-import {h, pallette, w} from '../../Constants/Constant';
-import {adjust} from '../../utils/commonFunctions';
+import {h, pallette, w} from '../../constants/constants';
+import {adjust} from '../../utils/common-functions';
 import DoctorDetailsCard from '../../components/doctor-details-card';
 
 // ---------- COMPONENT ----------

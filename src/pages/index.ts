@@ -3,18 +3,20 @@ export {Home} from './home';
 export {Dashboard} from './dashboard';
 export {Specialities} from './specialities';
 export {DoctorsList} from './doctor-list';
-export {DoctorSlotSelection} from './doctor-slots-selection';
-export {SlotConfirmation} from './slot-confirmation';
-export {default as BookVaccination} from './BookVaccination';
-export {default as VaccinesAdult} from './VaccinesAdult';
-export {default as BookScan} from './BookScan';
-export {default as MedicalRecord} from './MedicalRecord';
-export {default as MyAppointments} from './appointments/appointment-list';
-export {PayUWebView} from './slot-confirmation';
-export {default as MyAppointmentDetails} from './appointments/appointment-details';
-export {default as VaccinesPediatric} from './VaccinesPediatric';
-export {default as AppointmentConfirmed} from './appointments/appointment-confirmation';
-export {default as AppointmentChat} from './appointments/appointment-chat';
+export {
+  DoctorSlotSelection,
+  PayUWebView,
+  SlotConfirmation,
+} from './doctor-slots-selection';
+export {BookScan} from './scanning';
+export {MedicalRecord} from './reports';
+export {VaccinesPediatric, BookVaccination, VaccinesAdult} from './vaccination';
+export {
+  AppointmentChat,
+  AppointmentConfirmed,
+  MyAppointments,
+  MyAppointmentDetails,
+} from './appointments';
 export {Login} from './login';
 export {Otp} from './otp';
-export {default as Registration} from './Registration';
+export {Registration} from './register';

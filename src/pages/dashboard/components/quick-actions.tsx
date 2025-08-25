@@ -8,8 +8,8 @@ import {
   ListRenderItem,
   Dimensions,
 } from 'react-native';
-import {adjust, navigateTo} from '../../../utils/commonFunctions';
-import {h, pallette, w} from '../../../Constants/Constant';
+import {adjust, navigateTo} from '../../../utils/common-functions';
+import {h, pallette, w} from '../../../constants/constants';
 
 // Type for a single action item
 type ActionItem = {

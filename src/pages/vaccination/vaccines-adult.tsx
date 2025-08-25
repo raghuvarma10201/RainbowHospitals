@@ -10,10 +10,10 @@ import {
 import React, {useState} from 'react';
 import {Text, Banner, Modal, Portal} from 'react-native-paper';
 
-import Header from '../components/header';
-import Footer from '../components/footer';
-import {pallette} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+import Header from '../../components/header';
+import Footer from '../../components/footer';
+import {pallette} from '../../constants/constants';
+import {adjust} from '../../utils/common-functions';
 
 const VaccinesAdult: React.FC = () => {
   return (
@@ -32,7 +32,7 @@ const VaccinesAdult: React.FC = () => {
               <View style={styles.actionItem}>
                 <View style={styles.activeActionItemIcon}>
                   <Image
-                    source={require('../../assets/images/tetanus-diphtheria-icon.png')}
+                    source={require('../../../assets/images/tetanus-diphtheria-icon.png')}
                     style={styles.iconAction}
                   />
                 </View>
@@ -42,7 +42,7 @@ const VaccinesAdult: React.FC = () => {
               <View style={styles.actionItem}>
                 <View style={styles.actionItemIcon}>
                   <Image
-                    source={require('../../assets/images/plus-icon.png')}
+                    source={require('../../../assets/images/plus-icon.png')}
                     style={styles.iconAction}
                   />
                 </View>
@@ -52,7 +52,7 @@ const VaccinesAdult: React.FC = () => {
               <View style={styles.actionItem}>
                 <View style={styles.actionItemIcon}>
                   <Image
-                    source={require('../../assets/images/plus-icon.png')}
+                    source={require('../../../assets/images/plus-icon.png')}
                     style={styles.iconAction}
                   />
                 </View>
@@ -62,7 +62,7 @@ const VaccinesAdult: React.FC = () => {
               <View style={styles.actionItem}>
                 <View style={styles.actionItemIcon}>
                   <Image
-                    source={require('../../assets/images/plus-icon.png')}
+                    source={require('../../../assets/images/plus-icon.png')}
                     style={styles.iconAction}
                   />
                 </View>
@@ -74,7 +74,7 @@ const VaccinesAdult: React.FC = () => {
               <View style={styles.actionItem}>
                 <View style={styles.actionItemIcon}>
                   <Image
-                    source={require('../../assets/images/plus-icon.png')}
+                    source={require('../../../assets/images/plus-icon.png')}
                     style={styles.iconAction}
                   />
                 </View>
@@ -84,7 +84,7 @@ const VaccinesAdult: React.FC = () => {
               <View style={styles.actionItem}>
                 <View style={styles.actionItemIcon}>
                   <Image
-                    source={require('../../assets/images/plus-icon.png')}
+                    source={require('../../../assets/images/plus-icon.png')}
                     style={styles.iconAction}
                   />
                 </View>

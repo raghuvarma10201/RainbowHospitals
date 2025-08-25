@@ -6,7 +6,7 @@ import {
   getDoctorSessions,
   getDoctorSlots,
 } from '../../../services/common';
-import {ToastService} from '../../../utils/ToastService';
+import {ToastService} from '../../../utils/service-handlers';
 
 interface Slot {
   SlotID: string;

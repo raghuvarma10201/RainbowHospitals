@@ -1,4 +1,4 @@
-import {API_BASE_URL} from '../../utils/environment';
+import {API_BASE_URL} from '../../utils/enums';
 
 // api.ts
 export type Region = {

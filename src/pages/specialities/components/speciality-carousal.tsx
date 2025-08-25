@@ -8,8 +8,8 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import {adjust} from '../../../utils/commonFunctions';
-import {pallette} from '../../../Constants/Constant';
+import {adjust} from '../../../utils/common-functions';
+import {pallette} from '../../../constants/constants';
 
 const {width: screenWidth} = Dimensions.get('window');
 const ITEM_WIDTH = screenWidth * 0.3;

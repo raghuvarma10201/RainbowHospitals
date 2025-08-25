@@ -16,9 +16,9 @@ import {AppTheme} from './src/config/Theme';
 import {configureRTL} from './src/config/RTL';
 
 // Navigation
-import {navigationRef} from './src/navigation/RootNavigation';
-import {MainStack} from './src/navigation/AppNavigation';
-import {AuthStack} from './src/navigation/AuthNavigation';
+import {navigationRef} from './src/navigation/root-navigation';
+import {MainStack} from './src/navigation/app-navigation';
+import {AuthStack} from './src/navigation/auth-navigation';
 
 // Contexts
 import {
@@ -33,9 +33,9 @@ import {
 import {
   requestUserPermission,
   setupNotificationListeners,
-} from './src/utils/firebaseNotificationHandler';
+} from './src/utils/service-handlers';
 import {fetchSettings} from './src/services/common';
-import {pallette} from './src/Constants/Constant';
+import {pallette} from './src/constants/constants';
 import {CustomStatusBar} from './src/components';
 
 // Initialize RTL
@@ -54,6 +54,8 @@ const App: React.FC = () => {
       await requestUserPermission();
       const messaging = getMessaging();
       const FcmTtoken = await getToken(messaging);
+      console.log(FcmTtoken);
+
       // const FcmTtoken = await getMessaging().getToken();
       await AsyncStorage.setItem('FcmTtoken', FcmTtoken);
     };

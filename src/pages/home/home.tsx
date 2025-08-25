@@ -13,7 +13,7 @@ import {Header, Footer} from '../../components';
 import {AuthStackParamList, MainStackParamList} from '../../navigation/types';
 import {useAuth} from '../../context/auth-context';
 import {useApp} from '../../context/app-context';
-import {h, pallette} from '../../Constants/Constant';
+import {h, pallette} from '../../constants/constants';
 
 // ---------- TYPES ----------
 type CombinedNavigationProp = CompositeNavigationProp<

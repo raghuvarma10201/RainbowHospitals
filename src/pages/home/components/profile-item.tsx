@@ -1,7 +1,7 @@
 import {memo} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
-import {pallette, w} from '../../../Constants/Constant';
-import {adjust} from '../../../utils/commonFunctions';
+import {pallette, w} from '../../../constants/constants';
+import {adjust} from '../../../utils/common-functions';
 
 const ProfileItem = memo(({name, uid}: {name?: string; uid?: string}) => (
   <View style={styles.hProw}>

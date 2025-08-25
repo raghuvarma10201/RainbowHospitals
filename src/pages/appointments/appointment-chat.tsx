@@ -14,8 +14,8 @@ import {
   Dimensions,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {pallette, purpuleColor, whiteColor} from '../../Constants/Constant';
-import {API_IMG_URL} from '../../utils/environment';
+import {pallette} from '../../constants/constants';
+import {API_IMG_URL} from '../../utils/enums';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 import Video from 'react-native-video';
@@ -23,11 +23,11 @@ import {pick, types} from '@react-native-documents/picker';
 import {RecordBackType, PlayBackType} from 'react-native-audio-recorder-player';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import {fetchAppointmentChat, sendAppointmentChat} from '../../services/common';
-import {ToastService} from '../../utils/ToastService';
+import {ToastService} from '../../utils/service-handlers';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../navigation/types';
 import CommonHeader from '../../components/header';
-import {adjust} from '../../utils/commonFunctions';
+import {adjust} from '../../utils/common-functions';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 const screen_height = Dimensions.get('window').height;
@@ -270,7 +270,8 @@ const AppointmentChat: React.FC<any> = ({route}) => {
                         onPress={() =>
                           playStarted ? onStopPlay() : onStartPlay()
                         }
-                        style={styles.playPause}>
+                        // style={styles.playPause}
+                      >
                         <Icon
                           name={playStarted ? 'stop-circle' : 'play'}
                           color={'#00000080'}
@@ -385,21 +386,21 @@ const AppointmentChat: React.FC<any> = ({route}) => {
             <TouchableOpacity onPress={() => selectMediaType('img')}>
               <Icon
                 name={'image'}
-                color={whiteColor}
+                color={pallette.white}
                 size={screen_width * 0.06}
               />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => selectMediaType('vid')}>
               <Icon
                 name={'videocam'}
-                color={whiteColor}
+                color={pallette.white}
                 size={screen_width * 0.06}
               />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setTypeOfMedia('')}>
               <Icon
                 name="close"
-                color={whiteColor}
+                color={pallette.white}
                 size={screen_width * 0.06}
               />
             </TouchableOpacity>
@@ -451,7 +452,7 @@ const styles = StyleSheet.create({
     padding: screen_width * 0.025,
     borderWidth: 0.7,
     borderRadius: screen_width,
-    borderColor: whiteColor,
+    borderColor: pallette.white,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -493,7 +494,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   sendButton: {
-    backgroundColor: purpuleColor,
+    backgroundColor: pallette.app_purple,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,

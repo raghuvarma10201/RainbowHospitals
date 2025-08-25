@@ -3,7 +3,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {MainStackParamList} from '../navigation/types';
-import {h, pallette} from '../Constants/Constant';
+import {h, pallette} from '../constants/constants';
 
 type FooterIcon = 'home' | 'calendar' | 'call' | 'reports';
 

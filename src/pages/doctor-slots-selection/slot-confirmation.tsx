@@ -19,11 +19,11 @@ import {Header, Footer, Loader, DoctorDetailsCard} from '../../components';
 // ---------- OTHER IMPORTS ----------
 import {useApp} from '../../context/app-context';
 import {fetchConsultationFee, fetchFamilyMembers} from '../../services/common';
-import {ToastService} from '../../utils/ToastService';
+import {ToastService} from '../../utils/service-handlers';
 import {FamilyMember} from '../../utils/types';
 import {MainStackParamList} from '../../navigation/types';
-import {h, pallette, w} from '../../Constants/Constant';
-import {adjust} from '../../utils/commonFunctions';
+import {h, pallette, w} from '../../constants/constants';
+import {adjust} from '../../utils/common-functions';
 import {useSettings} from '../../context/settings-context';
 
 // ---------- COMPONENT ----------

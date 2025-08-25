@@ -1,6 +1,13 @@
 // File: JitsiModal.tsx
 
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -14,7 +21,7 @@ import {
   StatusBar,
 } from 'react-native';
 import {JitsiMeeting} from '@jitsi/react-native-sdk';
-import {pallette} from '../../Constants/Constant';
+import {pallette} from '../../constants/constants';
 
 // === Constants (kept module-scoped to avoid re-allocations per render) ===
 const CORNER_MARGIN = 10;
@@ -24,7 +31,7 @@ const SNAP_HEIGHT = 100;
 const initialScreen = Dimensions.get('window');
 
 // Component
-const JitsiModal = ({visible, options, onClose}: any) => {
+const JitsiModal: FC = ({visible, options, onClose}: any) => {
   const jitsiMeeting = useRef<any>(null);
   const [minimized, setMinimized] = useState(false);
   const [conferenceActive, setConferenceActive] = useState(false);

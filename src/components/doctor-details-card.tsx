@@ -7,10 +7,10 @@ import {
   View,
   ImageSourcePropType,
 } from 'react-native';
-import {IMG_BASE_URL} from '../utils/environment';
-import {h, pallette, w} from '../Constants/Constant';
+import {IMG_BASE_URL} from '../utils/enums';
+import {h, pallette, w} from '../constants/constants';
 import ShortInfoText from './short-info-text';
-import {adjust} from '../utils/commonFunctions';
+import {adjust} from '../utils/common-functions';
 
 /**
  * Types for Doctor Details

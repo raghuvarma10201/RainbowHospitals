@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {h, pallette, w} from '../Constants/Constant';
+import {h, pallette, w} from '../constants/constants';
 
 interface Props {
   data: any[];

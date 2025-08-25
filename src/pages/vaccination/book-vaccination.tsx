@@ -9,14 +9,14 @@ import {
 import React, {useState} from 'react';
 import {Text, Banner, Modal, Portal} from 'react-native-paper';
 
-import Header from '../components/header';
-import Footer from '../components/footer';
+import Header from '../../components/header';
+import Footer from '../../components/footer';
 
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../navigation/types';
-import {pallette} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+import {MainStackParamList} from '../../navigation/types';
+import {pallette} from '../../constants/constants';
+import {adjust} from '../../utils/common-functions';
 
 const BookVaccination: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -33,7 +33,7 @@ const BookVaccination: React.FC = () => {
         <View style={styles.container}>
           <View>
             <Image
-              source={require('../../assets/images/vaccine-img.jpg')}
+              source={require('../../../assets/images/vaccine-img.jpg')}
               style={styles.vaccinationImg}
             />
           </View>
@@ -44,7 +44,7 @@ const BookVaccination: React.FC = () => {
               onPress={() => navigateTo('VaccinesAdult', undefined)}>
               <View style={styles.activeActionItemIcon}>
                 <Image
-                  source={require('../../assets/images/adult-vaccination-icon.png')}
+                  source={require('../../../assets/images/adult-vaccination-icon.png')}
                   style={styles.iconAction}
                 />
               </View>
@@ -56,7 +56,7 @@ const BookVaccination: React.FC = () => {
               onPress={() => navigateTo('VaccinesPediatric', undefined)}>
               <View style={styles.actionItemIcon}>
                 <Image
-                  source={require('../../assets/images/pediatric-vaccination-icon.png')}
+                  source={require('../../../assets/images/pediatric-vaccination-icon.png')}
                   style={styles.iconAction}
                 />
               </View>

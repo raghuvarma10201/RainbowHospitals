@@ -10,10 +10,10 @@ import {Footer, Header, SearchLocationBlock} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
 import {getDoctors} from '../../services/common';
-import {ToastService} from '../../utils/ToastService';
+import {ToastService} from '../../utils/service-handlers';
 import {useApp} from '../../context/app-context';
 import {MainStackParamList} from '../../navigation/types';
-import {h, pallette} from '../../Constants/Constant';
+import {h, pallette} from '../../constants/constants';
 import NotFound from '../../components/empty-text';
 
 // ---------- TYPES ----------

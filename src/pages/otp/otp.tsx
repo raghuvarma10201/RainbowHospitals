@@ -34,8 +34,8 @@ import {
   getRegions,
   getBranches,
 } from '../../services/common';
-import {ToastService} from '../../utils/ToastService';
-import {getCurrentCoordinates} from '../../utils/LocationService';
+import {ToastService} from '../../utils/service-handlers';
+import {getCurrentCoordinates} from '../../utils/service-handlers';
 import {
   findNearestBranch,
   findNearestRegion,
@@ -43,8 +43,8 @@ import {
 import {useApp} from '../../context/app-context';
 import {useAuth} from '../../context/auth-context';
 import {AuthStackParamList, MainStackParamList} from '../../navigation/types';
-import {h, pallette} from '../../Constants/Constant';
-import {adjust} from '../../utils/commonFunctions';
+import {h, pallette} from '../../constants/constants';
+import {adjust} from '../../utils/common-functions';
 
 // ---------- STATIC DATA ----------
 const CELL_COUNT = 6;

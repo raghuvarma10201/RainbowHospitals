@@ -1,6 +1,6 @@
 import React, {useState, useMemo, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {adjust} from '../../../utils/commonFunctions';
+import {adjust} from '../../../utils/common-functions';
 
 type Session = {
   SessionDate: string;

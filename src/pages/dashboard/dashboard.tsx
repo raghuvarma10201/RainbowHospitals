@@ -25,12 +25,12 @@ import {
 
 // ---------- OTHER IMPORTS ----------
 import {useApp} from '../../context/app-context';
-import {h, pallette, w} from '../../Constants/Constant';
+import {h, pallette, w} from '../../constants/constants';
 import {getAppointments} from '../../services/common';
 import {MainStackParamList} from '../../navigation/types';
-import {ToastService} from '../../utils/ToastService';
+import {ToastService} from '../../utils/service-handlers';
 import {upcomingApointment} from '../../utils/types';
-import {adjust} from '../../utils/commonFunctions';
+import {adjust} from '../../utils/common-functions';
 
 // ---------- STATIC DATA OUTSIDE COMPONENT ----------
 const images = {

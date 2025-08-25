@@ -5,9 +5,9 @@ import {upcomingApointment} from '../../../utils/types';
 import {
   formatAppointmentDate,
   formatAppointmentTime,
-} from '../../../utils/dateTime';
-import {pallette, w} from '../../../Constants/Constant';
-import {adjust, navigateTo} from '../../../utils/commonFunctions';
+} from '../../../utils/common-functions';
+import {pallette, w} from '../../../constants/constants';
+import {adjust, navigateTo} from '../../../utils/common-functions';
 import {routes} from '../../../utils/enums';
 import {MainStackParamList} from '../../../navigation/types';
 

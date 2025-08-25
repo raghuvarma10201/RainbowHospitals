@@ -2,7 +2,6 @@ import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
   Login: undefined;
-  Splash: undefined;
   Topup: {amount?: number} | undefined;
 };
 
@@ -13,7 +12,6 @@ export type AuthStackParamList = {
 };
 
 export type MainStackParamList = {
-  Splash: undefined;
   Dashboard: undefined;
   Specialities: {appointmentType: string};
   AppointmentConfirmed: undefined;

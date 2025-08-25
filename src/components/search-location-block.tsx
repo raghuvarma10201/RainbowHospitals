@@ -2,8 +2,8 @@ import React, {useState, memo} from 'react';
 import {Image, StyleSheet, View, StyleProp, ViewStyle} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
-import {h, w, pallette} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+import {h, w, pallette} from '../constants/constants';
+import {adjust} from '../utils/common-functions';
 
 // ---------- STATIC DATA (memoized outside component) ----------
 const LOCATION_OPTIONS: {value: string; label: string}[] = [

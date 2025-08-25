@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {View, StyleSheet, ActivityIndicator} from 'react-native';
-import {pallette} from '../Constants/Constant';
+import {pallette} from '../constants/constants';
 
 const theme = {
   colors: {

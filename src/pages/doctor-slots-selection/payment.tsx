@@ -16,11 +16,11 @@ import {
   API_BASE_URL,
   PAYU_MERCHENT_KEY,
   PAYU_MERCHENT_SALT,
-} from '../../utils/environment';
+} from '../../utils/enums';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../navigation/types';
 import {useApp} from '../../context/app-context';
-import {ToastService} from '../../utils/ToastService';
+import {ToastService} from '../../utils/service-handlers';
 import {bookAppointment} from '../../services/common';
 
 const PayUWebView: React.FC = ({route}: any) => {

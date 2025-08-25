@@ -3,8 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import dayjs from 'dayjs';
 import RNFS from 'react-native-fs';
 
-import {API_BASE_URL} from '../utils/environment';
-import {ENABLE_API_LOGGING} from '../utils/environment';
+import {API_BASE_URL, ENABLE_API_LOGGING} from '../utils/enums';
 
 const downloadApiLog = async (msg: string) => {
   if (!ENABLE_API_LOGGING) return;

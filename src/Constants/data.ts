@@ -1,5 +1,3 @@
-import {ActionItem, upcomingApointment} from '../utils/types';
-
 const doctorData = {
   Cardiology: [
     {
@@ -214,25 +212,4 @@ const gridData = [
   },
 ];
 
-const upcomingData: upcomingApointment[] = [
-  {
-    title: 'UPCOMING APPOINTMENTS',
-    doctorName: 'Dr. Ramesh Konanki',
-    doctorImg: require('../../assets/images/doc-img.png'),
-    doctorSpeciality: 'Senior Consultant - Pediatric Neurologist',
-    appointmentDateAndTime: 'THU 10 JUL, 04:27 PM',
-    appointmentType: 'In Person',
-    appointmentNumber: '1023456',
-  },
-  {
-    title: 'UPCOMING APPOINTMENTS',
-    doctorName: 'Dr. Ramesh Konanki',
-    doctorImg: require('../../assets/images/doc-img.png'),
-    doctorSpeciality: 'Senior Consultant - Pediatric Neurologist',
-    appointmentDateAndTime: 'THU 10 JUL, 04:27 PM',
-    appointmentType: 'In Person',
-    appointmentNumber: '1023457',
-  },
-];
-
-export {doctorData, gridData, upcomingData};
+export {doctorData, gridData};

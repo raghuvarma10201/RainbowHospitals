@@ -14,17 +14,17 @@ import {Button, Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
-import {registerUser} from '../services/common';
+import {registerUser} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ToastService} from '../utils/ToastService';
-import Loader from '../components/loader';
+import {ToastService} from '../../utils/service-handlers';
+import Loader from '../../components/loader';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {AuthStackParamList, MainStackParamList} from '../navigation/types';
-import {useAuth} from '../context/auth-context';
+import {AuthStackParamList, MainStackParamList} from '../../navigation/types';
+import {useAuth} from '../../context/auth-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {pallette} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+import {pallette} from '../../constants/constants';
+import {adjust} from '../../utils/common-functions';
 
 const gender_data = [
   {

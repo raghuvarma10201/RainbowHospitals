@@ -1,7 +1,7 @@
 import {Image, StyleProp, StyleSheet, Text, View} from 'react-native';
 import React, {FC} from 'react';
-import {adjust} from '../utils/commonFunctions';
-import {h, pallette, w} from '../Constants/Constant';
+import {adjust} from '../utils/common-functions';
+import {h, pallette, w} from '../constants/constants';
 
 interface NotFoundType {
   text: string;

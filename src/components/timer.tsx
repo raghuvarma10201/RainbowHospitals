@@ -1,8 +1,8 @@
 import React, {FC} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useTimer} from '../context/timer-context';
-import {pallette} from '../Constants/Constant';
-import {adjust} from '../utils/commonFunctions';
+import {pallette} from '../constants/constants';
+import {adjust} from '../utils/common-functions';
 
 const Timer: FC = () => {
   const {secondsLeft} = useTimer();

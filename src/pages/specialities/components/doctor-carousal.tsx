@@ -10,11 +10,11 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import {IMG_BASE_URL} from '../../../utils/environment';
+import {IMG_BASE_URL} from '../../../utils/enums';
 import FastImage from 'react-native-fast-image';
-import {pallette} from '../../../Constants/Constant';
+import {pallette} from '../../../constants/constants';
 import {routes} from '../../../utils/enums';
-import {adjust, navigateTo} from '../../../utils/commonFunctions';
+import {adjust, navigateTo} from '../../../utils/common-functions';
 import {MainStackParamList} from '../../../navigation/types';
 
 const {width: screenWidth} = Dimensions.get('window');
