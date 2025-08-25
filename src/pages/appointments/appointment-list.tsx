@@ -1,16 +1,13 @@
 import {
-  Alert,
   Dimensions,
   Image,
-  NativeModules,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-const {ScreenShare} = NativeModules;
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Text} from 'react-native-paper';
 import Header from '../../components/header';
 import Footer from '../../components/footer';

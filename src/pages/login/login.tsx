@@ -66,7 +66,7 @@ const Login: React.FC = () => {
           ToastService.success('Success', 'OTP sent successfully');
           navigation.navigate('Otp');
         }
-      } catch (e) {
+      } catch (e: any) {
         console.log(e.message);
 
         console.error('Login error:', e);

@@ -6,7 +6,6 @@ import {
   Text,
   StyleSheet,
   ListRenderItem,
-  Dimensions,
 } from 'react-native';
 import {adjust, navigateTo} from '../../../utils/common-functions';
 import {h, pallette, w} from '../../../constants/constants';

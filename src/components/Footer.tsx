@@ -1,33 +1,35 @@
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React from 'react';
+// ---------- MODULE IMPORTS ----------
+import React, {FC} from 'react';
 import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+
+// ---------- TYPE IMPORTS ----------
+import {FooterButtonProps, FooterProps, NavProp} from './types';
 import {MainStackParamList} from '../navigation/types';
+
+// ---------- VALUE IMPORTS ----------
 import {h, pallette} from '../constants/constants';
+import {navigateTo, routes} from '../utils';
 
-type FooterIcon = 'home' | 'calendar' | 'call' | 'reports';
+// ---------- COMPONENT ----------
+const Footer: FC<FooterProps> = ({activeIcon}) => {
+  const navigation = useNavigation<NavProp>();
 
-interface FooterProps {
-  activeIcon?: FooterIcon;
-}
-
-const Footer: React.FC<FooterProps> = ({activeIcon}) => {
-  type AppNavigationProp = NativeStackNavigationProp<
-    MainStackParamList,
-    'Dashboard'
-  >;
-  const navigation = useNavigation<AppNavigationProp>();
-
-  const buttons: {icon: FooterIcon; onPress?: () => void; source: any}[] = [
+  const buttons: FooterButtonProps[] = [
     {
       icon: 'home',
-      onPress: () => navigation.navigate('Dashboard'),
+      onPress: () =>
+        navigateTo(navigation, routes.Dashboard as keyof MainStackParamList),
       source: require('../../assets/images/footer-home-icon.png'),
     },
     {
       icon: 'calendar',
       onPress: () =>
-        navigation.navigate('Specialities', {appointmentType: 'Physical'}),
+        navigateTo(
+          navigation,
+          routes.Specialities as keyof MainStackParamList,
+          {appointmentType: 'Physical'},
+        ),
       source: require('../../assets/images/footer-calendar-icon.png'),
     },
     {

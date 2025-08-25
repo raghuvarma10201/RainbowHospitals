@@ -1,4 +1,5 @@
-import React, {memo} from 'react';
+// ---------- MODULE IMPORTS ----------
+import React, {FC, memo} from 'react';
 import {
   Image,
   StyleSheet,
@@ -7,56 +8,51 @@ import {
   View,
   ImageSourcePropType,
 } from 'react-native';
-import {IMG_BASE_URL} from '../utils/enums';
-import {h, pallette, w} from '../constants/constants';
+
+// ---------- TYPE IMPORTS ----------
+import {DoctorDetailsCardProps} from './types';
+
+// ---------- COMPONENT IMPORTS ----------
 import ShortInfoText from './short-info-text';
+
+// ---------- UTILITY IMPORTS ----------
+import {IMG_BASE_URL} from '../utils/enums';
 import {adjust} from '../utils/common-functions';
 
-/**
- * Types for Doctor Details
- */
-interface DoctorDetail {
-  name?: string;
-  designation?: string;
-  small_image?: string;
-  experience?: number;
-  short_info?: string;
-  physical_consultation_fee?: string | undefined;
-  video_consultation_fee?: string | undefined;
-}
+// ---------- VALUE IMPORTS ----------
+import {doctor_img, h, pallette, w} from '../constants/constants';
 
-interface Props {
-  doctorDetail: DoctorDetail;
-  doctorSpecialitites: string;
-  appointmentType: string;
-  about?: boolean;
-  onConsultationPress: (type: string) => void;
-}
+// ---------- STATIC DATA OUTSIDE COMPONENT ----------
+const images = {
+  physical: require('../../assets/images/physical-consultation-icon.png'),
+  video: require('../../assets/images/video-consultation-icon.png'),
+};
 
-const DoctorDetailsCard: React.FC<Props> = ({
+// ---------- COMPONENT ----------
+const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
   doctorDetail,
   doctorSpecialitites,
   appointmentType,
   about = false,
   onConsultationPress,
 }) => {
-  // Fallback doctor profile image
+  // ---------- FALLBACK ----------
   const doctorImage: ImageSourcePropType = doctorDetail?.small_image
     ? {uri: `${IMG_BASE_URL}${doctorDetail.small_image}`}
     : {
-        uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+        uri: doctor_img,
       };
 
+  // ---------- RENDER ----------
   return (
     <View style={styles.container}>
-      {/* Doctor Image with Status Dot */}
+      {/* Doctor Image */}
       <View style={styles.imageWrapper}>
         <Image source={doctorImage} style={styles.docImg} />
         <View style={styles.dotWrapper}>
           <View style={styles.dot} />
         </View>
       </View>
-
       {/* Doctor Information */}
       <View style={styles.detailsWrapper}>
         <Text style={styles.doctorName}>{doctorDetail?.name}</Text>
@@ -65,7 +61,6 @@ const DoctorDetailsCard: React.FC<Props> = ({
         <Text style={styles.experience}>
           {`Experience ${doctorDetail?.experience ?? 0} Years`}
         </Text>
-
         {about && (
           <>
             {/* Consultation Buttons */}
@@ -106,12 +101,11 @@ const DoctorDetailsCard: React.FC<Props> = ({
                     },
                   ]}>
                   <Image
-                    source={require('../../assets/images/physical-consultation-icon.png')}
+                    source={images.physical}
                     style={styles.consultBtnImg}
                   />
                 </View>
               </TouchableOpacity>
-
               <TouchableOpacity
                 disabled={!doctorDetail?.video_consultation_fee}
                 style={[
@@ -147,14 +141,10 @@ const DoctorDetailsCard: React.FC<Props> = ({
                         : pallette.dark_grey,
                     },
                   ]}>
-                  <Image
-                    source={require('../../assets/images/video-consultation-icon.png')}
-                    style={styles.consultBtnImg}
-                  />
+                  <Image source={images.video} style={styles.consultBtnImg} />
                 </View>
               </TouchableOpacity>
             </View>
-
             {/* About Section */}
             <View style={styles.divider} />
             <Text style={styles.aboutTitle}>About</Text>
@@ -168,9 +158,7 @@ const DoctorDetailsCard: React.FC<Props> = ({
 
 export default memo(DoctorDetailsCard);
 
-/**
- * Styles
- */
+// ---------- STYLES ----------
 const styles = StyleSheet.create({
   container: {
     backgroundColor: pallette.app_purple,

@@ -22,7 +22,7 @@ import {useApp} from '../../context/app-context';
 import {ToastService} from '../../utils/service-handlers';
 import {MainStackParamList} from '../../navigation/types';
 import {routes} from '../../utils/enums';
-import {AppointmentPayload} from '../../types/Appointment';
+import {AppointmentPayload} from '../../utils/types';
 import {h, pallette, w} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 import DoctorDetailsCard from '../../components/doctor-details-card';

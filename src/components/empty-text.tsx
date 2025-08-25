@@ -1,20 +1,10 @@
-import {Image, StyleProp, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import React, {FC} from 'react';
 import {adjust} from '../utils/common-functions';
 import {h, pallette, w} from '../constants/constants';
+import {NotFoundProps} from './types';
 
-interface NotFoundType {
-  text: string;
-  margin: any;
-}
-
-const NotFound: FC<NotFoundType> = ({
-  text,
-  margin,
-}: {
-  text: string;
-  margin?: any;
-}) => {
+const NotFound: FC<NotFoundProps> = ({text, margin}) => {
   return (
     <View style={[styles.container, {marginTop: margin}]}>
       <Image

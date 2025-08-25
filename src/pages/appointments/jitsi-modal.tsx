@@ -23,6 +23,12 @@ import {
 import {JitsiMeeting} from '@jitsi/react-native-sdk';
 import {pallette} from '../../constants/constants';
 
+interface JitsiModalProps {
+  visible: boolean;
+  options?: any; // adjust type as needed
+  onClose: () => void;
+}
+
 // === Constants (kept module-scoped to avoid re-allocations per render) ===
 const CORNER_MARGIN = 10;
 const SNAP_WIDTH = 160;
@@ -31,7 +37,7 @@ const SNAP_HEIGHT = 100;
 const initialScreen = Dimensions.get('window');
 
 // Component
-const JitsiModal: FC = ({visible, options, onClose}: any) => {
+const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
   const jitsiMeeting = useRef<any>(null);
   const [minimized, setMinimized] = useState(false);
   const [conferenceActive, setConferenceActive] = useState(false);
@@ -64,11 +70,17 @@ const JitsiModal: FC = ({visible, options, onClose}: any) => {
     Animated.spring(position, {
       toValue: {
         x: Math.min(
-          Math.max(position.x.__getValue?.() ?? CORNER_MARGIN, CORNER_MARGIN),
+          Math.max(
+            (position.x as any).__getValue?.() ?? CORNER_MARGIN,
+            CORNER_MARGIN,
+          ),
           Math.max(screen.width - SNAP_WIDTH - CORNER_MARGIN, CORNER_MARGIN),
         ),
         y: Math.min(
-          Math.max(position.y.__getValue?.() ?? CORNER_MARGIN, CORNER_MARGIN),
+          Math.max(
+            (position.y as any).__getValue?.() ?? CORNER_MARGIN,
+            CORNER_MARGIN,
+          ),
           Math.max(screen.height - SNAP_HEIGHT - CORNER_MARGIN, CORNER_MARGIN),
         ),
       },
@@ -127,9 +139,10 @@ const JitsiModal: FC = ({visible, options, onClose}: any) => {
 
   // Snap minimized video to nearest corner
   const snapToNearestCorner = useCallback(() => {
-    const currentX = position.x.__getValue?.() ?? CORNER_MARGIN;
+    const currentX = (position.x as any).__getValue?.() ?? CORNER_MARGIN;
     const currentY =
-      position.y.__getValue?.() ?? screen.height - SNAP_HEIGHT - CORNER_MARGIN;
+      (position.y as any).__getValue?.() ??
+      screen.height - SNAP_HEIGHT - CORNER_MARGIN;
 
     const corners = [
       {x: CORNER_MARGIN, y: CORNER_MARGIN},

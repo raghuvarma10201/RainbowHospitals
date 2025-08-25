@@ -1,17 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  Button,
-  NativeEventEmitter,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {ActivityIndicator, View} from 'react-native';
 import {sha512} from 'js-sha512';
-import {RouteProp, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {WebView} from 'react-native-webview';
-import {RootStackParamList} from '../../utils/types';
 import {
   API_BASE_URL,
   PAYU_MERCHENT_KEY,

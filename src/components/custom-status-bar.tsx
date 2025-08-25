@@ -1,22 +1,22 @@
-import React from 'react';
+// ---------- MODULE IMPORTS ----------
+import React, {FC} from 'react';
 import {
   StatusBar,
   Platform,
   View,
   StyleSheet,
-  StatusBarStyle,
   SafeAreaView,
 } from 'react-native';
 
-interface MyStatusBarProps {
-  backgroundColor: string;
-  barStyle?: StatusBarStyle;
-}
+// ---------- TYPE IMPORTS ----------
+import {CustomStatusBarProps} from './types';
 
-const CustomStatusBar: React.FC<MyStatusBarProps> = ({
+// ---------- COMPONENT ----------
+const CustomStatusBar: FC<CustomStatusBarProps> = ({
   backgroundColor,
   barStyle = 'light-content',
 }) => {
+  // ---------- RENDER ----------
   return Platform.OS === 'ios' ? (
     <SafeAreaView style={[styles.iosStatusBar, {backgroundColor}]}>
       <StatusBar
@@ -36,6 +36,9 @@ const CustomStatusBar: React.FC<MyStatusBarProps> = ({
   );
 };
 
+export default CustomStatusBar;
+
+// ---------- STYLES ----------
 const styles = StyleSheet.create({
   iosStatusBar: {
     zIndex: 10,
@@ -45,5 +48,3 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
 });
-
-export default CustomStatusBar;

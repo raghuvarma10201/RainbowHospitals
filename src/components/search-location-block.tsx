@@ -1,20 +1,16 @@
 import React, {useState, memo} from 'react';
-import {Image, StyleSheet, View, StyleProp, ViewStyle} from 'react-native';
+import {Image, StyleSheet, View} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import {h, w, pallette} from '../constants/constants';
 import {adjust} from '../utils/common-functions';
+import {LocationOptionsProps, SearchLocationBlockProps} from './types';
 
 // ---------- STATIC DATA (memoized outside component) ----------
-const LOCATION_OPTIONS: {value: string; label: string}[] = [
+const location_options: LocationOptionsProps[] = [
   {value: '1', label: 'Location'},
   {value: '2', label: 'Location 2'},
 ];
-
-// ---------- PROPS TYPE ----------
-interface SearchLocationBlockProps {
-  style?: StyleProp<ViewStyle>; // Optional external style
-}
 
 // ---------- COMPONENT ----------
 const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
@@ -57,7 +53,7 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
           containerStyle={styles.dropdownList}
           maxHeight={200}
           value={country}
-          data={LOCATION_OPTIONS}
+          data={location_options}
           valueField="value"
           labelField="label"
           placeholder="Select Location"

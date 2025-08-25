@@ -1,8 +1,8 @@
 // AppProvider.tsx
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {createContext, useContext, useState} from 'react';
 import {Branch, Region, Setting} from '../services/Region/api';
 import {DoctorDetailsResponse, PatientProfile} from '../utils/types';
-import {AppointmentPayload} from '../types/Appointment';
+import {AppointmentPayload} from '../utils/types';
 
 type AppCtx = {
   user: string | null;

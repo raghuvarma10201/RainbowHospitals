@@ -1,7 +1,5 @@
 import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../navigation/types';
 import {
   View,
   Text,
@@ -24,7 +22,10 @@ import {
 } from '../services/Region/location';
 import {getCurrentCoordinates} from '../utils/service-handlers';
 import {pallette, w} from '../constants/constants';
-import {adjust} from '../utils/common-functions';
+import {adjust, navigateTo} from '../utils/common-functions';
+import {HeaderProps, NavProp} from './types';
+import {routes} from '../utils';
+import {MainStackParamList} from '../navigation/types';
 
 const STORAGE_KEYS = {
   BRANCH: 'branch',
@@ -40,19 +41,12 @@ const images = {
   filter: require('../../assets/images/filter-icon.png'),
 };
 
-interface CommonHeaderProps {
-  title?: string;
-  showLocation?: boolean;
-  showBack?: boolean;
-}
-
-const Header: React.FC<CommonHeaderProps> = ({
+const Header: React.FC<HeaderProps> = ({
   title,
   showLocation = true,
   showBack = true,
 }) => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const navigation = useNavigation<NavProp>();
 
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<any>(null);
@@ -357,7 +351,10 @@ const Header: React.FC<CommonHeaderProps> = ({
         </TouchableOpacity>
 
         {title !== 'menu' && (
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <TouchableOpacity
+            onPress={() =>
+              navigateTo(navigation, routes.Home as keyof MainStackParamList)
+            }>
             <Image
               source={images.filter}
               style={styles.filterIcon}

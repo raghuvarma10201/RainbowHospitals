@@ -16,3 +16,6 @@ export const pallette = {
   app_light_purple: '#8a3ab9',
   highlighting_purple: '#6200ee',
 };
+
+export const doctor_img =
+  'https://cdn-icons-png.flaticon.com/512/387/387561.png';

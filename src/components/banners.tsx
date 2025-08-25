@@ -1,3 +1,4 @@
+// ---------- MODULE IMPORTS ----------
 import React, {FC, useEffect, useRef, useState} from 'react';
 import {
   FlatList,
@@ -6,22 +7,15 @@ import {
   View,
   Animated,
   Dimensions,
-  ImageResizeMode,
 } from 'react-native';
 
-interface BannerProps {
-  images: any[];
-  activeindex: number;
-  setActiveindex: (index: number) => void;
-  height: number;
-  width: number;
-  marginVertical?: number;
-  resizeMode?: ImageResizeMode | undefined;
-  autoScrollEnabled?: boolean;
-  itemWidth?: number;
-}
-const AUTO_SCROLL_INTERVAL = 3000; // Auto-scroll every 3 seconds
+// ---------- TYPE IMPORTS ----------
+import {BannerProps} from './types';
 
+// ---------- INTERVAL ----------
+const AUTO_SCROLL_INTERVAL = 3000;
+
+// ---------- COMPONENT ----------
 const Banners: FC<BannerProps> = ({
   images,
   activeindex,
@@ -30,14 +24,16 @@ const Banners: FC<BannerProps> = ({
   width,
   marginVertical,
   resizeMode = 'contain',
-  autoScrollEnabled = true, // Toggle auto-scroll on/off
+  autoScrollEnabled = true,
   itemWidth,
 }) => {
+  // ---------- REF ----------
   const flatListRef = useRef<FlatList>(null);
   const scrollIndex = useRef(activeindex);
+  // ---------- STATE ----------
   const [currentIndex, setCurrentIndex] = useState(activeindex);
 
-  // **Auto-scroll function**
+  // ---------- EFFECTS ----------
   useEffect(() => {
     if (!images.length || !autoScrollEnabled) return;
 
@@ -56,8 +52,9 @@ const Banners: FC<BannerProps> = ({
     return () => clearInterval(autoScroll);
   }, [images, autoScrollEnabled]);
 
+  // ---------- RENDER ----------
   return (
-    <View style={{alignItems: 'center', justifyContent: 'center'}}>
+    <View style={styles.itemContainer}>
       <Animated.FlatList
         ref={flatListRef}
         data={images}
@@ -81,7 +78,7 @@ const Banners: FC<BannerProps> = ({
         horizontal
         showsHorizontalScrollIndicator={false}
         pagingEnabled
-        snapToInterval={width} // Ensures smooth snapping
+        snapToInterval={width}
         snapToAlignment="center"
         decelerationRate="fast"
         bounces={false}
@@ -106,6 +103,7 @@ const Banners: FC<BannerProps> = ({
 
 export default Banners;
 
+// ---------- STYLES ----------
 const styles = StyleSheet.create({
   itemContainer: {
     alignItems: 'center',

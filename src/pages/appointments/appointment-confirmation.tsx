@@ -6,23 +6,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Card,
-  Searchbar,
-  TextInput,
-  Icon,
-  Text,
-  Banner,
-  Modal,
-  Portal,
-} from 'react-native-paper';
-import {Dropdown} from 'react-native-element-dropdown';
+import React, {useCallback, useState} from 'react';
+import {Text, Modal, Portal} from 'react-native-paper';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
 import Banners from '../../components/banners';
 import {pallette} from '../../constants/constants';
-import {adjust, navigateTo} from '../../utils/common-functions';
+import {adjust} from '../../utils/common-functions';
 import {
   CommonActions,
   useFocusEffect,

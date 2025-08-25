@@ -1,19 +1,16 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import {pallette} from '../constants/constants';
+import {LoaderProps} from './types';
 
 const theme = {
   colors: {
     primary: pallette.app_purple,
-    background: '#f6f6f6',
+    background: pallette.white,
   },
-} as const;
+};
 
-const Loader: React.FC<{fullScreen?: boolean}> = ({fullScreen = true}) => {
-  useEffect(() => {
-    // Side effects if needed
-  }, []);
-
+const Loader: React.FC<LoaderProps> = ({fullScreen = true}) => {
   return (
     <View style={[styles.overlay, !fullScreen && styles.inline]}>
       <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -28,14 +25,14 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 50% black background
+    backgroundColor: pallette.black,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 999,
   },
   inline: {
     position: 'relative',
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: pallette.black,
     width: '100%',
     height: '100%',
   },

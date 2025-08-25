@@ -1,7 +1,5 @@
-import {Alert} from 'react-native';
 import api from './api';
-import axios from 'axios';
-import {AppointmentPayload} from '../types/Appointment';
+import {AppointmentPayload} from '../utils/types';
 
 export const getPatientProfile = async (payload: any) => {
   try {

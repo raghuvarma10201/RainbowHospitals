@@ -7,16 +7,7 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import {
-  Card,
-  Searchbar,
-  TextInput,
-  Icon,
-  Banner,
-  Text,
-  Modal,
-  Portal,
-} from 'react-native-paper';
+import {Card, TextInput, Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import Header from '../../components/header';
 import Footer from '../../components/footer';

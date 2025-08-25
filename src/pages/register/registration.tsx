@@ -2,22 +2,17 @@ import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
-  ImageBackground,
   ScrollView,
   TextInput,
-  Image,
   TouchableOpacity,
-  Pressable,
-  Platform,
 } from 'react-native';
-import {Button, Text} from 'react-native-paper';
+import {Text} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import {registerUser} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ToastService} from '../../utils/service-handlers';
-import Loader from '../../components/loader';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList, MainStackParamList} from '../../navigation/types';

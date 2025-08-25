@@ -25,9 +25,9 @@ const styles = StyleSheet.create({
   banner: {
     paddingVertical: 16,
     paddingHorizontal: 20,
-    backgroundColor: '#fff8e1',
+    backgroundColor: pallette.white,
     borderTopWidth: 1,
-    borderColor: '#ffe082',
+    borderColor: pallette.app_light_green,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: pallette.black,

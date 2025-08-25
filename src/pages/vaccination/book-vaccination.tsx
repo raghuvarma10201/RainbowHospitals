@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import {Text, Banner, Modal, Portal} from 'react-native-paper';
+import {Text} from 'react-native-paper';
 
 import Header from '../../components/header';
 import Footer from '../../components/footer';

@@ -12,8 +12,8 @@ import {getMessaging, getToken} from '@react-native-firebase/messaging';
 import './src/i18n';
 
 // Config
-import {AppTheme} from './src/config/Theme';
-import {configureRTL} from './src/config/RTL';
+import {AppTheme} from './src/config/theme';
+import {configureRTL} from './src/config/rtl';
 
 // Navigation
 import {navigationRef} from './src/navigation/root-navigation';

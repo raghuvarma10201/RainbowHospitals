@@ -1,23 +1,8 @@
 import React, {useState, useMemo, useCallback} from 'react';
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  StyleProp,
-  TextStyle,
-  ViewStyle,
-} from 'react-native';
+import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import {pallette} from '../constants/constants';
 import {adjust} from '../utils/common-functions';
-
-// ---------- TYPES ----------
-interface ShortInfoTextProps {
-  text: string; // raw text that may contain HTML tags
-  maxChars?: number; // max characters before showing "Read more"
-  containerStyle?: StyleProp<ViewStyle>;
-  textStyle?: StyleProp<TextStyle>;
-}
+import {ShortInfoTextProps} from './types';
 
 // ---------- COMPONENT ----------
 const ShortInfoText: React.FC<ShortInfoTextProps> = ({
@@ -28,7 +13,6 @@ const ShortInfoText: React.FC<ShortInfoTextProps> = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
 
-  // ✅ Clean text (remove HTML + collapse spaces) only when `text` changes
   const cleanText = useMemo<string>(() => {
     return text
       .replace(/<[^>]*>/g, '') // remove HTML tags
@@ -36,12 +20,10 @@ const ShortInfoText: React.FC<ShortInfoTextProps> = ({
       .trim(); // trim leading/trailing spaces
   }, [text]);
 
-  // ✅ Memoized toggle to prevent re-creation on re-render
   const toggleExpanded = useCallback(() => {
     setExpanded(prev => !prev);
   }, []);
 
-  // ✅ Only show "Read more" if text exceeds threshold
   const shouldShowToggle = cleanText.length > maxChars;
 
   return (

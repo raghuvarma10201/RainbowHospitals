@@ -24,7 +24,7 @@ import {pallette} from '../../constants/constants';
 import Loader from '../../components/loader';
 import {adjust} from '../../utils/common-functions';
 import {useJitsi} from '../../context/jitsi-context';
-import {AppointmentPayload} from '../../types/Appointment';
+import {AppointmentPayload} from '../../utils/types';
 
 const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
