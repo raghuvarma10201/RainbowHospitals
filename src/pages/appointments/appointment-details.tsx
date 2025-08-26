@@ -223,7 +223,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   OrganisationID: appointmentData?.OrganisationUID,
                 })
               }
-              style={[styles.payBtn, {backgroundColor: pallette.app_purple}]}>
+              style={[styles.payBtn, {backgroundColor: pallette.dark_purple}]}>
               <Text style={styles.payBtnTxt}>Reschedule</Text>
             </TouchableOpacity>
           </View>
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
 
   //---
   doctorDetailsContainer: {
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
 
     paddingHorizontal: 15,
     alignSelf: 'center',
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   },
   doctorDetails: {
     padding: 8,
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     width: '100%',
   },
   docName: {
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
     fontSize: adjust(14),
     marginTop: 10,
     fontFamily: 'ProximaNovaA-Bold',
-    color: pallette.app_purple,
+    color: pallette.dark_purple,
     textAlign: 'left',
   },
 
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     borderRadius: w,
     borderWidth: 1,
-    borderColor: pallette.app_purple,
+    borderColor: pallette.dark_purple,
     marginRight: 10,
   },
 
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderColor: 'transparent',
     borderRadius: 6,
-    backgroundColor: pallette.app_light_green,
+    backgroundColor: pallette.pale_turquoise,
   },
 
   formRowBtn: {
@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
   },
 
   formButton: {
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     borderRadius: 10,
     padding: 10,
     marginTop: 10,
@@ -632,7 +632,7 @@ const styles = StyleSheet.create({
   },
 
   chatBtn: {
-    backgroundColor: pallette.app_green,
+    backgroundColor: pallette.teal,
     borderRadius: 100,
     width: 62,
     height: 62,
@@ -654,7 +654,7 @@ const styles = StyleSheet.create({
   },
 
   vcBtn: {
-    backgroundColor: pallette.app_green,
+    backgroundColor: pallette.teal,
     borderRadius: 100,
     width: 62,
     height: 62,

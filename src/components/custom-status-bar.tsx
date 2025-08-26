@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 // ---------- TYPE IMPORTS ----------
-import {CustomStatusBarProps} from '../types/component-types';
+import {CustomStatusBarProps} from '../types/components';
 
 // ---------- COMPONENT ----------
 const CustomStatusBar: FC<CustomStatusBarProps> = ({

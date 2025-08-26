@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 // ---------- TYPE IMPORTS ----------
-import {BannerProps} from '../types/component-types';
+import {BannerProps} from '../types/components';
 
 // ---------- INTERVAL ----------
 const AUTO_SCROLL_INTERVAL = 3000;

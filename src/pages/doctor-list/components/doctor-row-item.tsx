@@ -66,7 +66,7 @@ const DoctorRow: React.FC<{
 
           {/* Appointment Button */}
           <TouchableOpacity
-            style={[styles.payBtn, {backgroundColor: pallette.app_purple}]}>
+            style={[styles.payBtn, {backgroundColor: pallette.dark_purple}]}>
             <Text style={styles.payBtnTxt}>Book Appointment</Text>
           </TouchableOpacity>
         </View>
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     color: pallette.black,
   },
   docNameHighlight: {
-    color: pallette.app_medium_green,
+    color: pallette.medium_turquoise,
     fontFamily: 'ProximaNovaA-Semibold',
     marginBottom: 2,
   },
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   docExperience: {
     fontSize: adjust(10),
     fontFamily: 'ProximaNovaA-Regular',
-    color: pallette.app_medium_green,
+    color: pallette.medium_turquoise,
     marginTop: 2,
   },
   payBtn: {

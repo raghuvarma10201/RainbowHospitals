@@ -3,7 +3,7 @@ import React, {createContext, useContext, useState} from 'react';
 import {Branch, Region, Setting} from '../services/Region/api';
 import {DoctorDetailsResponse, PatientProfile} from '../utils/types';
 import {AppointmentPayload} from '../utils/types';
-import {AppContextProps} from '../types/context-types';
+import {AppContextProps} from '../types/contexts';
 
 const AppCtx = createContext<AppContextProps | undefined>(undefined);
 export const useApp = () => {

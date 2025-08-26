@@ -110,7 +110,7 @@ const AppointmentConfirmed: React.FC = () => {
                       width: 8,
                       borderRadius: 5,
                       backgroundColor:
-                        index == activeindex ? pallette.app_green : 'grey',
+                        index == activeindex ? pallette.teal : 'grey',
                       marginHorizontal: w * 0.01,
                     }}
                     key={index}
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     paddingLeft: 20,
     paddingRight: 25,
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     borderRadius: 30,
   },
   textbeforeDot: {position: 'relative'},
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     right: -38,
     width: 30,
     height: 30,
-    backgroundColor: pallette.app_green,
+    backgroundColor: pallette.teal,
     borderRadius: 50,
     borderWidth: 7,
     borderColor: pallette.white,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   modalImageWrapp: {
     width: '90%',
     padding: 10,
-    backgroundColor: pallette.app_green,
+    backgroundColor: pallette.teal,
     marginHorizontal: 0,
     borderRadius: 20,
     position: 'absolute',

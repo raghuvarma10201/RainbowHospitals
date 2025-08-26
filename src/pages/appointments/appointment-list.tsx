@@ -100,7 +100,7 @@ const MyAppointments: React.FC = () => {
                         styles.docName,
                         {
                           fontSize: adjust(10),
-                          color: pallette.app_purple,
+                          color: pallette.dark_purple,
                           fontFamily: 'ProximaNovaA-Semibold',
                           marginBottom: 2,
                         },

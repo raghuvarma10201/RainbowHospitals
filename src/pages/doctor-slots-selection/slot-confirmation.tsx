@@ -201,7 +201,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
                 labelField="PatientName"
                 placeholder="Select Patient"
                 containerStyle={styles.dropdownList}
-                activeColor={pallette.app_light_green}
+                activeColor={pallette.pale_turquoise}
                 onChange={(item: FamilyMember) => {
                   setSelectedPatient(item.PatientID);
                   getConsultationFee(item.PatientID);
@@ -212,10 +212,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
           {/* PAYMENT SUMMARY */}
           <View>
             <View
-              style={[
-                styles.paymentBlock,
-                {backgroundColor: pallette.app_green},
-              ]}>
+              style={[styles.paymentBlock, {backgroundColor: pallette.teal}]}>
               <Text style={[styles.paymentTxt, {color: pallette.white}]}>
                 Total Charges
               </Text>
@@ -223,7 +220,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
             <View
               style={[
                 styles.paymentBlock,
-                {backgroundColor: pallette.app_light_green},
+                {backgroundColor: pallette.pale_turquoise},
               ]}>
               <Text
                 style={[
@@ -252,7 +249,10 @@ const SlotConfirmation: React.FC = ({route}: any) => {
             <View style={styles.payBtnsContainer}>
               <TouchableOpacity
                 onPress={() => navigateToOnlinePayment(true)}
-                style={[styles.payBtn, {backgroundColor: pallette.app_purple}]}>
+                style={[
+                  styles.payBtn,
+                  {backgroundColor: pallette.dark_purple},
+                ]}>
                 <Text style={styles.payBtnTxt}>Pay Now</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Semibold',
   },
   dropdownSelect: {
-    backgroundColor: pallette.app_light_green,
+    backgroundColor: pallette.pale_turquoise,
     height: 30,
     marginTop: 5,
     width: w * 0.6,

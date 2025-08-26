@@ -6,7 +6,7 @@ export const AppTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: pallette.app_purple,
+    primary: pallette.dark_purple,
     background: pallette.white,
   },
 } as const;

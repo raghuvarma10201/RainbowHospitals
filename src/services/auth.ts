@@ -9,6 +9,10 @@ export const VerifyOTP = async (payload: any) => {
   return data;
 };
 export const authenticateUser = async (payload: any) => {
-  const {data} = await api.post('/checkUser', payload);
-  return data;
+  try {
+    const {data} = await api.post('/checkUser', payload);
+    return data;
+  } catch (error) {
+    return error;
+  }
 };

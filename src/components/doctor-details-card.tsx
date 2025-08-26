@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 // ---------- TYPE IMPORTS ----------
-import {DoctorDetailsCardProps} from '../types/component-types';
+import {DoctorDetailsCardProps} from '../types/components';
 
 // ---------- COMPONENT IMPORTS ----------
 import ShortInfoText from './short-info-text';
@@ -72,8 +72,8 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                   {
                     backgroundColor: doctorDetail?.physical_consultation_fee
                       ? appointmentType == 'Physical'
-                        ? pallette.app_green
-                        : pallette.app_light_green
+                        ? pallette.teal
+                        : pallette.pale_turquoise
                       : pallette.dark_grey,
                   },
                 ]}
@@ -96,7 +96,7 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                     styles.iconContainer,
                     {
                       backgroundColor: doctorDetail?.physical_consultation_fee
-                        ? pallette.app_green
+                        ? pallette.teal
                         : pallette.dark_grey,
                     },
                   ]}>
@@ -113,8 +113,8 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                   {
                     backgroundColor: doctorDetail?.video_consultation_fee
                       ? appointmentType == 'Video'
-                        ? pallette.app_green
-                        : pallette.app_light_green
+                        ? pallette.teal
+                        : pallette.pale_turquoise
                       : pallette.dark_grey,
                   },
                 ]}
@@ -137,7 +137,7 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                     styles.iconContainer,
                     {
                       backgroundColor: doctorDetail?.video_consultation_fee
-                        ? pallette.app_green
+                        ? pallette.teal
                         : pallette.dark_grey,
                     },
                   ]}>
@@ -161,7 +161,7 @@ export default memo(DoctorDetailsCard);
 // ---------- STYLES ----------
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     paddingTop: h * 0.1,
     paddingHorizontal: w * 0.02,
     width: '90%',
@@ -205,17 +205,17 @@ const styles = StyleSheet.create({
     height: w * 0.035,
     width: w * 0.035,
     borderRadius: w * 0.1,
-    backgroundColor: pallette.app_medium_green,
+    backgroundColor: pallette.medium_turquoise,
   },
   detailsWrapper: {
     padding: 8,
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     width: '100%',
     gap: h * 0.005,
   },
   doctorName: {
     fontSize: adjust(14),
-    color: pallette.app_medium_green,
+    color: pallette.medium_turquoise,
     fontFamily: 'ProximaNovaA-Semibold',
   },
   designation: {
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   },
   experience: {
     fontSize: adjust(12),
-    color: pallette.app_medium_green,
+    color: pallette.medium_turquoise,
     marginTop: 3,
     marginBottom: 5,
     fontFamily: 'ProximaNovaA-Regular',
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     height: h * 0.05,
     width: 30,
     position: 'absolute',
-    backgroundColor: pallette.app_medium_green,
+    backgroundColor: pallette.medium_turquoise,
     left: 5,
     justifyContent: 'center',
     alignItems: 'center',
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   },
   aboutTitle: {
     fontSize: adjust(14),
-    color: pallette.app_medium_green,
+    color: pallette.medium_turquoise,
     marginBottom: 5,
     fontFamily: 'ProximaNovaA-Regular',
   },

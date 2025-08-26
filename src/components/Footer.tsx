@@ -4,11 +4,7 @@ import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 // ---------- TYPE IMPORTS ----------
-import {
-  FooterButtonProps,
-  FooterProps,
-  NavProp,
-} from '../types/component-types';
+import {FooterButtonProps, FooterProps, NavProp} from '../types/components';
 import {MainStackParamList} from '../navigation/types';
 
 // ---------- VALUE IMPORTS ----------
@@ -60,7 +56,7 @@ const Footer: FC<FooterProps> = ({activeIcon}) => {
                 width: 28,
                 height: 28,
                 tintColor:
-                  activeIcon === icon ? pallette.app_purple : pallette.white,
+                  activeIcon === icon ? pallette.dark_purple : pallette.white,
               }}
             />
           </TouchableOpacity>
@@ -82,7 +78,7 @@ const styles = StyleSheet.create({
   footerButtonContainer: {
     paddingVertical: 10,
     paddingBottom: h * 0.025,
-    backgroundColor: pallette.app_green,
+    backgroundColor: pallette.teal,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',

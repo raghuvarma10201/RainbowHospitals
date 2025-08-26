@@ -47,7 +47,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
             style={{
               fontFamily: 'ProximaNovaA-Regular',
               fontSize: adjust(12),
-              color: pallette.app_purple,
+              color: pallette.dark_purple,
             }}>
             {appointment?.CareProviderTitle} {appointment?.CareProviderName}
           </Text>
@@ -55,7 +55,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
             style={{
               fontFamily: 'ProximaNovaA-Regular',
               fontSize: adjust(8),
-              color: pallette.app_purple,
+              color: pallette.dark_purple,
             }}>
             {appointment?.SpecialtyName}
           </Text>
@@ -85,7 +85,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                 style={{
                   fontFamily: 'ProximaNovaA-Regular',
                   fontSize: adjust(10),
-                  color: pallette.app_purple,
+                  color: pallette.dark_purple,
                 }}>
                 {' '}
                 {appointment?.AppointmentType}
@@ -95,7 +95,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
               style={{
                 fontFamily: 'ProximaNovaA-Regular',
                 fontSize: adjust(10),
-                color: pallette.app_purple,
+                color: pallette.dark_purple,
               }}>
               {' '}
               #{appointment?.appointmentnumber}
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: adjust(10),
     color: pallette.white,
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     padding: 10,
     borderBottomLeftRadius: 10,
     borderTopLeftRadius: 10,
@@ -201,13 +201,13 @@ const styles = StyleSheet.create({
   divider: {
     height: '100%',
     width: 1,
-    backgroundColor: pallette.app_light_green,
+    backgroundColor: pallette.pale_turquoise,
   },
   upcomingTime: {
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: adjust(10),
     backgroundColor: pallette.white,
-    color: pallette.app_purple,
+    color: pallette.dark_purple,
     textAlign: 'center',
     padding: 4,
     marginVertical: 7,
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     padding: 7,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,

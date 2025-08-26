@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     height: w * 0.08,
     marginRight: 10,
     borderRadius: w * 0.1,
-    backgroundColor: pallette.app_green,
+    backgroundColor: pallette.teal,
     alignItems: 'center',
     justifyContent: 'center',
   },

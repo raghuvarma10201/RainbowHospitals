@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: pallette.app_purple,
+    borderColor: pallette.dark_purple,
     borderRadius: 10,
     marginTop: 10,
   },
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   doctorDetails: {
     padding: 8,
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     width: ITEM_WIDTH,
   },
   docName: {

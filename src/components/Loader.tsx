@@ -1,11 +1,11 @@
 import React from 'react';
 import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import {pallette} from '../constants/constants';
-import {LoaderProps} from '../types/component-types';
+import {LoaderProps} from '../types/components';
 
 const theme = {
   colors: {
-    primary: pallette.app_purple,
+    primary: pallette.dark_purple,
     background: pallette.white,
   },
 };

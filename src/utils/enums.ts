@@ -21,7 +21,7 @@ import {
 } from '../pages';
 import {AuthStackParamList, MainStackParamList} from '../navigation/types';
 
-type CombinedRouteNames = keyof AuthStackParamList | keyof MainStackParamList;
+type CombinedRouteNames = keyof (AuthStackParamList & MainStackParamList);
 
 export const routes: Record<CombinedRouteNames, CombinedRouteNames> = {
   Login: 'Login',

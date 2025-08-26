@@ -23,7 +23,7 @@ import {
 import {getCurrentCoordinates} from '../utils/service-handlers';
 import {pallette, w} from '../constants/constants';
 import {adjust, navigateTo} from '../utils/common-functions';
-import {HeaderProps, NavProp} from '../types/component-types';
+import {HeaderProps, NavProp} from '../types/components';
 import {routes} from '../utils';
 import {MainStackParamList} from '../navigation/types';
 
@@ -401,7 +401,7 @@ const Header: React.FC<HeaderProps> = ({
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -469,11 +469,11 @@ const styles = StyleSheet.create({
   },
   selectedLocationOption: {backgroundColor: pallette.light_grey},
   locationOptionText: {fontSize: adjust(14), color: pallette.black},
-  selectedLocationText: {color: pallette.app_light_purple, fontWeight: 'bold'},
+  selectedLocationText: {color: pallette.amethyst, fontWeight: 'bold'},
   regionRow: {flexDirection: 'row', justifyContent: 'space-between'},
   buttonRow: {flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20},
   updateButton: {
-    backgroundColor: pallette.app_light_purple,
+    backgroundColor: pallette.amethyst,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,

@@ -6,7 +6,7 @@ import {
   TextStyle,
   ViewStyle,
 } from 'react-native';
-import {MainStackParamList} from '../navigation/types';
+import {MainStackParamList} from './navigation';
 
 type NavProp = NativeStackNavigationProp<MainStackParamList>;
 

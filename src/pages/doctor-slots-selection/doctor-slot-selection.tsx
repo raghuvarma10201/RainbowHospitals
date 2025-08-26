@@ -20,7 +20,7 @@ import {Footer, Header, Loader} from '../../components';
 import {bookAppointment} from '../../services/common';
 import {useApp} from '../../context/app-context';
 import {ToastService} from '../../utils/service-handlers';
-import {MainStackParamList} from '../../navigation/types';
+import {MainStackParamList} from '../../types/navigation';
 import {routes} from '../../utils/enums';
 import {AppointmentPayload} from '../../utils/types';
 import {h, pallette, w} from '../../constants/constants';
@@ -79,7 +79,10 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
             'Appointment Rescheduled Successfully',
           );
           navigation.dispatch(
-            CommonActions.reset({index: 0, routes: [{name: routes.Dashboard}]}),
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: routes.Dashboard as keyof MainStackParamList}],
+            }),
           );
         } else {
           ToastService.error(
@@ -146,7 +149,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           onPress={proceedPayment}
           style={[
             styles.formButton,
-            {backgroundColor: selectedSlot ? pallette.app_purple : 'grey'},
+            {backgroundColor: selectedSlot ? pallette.dark_purple : 'grey'},
           ]}>
           <Text style={styles.formButtonText}>
             {appointmentnumber ? 'Confirm Reschedule' : 'Proceed To Confirm'}
@@ -194,10 +197,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   selectedTime: {
-    color: pallette.app_medium_green,
+    color: pallette.medium_turquoise,
   },
   centeredTxt: {
-    color: pallette.app_purple,
+    color: pallette.dark_purple,
     textAlign: 'center',
     fontSize: adjust(14),
     fontFamily: 'ProximaNovaA-Semibold',
@@ -229,7 +232,7 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
     textAlign: 'center',
     alignSelf: 'center',
-    color: pallette.app_purple,
+    color: pallette.dark_purple,
   },
   formButton: {
     borderRadius: 10,

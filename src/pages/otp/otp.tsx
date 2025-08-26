@@ -21,8 +21,7 @@ import {Text} from 'react-native-paper';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
 
 // ---------- COMPONENT IMPORTS ----------
 import {Loader} from '../../components';
@@ -42,9 +41,10 @@ import {
 } from '../../services/Region/location';
 import {useApp} from '../../context/app-context';
 import {useAuth} from '../../context/auth-context';
-import {AuthStackParamList, MainStackParamList} from '../../navigation/types';
+import {CombinedNavigationProp} from '../../navigation/types';
 import {h, pallette} from '../../constants/constants';
-import {adjust} from '../../utils/common-functions';
+import {adjust, navigateTo} from '../../utils/common-functions';
+import {routes} from '../../utils';
 
 // ---------- STATIC DATA ----------
 const CELL_COUNT = 6;
@@ -53,12 +53,6 @@ const images = {
   logo: require('../../../assets/images/logo.png'),
   otp: require('../../../assets/images/otp-img.png'),
 };
-
-// ---------- TYPES ----------
-type CombinedNavigationProp = CompositeNavigationProp<
-  NativeStackNavigationProp<AuthStackParamList>,
-  NativeStackNavigationProp<MainStackParamList>
->;
 
 // ---------- COMPONENT ----------
 const Otp: React.FC = () => {
@@ -151,15 +145,15 @@ const Otp: React.FC = () => {
           );
           return;
         }
-
         ToastService.success(
           'Success',
           response.data.message || 'OTP verified successfully',
         );
 
         const authResponse = await authenticateUser({MobileNo: phoneNumber});
+
         if (authResponse.status !== 200) {
-          navigation.navigate('Registration');
+          navigateTo(navigation, routes.Registration);
           ToastService.error(
             'Error',
             authResponse?.error || 'Authentication failed',
@@ -189,7 +183,8 @@ const Otp: React.FC = () => {
           updateProfile(profileData.data[0]);
           navigation.navigate('Dashboard');
         }
-      } catch {
+      } catch (e) {
+        console.log(e);
         ToastService.error('Error', 'Failed to verify OTP');
       } finally {
         setLoading(false);
@@ -298,7 +293,7 @@ const Otp: React.FC = () => {
                 backgroundColor:
                   formik.values.otp.length < 6
                     ? pallette.dark_grey
-                    : pallette.app_purple,
+                    : pallette.dark_purple,
               },
             ]}
             onPress={() => formik.handleSubmit()}>
@@ -332,7 +327,7 @@ const styles = StyleSheet.create({
   taglineBox: {
     width: '100%',
     padding: 15,
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     borderRadius: 10,
     marginBottom: 20,
   },
@@ -342,7 +337,7 @@ const styles = StyleSheet.create({
     left: '50%',
     width: 30,
     height: 30,
-    backgroundColor: pallette.app_green,
+    backgroundColor: pallette.teal,
     borderRadius: 50,
     borderWidth: 7,
     borderColor: pallette.white,
@@ -361,7 +356,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: {
-    color: pallette.app_green,
+    color: pallette.teal,
     fontSize: adjust(18),
     fontWeight: 'bold',
     textAlign: 'center',
@@ -382,14 +377,14 @@ const styles = StyleSheet.create({
     width: '14%',
     height: h * 0.06,
     borderWidth: 1,
-    borderColor: pallette.app_light_purple,
+    borderColor: pallette.amethyst,
     borderRadius: 8,
     backgroundColor: pallette.white,
     justifyContent: 'center',
     alignItems: 'center',
   },
   focusCell: {
-    borderColor: pallette.highlighting_purple,
+    borderColor: pallette.electric_indigo,
   },
   cellText: {
     fontSize: adjust(18),
@@ -409,7 +404,7 @@ const styles = StyleSheet.create({
   },
   resendText: {
     fontSize: adjust(12),
-    color: pallette.app_light_purple,
+    color: pallette.amethyst,
     fontWeight: 'bold',
     textAlign: 'right',
   },

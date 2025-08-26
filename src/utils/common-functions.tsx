@@ -1,10 +1,10 @@
 import {PixelRatio, Platform} from 'react-native';
-import {MainStackParamList} from '../navigation/types';
+import {AuthStackParamList, MainStackParamList} from '../navigation/types';
 import {div, w} from '../constants/constants';
 
 export const navigateTo = (
   navigation: any,
-  path: keyof MainStackParamList,
+  path: keyof MainStackParamList | keyof AuthStackParamList,
   data?: any,
 ) => {
   navigation.navigate(path as any, data);

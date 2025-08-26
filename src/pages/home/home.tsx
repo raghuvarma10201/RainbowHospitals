@@ -1,8 +1,7 @@
 // ---------- MODULE IMPORTS ----------
 import React, {useCallback, memo} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ---------- COMPONENT IMPORTS ----------
@@ -10,16 +9,10 @@ import {ProfileItem, MenuItems} from '.';
 import {Header, Footer} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
-import {AuthStackParamList, MainStackParamList} from '../../navigation/types';
+import {CombinedNavigationProp} from '../../navigation/types';
 import {useAuth} from '../../context/auth-context';
 import {useApp} from '../../context/app-context';
 import {h, pallette} from '../../constants/constants';
-
-// ---------- TYPES ----------
-type CombinedNavigationProp = CompositeNavigationProp<
-  NativeStackNavigationProp<AuthStackParamList>,
-  NativeStackNavigationProp<MainStackParamList>
->;
 
 // ---------- COMPONENT ----------
 const Home: React.FC = () => {
@@ -85,6 +78,6 @@ const styles = StyleSheet.create({
     marginVertical: h * 0.02,
     padding: 20,
     borderRadius: 30,
-    backgroundColor: pallette.app_light_green,
+    backgroundColor: pallette.pale_turquoise,
   },
 });

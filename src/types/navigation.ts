@@ -1,9 +1,8 @@
-import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
-
-export type RootStackParamList = {
-  Login: undefined;
-  Topup: {amount?: number} | undefined;
-};
+import {CompositeNavigationProp} from '@react-navigation/native';
+import {
+  NativeStackNavigationOptions,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -40,5 +39,10 @@ export type MainStackParamList = {
     payuUrl: string;
   };
 };
+
+export type CombinedNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<AuthStackParamList>,
+  NativeStackNavigationProp<MainStackParamList>
+>;
 
 export const screenOptions: NativeStackNavigationOptions = {headerShown: false};

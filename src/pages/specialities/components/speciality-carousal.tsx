@@ -195,20 +195,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeItemContainer: {
-    backgroundColor: pallette.app_light_green,
+    backgroundColor: pallette.pale_turquoise,
   },
   tabText: {
     fontSize: adjust(12),
     color: pallette.dark_grey,
   },
   activeTabText: {
-    color: pallette.app_green,
+    color: pallette.teal,
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
   arrow: {
     fontSize: adjust(16),
-    color: pallette.app_green,
+    color: pallette.teal,
     fontWeight: 'bold',
     paddingHorizontal: 10,
   },

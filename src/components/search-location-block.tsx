@@ -7,7 +7,7 @@ import {adjust} from '../utils/common-functions';
 import {
   LocationOptionsProps,
   SearchLocationBlockProps,
-} from '../types/component-types';
+} from '../types/components';
 
 // ---------- STATIC DATA (memoized outside component) ----------
 const location_options: LocationOptionsProps[] = [
@@ -78,7 +78,7 @@ export default memo(SearchLocationBlock); // ✅ Memoized for performance
 const styles = StyleSheet.create({
   searchBlock: {
     height: h * 0.05,
-    backgroundColor: pallette.app_medium_green,
+    backgroundColor: pallette.medium_turquoise,
     borderRadius: w * 0.1,
     paddingHorizontal: w * 0.02,
     justifyContent: 'center',

@@ -2,7 +2,7 @@ import React, {useState, useMemo, useCallback} from 'react';
 import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import {pallette} from '../constants/constants';
 import {adjust} from '../utils/common-functions';
-import {ShortInfoTextProps} from '../types/component-types';
+import {ShortInfoTextProps} from '../types/components';
 
 // ---------- COMPONENT ----------
 const ShortInfoText: React.FC<ShortInfoTextProps> = ({

@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
 
   activeActionItemIcon: {
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     borderRadius: 20,
     padding: 10,
     justifyContent: 'center',

@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     marginBottom: h * 0.01,
   },
   actionItem: {
-    backgroundColor: pallette.app_light_green,
+    backgroundColor: pallette.pale_turquoise,
     borderRadius: 10,
     padding: 10,
     paddingTop: 15,

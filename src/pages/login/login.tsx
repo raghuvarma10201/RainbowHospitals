@@ -177,7 +177,7 @@ const Login: React.FC = () => {
                 backgroundColor:
                   formik.values.mobileNumber.length < 10 || loading
                     ? pallette.dark_grey
-                    : pallette.app_purple,
+                    : pallette.dark_purple,
               },
             ]}
             onPress={handleSubmit}
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   taglineBox: {
     width: w * 0.45,
     padding: h * 0.012,
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     borderRadius: w * 0.025,
     marginBottom: h * 0.02,
   },
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     right: '-10%',
     width: w * 0.08,
     height: w * 0.08,
-    backgroundColor: pallette.app_green,
+    backgroundColor: pallette.teal,
     borderRadius: w * 0.1,
     borderWidth: w * 0.02,
     borderColor: pallette.white,
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: w * 0.05,
   },
   title: {
-    color: pallette.app_green,
+    color: pallette.teal,
     fontSize: adjust(18),
     textAlign: 'center',
     marginBottom: h * 0.01,

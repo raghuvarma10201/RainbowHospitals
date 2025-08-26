@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderColor: 'transparent',
     borderRadius: 2,
-    backgroundColor: pallette.app_light_green,
+    backgroundColor: pallette.pale_turquoise,
   },
 
   //---

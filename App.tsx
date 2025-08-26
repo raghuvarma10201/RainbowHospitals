@@ -16,9 +16,6 @@ import {AppTheme} from './src/config/theme';
 import {configureRTL} from './src/config/rtl';
 
 // Navigation
-import {navigationRef} from './src/navigation/root-navigation';
-import {MainStack} from './src/navigation/app-navigation';
-import {AuthStack} from './src/navigation/auth-navigation';
 
 // Contexts
 import {
@@ -37,6 +34,7 @@ import {
 import {fetchSettings} from './src/services/common';
 import {pallette} from './src/constants/constants';
 import {CustomStatusBar} from './src/components';
+import {AuthStack, MainStack, navigationRef} from './src/navigation/navigation';
 
 // Initialize RTL
 configureRTL();
@@ -136,7 +134,7 @@ const App: React.FC = () => {
     <AuthContext.Provider value={authCtx}>
       <PaperProvider theme={AppTheme}>
         <NavigationContainer ref={navigationRef}>
-          <CustomStatusBar backgroundColor={pallette.app_purple} />
+          <CustomStatusBar backgroundColor={pallette.dark_purple} />
           <JitsiProvider>
             <SettingsProvider>
               <TimerProvider>

@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   iconBox: {
     width: w * 0.15,
     height: w * 0.15,
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',

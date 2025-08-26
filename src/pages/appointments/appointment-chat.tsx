@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   sendButton: {
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,

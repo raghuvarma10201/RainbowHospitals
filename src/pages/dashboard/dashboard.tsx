@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: w * 0.02,
   },
   helloCard: {
-    backgroundColor: pallette.app_green,
+    backgroundColor: pallette.teal,
     borderRadius: w * 0.03,
     paddingVertical: h * 0.02,
     paddingHorizontal: w * 0.03,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   },
   searchBlock: {
     height: h * 0.05,
-    backgroundColor: pallette.app_medium_green,
+    backgroundColor: pallette.medium_turquoise,
     borderRadius: w * 0.1,
     paddingHorizontal: w * 0.02,
     justifyContent: 'center',
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     width: w * 0.25,
     height: h * 0.06,
-    backgroundColor: pallette.app_green,
+    backgroundColor: pallette.teal,
     borderTopEndRadius: 10,
     borderTopStartRadius: 10,
   },
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   footerCallButtonIcon: {
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     borderRadius: 100,
     borderWidth: 1,
     borderColor: pallette.white,

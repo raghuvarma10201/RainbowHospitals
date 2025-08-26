@@ -9,12 +9,12 @@ export const pallette = {
   red: '#f54a4a',
   light_grey: '#E6E7E8',
   dark_grey: '#818385',
-  app_green: '#00B3AE',
-  app_medium_green: '#4CC2BF',
-  app_light_green: '#C7E8E7',
-  app_purple: '#3C2871',
-  app_light_purple: '#8a3ab9',
-  highlighting_purple: '#6200ee',
+  teal: '#00B3AE', // Persian Green
+  medium_turquoise: '#4CC2BF', // Medium Turquoise
+  pale_turquoise: '#C7E8E7', // Powder Blue / Pale Turquoise
+  dark_purple: '#3C2871', // Midnight Blue (Deep Violet)
+  amethyst: '#8a3ab9', // Amethyst
+  electric_indigo: '#6200ee',
 };
 
 export const doctor_img =

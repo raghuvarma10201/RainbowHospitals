@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   actionItemIcon: {
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     borderRadius: 10,
     padding: 15,
     paddingTop: 15,
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   },
 
   activeActionItemIcon: {
-    backgroundColor: pallette.app_green,
+    backgroundColor: pallette.teal,
     borderRadius: 10,
     padding: 15,
     paddingTop: 15,
@@ -256,14 +256,14 @@ const styles = StyleSheet.create({
     height: 40,
     flex: 1,
     borderWidth: 1,
-    borderColor: pallette.app_light_green,
+    borderColor: pallette.pale_turquoise,
     borderRadius: 10,
     padding: 10,
-    backgroundColor: pallette.app_light_green,
+    backgroundColor: pallette.pale_turquoise,
   },
 
   formButton: {
-    backgroundColor: pallette.app_purple,
+    backgroundColor: pallette.dark_purple,
     borderRadius: 10,
     padding: 10,
     marginTop: 10,

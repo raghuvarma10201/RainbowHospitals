@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: pallette.white,
     borderTopWidth: 1,
-    borderColor: pallette.app_light_green,
+    borderColor: pallette.pale_turquoise,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: pallette.black,
