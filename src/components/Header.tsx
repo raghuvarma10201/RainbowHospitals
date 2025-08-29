@@ -331,13 +331,18 @@ const Header = forwardRef<any, HeaderProps>(
             <TouchableOpacity
               style={styles.dropdownIcon}
               onPress={handleOpenModal}>
-              <View style={{marginLeft: 6}}>
+              <View style={{marginLeft: w * 0.02}}>
                 <Text style={styles.locationText}>
                   {branch?.name || 'Fetching location...'}
                 </Text>
                 <View style={styles.locationInfo}>
                   <Image source={images.map} style={styles.mapIcon} />
                   <Text style={styles.regionText}>{region?.name ?? ''}</Text>
+                  <FontAwesome
+                    name={'angle-down'}
+                    size={w * 0.045}
+                    color={pallette.white}
+                  />
                 </View>
               </View>
             </TouchableOpacity>
@@ -449,12 +454,13 @@ const styles = StyleSheet.create({
   headerRight: {flexDirection: 'row', alignItems: 'center', gap: w * 0.03},
   dropdownIcon: {marginLeft: 0, padding: 4},
   locationText: {
-    fontSize: adjust(12),
+    fontSize: adjust(14),
     color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
+    textAlign: 'center',
   },
-  locationInfo: {flexDirection: 'row', alignItems: 'center'},
-  mapIcon: {width: w * 0.03, height: w * 0.03, marginRight: 3, marginTop: 3},
+  locationInfo: {flexDirection: 'row', alignItems: 'center', gap: 5},
+  mapIcon: {width: w * 0.032, height: w * 0.032},
   regionText: {
     fontSize: adjust(10),
     color: pallette.white,
