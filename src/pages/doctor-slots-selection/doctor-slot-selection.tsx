@@ -39,8 +39,15 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   // ---------- STATE AND CONTEXT DECLARATION ----------
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {doctorId, appointmentType, OrganisationID, appointmentnumber} =
-    route.params;
+  const {
+    doctorId,
+    appointmentType,
+    OrganisationID,
+    appointmentnumber,
+    details,
+  } = route.params;
+  console.log(details);
+
   const {branch, updateAppointment} = useApp();
   const {settings} = useSettings();
   const [typeOfAppointment, setTypeOfAppointment] = useState(appointmentType);
@@ -49,7 +56,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   const [selectedTime, setSelectedTime] = useState('');
   const [loadingPayment, setLoadingPayment] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<string | undefined>(
-    '',
+    details?.PatientID || '',
   );
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
@@ -280,13 +287,14 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                   styles.flexHead,
                   {fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2},
                 ]}>
-                Booking for
+                {appointmentnumber ? 'Re-Scheduling' : 'Booking'} for
               </Text>
               <Dropdown
                 style={styles.dropdownSelect}
                 selectedTextStyle={styles.selectedTextContry}
                 placeholderStyle={styles.placeholderCountry}
                 maxHeight={200}
+                disable={appointmentnumber}
                 value={selectedPatient}
                 data={familyMembers}
                 valueField="PatientID"
