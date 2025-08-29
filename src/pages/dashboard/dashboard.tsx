@@ -27,7 +27,7 @@ import {
 import {useApp} from '../../context/app-context';
 import {h, pallette, w} from '../../constants/constants';
 import {getAppointments} from '../../services/common';
-import {MainStackParamList} from '../../navigation/types';
+import {MainStackParamList} from '../../types/navigation';
 import {ToastService} from '../../utils/service-handlers';
 import {upcomingApointment} from '../../utils/types';
 import {adjust} from '../../utils/common-functions';

@@ -9,7 +9,7 @@ import {
 import {pallette, w} from '../../../constants/constants';
 import {adjust, navigateTo} from '../../../utils/common-functions';
 import {routes} from '../../../utils/enums';
-import {MainStackParamList} from '../../../navigation/types';
+import {MainStackParamList} from '../../../types/navigation';
 
 interface Props {
   appointment: upcomingApointment;
@@ -63,6 +63,25 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
             {formatAppointmentDate(appointment?.SlotStartDttm)}{' '}
             {formatAppointmentTime(appointment?.SlotStartDttm)}
           </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              marginLeft: 2,
+            }}>
+
+            <Text
+              style={{
+                fontFamily: 'ProximaNovaA-Regular',
+                fontSize: adjust(10),
+                color: pallette.dark_purple,
+                marginBottom: 5,
+              }}>
+              {' '}
+              Patient Name : {appointment?.PatientName}
+            </Text>
+          </View>
           <View
             style={{
               flexDirection: 'row',
@@ -179,7 +198,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomLeftRadius: 10,
     borderTopLeftRadius: 10,
-    marginTop: -10,
+    marginTop: -30,
     marginBottom: 7,
     textAlign: 'center',
   },
@@ -222,7 +241,7 @@ const styles = StyleSheet.create({
     padding: 7,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: -50,
     textAlign: 'center',
     marginHorizontal: 10,

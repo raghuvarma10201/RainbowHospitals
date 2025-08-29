@@ -12,7 +12,7 @@ import {Footer, Header, SearchLocationBlock} from '../../components';
 import {getDoctors} from '../../services/common';
 import {ToastService} from '../../utils/service-handlers';
 import {useApp} from '../../context/app-context';
-import {MainStackParamList} from '../../navigation/types';
+import {MainStackParamList} from '../../types/navigation';
 import {h, pallette} from '../../constants/constants';
 import NotFound from '../../components/empty-text';
 
@@ -106,9 +106,7 @@ const DoctorsList: React.FC = ({route}: any) => {
               ))
             ) : (
               <NotFound
-                text={
-                  'No doctors found in the branch with the selected specialty.'
-                }
+                text={`No doctors found in ${branch?.name ?? 'this branch'} for ${appointmentType?.toLowerCase() ?? 'the selected'} appointment.`}
                 margin={h * 0.15}
               />
             )}

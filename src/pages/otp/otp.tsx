@@ -41,7 +41,7 @@ import {
 } from '../../services/Region/location';
 import {useApp} from '../../context/app-context';
 import {useAuth} from '../../context/auth-context';
-import {CombinedNavigationProp} from '../../navigation/types';
+import {CombinedNavigationProp} from '../../types/navigation';
 import {h, pallette} from '../../constants/constants';
 import {adjust, navigateTo} from '../../utils/common-functions';
 import {routes} from '../../utils';
@@ -137,7 +137,7 @@ const Otp: React.FC = () => {
           otp: value,
           fcmToken,
         });
-
+        console.log('OTP Verification Response:', response);
         if (response?.status !== 200) {
           ToastService.error(
             'Error',

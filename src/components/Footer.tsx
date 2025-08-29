@@ -5,7 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 
 // ---------- TYPE IMPORTS ----------
 import {FooterButtonProps, FooterProps, NavProp} from '../types/components';
-import {MainStackParamList} from '../navigation/types';
+import {MainStackParamList} from '../types/navigation';
 
 // ---------- VALUE IMPORTS ----------
 import {h, pallette} from '../constants/constants';

@@ -1,5 +1,5 @@
 // ---------- MODULE IMPORTS ----------
-import React, {useEffect, useState, useCallback} from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Image,
   ScrollView,
@@ -8,32 +8,32 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 
 // ---------- COMPONENT IMPORTS ----------
-import {Header, Footer, Loader, DoctorDetailsCard} from '../../components';
+import { Header, Footer, Loader, DoctorDetailsCard } from '../../components';
 
 // ---------- OTHER IMPORTS ----------
-import {useApp} from '../../context/app-context';
-import {fetchConsultationFee, fetchFamilyMembers} from '../../services/common';
-import {ToastService} from '../../utils/service-handlers';
-import {FamilyMember} from '../../utils/types';
-import {MainStackParamList} from '../../navigation/types';
-import {h, pallette, w} from '../../constants/constants';
-import {adjust} from '../../utils/common-functions';
-import {useSettings} from '../../context/settings-context';
+import { useApp } from '../../context/app-context';
+import { fetchConsultationFee, fetchFamilyMembers } from '../../services/common';
+import { ToastService } from '../../utils/service-handlers';
+import { FamilyMember } from '../../utils/types';
+import { MainStackParamList } from '../../types/navigation';
+import { h, pallette, w } from '../../constants/constants';
+import { adjust } from '../../utils/common-functions';
+import { useSettings } from '../../context/settings-context';
 
 // ---------- COMPONENT ----------
-const SlotConfirmation: React.FC = ({route}: any) => {
+const SlotConfirmation: React.FC = ({ route }: any) => {
   // ---------- STATE AND CONTEXT DECLARATION ----------
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {doctor, doctorSpecialitites} = route.params;
-  const {branch, appointment, updateAppointment} = useApp();
-  const {settings} = useSettings();
+  const { doctor, doctorSpecialitites } = route.params;
+  const { branch, appointment, updateAppointment } = useApp();
+  const { settings } = useSettings();
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [appointmentType, setAppointmentType] = useState(
     appointment?.AppointmentType || '',
@@ -49,7 +49,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
   const getFamilyMembers = useCallback(async (mobile: string) => {
     try {
       setLoading(true);
-      const response = await fetchFamilyMembers({MobileNo: mobile});
+      const response = await fetchFamilyMembers({ MobileNo: mobile });
 
       if (response?.status === 200) {
         setFamilyMembers(response.data);
@@ -132,6 +132,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
     [appointment, consultationFee, navigation],
   );
 
+
   // ---------- LIFECYCLE ----------
   useEffect(() => {
     (async () => {
@@ -167,11 +168,11 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               <Text
                 style={[
                   styles.flexHead,
-                  {fontFamily: 'ProximaNovaA-Semibold'},
+                  { fontFamily: 'ProximaNovaA-Semibold' },
                 ]}>
                 Location
               </Text>
-              <Text style={[styles.flexHead, {fontSize: adjust(12)}]}>
+              <Text style={[styles.flexHead, { fontSize: adjust(12) }]}>
                 {branch?.name}
               </Text>
             </View>
@@ -186,9 +187,9 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               <Text
                 style={[
                   styles.flexHead,
-                  {fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2},
+                  { fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2 },
                 ]}>
-                Booked for
+                Booking for
               </Text>
               <Dropdown
                 style={styles.dropdownSelect}
@@ -212,15 +213,15 @@ const SlotConfirmation: React.FC = ({route}: any) => {
           {/* PAYMENT SUMMARY */}
           <View>
             <View
-              style={[styles.paymentBlock, {backgroundColor: pallette.teal}]}>
-              <Text style={[styles.paymentTxt, {color: pallette.white}]}>
+              style={[styles.paymentBlock, { backgroundColor: pallette.teal }]}>
+              <Text style={[styles.paymentTxt, { color: pallette.white }]}>
                 Total Charges
               </Text>
             </View>
             <View
               style={[
                 styles.paymentBlock,
-                {backgroundColor: pallette.pale_turquoise},
+                { backgroundColor: pallette.pale_turquoise },
               ]}>
               <Text
                 style={[
@@ -251,13 +252,13 @@ const SlotConfirmation: React.FC = ({route}: any) => {
                 onPress={() => navigateToOnlinePayment(true)}
                 style={[
                   styles.payBtn,
-                  {backgroundColor: pallette.dark_purple},
+                  { backgroundColor: pallette.dark_purple },
                 ]}>
                 <Text style={styles.payBtnTxt}>Pay Now</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigateToOnlinePayment(false)}
-                style={[styles.payBtn, {backgroundColor: 'grey'}]}>
+                style={[styles.payBtn, { backgroundColor: 'grey' }]}>
                 <Text style={styles.payBtnTxt}>Pay At Hospital</Text>
               </TouchableOpacity>
             </View>
@@ -266,7 +267,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
           <Text
             style={[
               styles.flexHead,
-              {fontSize: adjust(10), marginVertical: h * 0.02},
+              { fontSize: adjust(10), marginVertical: h * 0.02 },
             ]}>
             Disclaimer: Please note that waiting times may vary depending on the
             doctor's schedule and unforeseen circumstances. We appreciate your

@@ -25,7 +25,7 @@ import {pallette, w} from '../constants/constants';
 import {adjust, navigateTo} from '../utils/common-functions';
 import {HeaderProps, NavProp} from '../types/components';
 import {routes} from '../utils';
-import {MainStackParamList} from '../navigation/types';
+import {MainStackParamList} from '../types/navigation';
 
 const STORAGE_KEYS = {
   BRANCH: 'branch',

@@ -9,7 +9,7 @@ import {ProfileItem, MenuItems} from '.';
 import {Header, Footer} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
-import {CombinedNavigationProp} from '../../navigation/types';
+import {CombinedNavigationProp} from '../../types/navigation';
 import {useAuth} from '../../context/auth-context';
 import {useApp} from '../../context/app-context';
 import {h, pallette} from '../../constants/constants';

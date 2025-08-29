@@ -1,5 +1,5 @@
 import {PixelRatio, Platform} from 'react-native';
-import {AuthStackParamList, MainStackParamList} from '../navigation/types';
+import {AuthStackParamList, MainStackParamList} from '../types/navigation';
 import {div, w} from '../constants/constants';
 
 export const navigateTo = (

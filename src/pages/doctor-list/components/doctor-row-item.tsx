@@ -2,7 +2,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {h, pallette, w} from '../../../constants/constants';
 import {adjust, navigateTo} from '../../../utils/common-functions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../../navigation/types';
+import {MainStackParamList} from '../../../types/navigation';
 import {memo} from 'react';
 import {routes} from '../../../utils/enums';
 import FastImage from 'react-native-fast-image';

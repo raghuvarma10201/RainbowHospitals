@@ -9,7 +9,7 @@ import {
   PAYU_MERCHENT_SALT,
 } from '../../utils/enums';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../navigation/types';
+import {MainStackParamList} from '../../types/navigation';
 import {useApp} from '../../context/app-context';
 import {ToastService} from '../../utils/service-handlers';
 import {bookAppointment} from '../../services/common';

@@ -19,7 +19,7 @@ import {
   Otp,
   Registration,
 } from '../pages';
-import {AuthStackParamList, MainStackParamList} from '../navigation/types';
+import {AuthStackParamList, MainStackParamList} from '../types/navigation';
 
 type CombinedRouteNames = keyof (AuthStackParamList & MainStackParamList);
 
