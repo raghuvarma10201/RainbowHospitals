@@ -94,8 +94,6 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
           AppointmentType: typeOfAppointment,
           noofdays: '30',
         };
-        console.log(branch, payload);
-
         const response = await getDoctorSessions(payload);
         if (response?.status === 200 && response.data?.length) {
           const uniqueSessions = response.data.filter(

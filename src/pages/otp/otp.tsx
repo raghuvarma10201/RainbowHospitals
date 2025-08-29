@@ -137,7 +137,6 @@ const Otp: React.FC = () => {
           otp: value,
           fcmToken,
         });
-        console.log('OTP Verification Response:', response);
         if (response?.status !== 200) {
           ToastService.error(
             'Error',

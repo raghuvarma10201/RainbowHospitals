@@ -1,5 +1,6 @@
 import api from './api';
 import {AppointmentPayload} from '../utils/types';
+import {timeoutPromise} from '@jitsi/react-native-sdk/react/features/base/util/timeoutPromise';
 
 export const getPatientProfile = async (payload: any) => {
   try {
@@ -97,6 +98,17 @@ export const fetchConsultationFee = async (payload: any): Promise<any> => {
 export const bookAppointment = async (payload: AppointmentPayload) => {
   try {
     const response = await api.post('/bookAppointment', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const advancePay = async (payload: any) => {
+  try {
+    const response = await api.post('/patientAdvancePay', payload, {
+      timeout: 200000,
+    });
     return response.data;
   } catch (error) {
     throw error;

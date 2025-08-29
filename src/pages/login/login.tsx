@@ -23,7 +23,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 // ---------- OTHER IMPORTS ----------
 import {login} from '../../services/auth';
 import {ToastService} from '../../utils/service-handlers';
-import {AuthStackParamList} from '../../navigation/types';
+import {AuthStackParamList} from '../../types/navigation';
 import {h, pallette, w} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 
@@ -59,16 +59,12 @@ const Login: React.FC = () => {
       setLoading(true);
       try {
         const response = await login({number: values.mobileNumber});
-        console.log(response);
-
         if (response.status === 200 && response.success) {
           await AsyncStorage.setItem('mobileNumber', values.mobileNumber);
           ToastService.success('Success', 'OTP sent successfully');
           navigation.navigate('Otp');
         }
       } catch (e: any) {
-        console.log(e.message);
-
         console.error('Login error:', e);
         ToastService.error('Invalid credentials', 'Please try again');
         setErrors({mobileNumber: 'Invalid credentials'});

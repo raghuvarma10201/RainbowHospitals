@@ -8,9 +8,7 @@ import {
 } from 'react-native';
 import React, {useCallback, useState} from 'react';
 import {Text, Modal, Portal} from 'react-native-paper';
-import Header from '../../components/header';
-import Footer from '../../components/footer';
-import Banners from '../../components/banners';
+import {Header, Footer, Banners} from '../../components';
 import {pallette} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 import {
@@ -19,15 +17,16 @@ import {
   useNavigation,
 } from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../navigation/types';
+import {MainStackParamList} from '../../types/navigation';
 import {routes} from '../../utils/enums';
 
-const AppointmentConfirmed: React.FC = () => {
+const AppointmentConfirmed: React.FC = ({route}: any) => {
   const [activeindex, setActiveindex] = useState(0);
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const {status} = route.params;
 
   const [visible, setVisible] = React.useState(false);
   const showModal = () => setVisible(true);
@@ -57,7 +56,9 @@ const AppointmentConfirmed: React.FC = () => {
       <Header showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
-          <Text style={styles.acTitle}>Appointment Confirmed</Text>
+          <Text style={styles.acTitle}>
+            Appointment {status || 'Confirmed'}
+          </Text>
           <Text style={styles.acSubTitle}>
             Thank you for booking your appointment. We appreciate your trust and
             look forward to serving you.

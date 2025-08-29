@@ -12,7 +12,7 @@ import Header from '../../components/header';
 import Footer from '../../components/footer';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../navigation/types';
+import {MainStackParamList} from '../../types/navigation';
 import {
   formatAppointmentDate,
   formatAppointmentTime,
@@ -30,8 +30,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel} = route.params;
-  console.log(appointmentData);
-
   const [visible, setVisible] = React.useState(cancel || false);
   const [loading, setLoading] = useState(false);
   const {showJitsi} = useJitsi();
@@ -55,7 +53,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       AppointmentType: appointmentData?.AppointmentType,
       bank_details,
     };
-    console.log(obj);
     try {
       const response = await bookAppointment(obj);
       if (response?.status == 200 && response?.success) {

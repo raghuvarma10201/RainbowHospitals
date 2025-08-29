@@ -70,7 +70,6 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
               alignItems: 'center',
               marginLeft: 2,
             }}>
-
             <Text
               style={{
                 fontFamily: 'ProximaNovaA-Regular',

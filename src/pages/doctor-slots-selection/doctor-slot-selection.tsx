@@ -1,6 +1,7 @@
 // ---------- MODULE IMPORTS ----------
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,15 +18,21 @@ import {useDoctorSlots} from './components/functions';
 import {Footer, Header, Loader} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
-import {bookAppointment} from '../../services/common';
+import {
+  bookAppointment,
+  fetchConsultationFee,
+  fetchFamilyMembers,
+} from '../../services/common';
 import {useApp} from '../../context/app-context';
 import {ToastService} from '../../utils/service-handlers';
 import {MainStackParamList} from '../../types/navigation';
 import {routes} from '../../utils/enums';
-import {AppointmentPayload} from '../../utils/types';
+import {AppointmentPayload, FamilyMember} from '../../utils/types';
 import {h, pallette, w} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 import DoctorDetailsCard from '../../components/doctor-details-card';
+import {Dropdown} from 'react-native-element-dropdown';
+import {useSettings} from '../../context/settings-context';
 
 // ---------- COMPONENT ----------
 const DoctorSlotSelection: React.FC = ({route}: any) => {
@@ -34,11 +41,20 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {doctorId, appointmentType, OrganisationID, appointmentnumber} =
     route.params;
-  const {appointment, branch, updateAppointment} = useApp();
+  const {branch, updateAppointment} = useApp();
+  const {settings} = useSettings();
   const [typeOfAppointment, setTypeOfAppointment] = useState(appointmentType);
   const [selectedSlot, setSelectedSlot] = useState('');
+  const [selectedD, setSelectedD] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [loadingPayment, setLoadingPayment] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState<string | undefined>(
+    '',
+  );
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
+  const [consultationFee, setConsultationFee] = useState<number>(0);
+  const [registrationFee, setRegistrationFee] = useState<number>(0);
 
   // ---------- LIFECYCLE ----------
   const {
@@ -51,10 +67,73 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     loading,
   } = useDoctorSlots(doctorId, typeOfAppointment);
 
+  // ---------- CALLBACK FUNCTIONS ----------
+  const getFamilyMembers = useCallback(async (mobile: string) => {
+    try {
+      const response = await fetchFamilyMembers({MobileNo: mobile});
+
+      if (response?.status === 200) {
+        setFamilyMembers(response.data);
+      } else {
+        ToastService.error(
+          'Error',
+          response?.message || 'Unable to fetch patients',
+        );
+      }
+    } catch (error) {
+      console.error('Failed to load Family Members:', error);
+    } finally {
+    }
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const storedNumber = await AsyncStorage.getItem('mobileNumber');
+      if (storedNumber) {
+        setPhoneNumber(storedNumber);
+        await getFamilyMembers(storedNumber);
+      }
+    })();
+  }, [getFamilyMembers]);
+
+  const getConsultationFee = useCallback(
+    async (mrn: string | undefined, date: any, slot: any) => {
+      if (!branch) return;
+      try {
+        const payload = {
+          orgcode: branch.organisation?.code || '11MN',
+          OrganisationUID: branch?.organisation?.organisationid?.toString(),
+          Uhid: mrn || 'MAHTMP-182297',
+          Departmentcode: '11MNPAGP',
+          VisitDate: new Date(date).toISOString().split('T')[0],
+          DoctorId: doctorDetail.new_doctor_UID ?? '',
+        };
+        const response = await fetchConsultationFee(payload);
+        if (response?.status === 200) {
+          const fee =
+            response.data.ConsultationFee || response.data.RegistrationFee || 0;
+          const regFee = response.data.RegistrationFee || 0;
+          setConsultationFee(fee);
+          setRegistrationFee(regFee);
+        } else {
+          ToastService.error(
+            'Error',
+            response?.message || 'Unable to fetch fee',
+          );
+        }
+      } catch (error) {
+        console.error('Failed to load Consultation Fee:', error);
+      } finally {
+      }
+    },
+    [branch, doctorDetail, updateAppointment],
+  );
+
   // ---------- EVENT HANDLERS ----------
-  const proceedPayment = async () => {
+  const proceedPayment = async (paymenttype?: boolean) => {
     if (!selectedSlot) return;
     setLoadingPayment(true);
+    const txnid = `TXN_${Date.now()}`;
     try {
       const commonPayload = {
         slotid: selectedSlot,
@@ -93,20 +172,47 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
       } else {
         const blockPayload: AppointmentPayload = {
           status: 'BLOCK',
-          comment: appointment?.comment ?? '',
-          mrn: appointment?.mrn ?? '',
+          comment: '',
+          mrn: selectedPatient ?? '',
           OrganisationUID: branch?.organisation?.organisationid.toString(),
-          transaction_id: appointment?.transaction_id ?? '',
-          price: appointment?.price ?? 0,
-          payment_type: appointment?.payment_type ?? 'CASH',
+          transaction_id: txnid ?? '',
+          price: consultationFee ?? 0,
+          payment_type: paymenttype ? 'ONLINE' : 'CASH',
           orgcode: branch?.organisation?.code || '',
+          Visittype: 'First Visit',
+          careprovider_code: doctorDetail.new_doctor_UID,
+          expirytime:
+            (paymenttype
+              ? settings?.onlineBookingInterval ?? 0
+              : settings?.physicalBookingInterval ?? 0) / 60,
           ...commonPayload,
         };
-        await updateAppointment(blockPayload);
-        navigation.navigate('SlotConfirmation', {
-          doctor: doctorDetail,
-          doctorSpecialitites: doctorSpecialities,
-        });
+
+        try {
+          const response = await bookAppointment(blockPayload);
+          console.log(response);
+
+          if (response && response.status == 200 && response.success == true) {
+            ToastService.success(
+              'Appointment Success',
+              'appointment created successfully',
+            );
+            if (paymenttype) {
+              navigation.navigate('PayUWebView', {
+                finalPayload: {...blockPayload, registrationFee},
+                bookingId: response?.data?.his_booking_id,
+                payuUrl: 'https://test.payu.in/_payment',
+              });
+            } else {
+            }
+          } else {
+            navigation.navigate('Dashboard');
+            ToastService.error(response.message);
+          }
+        } catch (error: any) {
+          console.log(error);
+        } finally {
+        }
       }
     } catch (error) {
       console.error('Error in proceedPayment:', error);
@@ -114,6 +220,11 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     } finally {
       setLoadingPayment(false);
     }
+  };
+
+  const updateSlot = (slot: any) => {
+    setSelectedSlot(slot);
+    getConsultationFee(selectedPatient, selectedDate, slot);
   };
 
   // ---------- RENDER ----------
@@ -130,31 +241,150 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           onConsultationPress={setTypeOfAppointment}
           about
         />
-        {/* SESSIONS AND SLOTS COMPONENT */}
-        <SlotSelection
-          sessions={sessions}
-          slots={slots}
-          selectedTime={selectedTime}
-          selectedSlot={selectedSlot}
-          onDateClick={loadSlots}
-          onSelectSlot={(slotId: string, time: string) => {
-            setSelectedSlot(slotId);
-            setSelectedTime(time);
-          }}
-          styles={styles}
-        />
-        {/* PROCEED BUTTON */}
-        <TouchableOpacity
-          disabled={!selectedSlot}
-          onPress={proceedPayment}
+        {/* BRANCH DETAILS */}
+        <View
           style={[
-            styles.formButton,
-            {backgroundColor: selectedSlot ? pallette.dark_purple : 'grey'},
+            styles.patientContainer,
+            {
+              borderBottomLeftRadius: !selectedPatient ? w * 0.1 : 0,
+              borderBottomRightRadius: !selectedPatient ? w * 0.1 : 0,
+            },
           ]}>
-          <Text style={styles.formButtonText}>
-            {appointmentnumber ? 'Confirm Reschedule' : 'Proceed To Confirm'}
-          </Text>
-        </TouchableOpacity>
+          <View style={styles.flex}>
+            <Image
+              source={require('../../../assets/images/map-icon.png')}
+              style={styles.flexImg}
+            />
+            <View>
+              <Text
+                style={[
+                  styles.flexHead,
+                  {fontFamily: 'ProximaNovaA-Semibold'},
+                ]}>
+                Location
+              </Text>
+              <Text style={[styles.flexHead, {fontSize: adjust(12)}]}>
+                {branch?.name}
+              </Text>
+            </View>
+          </View>
+          {/* PATIENT DROPDOWN */}
+          <View style={styles.flex}>
+            <Image
+              source={require('../../../assets/images/booked-for-icon.png')}
+              style={styles.flexImg}
+            />
+            <View>
+              <Text
+                style={[
+                  styles.flexHead,
+                  {fontFamily: 'ProximaNovaA-Semibold', marginBottom: 2},
+                ]}>
+                Booking for
+              </Text>
+              <Dropdown
+                style={styles.dropdownSelect}
+                selectedTextStyle={styles.selectedTextContry}
+                placeholderStyle={styles.placeholderCountry}
+                maxHeight={200}
+                value={selectedPatient}
+                data={familyMembers}
+                valueField="PatientID"
+                labelField="PatientName"
+                placeholder="Select Patient"
+                containerStyle={styles.dropdownList}
+                activeColor={pallette.pale_turquoise}
+                onChange={(item: FamilyMember) => {
+                  setSelectedPatient(item.PatientID);
+                  // getConsultationFee(item.PatientID);
+                }}
+              />
+            </View>
+          </View>
+        </View>
+        {/* SESSIONS AND SLOTS COMPONENT */}
+        {selectedPatient && (
+          <SlotSelection
+            sessions={sessions}
+            slots={slots}
+            selectedTime={selectedTime}
+            selectedSlot={selectedSlot}
+            onDateClick={loadSlots}
+            onSelectSlot={(slotId: string, time: string) => {
+              updateSlot(slotId);
+              setSelectedTime(time);
+            }}
+            styles={styles}
+          />
+        )}
+
+        {/* PAYMENT SUMMARY */}
+        {selectedSlot && (
+          <View style={{marginVertical: h * 0.02}}>
+            <View
+              style={[styles.paymentBlock, {backgroundColor: pallette.teal}]}>
+              <Text style={[styles.paymentTxt, {color: pallette.white}]}>
+                Total Charges
+              </Text>
+            </View>
+            <View
+              style={[
+                styles.paymentBlock,
+                {backgroundColor: pallette.pale_turquoise},
+              ]}>
+              <Text
+                style={[
+                  styles.paymentTxt,
+                  {
+                    color: pallette.black,
+                    fontFamily: 'ProximaNovaA-Semibold',
+                  },
+                ]}>
+                Consultation Fee
+              </Text>
+              <Text
+                style={[
+                  styles.paymentTxt,
+                  {
+                    color: pallette.black,
+                    fontFamily: 'ProximaNovaA-Semibold',
+                  },
+                ]}>
+                ₹ {consultationFee}
+              </Text>
+            </View>
+          </View>
+        )}
+        {/* PROCEED BUTTON */}
+        {appointmentnumber ? (
+          <TouchableOpacity
+            disabled={!selectedSlot}
+            onPress={() => proceedPayment()}
+            style={[
+              styles.formButton,
+              {backgroundColor: selectedSlot ? pallette.dark_purple : 'grey'},
+            ]}>
+            <Text style={styles.formButtonText}>Confirm Reschedule</Text>
+          </TouchableOpacity>
+        ) : (
+          selectedSlot && (
+            <View style={styles.payBtnsContainer}>
+              <TouchableOpacity
+                onPress={() => proceedPayment(true)}
+                style={[
+                  styles.payBtn,
+                  {backgroundColor: pallette.dark_purple},
+                ]}>
+                <Text style={styles.payBtnTxt}>Pay Now</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => proceedPayment(false)}
+                style={[styles.payBtn, {backgroundColor: 'grey'}]}>
+                <Text style={styles.payBtnTxt}>Pay At Hospital</Text>
+              </TouchableOpacity>
+            </View>
+          )
+        )}
       </ScrollView>
       {/* COMMON FOOTER */}
       <Footer />
@@ -174,6 +404,12 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 100,
     minHeight: h,
+  },
+  patientContainer: {
+    backgroundColor: pallette.light_grey,
+    width: '90%',
+    alignSelf: 'center',
+    paddingBottom: h * 0.03,
   },
   calenderContainer: {
     backgroundColor: pallette.light_grey,
@@ -249,5 +485,76 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: 5,
     borderRadius: 10,
+  },
+  flex: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: w * 0.02,
+    marginVertical: h * 0.01,
+    paddingHorizontal: w * 0.02,
+  },
+  flexImg: {
+    height: h * 0.05,
+    width: w * 0.1,
+    resizeMode: 'contain',
+  },
+  flexHead: {
+    fontSize: adjust(12),
+    color: pallette.black,
+    fontFamily: 'ProximaNovaA-Regular',
+  },
+  paymentBlock: {
+    paddingVertical: h * 0.01,
+    paddingStart: w * 0.1,
+    paddingEnd: w * 0.05,
+    width: '90%',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  paymentTxt: {
+    fontSize: adjust(12),
+    fontFamily: 'ProximaNovaA-Regular',
+  },
+  payBtnsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: h * 0.02,
+    width: '90%',
+    alignSelf: 'center',
+  },
+  payBtn: {
+    padding: w * 0.03,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '48%',
+    borderRadius: w * 0.04,
+  },
+  payBtnTxt: {
+    fontSize: adjust(12),
+    color: pallette.white,
+    fontFamily: 'ProximaNovaA-Semibold',
+  },
+  dropdownSelect: {
+    backgroundColor: pallette.pale_turquoise,
+    height: 30,
+    marginTop: 5,
+    width: w * 0.6,
+    paddingHorizontal: 10,
+  },
+  placeholderCountry: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: adjust(12),
+    color: pallette.black,
+  },
+  selectedTextContry: {
+    fontSize: adjust(12),
+    color: pallette.black,
+  },
+  dropdownList: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: adjust(12),
+    backgroundColor: pallette.white,
   },
 });

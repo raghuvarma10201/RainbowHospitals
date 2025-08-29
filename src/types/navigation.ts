@@ -34,8 +34,9 @@ export type MainStackParamList = {
   JitsiCall: {roomName: string};
   PayUWebView: {
     finalPayload: any;
-    txnId: string;
-    amount: string;
+    // txnId: string;
+    bookingId: string;
+    // amount: string;
     payuUrl: string;
   };
 };

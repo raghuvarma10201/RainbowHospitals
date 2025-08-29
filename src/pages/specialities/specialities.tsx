@@ -11,7 +11,7 @@ import {Header, Footer, Loader, NotFound} from '../../components';
 // ---------- OTHER IMPORTS ----------
 import {ToastService} from '../../utils/service-handlers';
 import {getDoctors, getSpecialities} from '../../services/common';
-import {MainStackParamList} from '../../navigation/types';
+import {MainStackParamList} from '../../types/navigation';
 import {h, pallette} from '../../constants/constants';
 import {useApp} from '../../context/app-context';
 
@@ -46,8 +46,6 @@ const Specialities: React.FC = ({route}: any) => {
   };
 
   const loadDoctors = async (specialityId: any, appointmentType: any) => {
-    console.log(appointmentType);
-
     await fetchData(
       () =>
         getDoctors(

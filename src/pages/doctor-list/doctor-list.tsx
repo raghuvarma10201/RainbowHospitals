@@ -54,8 +54,6 @@ const DoctorsList: React.FC = ({route}: any) => {
         1,
         10,
       );
-      console.log(response.data.doctors);
-
       if (response?.status === 200) {
         setDoctors(response.data.doctors ?? []);
       } else {
@@ -106,7 +104,11 @@ const DoctorsList: React.FC = ({route}: any) => {
               ))
             ) : (
               <NotFound
-                text={`No doctors found in ${branch?.name ?? 'this branch'} for ${appointmentType?.toLowerCase() ?? 'the selected'} appointment.`}
+                text={`No doctors found in ${
+                  branch?.name ?? 'this branch'
+                } for ${
+                  appointmentType?.toLowerCase() ?? 'the selected'
+                } appointment.`}
                 margin={h * 0.15}
               />
             )}

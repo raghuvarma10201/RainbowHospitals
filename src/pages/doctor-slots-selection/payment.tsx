@@ -12,19 +12,19 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../types/navigation';
 import {useApp} from '../../context/app-context';
 import {ToastService} from '../../utils/service-handlers';
-import {bookAppointment} from '../../services/common';
+import {advancePay, bookAppointment} from '../../services/common';
 
 const PayUWebView: React.FC = ({route}: any) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {finalPayload, txnId, amount, payuUrl} = route.params;
+  const {finalPayload, bookingId, payuUrl} = route.params;
   const [hash, setHash] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
   const webViewRef = useRef<WebView>(null);
   const {profile} = useApp();
 
   const key = PAYU_MERCHENT_KEY;
-  const txnid = txnId;
+  const txnid = finalPayload?.transaction_id;
   const productinfo = 'Video Consultation';
   const firstname = profile?.PatientName || '';
   const email = profile?.EmailAddress || '';
@@ -36,14 +36,17 @@ const PayUWebView: React.FC = ({route}: any) => {
   const fetchHash = useCallback(async () => {
     // ✅ Correct number of pipes (16 total)
     const hashString =
-      `${key}|${txnid}|${finalPayload.price}|${productinfo}|${firstname}|${email}` +
-      `|||||||||||${salt}`;
+      `${key}|${txnid}|${finalPayload.price.toFixed(
+        2,
+      )}|${productinfo}|${firstname}|${email}` + `|||||||||||${salt}`;
     const pipeCount = (hashString.match(/\|/g) || []).length;
     const hash = sha512(hashString);
     setHash(hash);
   }, []);
 
-  const postData = `key=${key}&txnid=${txnid}&amount=${finalPayload.price}&productinfo=${productinfo}&firstname=${firstname}&email=${email}&phone=${phone}&surl=${surl}&furl=${furl}&hash=${hash}`;
+  const postData = `key=${key}&txnid=${txnid}&amount=${finalPayload.price.toFixed(
+    2,
+  )}&productinfo=${productinfo}&firstname=${firstname}&email=${email}&phone=${phone}&surl=${surl}&furl=${furl}&hash=${hash}`;
 
   useEffect(() => {
     fetchHash();
@@ -54,46 +57,44 @@ const PayUWebView: React.FC = ({route}: any) => {
       const url = navState.url;
       if (url === API_BASE_URL + '/payment/success') {
         setLoading(true);
-        updatePayment(''); // Call your API
-        // navigation.replace('SuccessScreen');
-      }
-
-      // Or detect if URL starts with it (in case there are query params)
-      else if (url.startsWith(API_BASE_URL + '/payment/success')) {
-        const urlObj = new URL(url);
-        const mihpayid = urlObj.searchParams.get('mihpayid');
+        updatePayment();
+      } else if (url.startsWith(API_BASE_URL + '/payment/success')) {
         setLoading(true);
-        updatePayment(mihpayid);
+        updatePayment();
       } else if (url.includes('failure')) {
         ToastService.error('Transaction failed. Please try again.');
-        navigation.navigate('Home');
-        // navigation.replace('FailureScreen');
+        navigation.navigate('Dashboard');
       }
     } catch (error) {
       console.log('payu error', error);
     }
   };
 
-  const updatePayment = useCallback(async (mihpayid: any) => {
+  const updatePayment = useCallback(async () => {
+    const payload = {
+      orgcode: finalPayload?.orgcode ?? '40FD',
+      mrn: finalPayload?.mrn ?? 'BAHTMP-761149',
+      paidby: finalPayload?.payment_type == 'CASH' ? 'PAYATHOSPOTAL' : 'PAYU',
+      ConsultationFee: finalPayload?.price.toString() ?? '0',
+      RegistrationFee: finalPayload.registrationFee.toString() ?? '0',
+      comments: `Transaction ID:${finalPayload?.transaction_id},Booking Number:${bookingId},`,
+      AppointmentNumber: bookingId ?? 'BAHOP-2972192',
+      transaction_id: finalPayload?.transaction_id,
+    };
+    console.log(payload);
     try {
       setLoading(true);
-      finalPayload.mihpayid = mihpayid;
-      finalPayload.transaction_id = txnId;
-      console.log(finalPayload);
-
-      const response = await bookAppointment(finalPayload);
-      console.log(response);
+      const response = await advancePay(payload);
+      console.log(response, payload);
 
       if (response && response.status == 200 && response.success == true) {
         navigation.navigate('AppointmentConfirmed');
       } else {
-        navigation.navigate('Dashboard');
         ToastService.error(response.message);
+        // navigation.navigate('Dashboard');
       }
     } catch (error: any) {
       console.log(error);
-
-      //console.error('Failed to load specialities:', error.message);
     } finally {
       setLoading(false);
     }
