@@ -60,12 +60,14 @@ interface FooterButtonProps {
 interface NotFoundProps {
   text: string;
   margin: any;
+  change?: any;
 }
 
 interface HeaderProps {
   title?: string;
   showLocation?: boolean;
   showBack?: boolean;
+  showModal?: boolean;
 }
 
 interface LoaderProps {

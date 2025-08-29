@@ -1,6 +1,6 @@
 // ---------- MODULE IMPORTS ----------
 import {ScrollView, StyleSheet, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
@@ -18,11 +18,13 @@ import {useApp} from '../../context/app-context';
 // ---------- COMPONENT ----------
 const Specialities: React.FC = ({route}: any) => {
   // ---------- STATE AND CONTEXT DECLARATION ----------
+  const headerRef = useRef<any>();
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentType} = route.params;
   const {branch} = useApp();
   const [specialities, setSpecialities] = useState<any[]>([]);
+  const [selectedSpecialityId, setSelectedSpecialityId] = useState<string>('');
   const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(0);
   const [activeDocIndex, setActiveDocIndex] = useState(0);
   const [doctors, setDoctors] = useState<any[]>([]);
@@ -31,7 +33,7 @@ const Specialities: React.FC = ({route}: any) => {
   // ---------- LIFECYCLE ----------
   useEffect(() => {
     loadSpecialities();
-  }, []);
+  }, [branch]);
 
   // ---------- CALLBACK FUNCTIONS ----------
   const loadSpecialities = async () => {
@@ -39,13 +41,17 @@ const Specialities: React.FC = ({route}: any) => {
       getSpecialities,
       data => {
         setSpecialities(data);
-        loadDoctors(data[0]?.speciality_id, appointmentType);
+        loadDoctors(
+          selectedSpecialityId || data[0]?.speciality_id,
+          appointmentType,
+        );
       },
       'specialities',
     );
   };
 
   const loadDoctors = async (specialityId: any, appointmentType: any) => {
+    setSelectedSpecialityId(specialityId);
     await fetchData(
       () =>
         getDoctors(
@@ -109,7 +115,7 @@ const Specialities: React.FC = ({route}: any) => {
   return (
     <View style={styles.mainContainer}>
       {/* COMMON HEADER */}
-      <Header showLocation />
+      <Header showLocation ref={headerRef} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <View style={styles.quickActions}>
@@ -142,10 +148,13 @@ const Specialities: React.FC = ({route}: any) => {
               />
             ) : (
               <NotFound
-                text={
-                  'No doctors found in the branch with the selected specialty.'
-                }
+                text={`No doctors found in ${
+                  branch?.name ?? 'this branch'
+                } for ${
+                  appointmentType?.toLowerCase() ?? 'the selected'
+                } appointment.`}
                 margin={h * 0.05}
+                change={() => headerRef.current?.openModal()}
               />
             )}
           </>

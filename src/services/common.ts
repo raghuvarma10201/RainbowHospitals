@@ -106,9 +106,7 @@ export const bookAppointment = async (payload: AppointmentPayload) => {
 
 export const advancePay = async (payload: any) => {
   try {
-    const response = await api.post('/patientAdvancePay', payload, {
-      timeout: 200000,
-    });
+    const response = await api.post('/patientAdvancePay', payload);
     return response.data;
   } catch (error) {
     throw error;

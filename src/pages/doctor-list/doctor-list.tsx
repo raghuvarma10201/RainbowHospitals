@@ -1,5 +1,5 @@
 // ---------- MODULE IMPORTS ----------
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState, useCallback, useRef} from 'react';
 import {Image, ScrollView, StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -33,11 +33,13 @@ interface Doctor {
 // ---------- COMPONENT ----------
 const DoctorsList: React.FC = ({route}: any) => {
   // ---------- STATE AND CONTEXT DECLARATION ----------
+  const headerRef = useRef<any>();
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {specialityId, appointmentType} = route.params;
   const {branch} = useApp();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [changeLocation, setChangeLocation] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
 
   // ---------- CALLBACK FUNCTIONS ----------
@@ -68,7 +70,7 @@ const DoctorsList: React.FC = ({route}: any) => {
     } finally {
       setLoading(false);
     }
-  }, [specialityId, appointmentType]);
+  }, [specialityId, appointmentType, branch]);
 
   // ---------- LIFECYCLE ----------
   useEffect(() => {
@@ -79,7 +81,7 @@ const DoctorsList: React.FC = ({route}: any) => {
   return (
     <View style={styles.mainContainer}>
       {/* COMMON HEADER */}
-      <Header showLocation />
+      <Header showLocation ref={headerRef} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           {/* Banner Image */}
@@ -110,6 +112,7 @@ const DoctorsList: React.FC = ({route}: any) => {
                   appointmentType?.toLowerCase() ?? 'the selected'
                 } appointment.`}
                 margin={h * 0.15}
+                change={() => headerRef.current?.openModal()}
               />
             )}
           </View>

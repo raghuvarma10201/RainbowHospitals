@@ -1,4 +1,11 @@
-import React, {useEffect, useState, useCallback, useMemo} from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {
   View,
@@ -41,363 +48,372 @@ const images = {
   filter: require('../../assets/images/filter-icon.png'),
 };
 
-const Header: React.FC<HeaderProps> = ({
-  title,
-  showLocation = true,
-  showBack = true,
-}) => {
-  const navigation = useNavigation<NavProp>();
+const Header = forwardRef<any, HeaderProps>(
+  ({title, showLocation = true, showBack = true}, ref) => {
+    const navigation = useNavigation<NavProp>();
 
-  const [locationModalVisible, setLocationModalVisible] = useState(false);
-  const [selectedRegion, setSelectedRegion] = useState<any>(null);
-  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
-  const [regions, setRegions] = useState<any[]>([]);
-  const [branchesForRegion, setBranchesForRegion] = useState<Branch[]>([]);
-  const [expandedRegionId, setExpandedRegionId] = useState<string | null>(null);
-  const [branchHeights, setBranchHeights] = useState<
-    Record<string, Animated.Value>
-  >({});
+    const [locationModalVisible, setLocationModalVisible] = useState(false);
+    const [selectedRegion, setSelectedRegion] = useState<any>(null);
+    const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
+    const [regions, setRegions] = useState<any[]>([]);
+    const [branchesForRegion, setBranchesForRegion] = useState<Branch[]>([]);
+    const [expandedRegionId, setExpandedRegionId] = useState<string | null>(
+      null,
+    );
+    const [branchHeights, setBranchHeights] = useState<
+      Record<string, Animated.Value>
+    >({});
 
-  const {
-    branch,
-    region,
-    updateAllBranch,
-    updateBranch,
-    updateRegion,
-    updateProfile,
-  } = useApp();
+    const {
+      branch,
+      region,
+      updateAllBranch,
+      updateBranch,
+      updateRegion,
+      updateProfile,
+    } = useApp();
 
-  /** Fetch Profile */
-  useEffect(() => {
-    const getProfile = async () => {
-      try {
-        const mrn = await AsyncStorage.getItem('mrn');
-        if (!mrn) return;
-        const data = await getPatientProfile({mrn});
-        if (data?.data?.[0]?.PatientID) {
-          updateProfile(data.data[0]);
+    /** 🔑 Expose modal controls to parent via ref */
+    useImperativeHandle(ref, () => ({
+      openModal: () => setLocationModalVisible(true),
+      closeModal: () => setLocationModalVisible(false),
+    }));
+
+    /** Fetch Profile */
+    useEffect(() => {
+      const getProfile = async () => {
+        try {
+          const mrn = await AsyncStorage.getItem('mrn');
+          if (!mrn) return;
+          const data = await getPatientProfile({mrn});
+          if (data?.data?.[0]?.PatientID) {
+            updateProfile(data.data[0]);
+          }
+        } catch (err) {
+          console.error('Failed to fetch profile:', err);
         }
-      } catch (err) {
-        console.error('Failed to fetch profile:', err);
-      }
-    };
-    getProfile();
-  }, [updateProfile]);
+      };
+      getProfile();
+    }, [updateProfile]);
 
-  /** Initial load with persisted region/branch */
-  useEffect(() => {
-    const loadDetails = async () => {
-      try {
-        const savedBranch = await AsyncStorage.getItem(STORAGE_KEYS.BRANCH);
-        const savedRegion = await AsyncStorage.getItem(STORAGE_KEYS.REGION);
+    /** Initial load with persisted region/branch */
+    useEffect(() => {
+      const loadDetails = async () => {
+        try {
+          const savedBranch = await AsyncStorage.getItem(STORAGE_KEYS.BRANCH);
+          const savedRegion = await AsyncStorage.getItem(STORAGE_KEYS.REGION);
 
-        const regionData = await getRegions();
-        const location = await getCurrentCoordinates();
-        if (!location) return;
+          const regionData = await getRegions();
+          const location = await getCurrentCoordinates();
+          if (!location) return;
 
-        let nearestRegion = null;
+          let nearestRegion = null;
 
-        if (savedRegion) {
-          nearestRegion = JSON.parse(savedRegion);
-        } else {
-          nearestRegion = findNearestRegion(
-            regionData,
-            location.latitude,
-            location.longitude,
-          );
-        }
-
-        if (!nearestRegion) return;
-
-        updateRegion(nearestRegion);
-
-        const allBranches = await getBranches(nearestRegion.region_id);
-        if (!allBranches.length) return;
-        updateAllBranch(allBranches);
-
-        if (branch) return;
-        if (savedBranch) {
-          updateBranch(JSON.parse(savedBranch));
-        } else {
-          const nearestBranch = findNearestBranch(
-            allBranches,
-            location.latitude,
-            location.longitude,
-          );
-          if (nearestBranch) {
-            updateBranch(nearestBranch);
-            await AsyncStorage.setItem(
-              STORAGE_KEYS.BRANCH,
-              JSON.stringify(nearestBranch),
+          if (savedRegion) {
+            nearestRegion = JSON.parse(savedRegion);
+          } else {
+            nearestRegion = findNearestRegion(
+              regionData,
+              location.latitude,
+              location.longitude,
             );
           }
+
+          if (!nearestRegion) return;
+
+          updateRegion(nearestRegion);
+
+          const allBranches = await getBranches(nearestRegion.region_id);
+          if (!allBranches.length) return;
+          updateAllBranch(allBranches);
+
+          if (branch) return;
+          if (savedBranch) {
+            updateBranch(JSON.parse(savedBranch));
+          } else {
+            const nearestBranch = findNearestBranch(
+              allBranches,
+              location.latitude,
+              location.longitude,
+            );
+            if (nearestBranch) {
+              updateBranch(nearestBranch);
+              await AsyncStorage.setItem(
+                STORAGE_KEYS.BRANCH,
+                JSON.stringify(nearestBranch),
+              );
+            }
+          }
+        } catch (err) {
+          console.error('Error loading details:', err);
         }
-      } catch (err) {
-        console.error('Error loading details:', err);
-      }
-    };
-    loadDetails();
-  }, [branch, updateAllBranch, updateBranch, updateRegion]);
+      };
+      loadDetails();
+    }, [branch, updateAllBranch, updateBranch, updateRegion]);
 
-  /** Load all regions & pre-initialize Animated.Values */
-  useEffect(() => {
-    getRegions()
-      .then(data => {
-        setRegions(data);
-        const initialHeights: Record<string, Animated.Value> = {};
-        data.forEach((r: any) => {
-          initialHeights[r.region_id] = new Animated.Value(0);
-        });
-        setBranchHeights(initialHeights);
-      })
-      .catch(err => console.error('Failed to load regions:', err));
-  }, []);
+    /** Load all regions & pre-initialize Animated.Values */
+    useEffect(() => {
+      getRegions()
+        .then(data => {
+          setRegions(data);
+          const initialHeights: Record<string, Animated.Value> = {};
+          data.forEach((r: any) => {
+            initialHeights[r.region_id] = new Animated.Value(0);
+          });
+          setBranchHeights(initialHeights);
+        })
+        .catch(err => console.error('Failed to load regions:', err));
+    }, []);
 
-  /** Sync local selections with context */
-  useEffect(() => {
-    setSelectedBranch(branch || null);
-    setSelectedRegion(region || null);
-  }, [branch, region]);
+    /** Sync local selections with context */
+    useEffect(() => {
+      setSelectedBranch(branch || null);
+      setSelectedRegion(region || null);
+    }, [branch, region]);
 
-  /** Handlers */
-  const handleGoBack = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
+    /** Handlers */
+    const handleGoBack = useCallback(() => {
+      navigation.goBack();
+    }, [navigation]);
 
-  const handleOpenModal = useCallback(() => {
-    setLocationModalVisible(true);
-  }, []);
+    const handleOpenModal = useCallback(() => {
+      setLocationModalVisible(true);
+    }, []);
 
-  const handleCloseModal = useCallback(() => {
-    setLocationModalVisible(false);
-  }, []);
-
-  const handleBranchUpdate = useCallback(async () => {
-    if (selectedBranch && selectedRegion) {
-      updateBranch(selectedBranch);
-      updateRegion(selectedRegion);
+    const handleCloseModal = useCallback(() => {
       setLocationModalVisible(false);
+    }, []);
 
-      await AsyncStorage.setItem(
-        STORAGE_KEYS.BRANCH,
-        JSON.stringify(selectedBranch),
-      );
-      await AsyncStorage.setItem(
-        STORAGE_KEYS.REGION,
-        JSON.stringify(selectedRegion),
-      );
-    }
-  }, [selectedBranch, selectedRegion, updateBranch, updateRegion]);
+    const handleBranchUpdate = useCallback(async () => {
+      if (selectedBranch && selectedRegion) {
+        updateBranch(selectedBranch);
+        updateRegion(selectedRegion);
+        setLocationModalVisible(false);
 
-  const toggleRegion = useCallback(
-    async (regionItem: any) => {
-      const id = regionItem.region_id;
-      const isExpanded = expandedRegionId === id;
-
-      if (expandedRegionId && expandedRegionId !== id) {
-        Animated.timing(branchHeights[expandedRegionId], {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: false,
-        }).start();
-      }
-
-      if (isExpanded) {
-        Animated.timing(branchHeights[id], {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: false,
-        }).start(() => setExpandedRegionId(null));
-      } else {
-        const branches = await getBranches(id);
-        setBranchesForRegion(branches);
-        setExpandedRegionId(id);
-        Animated.timing(branchHeights[id], {
-          toValue: branches.length * 50,
-          duration: 300,
-          useNativeDriver: false,
-        }).start();
-      }
-    },
-    [expandedRegionId, branchHeights],
-  );
-
-  /** Memoized modal content */
-  const regionList = useMemo(
-    () =>
-      regions.map(regionItem => {
-        const isExpanded = expandedRegionId === regionItem.region_id;
-        const animatedHeight = branchHeights[regionItem.region_id];
-
-        return (
-          <View key={regionItem.region_id}>
-            <TouchableOpacity
-              style={[
-                styles.locationOption,
-                isExpanded && styles.selectedLocationOption,
-              ]}
-              onPress={() => {
-                toggleRegion(regionItem);
-                setSelectedRegion(regionItem);
-              }}>
-              <View style={styles.regionRow}>
-                <Text
-                  style={[
-                    styles.locationOptionText,
-                    isExpanded && styles.selectedLocationText,
-                  ]}>
-                  {regionItem.name}
-                </Text>
-                <FontAwesome
-                  name={isExpanded ? 'angle-up' : 'angle-down'}
-                  size={20}
-                  color="#888"
-                />
-              </View>
-            </TouchableOpacity>
-
-            <Animated.View style={{height: animatedHeight, overflow: 'hidden'}}>
-              {isExpanded &&
-                branchesForRegion.map((b, idx) => (
-                  <TouchableOpacity
-                    key={b.id}
-                    style={[
-                      styles.locationOption,
-                      selectedBranch?.id === b.id &&
-                        styles.selectedLocationOption,
-                    ]}
-                    onPress={() => setSelectedBranch(b)}>
-                    <Text
-                      style={[
-                        styles.locationOptionText,
-                        selectedBranch?.id === b.id &&
-                          styles.selectedLocationText,
-                      ]}>
-                      {idx + 1}. {b.name}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-            </Animated.View>
-          </View>
+        await AsyncStorage.setItem(
+          STORAGE_KEYS.BRANCH,
+          JSON.stringify(selectedBranch),
         );
-      }),
-    [
-      regions,
-      expandedRegionId,
-      branchHeights,
-      branchesForRegion,
-      selectedBranch,
-      toggleRegion,
-    ],
-  );
+        await AsyncStorage.setItem(
+          STORAGE_KEYS.REGION,
+          JSON.stringify(selectedRegion),
+        );
+      }
+    }, [selectedBranch, selectedRegion, updateBranch, updateRegion]);
 
-  return (
-    <View style={styles.header}>
-      <View style={styles.headerLeft}>
-        {showBack ? (
-          <TouchableOpacity
-            onPress={handleGoBack}
-            style={styles.backArrowBlock}>
-            <Image
-              source={images.arrow}
-              style={styles.arrowIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.profileIconBlock}>
-            <Image
-              source={images.profile}
-              style={styles.profileIcon}
-              resizeMode="contain"
-            />
-          </View>
-        )}
+    const toggleRegion = useCallback(
+      async (regionItem: any) => {
+        const id = regionItem.region_id;
+        const isExpanded = expandedRegionId === id;
 
-        {showLocation ? (
-          <TouchableOpacity
-            style={styles.dropdownIcon}
-            onPress={handleOpenModal}>
-            <View style={{marginLeft: 6}}>
-              <Text style={styles.locationText}>
-                {branch?.name || 'Fetching location...'}
-              </Text>
-              <View style={styles.locationInfo}>
-                <Image source={images.map} style={styles.mapIcon} />
-                <Text style={styles.regionText}>{region?.name ?? ''}</Text>
-              </View>
+        if (expandedRegionId && expandedRegionId !== id) {
+          Animated.timing(branchHeights[expandedRegionId], {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: false,
+          }).start();
+        }
+
+        if (isExpanded) {
+          Animated.timing(branchHeights[id], {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: false,
+          }).start(() => setExpandedRegionId(null));
+        } else {
+          const branches = await getBranches(id);
+          setBranchesForRegion(branches);
+          setExpandedRegionId(id);
+          Animated.timing(branchHeights[id], {
+            toValue: branches.length * 50,
+            duration: 300,
+            useNativeDriver: false,
+          }).start();
+        }
+      },
+      [expandedRegionId, branchHeights],
+    );
+
+    /** Memoized modal content */
+    const regionList = useMemo(
+      () =>
+        regions.map(regionItem => {
+          const isExpanded = expandedRegionId === regionItem.region_id;
+          const animatedHeight = branchHeights[regionItem.region_id];
+
+          return (
+            <View key={regionItem.region_id}>
+              <TouchableOpacity
+                style={[
+                  styles.locationOption,
+                  isExpanded && styles.selectedLocationOption,
+                ]}
+                onPress={() => {
+                  toggleRegion(regionItem);
+                  setSelectedRegion(regionItem);
+                }}>
+                <View style={styles.regionRow}>
+                  <Text
+                    style={[
+                      styles.locationOptionText,
+                      isExpanded && styles.selectedLocationText,
+                    ]}>
+                    {regionItem.name}
+                  </Text>
+                  <FontAwesome
+                    name={isExpanded ? 'angle-up' : 'angle-down'}
+                    size={20}
+                    color="#888"
+                  />
+                </View>
+              </TouchableOpacity>
+
+              <Animated.View
+                style={{height: animatedHeight, overflow: 'hidden'}}>
+                {isExpanded &&
+                  branchesForRegion.map((b, idx) => (
+                    <TouchableOpacity
+                      key={b.id}
+                      style={[
+                        styles.locationOption,
+                        selectedBranch?.id === b.id &&
+                          styles.selectedLocationOption,
+                      ]}
+                      onPress={() => setSelectedBranch(b)}>
+                      <Text
+                        style={[
+                          styles.locationOptionText,
+                          selectedBranch?.id === b.id &&
+                            styles.selectedLocationText,
+                        ]}>
+                        {idx + 1}. {b.name}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+              </Animated.View>
             </View>
-          </TouchableOpacity>
-        ) : (
-          title && <Text style={styles.headerTitle}>{title}</Text>
-        )}
-      </View>
+          );
+        }),
+      [
+        regions,
+        expandedRegionId,
+        branchHeights,
+        branchesForRegion,
+        selectedBranch,
+        toggleRegion,
+      ],
+    );
 
-      <View style={styles.headerRight}>
-        <TouchableOpacity>
-          <Image
-            source={images.services}
-            style={styles.serviceIcon}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
+    return (
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          {showBack ? (
+            <TouchableOpacity
+              onPress={handleGoBack}
+              style={styles.backArrowBlock}>
+              <Image
+                source={images.arrow}
+                style={styles.arrowIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.profileIconBlock}>
+              <Image
+                source={images.profile}
+                style={styles.profileIcon}
+                resizeMode="contain"
+              />
+            </View>
+          )}
 
-        <TouchableOpacity>
-          <Image
-            source={images.wallet}
-            style={styles.walletIcon}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-
-        {title !== 'menu' && (
-          <TouchableOpacity
-            onPress={() =>
-              navigateTo(navigation, routes.Home as keyof MainStackParamList)
-            }>
-            <Image
-              source={images.filter}
-              style={styles.filterIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Location Modal */}
-      <Modal
-        animationType="slide"
-        transparent
-        visible={locationModalVisible}
-        onRequestClose={handleCloseModal}>
-        <TouchableWithoutFeedback onPress={handleCloseModal}>
-          <View style={styles.modalOverlay}>
-            <TouchableWithoutFeedback>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>📍 Select Region & Branch</Text>
-                <ScrollView style={{maxHeight: 400}}>{regionList}</ScrollView>
-
-                <View style={styles.buttonRow}>
-                  <TouchableOpacity
-                    style={[styles.updateButton, {marginRight: 8}]}
-                    disabled={!selectedBranch}
-                    onPress={handleBranchUpdate}>
-                    <Text style={styles.updateButtonText}>Update</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.cancelButton}
-                    onPress={handleCloseModal}>
-                    <Text style={styles.cancelButtonText}>Cancel</Text>
-                  </TouchableOpacity>
+          {showLocation ? (
+            <TouchableOpacity
+              style={styles.dropdownIcon}
+              onPress={handleOpenModal}>
+              <View style={{marginLeft: 6}}>
+                <Text style={styles.locationText}>
+                  {branch?.name || 'Fetching location...'}
+                </Text>
+                <View style={styles.locationInfo}>
+                  <Image source={images.map} style={styles.mapIcon} />
+                  <Text style={styles.regionText}>{region?.name ?? ''}</Text>
                 </View>
               </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </View>
-  );
-};
+            </TouchableOpacity>
+          ) : (
+            title && <Text style={styles.headerTitle}>{title}</Text>
+          )}
+        </View>
+
+        <View style={styles.headerRight}>
+          <TouchableOpacity>
+            <Image
+              source={images.services}
+              style={styles.serviceIcon}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity>
+            <Image
+              source={images.wallet}
+              style={styles.walletIcon}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+
+          {title !== 'menu' && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateTo(navigation, routes.Home as keyof MainStackParamList)
+              }>
+              <Image
+                source={images.filter}
+                style={styles.filterIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* Location Modal */}
+        <Modal
+          animationType="slide"
+          transparent
+          visible={locationModalVisible}
+          onRequestClose={handleCloseModal}>
+          <TouchableWithoutFeedback onPress={handleCloseModal}>
+            <View style={styles.modalOverlay}>
+              <TouchableWithoutFeedback>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>
+                    📍 Select Region & Branch
+                  </Text>
+                  <ScrollView style={{maxHeight: 400}}>{regionList}</ScrollView>
+
+                  <View style={styles.buttonRow}>
+                    <TouchableOpacity
+                      style={[styles.updateButton, {marginRight: 8}]}
+                      disabled={!selectedBranch}
+                      onPress={handleBranchUpdate}>
+                      <Text style={styles.updateButtonText}>Update</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.cancelButton}
+                      onPress={handleCloseModal}>
+                      <Text style={styles.cancelButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      </View>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   header: {
