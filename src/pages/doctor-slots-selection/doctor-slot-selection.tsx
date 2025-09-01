@@ -189,7 +189,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           OrganisationUID: branch?.organisation?.organisationid.toString(),
           transaction_id: paymenttype ? txnid ?? '' : '',
           price: consultationFee ?? 0,
-          payment_type: paymenttype ? 'ONLINE' : 'CASH',
+          payment_type: paymenttype ? 'PayU' : 'PAYATHOSPITAL',
           orgcode: branch?.organisation?.code || '',
           Visittype: 'First Visit',
           careprovider_code: doctorDetail.new_doctor_UID,

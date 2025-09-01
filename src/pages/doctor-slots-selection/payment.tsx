@@ -95,7 +95,7 @@ const PayUWebView: React.FC = ({route}: any) => {
     const payload = {
       orgcode: finalPayload?.orgcode ?? '40FD',
       mrn: finalPayload?.mrn ?? 'BAHTMP-761149',
-      paidby: finalPayload?.payment_type == 'CASH' ? 'PAYATHOSPOTAL' : 'PAYU',
+      paidby: finalPayload?.payment_type == 'CASH' ? 'PAYATHOSPOTAL' : 'PayU',
       ConsultationFee: finalPayload?.price.toString() ?? '0',
       RegistrationFee: finalPayload.registrationFee.toString() ?? '0',
       comments: `Transaction ID:${finalPayload?.transaction_id},Booking Number:${bookingId},`,

@@ -6,7 +6,7 @@ export {DoctorsList} from './doctor-list';
 export {
   DoctorSlotSelection,
   PayUWebView,
-  SlotConfirmation,
+  // SlotConfirmation,
 } from './doctor-slots-selection';
 export {BookScan} from './scanning';
 export {MedicalRecord} from './reports';
