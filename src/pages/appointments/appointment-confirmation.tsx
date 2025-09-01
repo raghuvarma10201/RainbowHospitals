@@ -26,7 +26,7 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
   const h = Dimensions.get('window').height;
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {status} = route.params;
+  const {status} = route.params ?? 'Confirmed';
 
   const [visible, setVisible] = React.useState(false);
   const showModal = () => setVisible(true);
@@ -57,7 +57,7 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <Text style={styles.acTitle}>
-            Appointment {status || 'Confirmed'}
+            Appointment {status ?? 'Confirmed'}
           </Text>
           <Text style={styles.acSubTitle}>
             Thank you for booking your appointment. We appreciate your trust and

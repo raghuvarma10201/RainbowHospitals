@@ -26,7 +26,7 @@ const downloadApiLog = async (msg: string) => {
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 180000,
 });
 
 /* -------- 1. Refresh helper -------- */

@@ -10,7 +10,7 @@ import {useSettings} from './settings-context';
 
 type TimerContextType = {
   secondsLeft: number;
-  startTimer: () => void;
+  startTimer: (timeLeft: number) => void;
   clearTimers: () => void;
   physicalInterval: number | null;
   joinEnableOffsetSeconds: number | null;
@@ -26,23 +26,19 @@ const TimerProvider = ({children}: {children: React.ReactNode}) => {
 
   const {settings} = useSettings();
 
-  const startTimer = () => {
+  const startTimer = (timeLeft: number) => {
     clearTimers();
 
-    if (settings && settings.physicalBookingInterval > 0) {
-      setSecondsLeft(settings.physicalBookingInterval);
+    setSecondsLeft(timeLeft);
 
-      intervalRef.current = setInterval(() => {
-        setSecondsLeft(prev => prev - 1);
-      }, 1000);
+    intervalRef.current = setInterval(() => {
+      setSecondsLeft(prev => prev - 1);
+    }, 1000);
 
-      timeoutRef.current = setTimeout(() => {
-        clearTimers();
-        navigation.navigate('Home' as never);
-      }, settings.physicalBookingInterval * 1000);
-    } else {
-      console.warn('⚠️ Invalid timer value. Timer not started.');
-    }
+    timeoutRef.current = setTimeout(() => {
+      clearTimers();
+      navigation.navigate('Home' as never);
+    }, timeLeft * 1000);
   };
 
   const clearTimers = () => {

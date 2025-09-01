@@ -1,20 +1,27 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, View} from 'react-native';
 import {sha512} from 'js-sha512';
-import {useNavigation} from '@react-navigation/native';
+import {
+  CommonActions,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
 import {WebView} from 'react-native-webview';
 import {
   API_BASE_URL,
   PAYU_MERCHENT_KEY,
   PAYU_MERCHENT_SALT,
+  routes,
 } from '../../utils/enums';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../types/navigation';
 import {useApp} from '../../context/app-context';
 import {ToastService} from '../../utils/service-handlers';
 import {advancePay, bookAppointment} from '../../services/common';
+import {useTimer} from '../../context/timer-context';
 
 const PayUWebView: React.FC = ({route}: any) => {
+  const {secondsLeft} = useTimer();
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {finalPayload, bookingId, payuUrl} = route.params;
@@ -52,6 +59,20 @@ const PayUWebView: React.FC = ({route}: any) => {
     fetchHash();
   }, []);
 
+  useEffect(() => {
+    console.log(secondsLeft);
+
+    if (secondsLeft == 0) {
+      ToastService.error('Payment Timeout');
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: routes.Dashboard}],
+        }),
+      );
+    }
+  }, [secondsLeft]);
+
   const handleNavigationChange = (navState: {url: string}) => {
     try {
       const url = navState.url;
@@ -87,7 +108,8 @@ const PayUWebView: React.FC = ({route}: any) => {
       const response = await advancePay(payload);
       console.log(response, payload);
 
-      if (response && response.status == 200 && response.success == true) {
+      if (response && response?.status == 200 && response?.success == true) {
+        ToastService.success('appointment Booked Successfully');
         navigation.navigate('AppointmentConfirmed');
       } else {
         ToastService.error(response.message);

@@ -337,7 +337,9 @@ const Header = forwardRef<any, HeaderProps>(
                 </Text>
                 <View style={styles.locationInfo}>
                   <Image source={images.map} style={styles.mapIcon} />
-                  <Text style={styles.regionText}>{region?.name ?? ''}</Text>
+                  <Text style={styles.regionText}>
+                    {region?.name ?? 'loading...'}
+                  </Text>
                   <FontAwesome
                     name={'angle-down'}
                     size={w * 0.045}

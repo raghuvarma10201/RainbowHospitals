@@ -62,6 +62,8 @@ const Dashboard: React.FC = () => {
           date,
           OrganisationUID: branch?.organisation?.organisationid.toString(),
         });
+        console.log(data);
+
         setAppointments(
           data
             .filter((item: upcomingApointment) =>
@@ -107,7 +109,9 @@ const Dashboard: React.FC = () => {
             {/* GREETING TEXT */}
             <View style={styles.textHelloCard}>
               <Text style={styles.helloSmall}>Hello,</Text>
-              <Text style={styles.helloName}>{profile?.PatientName}</Text>
+              <Text style={styles.helloName}>
+                {profile?.PatientName ?? 'User'}
+              </Text>
               <Text style={styles.helloSmall}>We are here to help!</Text>
             </View>
           </View>
@@ -127,10 +131,12 @@ const Dashboard: React.FC = () => {
             onMomentumScrollEnd={handleScrollEnd}
           />
           {/* PAGINATION DOTS COMPONENT */}
-          <PaginationDots
-            data={appointments}
-            activeIndex={activeAppointmentIndex}
-          />
+          {appointments.length > 1 && (
+            <PaginationDots
+              data={appointments}
+              activeIndex={activeAppointmentIndex}
+            />
+          )}
           {/* QUICK ACTIONS */}
           <QuickActions navigation={navigation} />
         </View>

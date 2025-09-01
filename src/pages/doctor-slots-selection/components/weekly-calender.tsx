@@ -1,6 +1,7 @@
 import React, {useState, useMemo, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {adjust} from '../../../utils/common-functions';
+import {h} from '../../../constants/constants';
 
 type Session = {
   SessionDate: string;
@@ -158,8 +159,7 @@ export default WeeklyCalendar;
 
 const styles = StyleSheet.create({
   container: {
-    margin: 16,
-    paddingVertical: 10,
+    marginBottom: h * 0.01,
   },
   header: {
     flexDirection: 'row',

@@ -10,10 +10,10 @@ import {
 import {IMG_BASE_URL} from '../../../utils/enums';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../../navigation/types';
+import {MainStackParamList} from '../../../types/navigation';
 import PaginationDots from '../../../components/pagination-dots';
 import {adjust} from '../../../utils/common-functions';
-import {pallette, w} from '../../../constants/constants';
+import {h, pallette, w} from '../../../constants/constants';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
     fontSize: adjust(10),
     color: pallette.black,
     width: '100%',
+    minHeight: h * 0.05,
   },
   paginationContainer: {
     flexDirection: 'row',
