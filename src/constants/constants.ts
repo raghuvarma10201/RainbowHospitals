@@ -15,6 +15,8 @@ export const pallette = {
   dark_purple: '#3C2871', // Midnight Blue (Deep Violet)
   amethyst: '#8a3ab9', // Amethyst
   electric_indigo: '#6200ee',
+  rainbow: '#472D7A',
+  light_rainbow: '#00B1AC',
 };
 
 export const doctor_img =
