@@ -10,7 +10,14 @@ import {h, pallette, w} from '../constants/constants';
 import {adjust} from '../utils';
 import {FC, useCallback, useState} from 'react';
 import {Dropdown} from 'react-native-element-dropdown';
+import {
+  CodeField,
+  Cursor,
+  useBlurOnFulfill,
+  useClearByFocusCell,
+} from 'react-native-confirmation-code-field';
 
+const CELL_COUNT = 6;
 const local_data = [
   {value: '1', lable: '+91'},
   {value: '2', lable: '+92'},
@@ -21,9 +28,9 @@ interface commonauth {
   subTxt: string;
   input: string;
   btnTxt: string;
-  handleNumberChange: any;
-  handleNumberBlur: any;
-  value: any;
+  handleNumberChange?: any;
+  handleNumberBlur?: any;
+  formik: any;
 }
 
 export const AuthCommonComponent: FC<commonauth> = ({
@@ -33,9 +40,15 @@ export const AuthCommonComponent: FC<commonauth> = ({
   btnTxt,
   handleNumberChange,
   handleNumberBlur,
-  value,
+  formik,
 }) => {
   const [country, setCountry] = useState('1');
+  const [value, setValue] = useState('');
+  const codeFieldRef = useBlurOnFulfill({value, cellCount: CELL_COUNT});
+  const [props, getCellOnLayoutHandler] = useClearByFocusCell({
+    value,
+    setValue,
+  });
 
   const handleCountryChange = useCallback((e: any) => {
     setCountry(e.value);
@@ -61,35 +74,88 @@ export const AuthCommonComponent: FC<commonauth> = ({
       <View style={styles.inputContainer}>
         <Text style={styles.inpHeading}>Enter {toEnter}</Text>
         <Text style={styles.inpSubHeading}>{subTxt}</Text>
-        <View style={styles.inputGroup}>
-          <Dropdown
-            style={styles.dropdown}
-            selectedTextStyle={styles.dropdownText}
-            placeholderStyle={styles.dropdownText}
-            maxHeight={h * 0.25}
-            value={country}
-            data={local_data}
-            valueField="value"
-            labelField="lable"
-            placeholder="Select country"
-            onChange={handleCountryChange}
-          />
-          <TextInput
-            keyboardType="numeric"
-            maxLength={10}
-            style={styles.input}
-            placeholder="Enter Mobile Number"
-            onChangeText={handleNumberChange}
-            onBlur={handleNumberBlur}
-            value={value}
-          />
-        </View>
-        <Text style={styles.inpSubHeading}>{subTxt}</Text>
-        <TouchableOpacity style={styles.btn}>
+        {input == 'mobile' ? (
+          <>
+            <View style={styles.inputGroup}>
+              <Dropdown
+                style={styles.dropdown}
+                selectedTextStyle={styles.dropdownText}
+                placeholderStyle={styles.dropdownText}
+                maxHeight={h * 0.25}
+                value={country}
+                data={local_data}
+                valueField="value"
+                labelField="lable"
+                placeholder="Select country"
+                onChange={handleCountryChange}
+              />
+              <TextInput
+                keyboardType="numeric"
+                maxLength={10}
+                style={styles.input}
+                placeholder="Enter Mobile Number"
+                onChangeText={handleNumberChange}
+                onBlur={handleNumberBlur}
+                value={formik.values.mobileNumber}
+              />
+            </View>
+
+            {formik.touched.mobileNumber && formik.errors.mobileNumber && (
+              <Text style={styles.error}>{formik.errors.mobileNumber}</Text>
+            )}
+          </>
+        ) : (
+          <>
+            <CodeField
+              ref={codeFieldRef as React.RefObject<TextInput>}
+              {...props}
+              value={value}
+              onChangeText={text => {
+                setValue(text.replace(/[^0-9]/g, '')),
+                  handleNumberChange(text.replace(/[^0-9]/g, ''));
+              }}
+              cellCount={CELL_COUNT}
+              rootStyle={styles.codeFieldRoot}
+              keyboardType="number-pad"
+              textContentType="oneTimeCode"
+              renderCell={({index, symbol, isFocused}) => (
+                <View
+                  key={index}
+                  style={[styles.cell, isFocused && styles.focusCell]}
+                  onLayout={getCellOnLayoutHandler(index)}>
+                  <Text style={styles.cellText}>
+                    {symbol || (isFocused ? <Cursor /> : null)}
+                  </Text>
+                </View>
+              )}
+            />
+            {formik.errors.otp && formik.touched.otp && (
+              <Text style={styles.error}>{formik.errors.otp}</Text>
+            )}
+          </>
+        )}
+        <Text
+          style={[
+            styles.inpSubHeading,
+            {fontSize: adjust(11)},
+          ]}>{`You will recieve an OTP on this mobile number /\nor on your registered email id as well`}</Text>
+        {input != 'mobile' && (
+          <TouchableOpacity>
+            <Text style={styles.resend}>{`Resend OTP`}</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          onPress={() => formik.handleSubmit()}
+          style={styles.btn}>
           <View style={styles.btnTxtCntnr}>
             <Text style={styles.btnTxt}>{btnTxt}</Text>
           </View>
-          <View style={styles.btnIcnCntnr}></View>
+          <View style={styles.btnIcnCntnr}>
+            <Image
+              source={require('../../assets/images/login-right-arrow.png')}
+              style={styles.rightArrow}
+            />
+          </View>
         </TouchableOpacity>
       </View>
     </>
@@ -140,6 +206,11 @@ const styles = StyleSheet.create({
     color: pallette.black,
     fontFamily: 'ProximaNovaA-Regular',
   },
+  resend: {
+    fontSize: adjust(11),
+    color: pallette.medium_turquoise,
+    fontFamily: 'ProximaNovaA-Semibold',
+  },
   inputGroup: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -148,9 +219,13 @@ const styles = StyleSheet.create({
     borderRadius: w * 0.01,
     borderWidth: 0.7,
     borderColor: pallette.dark_grey,
+    height: h * 0.04,
   },
   input: {
     fontSize: adjust(12),
+    color: pallette.black,
+    width: '80%',
+    fontFamily: 'ProximaNovaA-Regular',
   },
   dropdown: {
     height: h * 0.02,
@@ -165,13 +240,13 @@ const styles = StyleSheet.create({
     color: pallette.black,
   },
   btn: {
-    paddingVertical: h * 0.01,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     width: w * 0.5,
     borderWidth: 1,
     borderColor: pallette.medium_turquoise,
+    marginTop: h * 0.02,
   },
   btnTxtCntnr: {
     width: '80%',
@@ -183,7 +258,44 @@ const styles = StyleSheet.create({
     color: pallette.black,
   },
   btnIcnCntnr: {
-    width: '20%',
+    width: '21%',
+    height: h * 0.04,
     backgroundColor: pallette.medium_turquoise,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rightArrow: {
+    resizeMode: 'contain',
+    tintColor: pallette.black,
+    height: h * 0.04,
+    width: w * 0.05,
+  },
+  error: {
+    color: pallette.red,
+    marginBottom: h * 0.007,
+    fontSize: adjust(12),
+  },
+  codeFieldRoot: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  cell: {
+    width: h * 0.04,
+    height: h * 0.04,
+    borderWidth: 1,
+    borderColor: pallette.light_grey,
+    borderRadius: 8,
+    backgroundColor: pallette.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  focusCell: {
+    borderColor: pallette.electric_indigo,
+  },
+  cellText: {
+    fontSize: adjust(18),
+    textAlign: 'center',
+    color: pallette.black,
   },
 });
