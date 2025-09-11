@@ -26,6 +26,7 @@ import {ToastService} from '../../utils/service-handlers';
 import {AuthStackParamList} from '../../types/navigation';
 import {h, pallette, w} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
+import {AuthCommonComponent} from '../../components/auth-common';
 
 // ---------- STATIC DATA ----------
 const local_data = [
@@ -108,81 +109,23 @@ const Login: React.FC = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
       <ScrollView
-        contentContainerStyle={{flexGrow: 1, paddingBottom: h * 0.05}}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: h * 0.05,
+          backgroundColor: pallette.white,
+        }}
         keyboardShouldPersistTaps="handled">
-        {/* LOGO */}
-        <ImageBackground
-          source={images.logo}
-          style={styles.logo}
-          resizeMode="contain"
+        <AuthCommonComponent
+          toEnter={'Your Mobile No'}
+          subTxt={
+            'Log in or sign up to book appointments,\nview records and more.'
+          }
+          input={'mobile'}
+          btnTxt={'Request OTP'}
+          handleNumberChange={handleNumberChange}
+          handleNumberBlur={handleNumberBlur}
+          value={formik.values.mobileNumber}
         />
-        {/* TAGLINE & IMAGE */}
-        <View style={styles.taglineWrapper}>
-          <View style={styles.taglineBox}>
-            <View style={styles.beforeDot} />
-            <Text style={styles.tagline}>
-              Leading multi-specialty Hospital for pediatrics, obstetrics &
-              gynecology
-            </Text>
-          </View>
-          <Image
-            source={images.login}
-            style={styles.loginImg}
-            resizeMode="contain"
-          />
-        </View>
-        {/* FORM */}
-        <View style={styles.formContainer}>
-          <Text variant="headlineMedium" style={styles.title}>
-            SIGN IN
-          </Text>
-          <Text style={styles.label}>Mobile Number</Text>
-          {/* INPUT GROUP */}
-          <View style={styles.inputGroup}>
-            <Dropdown
-              style={styles.dropdown}
-              selectedTextStyle={styles.dropdownText}
-              placeholderStyle={styles.dropdownText}
-              maxHeight={h * 0.25}
-              value={country}
-              data={local_data}
-              valueField="value"
-              labelField="lable"
-              placeholder="Select country"
-              onChange={handleCountryChange}
-            />
-            <TextInput
-              keyboardType="numeric"
-              maxLength={10}
-              style={styles.input}
-              placeholder="Enter Mobile Number"
-              onChangeText={handleNumberChange}
-              onBlur={handleNumberBlur}
-              value={formik.values.mobileNumber}
-            />
-          </View>
-          {/* ERROR */}
-          {formik.touched.mobileNumber && formik.errors.mobileNumber && (
-            <Text style={styles.error}>{formik.errors.mobileNumber}</Text>
-          )}
-          {/* SUBMIT BUTTON */}
-          <TouchableOpacity
-            style={[
-              styles.button,
-              {
-                backgroundColor:
-                  formik.values.mobileNumber.length < 10 || loading
-                    ? pallette.dark_grey
-                    : pallette.dark_purple,
-              },
-            ]}
-            onPress={handleSubmit}
-            disabled={formik.values.mobileNumber.length < 10 || loading}>
-            <Text style={styles.buttonText}>
-              {loading ? 'Sending...' : 'Get OTP'}
-            </Text>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -192,12 +135,6 @@ export default Login;
 
 // ---------- STYLES ----------
 const styles = StyleSheet.create({
-  logo: {
-    alignSelf: 'center',
-    marginVertical: h * 0.05,
-    width: w * 0.8,
-    height: h * 0.09,
-  },
   taglineWrapper: {
     paddingLeft: w * 0.05,
   },
