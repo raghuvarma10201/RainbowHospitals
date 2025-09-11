@@ -119,8 +119,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',     
         width: '100%',
-        paddingLeft: w * 0.03,
-        
+        paddingLeft: w * 0.03,        
       },
   
 
