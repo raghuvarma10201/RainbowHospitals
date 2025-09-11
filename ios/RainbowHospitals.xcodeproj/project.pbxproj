@@ -22,6 +22,7 @@
 		B5C0479D3F39407CAC578710 /* libPods-RainbowHospitals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27C1F5537A4D8E37362940BD /* libPods-RainbowHospitals.a */; };
 		4470DEC3A4574CE68406E0CA /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73631E2F46474620BD51D05E /* BootSplash.storyboard */; };
 		ECAF88FCFC724C86B8BEA932 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA269BB9DA2C4F6392325E44 /* Colors.xcassets */; };
+		BBC80B2D71BF435E8DFDB8B6 /* ProximaNova-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 759CED1B36C44FB6ACF981A1 /* ProximaNova-Light.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +77,7 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		73631E2F46474620BD51D05E /* BootSplash.storyboard */ = {isa = PBXFileReference; name = "BootSplash.storyboard"; path = "RainbowHospitals/BootSplash.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		AA269BB9DA2C4F6392325E44 /* Colors.xcassets */ = {isa = PBXFileReference; name = "Colors.xcassets"; path = "RainbowHospitals/Colors.xcassets"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = folder.assetcatalog; explicitFileType = undefined; includeInIndex = 0; };
+		759CED1B36C44FB6ACF981A1 /* ProximaNova-Light.ttf */ = {isa = PBXFileReference; name = "ProximaNova-Light.ttf"; path = "../assets/fonts/ProximaNova-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -222,6 +224,7 @@
 				90F09294DA4C4D22A27CC074 /* ProximaNovaA-Bold.ttf */,
 				B6D357B8888E44EFB4282ECC /* ProximaNovaA-Regular.ttf */,
 				195CE71180CD48BFAED6C319 /* ProximaNovaA-Semibold.ttf */,
+				759CED1B36C44FB6ACF981A1 /* ProximaNova-Light.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				9152E8F49994DE325B436B28 /* PrivacyInfo.xcprivacy in Resources */,
 				4470DEC3A4574CE68406E0CA /* BootSplash.storyboard in Resources */,
 				ECAF88FCFC724C86B8BEA932 /* Colors.xcassets in Resources */,
+				BBC80B2D71BF435E8DFDB8B6 /* ProximaNova-Light.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

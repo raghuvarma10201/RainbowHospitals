@@ -37,6 +37,7 @@ const local_data = [
 const images = {
   logo: require('../../../assets/images/logo.png'),
   login: require('../../../assets/images/login-img.png'),
+  loginRightArrow: require('../../../assets/images/login-right-arrow.png'),
 };
 
 // ---------- FORMIC SCHEMA ----------
@@ -115,17 +116,94 @@ const Login: React.FC = () => {
           backgroundColor: pallette.white,
         }}
         keyboardShouldPersistTaps="handled">
-        <AuthCommonComponent
-          toEnter={'Your Mobile No'}
-          subTxt={
-            'Log in or sign up to book appointments,\nview records and more.'
-          }
-          input={'mobile'}
-          btnTxt={'Request OTP'}
-          handleNumberChange={handleNumberChange}
-          handleNumberBlur={handleNumberBlur}
-          value={formik.values.mobileNumber}
-        />
+        <View style={styles.container}>
+          {/* LOGO */}
+          <ImageBackground
+            source={images.logo}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+
+          <Text style={styles.headingLightText}>India's no. 1</Text>
+          <Text style={styles.headingText}>Women and Children</Text>
+          <Text style={styles.headingLightText}>Hospital Group</Text>
+        </View>
+
+        <Text style={styles.overFlowHeading}>Login / Register</Text>
+
+        <View style={styles.container}>
+          {/* FORM */}
+          <View style={styles.formContainer}>
+            <Text style={styles.title}>Enter Your Mobile No</Text>
+            <Text style={styles.label}>
+              Log in or sign up to book appointments, view records, and more.
+            </Text>
+            {/* INPUT GROUP */}
+            <View style={styles.inputGroup}>
+              <Dropdown
+                style={styles.dropdown}
+                selectedTextStyle={styles.dropdownText}
+                placeholderStyle={styles.dropdownText}
+                maxHeight={h * 0.25}
+                value={country}
+                data={local_data}
+                valueField="value"
+                labelField="lable"
+                placeholder="Select country"
+                onChange={handleCountryChange}
+              />
+              <TextInput
+                keyboardType="numeric"
+                maxLength={10}
+                style={styles.input}
+                placeholder="Enter Mobile Number"
+                onChangeText={handleNumberChange}
+                onBlur={handleNumberBlur}
+                value={formik.values.mobileNumber}
+              />
+            </View>
+            {/* ERROR */}
+            {formik.touched.mobileNumber && formik.errors.mobileNumber && (
+              <Text style={styles.error}>{formik.errors.mobileNumber}</Text>
+            )}
+
+            <Text
+              style={[
+                styles.label,
+                {fontSize: adjust(13), marginTop: h * 0.01},
+              ]}>
+              You will recive an OTP on this mobile number / or on your
+              registered email id as well
+            </Text>
+
+            {/* SUBMIT BUTTON */}
+            <TouchableOpacity
+              style={[
+                styles.button,
+                // {
+                //   backgroundColor:
+                //     formik.values.mobileNumber.length < 10 || loading
+                //       ? pallette.white
+                //       : pallette.dark_purple,
+                // },
+              ]}
+              onPress={handleSubmit}
+              disabled={formik.values.mobileNumber.length < 10 || loading}>
+              <Text style={styles.buttonText}>
+                {loading ? 'Sending...' : 'Request OTP'}
+              </Text>
+              <View style={styles.buttonArrowContainer}>
+                <Image
+                  style={[
+                    styles.buttonArrow,
+                    {width: w * 0.05, height: h * 0.03},
+                  ]}
+                  source={images.loginRightArrow}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -135,62 +213,67 @@ export default Login;
 
 // ---------- STYLES ----------
 const styles = StyleSheet.create({
+  logo: {
+    alignSelf: 'center',
+    marginVertical: h * 0.05,
+    width: w * 0.8,
+    height: h * 0.09,
+  },
   taglineWrapper: {
     paddingLeft: w * 0.05,
   },
-  taglineBox: {
-    width: w * 0.45,
-    padding: h * 0.012,
-    backgroundColor: pallette.dark_purple,
-    borderRadius: w * 0.025,
-    marginBottom: h * 0.02,
+  headingText: {
+    fontSize: adjust(33),
+    color: pallette.rainbow,
+    fontFamily: 'ProximaNovaA-Bold',
+    lineHeight: h * 0.04,
   },
-  beforeDot: {
-    position: 'absolute',
-    top: '40%',
-    right: '-10%',
-    width: w * 0.08,
-    height: w * 0.08,
-    backgroundColor: pallette.teal,
-    borderRadius: w * 0.1,
-    borderWidth: w * 0.02,
-    borderColor: pallette.white,
+
+  headingLightText: {
+    fontSize: adjust(33),
+    color: pallette.rainbow,
+    fontFamily: 'ProximaNova-Light',
+    lineHeight: h * 0.04,
   },
-  tagline: {
+
+  overFlowHeading: {
     fontSize: adjust(18),
     color: pallette.white,
-    paddingBottom: h * 0.025,
-  },
-  loginImg: {
-    height: h * 0.43,
-    width: '100%',
-    marginTop: -h * 0.15,
-    alignSelf: 'flex-end',
-    right: '-15%',
-  },
-  formContainer: {
-    paddingHorizontal: w * 0.05,
-  },
-  title: {
-    color: pallette.teal,
-    fontSize: adjust(18),
+    fontFamily: 'ProximaNovaA-Bold',
+    marginBottom: h * 0.02,
+    backgroundColor: pallette.light_rainbow,
+    width: w * 0.55,
+    padding: h * 0.01,
+    borderBottomRightRadius: h * 0.05,
+    borderBottomLeftRadius: h * 0.05,
     textAlign: 'center',
-    marginBottom: h * 0.01,
+    paddingLeft: w * 0.06,
+  },
+
+  formContainer: {},
+  title: {
+    color: pallette.black,
+    fontSize: adjust(20),
+    textAlign: 'left',
+    marginBottom: h * 0.005,
     fontFamily: 'ProximaNovaA-Bold',
   },
   label: {
-    fontSize: adjust(16),
+    fontSize: adjust(14),
     color: pallette.black,
-    marginBottom: h * 0.012,
-    textAlign: 'center',
+    marginBottom: h * 0.017,
+    textAlign: 'left',
+    fontFamily: 'ProximaNovaA-Regular',
   },
   inputGroup: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: h * 0.007,
     paddingHorizontal: w * 0.025,
-    backgroundColor: pallette.light_grey,
-    borderRadius: w * 0.02,
+    borderWidth: 1,
+    height: h * 0.055,
+    borderColor: pallette.dark_grey,
+    backgroundColor: pallette.white,
   },
   input: {
     flex: 1,
@@ -201,9 +284,9 @@ const styles = StyleSheet.create({
     height: h * 0.04,
     borderRightWidth: 2,
     borderRightColor: pallette.dark_grey,
-    width: w * 0.2,
-    marginRight: w * 0.02,
-    paddingHorizontal: w * 0.025,
+    width: 70,
+    marginRight: 10,
+    paddingHorizontal: 10,
   },
   dropdownText: {
     fontSize: adjust(14),
@@ -215,15 +298,36 @@ const styles = StyleSheet.create({
     fontSize: adjust(12),
   },
   button: {
-    borderRadius: h * 0.05,
-    paddingVertical: h * 0.015,
-    width: w * 0.5,
-    alignSelf: 'center',
+    width: w * 0.55,
+    height: h * 0.055,
     marginTop: h * 0.015,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 2,
+    color: pallette.black,
+    borderColor: pallette.light_rainbow,
   },
   buttonText: {
-    color: pallette.white,
-    fontSize: adjust(14),
+    color: pallette.black,
+    fontSize: adjust(15),
     textAlign: 'center',
+    paddingRight: w * 0.04,
+    fontFamily: 'ProximaNovaA-Bold',
+    paddingLeft: w * 0.07,
+    paddingVertical: h * 0.01,
+  },
+
+  buttonArrowContainer: {
+    width: w * 0.11,
+    backgroundColor: pallette.light_rainbow,
+    height: h * 0.055,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  buttonArrow: {
+    resizeMode: 'contain',
   },
 });
