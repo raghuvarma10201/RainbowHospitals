@@ -1,6 +1,7 @@
 // src/pages/index.ts
 export {Home} from './home';
 export {Dashboard} from './dashboard';
+export {Category} from './category';
 export {Specialities} from './specialities';
 export {DoctorsList} from './doctor-list';
 export {

@@ -1,6 +1,7 @@
 import {
   Home,
   Dashboard,
+  Category,
   Specialities,
   DoctorsList,
   DoctorSlotSelection,
@@ -24,10 +25,12 @@ import {AuthStackParamList, MainStackParamList} from '../types/navigation';
 type CombinedRouteNames = keyof (AuthStackParamList & MainStackParamList);
 
 export const routes: Record<CombinedRouteNames, CombinedRouteNames> = {
+  Category: 'Category',
   Login: 'Login',
   Otp: 'Otp',
   Registration: 'Registration',
   Dashboard: 'Dashboard',
+
   Specialities: 'Specialities',
   AppointmentConfirmed: 'AppointmentConfirmed',
   DoctorSlots: 'DoctorSlots',
@@ -47,6 +50,7 @@ export const routes: Record<CombinedRouteNames, CombinedRouteNames> = {
 };
 
 export const auth_screens = [
+  {name: routes.Category, component: Category},
   {name: routes.Login, component: Login},
   {name: routes.Otp, component: Otp},
   {name: routes.Registration, component: Registration},
@@ -54,6 +58,7 @@ export const auth_screens = [
 
 export const app_screens = [
   {name: routes.Dashboard, component: Dashboard},
+  {name: routes.Category, component: Category},
   {name: routes.Specialities, component: Specialities},
   {name: routes.DoctorsList, component: DoctorsList},
   {name: routes.DoctorSlots, component: DoctorSlotSelection},

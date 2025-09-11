@@ -12,6 +12,7 @@ export type AuthStackParamList = {
 
 export type MainStackParamList = {
   Dashboard: undefined;
+  Category: undefined;
   Specialities: {appointmentType: string};
   AppointmentConfirmed: undefined;
   DoctorSlots: {
