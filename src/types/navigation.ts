@@ -21,7 +21,11 @@ export type MainStackParamList = {
     OrganisationID: string;
     appointmentnumber?: string;
   };
-  DoctorsList: {specialityId: number; appointmentType: string};
+  DoctorsList: {
+    specialityId: number;
+    specialityName: string;
+    appointmentType: string;
+  };
   BookVaccination: undefined;
   VaccinesAdult: undefined;
   VaccinesPediatric: undefined;

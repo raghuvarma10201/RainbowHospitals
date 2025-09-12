@@ -46,6 +46,7 @@ const images = {
   services: require('../../assets/images/services-icon.png'),
   wallet: require('../../assets/images/wallet-icon.png'),
   filter: require('../../assets/images/filter-icon.png'),
+  notification: require('../../assets/images/notification-icon.png'),
 };
 
 const Header = forwardRef<any, HeaderProps>(
@@ -67,6 +68,7 @@ const Header = forwardRef<any, HeaderProps>(
     const {
       branch,
       region,
+      profile,
       updateAllBranch,
       updateBranch,
       updateRegion,
@@ -333,7 +335,8 @@ const Header = forwardRef<any, HeaderProps>(
               onPress={handleOpenModal}>
               <View style={{marginLeft: w * 0.02}}>
                 <Text style={styles.locationText}>
-                  {branch?.name || 'Fetching location...'}
+                  {/* {branch?.name || 'Fetching location...'} */}
+                  {profile?.PatientName ?? 'User'}
                 </Text>
                 <View style={styles.locationInfo}>
                   <Image source={images.map} style={styles.mapIcon} />
@@ -358,6 +361,14 @@ const Header = forwardRef<any, HeaderProps>(
             <Image
               source={images.services}
               style={styles.serviceIcon}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity>
+            <Image
+              source={images.notification}
+              style={styles.notificationIcon}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -430,6 +441,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
     paddingVertical: 10,
+    borderBottomLeftRadius: w * 0.07,
+    borderBottomRightRadius: w * 0.07,
   },
   headerLeft: {flexDirection: 'row', alignItems: 'center'},
   profileIconBlock: {
@@ -456,7 +469,7 @@ const styles = StyleSheet.create({
   headerRight: {flexDirection: 'row', alignItems: 'center', gap: w * 0.03},
   dropdownIcon: {marginLeft: 0, padding: 4},
   locationText: {
-    fontSize: adjust(14),
+    fontSize: adjust(12),
     color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'center',
@@ -505,7 +518,8 @@ const styles = StyleSheet.create({
   updateButtonText: {color: 'white', fontWeight: '600'},
   cancelButton: {paddingVertical: 10, paddingHorizontal: 20},
   cancelButtonText: {color: pallette.dark_grey, fontWeight: '600'},
-  serviceIcon: {width: w * 0.07, height: w * 0.07},
+  serviceIcon: {width: w * 0.06, height: w * 0.06},
+  notificationIcon: {width: w * 0.05, height: w * 0.05},
   walletIcon: {width: w * 0.065, height: w * 0.065},
   filterIcon: {width: w * 0.06, height: w * 0.06},
 });

@@ -22,15 +22,20 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
 
   return (
     <View style={style}>
-      {/* --- Search Input Block --- */}
-      <View style={styles.searchBlock}>
+      <View style={styles.container}>
+        <View style={styles.iconContainer}>
+          <Image
+            source={require('../../assets/images/search-icon.png')}
+            style={styles.icon}
+          />
+        </View>
         <TextInput
           mode="flat"
-          style={styles.searchFormInput}
-          placeholder="Search"
+          style={styles.input}
+          placeholder="Doctor/Specialty"
           value={search}
           onChangeText={setSearch}
-          placeholderTextColor={pallette.white}
+          placeholderTextColor={pallette.light_grey}
           underlineColor="transparent"
           activeUnderlineColor="transparent"
           theme={{
@@ -41,14 +46,14 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
             },
           }}
         />
-        <Image
-          source={require('../../assets/images/search-icon.png')}
-          style={styles.formInputIcon}
-        />
       </View>
-
-      {/* --- Dropdown Location Selector --- */}
-      <View style={styles.searchBlock}>
+      <View style={styles.container}>
+        <View style={styles.iconContainer}>
+          <Image
+            source={require('../../assets/images/map-icon.png')}
+            style={styles.icon}
+          />
+        </View>
         <Dropdown
           style={styles.dropdownSelect}
           selectedTextStyle={styles.selectedTextCountry}
@@ -63,65 +68,63 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
           activeColor={pallette.white}
           onChange={e => setCountry(e.value)}
         />
-        <Image
-          source={require('../../assets/images/map-icon.png')}
-          style={styles.formInputIcon}
-        />
       </View>
     </View>
   );
 };
-
 export default memo(SearchLocationBlock); // ✅ Memoized for performance
 
 // ---------- STYLES ----------
 const styles = StyleSheet.create({
-  searchBlock: {
-    height: h * 0.05,
+  container: {
+    backgroundColor: pallette.white,
+    flexDirection: 'row',
+    borderRadius: w * 0.1,
+    borderWidth: 0.3,
+    borderColor: pallette.light_grey,
+    paddingRight: w * 0.03,
+  },
+  iconContainer: {
     backgroundColor: pallette.medium_turquoise,
+    width: w * 0.12,
+    height: h * 0.04,
     borderRadius: w * 0.1,
-    paddingHorizontal: w * 0.02,
     justifyContent: 'center',
-    marginBottom: h * 0.01, // added small gap for better UI separation
+    alignItems: 'center',
   },
-  searchFormInput: {
-    height: h * 0.05,
-    borderRadius: w * 0.1,
-    paddingLeft: w * 0.03,
-    fontSize: adjust(12),
-    color: pallette.white,
-    backgroundColor: 'transparent',
-    fontFamily: 'ProximaNovaA-Regular',
-    width: w * 0.4,
-  },
-  formInputIcon: {
-    width: w * 0.04,
-    height: h * 0.02,
-    position: 'absolute',
-    left: w * 0.03,
+  icon: {
+    height: '80%',
+    width: '50%',
+    resizeMode: 'contain',
     tintColor: pallette.white,
   },
+  input: {
+    height: h * 0.04,
+    width: w * 0.28,
+    color: pallette.black,
+    backgroundColor: pallette.white,
+    borderRadius: w * 0.1,
+    fontSize: adjust(11),
+    fontFamily: 'ProximaNovaA-Regular',
+  },
   dropdownSelect: {
-    height: h * 0.05,
-    paddingLeft: w * 0.07,
-    width: w * 0.4,
-    justifyContent: 'center',
+    height: h * 0.04,
+    width: w * 0.18,
+    marginLeft: w * 0.01,
   },
   placeholderCountry: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: adjust(12),
-    color: pallette.white,
+    fontSize: adjust(11),
+    color: pallette.light_grey,
   },
   selectedTextCountry: {
-    fontSize: adjust(12),
-    color: pallette.white,
+    fontSize: adjust(11),
+    color: pallette.dark_grey,
   },
   dropdownList: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: adjust(12),
-    marginLeft: 0,
-    marginRight: 5,
-    padding: 0,
-    textAlign: 'right',
+    fontSize: adjust(11),
+    width: w * 0.3,
+    marginLeft: -(w * 0.1),
   },
 });

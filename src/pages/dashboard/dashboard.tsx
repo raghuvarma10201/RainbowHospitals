@@ -21,6 +21,7 @@ import {
   Banners,
   PaginationDots,
   SearchLocationBlock,
+  Footer,
 } from '../../components';
 
 // ---------- OTHER IMPORTS ----------
@@ -31,23 +32,32 @@ import {MainStackParamList} from '../../types/navigation';
 import {ToastService} from '../../utils/service-handlers';
 import {upcomingApointment} from '../../utils/types';
 import {adjust} from '../../utils/common-functions';
+import CategorySelection from '../../components/category-selection';
 
 // ---------- STATIC DATA OUTSIDE COMPONENT ----------
 const images = {
-  banner: require('../../../assets/images/slide1.png'),
+  women_banner: require('../../../assets/images/womancare-img.png'),
+  child_banner: require('../../../assets/images/childcare-img.png'),
+  fertility_banner: require('../../../assets/images/fertilitycare-img.png'),
   search: require('../../../assets/images/search-icon.png'),
   location: require('../../../assets/images/map-icon.png'),
   call: require('../../../assets/images/call-icon.png'),
+  childCare: require('../../../assets/images/birth-icon.png'),
 };
-
-const banners = Array(3).fill(images.banner);
 
 // ---------- COMPONENT ----------
 const Dashboard: React.FC = () => {
   // ---------- STATE AND CONTEXT DECLARATION ----------
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {profile, branch} = useApp();
+  const {branch, category} = useApp();
+  const banners = Array(3).fill(
+    category == 'Child Care'
+      ? images.child_banner
+      : category == 'Women Care'
+      ? images.women_banner
+      : images.fertility_banner,
+  );
   const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
   const [activeindex, setActiveindex] = useState(0);
   const [activeAppointmentIndex, setActiveAppointmentIndex] = useState(0);
@@ -102,69 +112,22 @@ const Dashboard: React.FC = () => {
       <Header showLocation showBack={false} title="home" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
-          {/* GREETING CARD */}
-          <View style={styles.helloCard}>
-            {/* Search Location Block Component */}
-            <SearchLocationBlock style={styles.searchLocationBlock} />
-            {/* GREETING TEXT */}
-            <View style={styles.textHelloCard}>
-              <Text style={styles.helloSmall}>Hello,</Text>
-              <Text style={styles.helloName}>
-                {profile?.PatientName ?? 'User'}
-              </Text>
-              <Text style={styles.helloSmall}>We are here to help!</Text>
-            </View>
-          </View>
-          {/* UPCOMING APPOINTMENTS */}
-          <FlatList
-            data={appointments}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(_, index) => index.toString()}
-            renderItem={({item}) => (
-              <UpcomingAppointmentCard
-                appointment={item}
-                navigation={navigation}
-              />
-            )}
-            onMomentumScrollEnd={handleScrollEnd}
-          />
-          {/* PAGINATION DOTS COMPONENT */}
-          {appointments.length > 1 && (
-            <PaginationDots
-              data={appointments}
-              activeIndex={activeAppointmentIndex}
-            />
-          )}
-          {/* QUICK ACTIONS */}
+          <SearchLocationBlock style={styles.searchLocationBlock} />
+          <CategorySelection />
           <QuickActions navigation={navigation} />
+          <Banners
+            images={banners}
+            activeindex={activeindex}
+            setActiveindex={setActiveindex}
+            height={h * 0.3}
+            width={w * 0.96}
+            itemWidth={w * 0.7}
+            resizeMode={'cover'}
+          />
+          <PaginationDots data={banners} activeIndex={activeindex} />
         </View>
-        {/* BANNERS */}
-        <Banners
-          images={banners}
-          activeindex={activeindex}
-          setActiveindex={setActiveindex}
-          height={h * 0.2}
-          resizeMode="cover"
-          width={w * 0.95}
-          marginVertical={w * 0.01}
-        />
-        {/* PAGINATION DOTS COMPONENT */}
-        <PaginationDots data={banners} activeIndex={activeindex} />
       </ScrollView>
-      {/* FOOTER CALL BUTTON */}
-      <View style={styles.footerCall}>
-        <TouchableOpacity style={styles.footerCallButton}>
-          <View style={styles.footerCallButtonIcon}>
-            <Image
-              source={images.call}
-              style={styles.footerCallButtonIconImage}
-            />
-          </View>
-          <Text style={styles.footerCallButtonText}>Call</Text>
-        </TouchableOpacity>
-      </View>
+      <Footer />
     </View>
   );
 };
@@ -184,116 +147,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: w * 0.02,
   },
-  helloCard: {
-    backgroundColor: pallette.teal,
-    borderRadius: w * 0.03,
-    paddingVertical: h * 0.02,
-    paddingHorizontal: w * 0.03,
-    marginTop: h * 0.01,
-  },
   searchLocationBlock: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  searchBlock: {
-    height: h * 0.05,
-    backgroundColor: pallette.medium_turquoise,
-    borderRadius: w * 0.1,
-    paddingHorizontal: w * 0.02,
-    justifyContent: 'center',
-  },
-  searchFormInput: {
-    height: h * 0.05,
-    borderRadius: w * 0.1,
-    paddingLeft: w * 0.03,
-    fontSize: adjust(12),
-    color: pallette.white,
-    backgroundColor: 'transparent',
-    fontFamily: 'ProximaNovaA-Regular',
-    width: w * 0.4,
-  },
-  formInputIcon: {
-    width: w * 0.04,
-    height: h * 0.02,
-    position: 'absolute',
-    left: w * 0.03,
-    tintColor: pallette.white,
-  },
-  dropdownSelect: {
-    height: h * 0.02,
-    paddingLeft: w * 0.07,
-    width: w * 0.4,
-  },
-  placeholderCountry: {
-    fontFamily: 'ProximaNovaA-Regular',
-    fontSize: adjust(12),
-    color: pallette.white,
-  },
-  selectedTextContry: {
-    fontSize: adjust(12),
-    color: pallette.white,
-  },
-  dropdownList: {
-    fontFamily: 'ProximaNovaA-Regular',
-    fontSize: adjust(12),
-    marginLeft: 0,
-    marginRight: 5,
-    padding: 0,
-    textAlign: 'right',
-  },
-  textHelloCard: {
-    marginTop: h * 0.02,
-    paddingHorizontal: w * 0.03,
-  },
-  helloSmall: {
-    fontFamily: 'ProximaNovaA-Regular',
-    fontSize: adjust(14),
-    color: pallette.white,
-  },
-  helloName: {
-    fontFamily: 'ProximaNovaA-Semibold',
-    fontSize: adjust(18),
-    color: pallette.white,
-  },
-  footerCall: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  footerCallButton: {
-    alignItems: 'center',
-    paddingVertical: 10,
-    width: w * 0.25,
-    height: h * 0.06,
-    backgroundColor: pallette.teal,
-    borderTopEndRadius: 10,
-    borderTopStartRadius: 10,
-  },
-  footerCallButtonText: {
-    color: pallette.white,
-    fontSize: adjust(12),
-    fontFamily: 'ProximaNovaA-Regular',
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    paddingTop: 8,
-  },
-  footerCallButtonIcon: {
-    backgroundColor: pallette.dark_purple,
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: pallette.white,
-    width: w * 0.1,
-    height: w * 0.1,
-    position: 'absolute',
-    top: -(h * 0.025),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  footerCallButtonIconImage: {
-    width: w * 0.05,
-    height: w * 0.05,
+    marginVertical: h * 0.02,
+    width: w * 0.8,
+    alignSelf: 'center',
   },
 });

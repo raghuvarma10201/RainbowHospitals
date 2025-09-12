@@ -12,8 +12,10 @@ import {Header, Footer, Loader, NotFound} from '../../components';
 import {ToastService} from '../../utils/service-handlers';
 import {getDoctors, getSpecialities} from '../../services/common';
 import {MainStackParamList} from '../../types/navigation';
-import {h, pallette} from '../../constants/constants';
+import {h, pallette, w} from '../../constants/constants';
 import {useApp} from '../../context/app-context';
+import SearchLocationBlock from '../../components/search-location-block';
+import CategorySelection from '../../components/category-selection';
 
 // ---------- COMPONENT ----------
 const Specialities: React.FC = ({route}: any) => {
@@ -118,47 +120,12 @@ const Specialities: React.FC = ({route}: any) => {
       <Header showLocation ref={headerRef} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
+          <SearchLocationBlock style={styles.searchLocationBlock} />
+          <CategorySelection />
           <View style={styles.quickActions}>
             <SpecialityGrid items={specialities} type={appointmentType} />
           </View>
         </View>
-        {specialities.length > 0 && (
-          <>
-            <SpecialtyCarousal
-              specialties={specialities}
-              activeIndex={activeSpecialtyIndex}
-              onLeftPress={handleLeft}
-              onRightPress={handleRight}
-              onTabPress={(index, specialityId) => {
-                setActiveSpecialtyIndex(index);
-                setActiveDocIndex(0);
-                loadDoctors(specialityId, appointmentType);
-              }}
-            />
-            {doctors.length > 0 ? (
-              <DoctorCarousal
-                doctors={doctors}
-                activeindex={activeDocIndex}
-                setActiveindex={setActiveDocIndex}
-                height={h * 0.175}
-                autoScrollEnabled={false}
-                type={appointmentType}
-                organizationId={branch?.organisation?.organisationid}
-                nav={navigation}
-              />
-            ) : (
-              <NotFound
-                text={`No doctors found in ${
-                  branch?.name ?? 'this branch'
-                } for ${
-                  appointmentType?.toLowerCase() ?? 'the selected'
-                } appointment.`}
-                margin={h * 0.05}
-                change={() => headerRef.current?.openModal()}
-              />
-            )}
-          </>
-        )}
       </ScrollView>
       <Footer />
     </View>
@@ -177,8 +144,14 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: 10,
-    paddingBottom: 10,
+    paddingHorizontal: w * 0.02,
+  },
+  searchLocationBlock: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: h * 0.02,
+    width: w * 0.8,
+    alignSelf: 'center',
   },
   quickActions: {
     flexDirection: 'row',
