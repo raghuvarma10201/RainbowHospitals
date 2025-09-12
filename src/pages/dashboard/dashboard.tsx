@@ -119,10 +119,10 @@ const Dashboard: React.FC = () => {
             images={banners}
             activeindex={activeindex}
             setActiveindex={setActiveindex}
-            height={h * 0.3}
+            height={h * 0.35}
             width={w * 0.96}
             itemWidth={w * 0.7}
-            resizeMode={'cover'}
+            resizeMode={'contain'}
           />
           <PaginationDots data={banners} activeIndex={activeindex} />
         </View>

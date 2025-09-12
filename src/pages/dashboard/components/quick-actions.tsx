@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     marginHorizontal: w * 0.02,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: h * 0.02,
+    marginVertical: h * 0.04,
     paddingVertical: h * 0.01,
   },
   actionText: {
