@@ -185,27 +185,6 @@ const styles = StyleSheet.create({
     width: '85%',
     position: 'relative',
   },
-  categoryBtContainer: {
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    width: '100%',
-    paddingLeft: w * 0.03,
-  },
-
-  categoryButton: {
-    borderWidth: 1.3,
-    borderColor: pallette.light_rainbow,
-    backgroundColor: '#E1F1F2',
-    borderRadius: 30,
-    borderBottomRightRadius: 0,
-
-    marginTop: h * 0.01,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: h * 0.02,
-    width: '85%',
-    position: 'relative',
-  },
 
   categoryText: {
     fontSize: adjust(19),
