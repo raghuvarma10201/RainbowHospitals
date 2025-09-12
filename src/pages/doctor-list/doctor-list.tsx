@@ -52,10 +52,11 @@ const DoctorsList: React.FC = ({route}: any) => {
       const response = await getDoctors(
         '',
         specialityId,
-        branch?.id.toString(),
+        branch?.id,
         // '',
         '',
-        appointmentType,
+        // appointmentType,
+        '',
         1,
         10,
       );

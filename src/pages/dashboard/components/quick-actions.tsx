@@ -37,13 +37,12 @@ const QuickActionButton: React.FC<ActionItem & {style?: object}> = ({
     style={[
       styles.actionItem,
       {
-        marginVertical: cat != 'Women Care' ? h * 0.02 : h * 0.01,
-        paddingVertical:
-          cat == 'Fertility'
-            ? h * 0.02
-            : cat == 'Child Care'
-            ? h * 0.03
-            : h * 0.01,
+        borderColor:
+          cat == 'Child Care' ? pallette.medium_turquoise : pallette.amethyst,
+        backgroundColor:
+          cat == 'Child Care'
+            ? pallette.pale_turquoise
+            : pallette.light_amethyst,
       },
       style,
     ]}
@@ -54,20 +53,29 @@ const QuickActionButton: React.FC<ActionItem & {style?: object}> = ({
         source={icon}
         style={{
           position: 'absolute',
-          top: -(h * 0.1),
-          left: -(w * 0.05),
+          top: -(h * 0.07),
+          left: -(w * 0.1),
           height: w * 0.12,
           width: w * 0.12,
-          backgroundColor: pallette.dark_purple,
+          backgroundColor:
+            cat == 'Child Care' ? pallette.medium_turquoise : pallette.amethyst,
           tintColor: pallette.white,
           borderRadius: w,
           resizeMode: 'contain',
         }}
       />
     </View>
-    <View style={{width: '60%'}}>
-      <Text style={[styles.actionText]}>{label}</Text>
-    </View>
+    <Text style={[styles.actionText]}>{label}</Text>
+    <Image
+      source={require('../../../../assets/images/arrow-right-light-icon.png')}
+      style={[
+        styles.arrowIcon,
+        {
+          tintColor:
+            cat == 'Child Care' ? pallette.medium_turquoise : pallette.amethyst,
+        },
+      ]}
+    />
   </TouchableOpacity>
 );
 
@@ -94,13 +102,6 @@ const QuickActions: React.FC<QuickActionsProps> = ({navigation}) => {
       onPress: () => navigateTo(navigation, 'BookVaccination'),
       cat: category,
     },
-    {
-      icon: require('../../../../assets/images/video-consultation-icon.png'),
-      label: 'Pregnancy Tracker',
-      onPress: () =>
-        navigateTo(navigation, 'Specialities', {appointmentType: 'Video'}),
-      cat: category,
-    },
   ];
 
   // Render function for FlatList
@@ -125,7 +126,11 @@ const QuickActions: React.FC<QuickActionsProps> = ({navigation}) => {
       numColumns={3}
       keyExtractor={(_, index) => index.toString()}
       renderItem={renderItem}
-      contentContainerStyle={{paddingVertical: 10}}
+      contentContainerStyle={{
+        paddingVertical: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
     />
   );
 };
@@ -138,24 +143,33 @@ const styles = StyleSheet.create({
     marginBottom: h * 0.01,
   },
   actionItem: {
-    backgroundColor: pallette.pale_turquoise,
-    width: '29%',
-    height: h * 0.15,
+    width: w * 0.28,
+    height: h * 0.14,
     alignSelf: 'center',
     borderWidth: 1.5,
-    borderColor: pallette.medium_turquoise,
     borderBottomLeftRadius: w * 0.1,
     borderTopRightRadius: w * 0.1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
     marginHorizontal: w * 0.02,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: h * 0.02,
+    paddingVertical: h * 0.01,
   },
   actionText: {
     fontSize: adjust(12),
     color: pallette.dark_purple,
     fontFamily: 'ProximaNovaA-Bold',
     textAlign: 'left',
+    minHeight: h * 0.04,
+    width: '80%',
+  },
+  arrowIcon: {
+    height: w * 0.03,
+    width: w * 0.03,
+    resizeMode: 'contain',
+    position: 'absolute',
+    bottom: h * 0.005,
+    right: w * 0.01,
   },
 });
 

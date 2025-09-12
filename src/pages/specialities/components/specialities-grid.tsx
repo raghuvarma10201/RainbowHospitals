@@ -40,6 +40,8 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
     specialityId: number,
     specialityName: string,
   ) => {
+    console.log(specialityId);
+
     navigation.navigate('DoctorsList', {
       specialityId: specialityId,
       specialityName: specialityName,

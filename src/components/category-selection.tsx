@@ -26,7 +26,7 @@ const CategorySelection = () => {
             {
               backgroundColor:
                 category == 'Child Care'
-                  ? pallette.amethyst
+                  ? pallette.medium_turquoise
                   : pallette.dark_purple,
             },
           ]}>
