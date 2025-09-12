@@ -50,6 +50,7 @@
     "react-native-get-random-values": "1.11.0",
     "react-native-image-crop-picker": "^0.50.1",
     "react-native-immersive-mode": "https://github.com/jitsi/react-native-immersive-mode.git#38cc9001db24618bc0c61800f81e889bcfb6ff2c",
+    "react-native-linear-gradient": "^2.8.3",
     "react-native-localize": "^3.5.1",
     "react-native-modal-datetime-picker": "^18.0.0",
     "react-native-orientation-locker": "1.6.0",

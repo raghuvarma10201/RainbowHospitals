@@ -50,15 +50,16 @@ export const routes: Record<CombinedRouteNames, CombinedRouteNames> = {
 };
 
 export const auth_screens = [
-  {name: routes.Category, component: Category},
+  // {name: routes.Category, component: Category},
+  // {name: routes.Dashboard, component: Dashboard},
   {name: routes.Login, component: Login},
   {name: routes.Otp, component: Otp},
   {name: routes.Registration, component: Registration},
 ];
 
 export const app_screens = [
-  {name: routes.Dashboard, component: Dashboard},
   {name: routes.Category, component: Category},
+  {name: routes.Dashboard, component: Dashboard},
   {name: routes.Specialities, component: Specialities},
   {name: routes.DoctorsList, component: DoctorsList},
   {name: routes.DoctorSlots, component: DoctorSlotSelection},

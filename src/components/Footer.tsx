@@ -8,7 +8,7 @@ import {FooterButtonProps, FooterProps, NavProp} from '../types/components';
 import {MainStackParamList} from '../types/navigation';
 
 // ---------- VALUE IMPORTS ----------
-import {h, pallette} from '../constants/constants';
+import {h, pallette, w} from '../constants/constants';
 import {navigateTo, routes} from '../utils';
 
 // ---------- COMPONENT ----------
@@ -53,8 +53,8 @@ const Footer: FC<FooterProps> = ({activeIcon}) => {
             <Image
               source={source}
               style={{
-                width: 28,
-                height: 28,
+                width: w * 0.08,
+                height: w * 0.08,
                 tintColor:
                   activeIcon === icon ? pallette.dark_purple : pallette.white,
               }}
@@ -69,23 +69,20 @@ const Footer: FC<FooterProps> = ({activeIcon}) => {
 const styles = StyleSheet.create({
   footer: {
     position: 'absolute',
-    bottom: 0,
+    bottom: h * 0.03,
     left: 0,
     right: 0,
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
   footerButtonContainer: {
-    paddingVertical: 10,
-    paddingBottom: h * 0.025,
-    backgroundColor: pallette.teal,
+    paddingVertical: h * 0.012,
+    backgroundColor: pallette.dark_purple,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     width: '78%',
     paddingHorizontal: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
   },
   footerButton: {
     alignItems: 'center',

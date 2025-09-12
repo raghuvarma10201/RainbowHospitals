@@ -1,6 +1,6 @@
 // ---------- MODULE IMPORTS ----------
 import React, {useEffect, useState, useCallback, useRef} from 'react';
-import {Image, ScrollView, StyleSheet, View} from 'react-native';
+import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
@@ -13,8 +13,11 @@ import {getDoctors} from '../../services/common';
 import {ToastService} from '../../utils/service-handlers';
 import {useApp} from '../../context/app-context';
 import {MainStackParamList} from '../../types/navigation';
-import {h, pallette} from '../../constants/constants';
+import {h, pallette, w} from '../../constants/constants';
 import NotFound from '../../components/empty-text';
+import CategorySelection from '../../components/category-selection';
+import {LinearGradient} from 'react-native-linear-gradient';
+import {adjust} from '../../utils';
 
 // ---------- TYPES ----------
 interface DoctorSpeciality {
@@ -36,7 +39,7 @@ const DoctorsList: React.FC = ({route}: any) => {
   const headerRef = useRef<any>();
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {specialityId, appointmentType} = route.params;
+  const {specialityId, specialityName, appointmentType} = route.params;
   const {branch} = useApp();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [changeLocation, setChangeLocation] = useState<boolean>(false);
@@ -84,18 +87,28 @@ const DoctorsList: React.FC = ({route}: any) => {
       <Header showLocation ref={headerRef} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
-          {/* Banner Image */}
-          <Image
-            source={require('../../../assets/images/doctors-list-img.png')}
-            style={styles.banner}
-          />
-          {/* Search Location Block */}
           <SearchLocationBlock style={styles.searchLocationBlock} />
-          {/* Doctor List */}
+          <CategorySelection />
+          <View style={styles.specialtyRibbonContainer}>
+            <LinearGradient
+              colors={[pallette.white, pallette.light_amethyst]}
+              start={{x: 0, y: 0.5}}
+              end={{x: 1, y: 0.5}}
+              style={styles.gradient}
+            />
+            <View style={styles.specialtyContainer}>
+              <Text style={styles.specialtyName}>{specialityName}</Text>
+            </View>
+            <LinearGradient
+              colors={[pallette.light_amethyst, pallette.white]}
+              start={{x: 0, y: 0.5}}
+              end={{x: 1, y: 0.5}}
+              style={styles.gradient}
+            />
+          </View>
           <View style={styles.doctorsListContainer}>
             {doctors.length > 0 ? (
               doctors.map(doctor => (
-                // ---------- DOCTOR ROW COMPONENT ----------
                 <DoctorRow
                   key={doctor.id}
                   doctor={doctor}
@@ -137,21 +150,36 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingBottom: 10,
-  },
-  banner: {
-    height: h * 0.29,
-    width: '100%',
-    resizeMode: 'contain',
+    paddingHorizontal: w * 0.02,
   },
   searchLocationBlock: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    position: 'absolute',
-    width: '90%',
+    marginVertical: h * 0.02,
+    width: w * 0.8,
     alignSelf: 'center',
-    top: h * 0.2,
+  },
+  specialtyRibbonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: h * 0.04,
+  },
+  gradient: {
+    width: w * 0.15,
+    backgroundColor: 'red',
+    height: h * 0.04,
+  },
+  specialtyContainer: {
+    width: w * 0.6,
+    backgroundColor: pallette.amethyst,
+    height: h * 0.04,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  specialtyName: {
+    fontSize: adjust(12),
+    color: pallette.white,
+    fontFamily: 'ProximaNovaA-Regular',
   },
   doctorsListContainer: {
     paddingHorizontal: 15,

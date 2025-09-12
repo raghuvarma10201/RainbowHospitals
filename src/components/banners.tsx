@@ -11,6 +11,7 @@ import {
 
 // ---------- TYPE IMPORTS ----------
 import {BannerProps} from '../types/components';
+import {w} from '../constants/constants';
 
 // ---------- INTERVAL ----------
 const AUTO_SCROLL_INTERVAL = 3000;
@@ -68,7 +69,7 @@ const Banners: FC<BannerProps> = ({
                   width: itemWidth || width * 0.95,
                   marginVertical,
                   resizeMode,
-                  borderRadius: Dimensions.get('window').width * 0.04,
+                  marginHorizontal: 30,
                 }}
               />
             </View>

@@ -36,9 +36,13 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
     pages.push(items.slice(i, i + ITEMS_PER_PAGE));
   }
 
-  const navigateToDoctors = async (specialityId: number) => {
+  const navigateToDoctors = async (
+    specialityId: number,
+    specialityName: string,
+  ) => {
     navigation.navigate('DoctorsList', {
       specialityId: specialityId,
+      specialityName: specialityName,
       appointmentType: type,
     });
   };
@@ -55,7 +59,7 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
       {page.map((item: any) => (
         <TouchableOpacity
           key={item.icon_image}
-          onPress={() => navigateToDoctors(item.id)}>
+          onPress={() => navigateToDoctors(item.id, item?.name)}>
           <View style={styles.itemContainer}>
             <View
               style={[styles.iconBox, item.isSpecial && styles.specialItem]}>
@@ -69,8 +73,8 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
                 }
                 style={styles.icon}
               />
+              <Text style={styles.itemText}>{item.name}</Text>
             </View>
-            <Text style={styles.itemText}>{item.name}</Text>
           </View>
         </TouchableOpacity>
       ))}
@@ -102,15 +106,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   itemContainer: {
-    width: w * 0.25,
+    width: w * 0.3,
     alignItems: 'center',
     marginVertical: 10,
   },
   iconBox: {
-    width: w * 0.15,
-    height: w * 0.15,
-    backgroundColor: pallette.dark_purple,
-    borderRadius: 12,
+    width: w * 0.25,
+    height: w * 0.3,
+    backgroundColor: pallette.white,
+    borderWidth: 1,
+    borderColor: pallette.light_grey,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -118,9 +123,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#00bcd4',
   },
   icon: {
-    width: 40,
-    height: 40,
-    tintColor: 'white',
+    width: w * 0.2,
+    height: w * 0.2,
+    tintColor: pallette.dark_purple,
   },
   itemText: {
     marginTop: 6,
@@ -128,7 +133,6 @@ const styles = StyleSheet.create({
     fontSize: adjust(10),
     color: pallette.black,
     width: '100%',
-    minHeight: h * 0.05,
   },
   paginationContainer: {
     flexDirection: 'row',

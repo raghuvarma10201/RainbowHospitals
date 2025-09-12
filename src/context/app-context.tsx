@@ -18,6 +18,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [allbranch, setAllBranch] = useState<Branch[]>([]);
   const [region, setRegion] = useState<Region | null>(null);
   const [mrn, setMrn] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
   const [profile, setProfile] = useState<PatientProfile | null>(null);
   const [doctorDetails, setDoctorDetails] =
     useState<DoctorDetailsResponse | null>(null);
@@ -37,6 +38,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
     allbranch,
     region,
     mrn,
+    category,
     profile,
     doctorDetails,
     isvideoconsulation,
@@ -52,6 +54,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
     updateAllBranch: setAllBranch,
     updateRegion: setRegion,
     updateMrn: setMrn,
+    updateCategory: setCategory,
     updateProfile: setProfile,
     updateDoctorDetails: setDoctorDetails,
     updateVideoConsult: setIsvideoconsulation,
