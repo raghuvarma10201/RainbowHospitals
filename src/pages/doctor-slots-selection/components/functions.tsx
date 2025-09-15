@@ -7,6 +7,7 @@ import {
   getDoctorSlots,
 } from '../../../services/common';
 import {ToastService} from '../../../utils/service-handlers';
+import { pallette } from '../../../constants/constants';
 
 interface Slot {
   SlotID: string;
@@ -40,7 +41,7 @@ export const RenderSlot: React.FC<RenderSlotProps> = ({
 
   return (
     <TouchableOpacity
-      style={styles.timeBtn}
+      style={[styles.timeBtn,{backgroundColor: isSelected ? pallette.medium_turquoise : pallette.white}]}
       onPress={() => onSelect(item.SlotID, time)}>
       <Text style={[styles.timeTxt, isSelected && styles.selectedTime]}>
         {time}

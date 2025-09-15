@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import WeeklyCalendar from './weekly-calender';
 import {RenderSlot} from './functions';
 
@@ -10,7 +10,7 @@ interface DoctorSession {
 
 interface Slot {
   SlotID: string;
-  SessionStartDttm: string;
+  SessionStartDttm: string; // Example: "2025-09-15T09:30:00"
 }
 
 interface SlotSelectionSectionProps {
@@ -32,9 +32,18 @@ const SlotSelection: React.FC<SlotSelectionSectionProps> = ({
   onSelectSlot,
   styles,
 }) => {
-  const [viewAll, setViewAll] = useState(false);
-
   if (!sessions.length) return null;
+
+  // Helper: Split slots into morning/evening
+  const morningSlots = slots.filter(slot => {
+    const hour = new Date(slot.SessionStartDttm).getHours();
+    return hour < 12;
+  });
+
+  const eveningSlots = slots.filter(slot => {
+    const hour = new Date(slot.SessionStartDttm).getHours();
+    return hour >= 12;
+  });
 
   return (
     <View style={styles.calenderContainer}>
@@ -42,31 +51,60 @@ const SlotSelection: React.FC<SlotSelectionSectionProps> = ({
 
       {slots.length > 0 ? (
         <>
-          <Text style={[styles.centeredTxt, {marginVertical: 5}]}>
-            Available Time
-          </Text>
-          <FlatList
-            data={
-              slots.length > 10 ? (viewAll ? slots : slots.slice(0, 10)) : slots
-            }
-            contentContainerStyle={styles.timeList}
-            numColumns={5}
-            keyExtractor={(item, index) => `${item.SlotID}-${index}`}
-            renderItem={({item}) => (
-              <RenderSlot
-                item={item}
-                selectedTime={selectedTime}
-                onSelect={onSelectSlot}
-                styles={styles}
-              />
-            )}
-          />
-          {slots.length > 10 && (
-            <TouchableOpacity onPress={() => setViewAll(prev => !prev)}>
-              <Text style={styles.viewToggle}>
-                {viewAll ? 'View Less' : 'View More'}
+          {morningSlots.length > 0 && (
+            <>
+              <Text
+                style={[
+                  styles.centeredTxt,
+                  {marginVertical: 5, textAlign: 'left'},
+                ]}>
+                Morning Slots
               </Text>
-            </TouchableOpacity>
+              <FlatList
+                data={morningSlots}
+                contentContainerStyle={styles.timeList}
+                numColumns={5}
+                keyExtractor={(item, index) =>
+                  `${item.SlotID}-morning-${index}`
+                }
+                renderItem={({item}) => (
+                  <RenderSlot
+                    item={item}
+                    selectedTime={selectedTime}
+                    onSelect={onSelectSlot}
+                    styles={styles}
+                  />
+                )}
+              />
+            </>
+          )}
+
+          {eveningSlots.length > 0 && (
+            <>
+              <Text
+                style={[
+                  styles.centeredTxt,
+                  {marginVertical: 5, textAlign: 'left'},
+                ]}>
+                Evening Slots
+              </Text>
+              <FlatList
+                data={eveningSlots}
+                contentContainerStyle={styles.timeList}
+                numColumns={5}
+                keyExtractor={(item, index) =>
+                  `${item.SlotID}-evening-${index}`
+                }
+                renderItem={({item}) => (
+                  <RenderSlot
+                    item={item}
+                    selectedTime={selectedTime}
+                    onSelect={onSelectSlot}
+                    styles={styles}
+                  />
+                )}
+              />
+            </>
           )}
         </>
       ) : (
