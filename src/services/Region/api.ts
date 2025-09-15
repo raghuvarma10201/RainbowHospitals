@@ -26,6 +26,22 @@ export type Branch = {
   organisation: any;
 };
 
+export type Category = {
+  id: number;
+  coe_id: number;
+  UID: string;
+  name: string;
+  banner_desktop_image: string;
+  banner_mobile_image: string;
+  description: any;
+  status: number;
+  createdby: string;
+  updatedby: null;
+  createdAt: string;
+  updatedAt: string;
+  isDeleted: number;
+};
+
 export type Setting = {
   key: string;
   value: string;

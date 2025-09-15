@@ -1,4 +1,4 @@
-import {Branch, Region, Setting} from '../services/Region/api';
+import {Branch, Category, Region, Setting} from '../services/Region/api';
 import {
   AppointmentPayload,
   DoctorDetailsResponse,
@@ -11,7 +11,7 @@ interface AppContextProps {
   allbranch: Branch[];
   region: Region | null;
   mrn: string;
-  category: string;
+  category: any;
   profile: PatientProfile | null;
   doctorDetails: DoctorDetailsResponse | null;
   isvideoconsulation: boolean;
@@ -29,7 +29,7 @@ interface AppContextProps {
   updateAllBranch: (b: Branch[]) => void;
   updateRegion: (r: Region | null) => void;
   updateMrn: (m: string) => void;
-  updateCategory: (c: string) => void;
+  updateCategory: (c: Category) => void;
   updateProfile: (p: PatientProfile | null) => void;
   updateDoctorDetails: (d: DoctorDetailsResponse | null) => void;
   updateVideoConsult: (v: boolean) => void;

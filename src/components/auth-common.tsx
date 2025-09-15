@@ -56,34 +56,32 @@ export const AuthCommonComponent: FC<commonauth> = ({
   }, []);
   return (
     <>
+      <ImageBackground
+        source={require('../../assets/images/topbg.png')}
+        style={{
+          height: h * 0.2,
+          width: '100%',
+          position: 'absolute',
+          top: -(h * 0.05),
+          right: 0,
+          left: 0,
+        }}
+        resizeMode="cover"
+      />
 
-    
-<ImageBackground
-          source={require('../../assets/images/topbg.png')}
-          style={{
-            height: h * 0.2,
-            width:'100%',
-            position: 'absolute',
-            top: -(h * 0.05),
-            right: 0,
-            left: 0,
-          }}
-          resizeMode="cover"
-        />
+      <ImageBackground
+        source={require('../../assets/images/bottombg.png')}
+        style={{
+          height: h * 0.4,
+          width: '100%',
+          position: 'absolute',
+          bottom: -(h * 0.1),
+          right: 0,
+          left: 0,
+        }}
+        resizeMode="cover"
+      />
 
-        <ImageBackground
-          source={require('../../assets/images/bottombg.png')}
-          style={{
-            height: h * 0.4,
-            width:'100%',
-            position: 'absolute',
-            bottom: -(h * 0.1),
-            right: 0,
-            left: 0,
-          }}
-          resizeMode="cover"
-        />
-        
       {/* LOGO */}
       <Image
         source={require('../../assets/images/logo.png')}
@@ -194,18 +192,17 @@ export const AuthCommonComponent: FC<commonauth> = ({
 const styles = StyleSheet.create({
   logo: {
     alignSelf: 'center',
-
     marginTop: h * 0.06,
     marginBottom: h * 0.05,
     width: w * 0.8,
-    height: h * 0.09,
+    height: w * 0.2,
   },
   tagline: {
-    fontSize: adjust(32),
+    fontSize: adjust(28),
     color: pallette.dark_purple,
     fontFamily: 'ProximaNovaA-Regular',
     marginLeft: w * 0.18,
-    lineHeight: h * 0.041,
+    lineHeight: h * 0.04,
   },
   headingContainer: {
     paddingVertical: h * 0.01,
@@ -224,9 +221,10 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Semibold',
   },
   inputContainer: {
-    width: w * 0.62,
-    alignSelf: 'center',
+    width: w * 0.8,
+    alignSelf: 'flex-end',
     paddingVertical: w * 0.05,
+    paddingRight: w * 0.1,
   },
   inpHeading: {
     fontSize: adjust(16),
@@ -259,6 +257,7 @@ const styles = StyleSheet.create({
     fontSize: adjust(13),
     color: pallette.black,
     width: '80%',
+    height: h * 0.6,
     fontFamily: 'ProximaNovaA-Regular',
   },
   dropdown: {

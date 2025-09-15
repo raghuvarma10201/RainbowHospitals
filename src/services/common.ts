@@ -144,7 +144,7 @@ export const getAppointments = async (payload: any) => {
 
 export const getCategories = async () => {
   try {
-    const response = await api.post('/getCategories');
+    const response = await api.get('/getCategories');
     console.log(response);
     return response.data;
   } catch (error) {

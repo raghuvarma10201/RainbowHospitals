@@ -1,8 +1,11 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {h, pallette, w} from '../constants/constants';
-import {adjust} from '../utils';
+import {adjust, ToastService} from '../utils';
 import {useApp} from '../context/app-context';
+import {Category} from '../services/Region/api';
+import {getCategories} from '../services/common';
+import {useFocusEffect} from '@react-navigation/native';
 
 const images = {
   childCare: require('../../assets/images/child-care.png'),
@@ -12,29 +15,61 @@ const images = {
 
 const CategorySelection = () => {
   const {updateCategory, category, branch} = useApp();
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  const fetchCategries = useCallback(async () => {
+    try {
+      const {data} = await getCategories();
+      console.log(data);
+      setCategories(data);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+      ToastService.error('Error', 'Unable to fetch categoriess');
+      setCategories([]);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchCategries();
+    }, [fetchCategries]),
+  );
   return (
     <View style={styles.categoryContainer}>
-      <TouchableOpacity
-        onPress={() => updateCategory('Child Care')}
-        style={[
-          styles.category,
-          {borderBottomWidth: category == 'Child Care' ? 4 : 0},
-        ]}>
-        <View
+      {categories.map((category, index) => (
+        <TouchableOpacity
+          onPress={() => {
+            updateCategory(category);
+          }}
           style={[
-            styles.categoryImgContainer,
-            {
-              backgroundColor:
-                category == 'Child Care'
-                  ? pallette.medium_turquoise
-                  : pallette.dark_purple,
-            },
+            styles.category,
+            {borderBottomWidth: category?.name == 'Women Care' ? 4 : 0},
           ]}>
-          <Image source={images.childCare} style={styles.categoryImg} />
-        </View>
-        <Text style={styles.categoryTxt}>Child Care</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
+          <View
+            style={[
+              styles.categoryImgContainer,
+              {
+                backgroundColor:
+                  category?.name == 'Women Care'
+                    ? pallette.amethyst
+                    : pallette.dark_purple,
+              },
+            ]}>
+            <Image
+              source={
+                category?.name == 'Child Care'
+                  ? images.childCare
+                  : category?.name == 'Women Care'
+                  ? images.womenCare
+                  : images.fertility
+              }
+              style={styles.categoryImg}
+            />
+          </View>
+          <Text style={styles.categoryTxt}>{category?.name}</Text>
+        </TouchableOpacity>
+      ))}
+      {/* <TouchableOpacity
         onPress={() => updateCategory('Women Care')}
         style={[
           styles.category,
@@ -73,7 +108,7 @@ const CategorySelection = () => {
           <Image source={images.fertility} style={styles.categoryImg} />
         </View>
         <Text style={styles.categoryTxt}>Fertility Care</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };

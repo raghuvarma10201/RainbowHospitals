@@ -1,6 +1,6 @@
 // AppProvider.tsx
 import React, {createContext, useContext, useState} from 'react';
-import {Branch, Region, Setting} from '../services/Region/api';
+import {Branch, Category, Region, Setting} from '../services/Region/api';
 import {DoctorDetailsResponse, PatientProfile} from '../utils/types';
 import {AppointmentPayload} from '../utils/types';
 import {AppContextProps} from '../types/contexts';
@@ -18,7 +18,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [allbranch, setAllBranch] = useState<Branch[]>([]);
   const [region, setRegion] = useState<Region | null>(null);
   const [mrn, setMrn] = useState<string>('');
-  const [category, setCategory] = useState<string>('');
+  const [category, setCategory] = useState<Category | null>(null);
   const [profile, setProfile] = useState<PatientProfile | null>(null);
   const [doctorDetails, setDoctorDetails] =
     useState<DoctorDetailsResponse | null>(null);

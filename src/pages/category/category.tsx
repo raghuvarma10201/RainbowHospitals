@@ -27,6 +27,7 @@ import {adjust} from '../../utils/common-functions';
 import {useApp} from '../../context/app-context';
 import {routes, ToastService} from '../../utils';
 import {getCategories} from '../../services/common';
+import {Category as Cat} from '../../services/Region/api';
 
 // ---------- COMPONENT ----------
 const Category: React.FC = () => {
@@ -34,11 +35,11 @@ const Category: React.FC = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {profile, updateCategory} = useApp();
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Cat[]>([]);
 
   const fetchCategries = useCallback(async () => {
     try {
-      const {data = []} = await getCategories();
+      const {data} = await getCategories();
       console.log(data);
       setCategories(data);
     } catch (err) {
@@ -57,11 +58,11 @@ const Category: React.FC = () => {
   return (
     <View style={styles.mainContainer}>
       <ScrollView>
-      <ImageBackground
+        <ImageBackground
           source={require('../../../assets/images/topbg.png')}
           style={{
             height: h * 0.2,
-            width:'100%',
+            width: '100%',
             position: 'absolute',
             top: -(h * 0.05),
             right: 0,
@@ -96,26 +97,34 @@ const Category: React.FC = () => {
           </View>
 
           <View style={styles.categoryBtContainer}>
-            <TouchableOpacity
-              onPress={() => {
-                updateCategory('Child Care'),
-                  navigation.navigate(routes.Dashboard as never);
-              }}
-              style={styles.categoryButton}>
-              <View style={styles.imageCategoryView}>
+            {categories.map((category, index) => (
+              <TouchableOpacity
+                onPress={() => {
+                  updateCategory(category),
+                    navigation.navigate(routes.Dashboard as never);
+                }}
+                style={styles.categoryButton}>
+                <View style={styles.imageCategoryView}>
+                  <Image
+                    source={
+                      category?.name == 'Child Care'
+                        ? images.childCare
+                        : category?.name == 'Women Care'
+                        ? images.womenCare
+                        : images.fertility
+                    }
+                    style={styles.imageCategoryImage}
+                  />
+                </View>
+                <Text style={styles.categoryText}>{category?.name}</Text>
                 <Image
-                  source={images.childCare}
-                  style={styles.imageCategoryImage}
+                  source={images.arrowRightLight}
+                  style={styles.arrowRightLight}
                 />
-              </View>
-              <Text style={styles.categoryText}>Child Care</Text>
-              <Image
-                source={images.arrowRightLight}
-                style={styles.arrowRightLight}
-              />
-            </TouchableOpacity>
+              </TouchableOpacity>
+            ))}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 updateCategory('Women Care'),
                   navigation.navigate(routes.Dashboard as never);
@@ -151,7 +160,7 @@ const Category: React.FC = () => {
                 source={images.arrowRightLight}
                 style={styles.arrowRightLight}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </ScrollView>
@@ -181,7 +190,7 @@ const styles = StyleSheet.create({
     fontSize: adjust(30),
     color: pallette.rainbow,
     fontFamily: 'ProximaNovaA-Bold',
-    lineHeight: h * 0.04,
+    lineHeight: h * 0.045,
   },
 
   headingLightText: {
