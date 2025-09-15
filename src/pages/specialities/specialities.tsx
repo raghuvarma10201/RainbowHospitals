@@ -24,7 +24,7 @@ const Specialities: React.FC = ({route}: any) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentType} = route.params;
-  const {branch} = useApp();
+  const {branch, category} = useApp();
   const [specialities, setSpecialities] = useState<any[]>([]);
   const [selectedSpecialityId, setSelectedSpecialityId] = useState<string>('');
   const [activeSpecialtyIndex, setActiveSpecialtyIndex] = useState(0);
@@ -35,12 +35,12 @@ const Specialities: React.FC = ({route}: any) => {
   // ---------- LIFECYCLE ----------
   useEffect(() => {
     loadSpecialities();
-  }, [branch]);
+  }, [branch, category]);
 
   // ---------- CALLBACK FUNCTIONS ----------
   const loadSpecialities = async () => {
     await fetchData(
-      getSpecialities,
+      () => getSpecialities(category?.coe_id?.toString()),
       data => {
         setSpecialities(data);
         loadDoctors(

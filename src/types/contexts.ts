@@ -11,7 +11,7 @@ interface AppContextProps {
   allbranch: Branch[];
   region: Region | null;
   mrn: string;
-  category: any;
+  category: Category;
   profile: PatientProfile | null;
   doctorDetails: DoctorDetailsResponse | null;
   isvideoconsulation: boolean;

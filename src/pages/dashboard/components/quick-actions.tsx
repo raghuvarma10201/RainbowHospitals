@@ -38,9 +38,11 @@ const QuickActionButton: React.FC<ActionItem & {style?: object}> = ({
       styles.actionItem,
       {
         borderColor:
-          cat == 'Child Care' ? pallette.medium_turquoise : pallette.amethyst,
+          cat.name == 'Child Care'
+            ? pallette.medium_turquoise
+            : pallette.amethyst,
         backgroundColor:
-          cat == 'Child Care'
+          cat.name == 'Child Care'
             ? pallette.pale_turquoise
             : pallette.light_amethyst,
       },
@@ -53,12 +55,14 @@ const QuickActionButton: React.FC<ActionItem & {style?: object}> = ({
         source={icon}
         style={{
           position: 'absolute',
-          top: -(h * 0.07),
+          top: -(h * 0.08),
           left: -(w * 0.1),
           height: w * 0.12,
           width: w * 0.12,
           backgroundColor:
-            cat == 'Child Care' ? pallette.medium_turquoise : pallette.amethyst,
+            cat.name == 'Child Care'
+              ? pallette.medium_turquoise
+              : pallette.amethyst,
           tintColor: pallette.white,
           borderRadius: w,
           resizeMode: 'contain',
@@ -72,7 +76,9 @@ const QuickActionButton: React.FC<ActionItem & {style?: object}> = ({
         styles.arrowIcon,
         {
           tintColor:
-            cat == 'Child Care' ? pallette.medium_turquoise : pallette.amethyst,
+            cat.name == 'Child Care'
+              ? pallette.medium_turquoise
+              : pallette.amethyst,
         },
       ]}
     />
@@ -117,9 +123,9 @@ const QuickActions: React.FC<QuickActionsProps> = ({navigation}) => {
   return (
     <FlatList
       data={
-        category == 'Fertility'
+        category?.name == 'Fertility'
           ? actionItems.slice(0, 1)
-          : category == 'Child Care'
+          : category?.name == 'Child Care'
           ? [actionItems[0], actionItems[2]]
           : actionItems
       }
@@ -144,7 +150,7 @@ const styles = StyleSheet.create({
   },
   actionItem: {
     width: w * 0.28,
-    height: h * 0.14,
+    height: h * 0.15,
     alignSelf: 'center',
     borderWidth: 1.5,
     borderBottomLeftRadius: w * 0.1,

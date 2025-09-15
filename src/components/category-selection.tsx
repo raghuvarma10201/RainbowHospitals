@@ -36,37 +36,45 @@ const CategorySelection = () => {
   );
   return (
     <View style={styles.categoryContainer}>
-      {categories.map((category, index) => (
+      {categories.map((cat, index) => (
         <TouchableOpacity
           onPress={() => {
-            updateCategory(category);
+            updateCategory(cat);
           }}
           style={[
             styles.category,
-            {borderBottomWidth: category?.name == 'Women Care' ? 4 : 0},
+            {
+              borderBottomWidth: 4,
+              borderColor:
+                cat?.name == category?.name
+                  ? pallette.medium_turquoise
+                  : pallette.white,
+            },
           ]}>
           <View
             style={[
               styles.categoryImgContainer,
               {
                 backgroundColor:
-                  category?.name == 'Women Care'
-                    ? pallette.amethyst
+                  cat?.name == category?.name
+                    ? cat?.name != 'Child Care'
+                      ? pallette.amethyst
+                      : pallette.medium_turquoise
                     : pallette.dark_purple,
               },
             ]}>
             <Image
               source={
-                category?.name == 'Child Care'
+                cat?.name == 'Child Care'
                   ? images.childCare
-                  : category?.name == 'Women Care'
+                  : cat?.name == 'Women Care'
                   ? images.womenCare
                   : images.fertility
               }
               style={styles.categoryImg}
             />
           </View>
-          <Text style={styles.categoryTxt}>{category?.name}</Text>
+          <Text style={styles.categoryTxt}>{cat?.name}</Text>
         </TouchableOpacity>
       ))}
       {/* <TouchableOpacity
@@ -117,7 +125,7 @@ export default CategorySelection;
 
 const styles = StyleSheet.create({
   categoryContainer: {
-    height: h * 0.08,
+    height: w * 0.2,
     width: w * 0.9,
     alignSelf: 'center',
     flexDirection: 'row',
@@ -129,7 +137,6 @@ const styles = StyleSheet.create({
     width: w * 0.3,
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderColor: pallette.medium_turquoise,
   },
   categoryImgContainer: {
     height: w * 0.1,

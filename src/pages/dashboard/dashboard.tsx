@@ -52,9 +52,9 @@ const Dashboard: React.FC = () => {
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {branch, category} = useApp();
   const banners = Array(3).fill(
-    category == 'Child Care'
+    category?.name == 'Child Care'
       ? images.child_banner
-      : category == 'Women Care'
+      : category?.name == 'Women Care'
       ? images.women_banner
       : images.fertility_banner,
   );
@@ -119,9 +119,9 @@ const Dashboard: React.FC = () => {
             images={banners}
             activeindex={activeindex}
             setActiveindex={setActiveindex}
-            height={h * 0.35}
+            height={h * 0.28}
             width={w * 0.96}
-            itemWidth={w * 0.7}
+            itemWidth={w * 0.9}
             resizeMode={'contain'}
           />
           <PaginationDots data={banners} activeIndex={activeindex} />

@@ -26,9 +26,9 @@ export const getBranches = async (regionId: number) => {
     throw error;
   }
 };
-export const getSpecialities = async () => {
+export const getSpecialities = async (coe: string) => {
   try {
-    const response = await api.get('/getSpecialities/6');
+    const response = await api.get(`/getSpecialities/${coe}`);
     return response.data;
   } catch (error) {
     throw error;

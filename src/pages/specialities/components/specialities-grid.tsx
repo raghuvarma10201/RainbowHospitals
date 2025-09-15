@@ -70,11 +70,11 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
                 styles.iconBox,
                 {
                   borderColor:
-                    category == 'Child Care'
+                    category?.name == 'Child Care'
                       ? pallette.medium_turquoise
                       : pallette.amethyst,
                   backgroundColor:
-                    category == 'Child Care'
+                    category?.name == 'Child Care'
                       ? pallette.pale_turquoise
                       : pallette.light_amethyst,
                 },

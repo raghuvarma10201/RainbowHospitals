@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     backgroundColor: pallette.medium_turquoise,
-    width: w * 0.12,
-    height: h * 0.04,
+    width: w * 0.15,
+    height: h * 0.05,
     borderRadius: w * 0.1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -99,17 +99,17 @@ const styles = StyleSheet.create({
     tintColor: pallette.white,
   },
   input: {
-    height: h * 0.04,
-    width: w * 0.28,
+    height: h * 0.045,
+    width: w * 0.25,
     color: pallette.black,
     backgroundColor: pallette.white,
     borderRadius: w * 0.1,
-    fontSize: adjust(11),
+    fontSize: adjust(10),
     fontFamily: 'ProximaNovaA-Regular',
   },
   dropdownSelect: {
-    height: h * 0.04,
-    width: w * 0.18,
+    height: h * 0.045,
+    width: w * 0.17,
     marginLeft: w * 0.01,
   },
   placeholderCountry: {
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     color: pallette.light_grey,
   },
   selectedTextCountry: {
-    fontSize: adjust(11),
+    fontSize: adjust(10),
     color: pallette.dark_grey,
   },
   dropdownList: {
