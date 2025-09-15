@@ -50,10 +50,14 @@ const DoctorRow: React.FC<{
 
         {/* Doctor Details */}
         <View style={styles.doctorCardDetails}>
-          <Text style={[styles.docName, styles.docNameHighlight]}>
+          <Text
+            numberOfLines={1}
+            style={[styles.docName, styles.docNameHighlight]}>
             {doctor.name}
           </Text>
-          <Text style={styles.docDesignation}>{doctor.designation}</Text>
+          <Text numberOfLines={2} style={styles.docDesignation}>
+            {doctor.designation}
+          </Text>
           {/* <Text
             style={styles.docSpeciality}
             numberOfLines={2}
@@ -79,31 +83,30 @@ export default DoctorRow;
 
 const styles = StyleSheet.create({
   doctorContainer: {
-    width:w * 0.29,
-    height:h * 0.25,
+    minHeight: h * 0.2,
+    width: w * 0.29,
     paddingVertical: h * 0.005,
-    paddingHorizontal:w * 0.01, 
+    paddingHorizontal: w * 0.01,
     flexDirection: 'column',
-    alignItems: 'flex-start', 
-    backgroundColor:'#43316D',
+    alignItems: 'flex-start',
+    backgroundColor: '#43316D',
     borderRadius: w * 0.03,
-    gap:w*0.01,
+    gap: w * 0.01,
   },
 
-
   doctorImg: {
-    height: h * 0.12,
+    height: h * 0.13,
     borderRadius: w * 0.03,
     width: '100%',
     resizeMode: 'contain',
     borderColor: pallette.light_grey,
   },
 
-  doctorCardDetails:{
+  doctorCardDetails: {
     width: '100%',
-    paddingHorizontal:w * 0.01, 
-    paddingTop:h*0.005,
-    paddingBottom:h*0.005,
+    paddingHorizontal: w * 0.01,
+    paddingTop: h * 0.005,
+    paddingBottom: h * 0.005,
   },
   docName: {
     fontSize: adjust(9),

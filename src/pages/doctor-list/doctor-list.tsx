@@ -107,7 +107,11 @@ const DoctorsList: React.FC = ({route}: any) => {
               style={styles.gradient}
             />
           </View>
-          <View style={styles.doctorsListContainer}>
+          <View
+            style={[
+              styles.doctorsListContainer,
+              {justifyContent: doctors?.length > 2 ? 'center' : 'flex-start'},
+            ]}>
             {doctors.length > 0 ? (
               doctors.map(doctor => (
                 <DoctorRow
@@ -168,7 +172,7 @@ const styles = StyleSheet.create({
   gradient: {
     width: w * 0.08,
     height: h * 0.045,
-    opacity:0.1,
+    opacity: 0.1,
   },
   specialtyContainer: {
     width: w * 0.75,
@@ -176,7 +180,7 @@ const styles = StyleSheet.create({
     height: h * 0.045,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal:w * 0.01,
+    paddingHorizontal: w * 0.01,
   },
   specialtyName: {
     fontSize: adjust(13),
@@ -184,12 +188,11 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Bold',
   },
   doctorsListContainer: {
-    marginVertical:h*0.04,
-    paddingHorizontal:w * 0.01,  
-    justifyContent:'center',
-    flexDirection:'row',
-    flexWrap:'wrap',
-    gap:w*0.02,
-  
+    marginVertical: h * 0.04,
+    paddingHorizontal: w * 0.01,
+    // justifyContent:'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: w * 0.02,
   },
 });
