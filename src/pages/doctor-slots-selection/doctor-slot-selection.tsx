@@ -478,13 +478,13 @@ const styles = StyleSheet.create({
     minHeight: h,
   },
   patientContainer: {
-    backgroundColor: pallette.light_grey,
+    backgroundColor:'#fff',
     width: '90%',
     alignSelf: 'center',
     paddingBottom: h * 0.03,
   },
   calenderContainer: {
-    backgroundColor: pallette.light_grey,
+    backgroundColor: pallette.white,
     width: '90%',
     alignSelf: 'center',
     borderBottomLeftRadius: w * 0.1,

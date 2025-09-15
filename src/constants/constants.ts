@@ -13,8 +13,8 @@ export const pallette = {
   medium_turquoise: '#4CC2BF', // Medium Turquoise
   pale_turquoise: '#C7E8E7', // Powder Blue / Pale Turquoise
   dark_purple: '#3C2871', // Midnight Blue (Deep Violet)
-  amethyst: '#8a3ab9', // Amethyst
-  light_amethyst: '#e7d7f0ff', // Amethyst
+  amethyst: '#81388B', // Amethyst
+  light_amethyst: '#F1E4F1', // Amethyst
   electric_indigo: '#6200ee',
   rainbow: '#472D7A',
   light_rainbow: '#00B1AC',
