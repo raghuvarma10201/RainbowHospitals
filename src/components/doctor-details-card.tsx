@@ -36,6 +36,8 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
   about = false,
   onConsultationPress,
 }) => {
+  console.log(appointmentType);
+
   // ---------- FALLBACK ----------
   const doctorImage: ImageSourcePropType = doctorDetail?.small_image
     ? {uri: `${IMG_BASE_URL}${doctorDetail.small_image}`}
@@ -47,117 +49,129 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
   return (
     <View style={styles.container}>
       {/* Doctor Image */}
-<Text style={styles.headingAppointment}>Appointment</Text>
+      <Text style={styles.headingAppointment}>Appointment</Text>
       <View style={styles.imageDetailsWrapper}>
-          <View style={styles.imageWrapper}>
-            <Image source={doctorImage} style={styles.docImg} />
-            <View style={styles.dotWrapper}>
-              <View style={styles.dot} />
-            </View>
+        <View style={styles.imageWrapper}>
+          <Image source={doctorImage} style={styles.docImg} />
+          <View style={styles.dotWrapper}>
+            <View style={styles.dot} />
           </View>
-          {/* Doctor Information */}
-          <View style={styles.detailsWrapper}>
-            <Text style={styles.doctorName}>{doctorDetail?.name}</Text>
-            <Text style={styles.designation}>{doctorDetail?.designation}</Text>
-            <Text style={styles.specialities}>{doctorSpecialitites}</Text>
-            <Text style={styles.experience}>
-              {`Experience ${doctorDetail?.experience ?? 0} Years`}
-            </Text>
-            {about && (
-              <>
-                {/* Consultation Buttons */}
-                <View style={styles.consultBtnsContainer}>
-                  <TouchableOpacity
-                    disabled={!doctorDetail?.physical_consultation_fee}
+        </View>
+        {/* Doctor Information */}
+        <View style={styles.detailsWrapper}>
+          <Text style={styles.doctorName}>{doctorDetail?.name}</Text>
+          <Text style={styles.designation}>{doctorDetail?.designation}</Text>
+          <Text style={styles.specialities}>{doctorSpecialitites}</Text>
+          <Text style={styles.experience}>
+            {`Experience ${doctorDetail?.experience ?? 0} Years`}
+          </Text>
+          {about && (
+            <>
+              {/* Consultation Buttons */}
+              <View style={styles.consultBtnsContainer}>
+                <TouchableOpacity
+                  disabled={!doctorDetail?.physical_consultation_fee}
+                  style={[
+                    styles.consultBtn,
+                    {
+                      backgroundColor: doctorDetail?.physical_consultation_fee
+                        ? appointmentType == 'Physical'
+                          ? pallette.teal
+                          : pallette.pale_turquoise
+                        : pallette.dark_grey,
+                    },
+                  ]}
+                  onPress={() => onConsultationPress('Physical')}>
+                  <View
                     style={[
-                      styles.consultBtn,
+                      styles.iconContainer,
                       {
                         backgroundColor: doctorDetail?.physical_consultation_fee
-                          ? appointmentType == 'Physical'
-                            ? pallette.teal
-                            : pallette.pale_turquoise
+                          ? pallette.rainbow
                           : pallette.dark_grey,
                       },
-                    ]}
-                    onPress={() => onConsultationPress('Physical')}>
-                    <View
-                      style={[
-                        styles.iconContainer,
-                        {
-                          backgroundColor: doctorDetail?.physical_consultation_fee
-                            ? pallette.rainbow
-                            : pallette.dark_grey,
-                        },
-                      ]}>
-                      <Image
-                        source={images.physical}
-                        style={styles.consultBtnImg}
-                      />
-                    </View>
+                    ]}>
+                    <Image
+                      source={images.physical}
+                      style={styles.consultBtnImg}
+                    />
+                  </View>
 
-                    <Text
-                      style={[
-                        styles.consultBtnTxt,
-                        {
-                          color: doctorDetail?.physical_consultation_fee
-                            ? appointmentType == 'Physical'
-                              ? pallette.white
-                              : pallette.black
-                            : pallette.white,
-                        },
-                      ]}>
-                      Physical Consultation
-                    </Text>
-   
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    disabled={!doctorDetail?.video_consultation_fee}
+                  <Text
                     style={[
-                      styles.consultBtn,
+                      styles.consultBtnTxt,
+                      {
+                        color: doctorDetail?.physical_consultation_fee
+                          ? appointmentType == 'Physical'
+                            ? pallette.white
+                            : pallette.black
+                          : pallette.white,
+                      },
+                    ]}>
+                    Physical Consultation
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  disabled={!doctorDetail?.video_consultation_fee}
+                  style={[
+                    styles.consultBtn,
+                    {
+                      backgroundColor: doctorDetail?.video_consultation_fee
+                        ? appointmentType == 'Video'
+                          ? pallette.teal
+                          : pallette.white
+                        : pallette.dark_grey,
+                    },
+                  ]}
+                  onPress={() => onConsultationPress('Video')}>
+                  <View
+                    style={[
+                      styles.iconContainer,
                       {
                         backgroundColor: doctorDetail?.video_consultation_fee
                           ? appointmentType == 'Video'
                             ? pallette.teal
-                            : pallette.teal
+                            : pallette.white
                           : pallette.dark_grey,
                       },
-                    ]}
-                    onPress={() => onConsultationPress('Video')}>
-                    <View
+                    ]}>
+                    <Image
+                      source={images.video}
                       style={[
-                        styles.iconContainer,
+                        styles.consultBtnImg,
                         {
-                          backgroundColor: doctorDetail?.video_consultation_fee
-                            ? pallette.teal
-                            : pallette.dark_grey,
-                        },
-                      ]}>
-                      <Image source={images.video} style={styles.consultBtnImg} />
-                    </View>
-
-                    <Text
-                      style={[
-                        styles.consultBtnTxt,
-                        {
-                          color: doctorDetail?.video_consultation_fee
+                          tintColor: doctorDetail?.video_consultation_fee
                             ? appointmentType == 'Video'
                               ? pallette.white
-                              : pallette.black
-                            : pallette.white,
+                              : pallette.teal
+                            : pallette.dark_grey,
                         },
-                      ]}>
-                      Video Consultation
-                    </Text>
-         
-                  </TouchableOpacity>
-                </View>
-                {/* About Section */}
-                {/* <View style={styles.divider} />
+                      ]}
+                    />
+                  </View>
+
+                  <Text
+                    style={[
+                      styles.consultBtnTxt,
+                      {
+                        color: doctorDetail?.video_consultation_fee
+                          ? appointmentType == 'Video'
+                            ? pallette.white
+                            : pallette.black
+                          : pallette.white,
+                      },
+                    ]}>
+                    Video Consultation
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              {/* About Section */}
+              {/* <View style={styles.divider} />
                 <Text style={styles.aboutTitle}>About</Text>
                 <ShortInfoText text={doctorDetail?.short_info || ''} /> */}
-              </>
-            )}
-          </View>
+            </>
+          )}
+        </View>
       </View>
     </View>
   );
@@ -167,29 +181,26 @@ export default memo(DoctorDetailsCard);
 
 // ---------- STYLES ----------
 const styles = StyleSheet.create({
-
-  headingAppointment:{
+  headingAppointment: {
     fontSize: adjust(13),
     color: pallette.rainbow,
     fontFamily: 'ProximaNovaA-Bold',
     marginBottom: w * 0.02,
     textAlign: 'center',
-    paddingVertical:h*0.02,
+    paddingVertical: h * 0.02,
     textTransform: 'uppercase',
-  letterSpacing: 5,
+    letterSpacing: 5,
   },
   container: {
-    backgroundColor:pallette.white,    
+    backgroundColor: pallette.white,
     paddingHorizontal: w * 0.02,
     width: '90%',
     alignSelf: 'center',
     borderTopLeftRadius: w * 0.1,
     borderTopRightRadius: w * 0.1,
-    
   },
 
-  imageDetailsWrapper:{
-
+  imageDetailsWrapper: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
@@ -204,14 +215,12 @@ const styles = StyleSheet.create({
     borderColor: '#EBECEC',
     padding: 5,
     overflow: 'hidden',
-    borderRadius:0,
-
-  
+    borderRadius: 0,
   },
   docImg: {
     height: h * 0.22,
-    width:'100%',
-    borderRadius:0,
+    width: '100%',
+    borderRadius: 0,
     resizeMode: 'cover',
   },
   dotWrapper: {
@@ -228,10 +237,9 @@ const styles = StyleSheet.create({
     backgroundColor: pallette.medium_turquoise,
   },
   detailsWrapper: {
-     backgroundColor: pallette.white, 
-      gap: w * 0.005,
-      width:w * 0.5,
-
+    backgroundColor: pallette.white,
+    gap: w * 0.005,
+    width: w * 0.5,
   },
   doctorName: {
     fontSize: adjust(14),
@@ -256,20 +264,15 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontFamily: 'ProximaNovaA-Regular',
   },
-  consultBtnsContainer: {
-
-
-
-  },
+  consultBtnsContainer: {},
   consultBtn: {
-
-  flexDirection: 'row',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',   
+    justifyContent: 'center',
     marginVertical: h * 0.003,
-    borderRadius:w * 0.05,
-    borderWidth:1,
-    borderColor:pallette.teal,
+    borderRadius: w * 0.05,
+    borderWidth: 1,
+    borderColor: pallette.teal,
   },
   consultBtnTxt: {
     fontSize: adjust(12),
@@ -279,17 +282,16 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   iconContainer: {
-    backgroundColor:'red',
+    backgroundColor: 'red',
     height: h * 0.05,
-    flexDirection:'row',
-    alignItems:'center',
-    justifyContent:'center',
-
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  consultBtnImg: {   
+  consultBtnImg: {
     resizeMode: 'contain',
     tintColor: 'white',
-    width:w*0.05,
+    width: w * 0.05,
   },
   divider: {
     height: 1,
