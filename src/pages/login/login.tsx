@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  ImageBackground,
 } from 'react-native';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
@@ -16,7 +17,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {login} from '../../services/auth';
 import {ToastService} from '../../utils/service-handlers';
 import {AuthStackParamList} from '../../types/navigation';
-import {h, pallette} from '../../constants/constants';
+import {h, pallette, w} from '../../constants/constants';
 import {AuthCommonComponent} from '../../components/auth-common';
 import {Loader} from '../../components';
 
@@ -84,6 +85,8 @@ const Login: React.FC = () => {
       style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
+
+        
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,

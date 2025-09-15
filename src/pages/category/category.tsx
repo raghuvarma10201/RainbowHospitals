@@ -57,17 +57,30 @@ const Category: React.FC = () => {
   return (
     <View style={styles.mainContainer}>
       <ScrollView>
+      <ImageBackground
+          source={require('../../../assets/images/topbg.png')}
+          style={{
+            height: h * 0.2,
+            width:'100%',
+            position: 'absolute',
+            top: -(h * 0.05),
+            right: 0,
+            left: 0,
+          }}
+          resizeMode="cover"
+        />
+
         <ImageBackground
           source={require('../../../assets/images/bottombg.png')}
           style={{
             height: h * 0.4,
-            width: w,
+            width: '100%',
             position: 'absolute',
             bottom: -(h * 0.1),
             right: 0,
             left: 0,
           }}
-          resizeMode="contain"
+          resizeMode="cover"
         />
         <View style={styles.container}>
           <View style={styles.headingContainer}>

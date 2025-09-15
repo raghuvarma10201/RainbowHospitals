@@ -1,5 +1,6 @@
 import {
   Image,
+  ImageBackground,
   StyleSheet,
   Text,
   TextInput,
@@ -55,6 +56,34 @@ export const AuthCommonComponent: FC<commonauth> = ({
   }, []);
   return (
     <>
+
+    
+<ImageBackground
+          source={require('../../assets/images/topbg.png')}
+          style={{
+            height: h * 0.2,
+            width:'100%',
+            position: 'absolute',
+            top: -(h * 0.05),
+            right: 0,
+            left: 0,
+          }}
+          resizeMode="cover"
+        />
+
+        <ImageBackground
+          source={require('../../assets/images/bottombg.png')}
+          style={{
+            height: h * 0.4,
+            width:'100%',
+            position: 'absolute',
+            bottom: -(h * 0.1),
+            right: 0,
+            left: 0,
+          }}
+          resizeMode="cover"
+        />
+        
       {/* LOGO */}
       <Image
         source={require('../../assets/images/logo.png')}
@@ -138,7 +167,7 @@ export const AuthCommonComponent: FC<commonauth> = ({
           style={[
             styles.inpSubHeading,
             {fontSize: adjust(11)},
-          ]}>{`You will recieve an OTP on this mobile number /\nor on your registered email id as well`}</Text>
+          ]}>{`You will recieve an OTP on this mobile number / or on your registered email id as well`}</Text>
         {input != 'mobile' && (
           <TouchableOpacity>
             <Text style={styles.resend}>{`Resend OTP`}</Text>
@@ -165,7 +194,9 @@ export const AuthCommonComponent: FC<commonauth> = ({
 const styles = StyleSheet.create({
   logo: {
     alignSelf: 'center',
-    marginVertical: h * 0.05,
+
+    marginTop: h * 0.06,
+    marginBottom: h * 0.05,
     width: w * 0.8,
     height: h * 0.09,
   },
@@ -174,6 +205,7 @@ const styles = StyleSheet.create({
     color: pallette.dark_purple,
     fontFamily: 'ProximaNovaA-Regular',
     marginLeft: w * 0.18,
+    lineHeight: h * 0.041,
   },
   headingContainer: {
     paddingVertical: h * 0.01,
@@ -200,11 +232,13 @@ const styles = StyleSheet.create({
     fontSize: adjust(16),
     color: pallette.black,
     fontFamily: 'ProximaNovaA-Bold',
+    marginBottom: h * 0.006,
   },
   inpSubHeading: {
     fontSize: adjust(12),
     color: pallette.black,
     fontFamily: 'ProximaNovaA-Regular',
+    marginBottom: h * 0.01,
   },
   resend: {
     fontSize: adjust(11),
@@ -219,10 +253,10 @@ const styles = StyleSheet.create({
     borderRadius: w * 0.01,
     borderWidth: 0.7,
     borderColor: pallette.dark_grey,
-    height: h * 0.04,
+    height: h * 0.05,
   },
   input: {
-    fontSize: adjust(12),
+    fontSize: adjust(13),
     color: pallette.black,
     width: '80%',
     fontFamily: 'ProximaNovaA-Regular',
@@ -236,7 +270,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: w * 0.025,
   },
   dropdownText: {
-    fontSize: adjust(12),
+    fontSize: adjust(13),
     color: pallette.black,
   },
   btn: {
@@ -247,6 +281,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: pallette.medium_turquoise,
     marginTop: h * 0.02,
+    backgroundColor: pallette.white,
   },
   btnTxtCntnr: {
     width: '80%',
@@ -254,8 +289,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnTxt: {
-    fontSize: adjust(12),
+    fontSize: adjust(14),
     color: pallette.black,
+    fontFamily: 'ProximaNovaA-Semibold',
   },
   btnIcnCntnr: {
     width: '21%',
@@ -276,7 +312,8 @@ const styles = StyleSheet.create({
     fontSize: adjust(12),
   },
   codeFieldRoot: {
-    marginTop: 10,
+    marginTop: h * 0.005,
+    marginBottom: h * 0.005,
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
