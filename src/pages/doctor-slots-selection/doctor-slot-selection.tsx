@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
     minHeight: h,
   },
   patientContainer: {
-    backgroundColor:'#fff',
+    backgroundColor: '#fff',
     width: '90%',
     alignSelf: 'center',
     paddingBottom: h * 0.03,
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   selectedTime: {
-    color: pallette.medium_turquoise,
+    color: pallette.white,
   },
   centeredTxt: {
     color: pallette.dark_purple,
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Semibold',
   },
   timeList: {
-    width: '90%',
+    width: '100%',
     alignItems: 'flex-start',
     alignSelf: 'center',
     marginVertical: 10,

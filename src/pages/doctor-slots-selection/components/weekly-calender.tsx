@@ -1,7 +1,7 @@
 import React, {useState, useMemo, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {adjust} from '../../../utils/common-functions';
-import {h} from '../../../constants/constants';
+import {h, pallette, w} from '../../../constants/constants';
 
 type Session = {
   SessionDate: string;
@@ -28,18 +28,18 @@ function getMonthDisplayForChunk(chunk: SessionDay[]): string {
   const start = chunk[0].dateObj;
   const end = chunk[chunk.length - 1].dateObj;
 
-  const startMonth = start.toLocaleDateString('en-US', {month: 'short'});
-  const endMonth = end.toLocaleDateString('en-US', {month: 'short'});
+  const startMonth = start.toLocaleDateString('en-US', {month: 'long'});
+  const endMonth = end.toLocaleDateString('en-US', {month: 'long'});
 
   const startYear = start.getFullYear();
   const endYear = end.getFullYear();
 
   if (startMonth === endMonth && startYear === endYear) {
-    return `${startMonth} ${startYear}`;
+    return `${startMonth}`;
   } else if (startYear === endYear) {
-    return `${startMonth} - ${endMonth} ${startYear}`;
+    return `${startMonth} - ${endMonth}`;
   } else {
-    return `${startMonth} ${startYear} - ${endMonth} ${endYear}`;
+    return `${startMonth} - ${endMonth}`;
   }
 }
 
@@ -92,7 +92,15 @@ const WeeklyCalendar: React.FC<Props> = ({sessions, onDateClick}) => {
 
   const renderDay = (item: SessionDay) => (
     <TouchableOpacity
-      style={styles.dayBox}
+      style={[
+        styles.dayBox,
+        {
+          backgroundColor:
+            item.fullDate === selectedDate
+              ? pallette.medium_turquoise
+              : pallette.white,
+        },
+      ]}
       onPress={() => {
         setSelectedDate(item.fullDate);
         onDateClick?.(
@@ -103,14 +111,20 @@ const WeeklyCalendar: React.FC<Props> = ({sessions, onDateClick}) => {
       <Text
         style={[
           styles.dayText,
-          {color: item.fullDate === selectedDate ? '#4CC2BF' : '#4B3E75'},
+          {
+            color:
+              item.fullDate === selectedDate ? pallette.white : pallette.black,
+          },
         ]}>
         {item.day}
       </Text>
       <Text
         style={[
           styles.dateText,
-          {color: item.fullDate === selectedDate ? '#4CC2BF' : '#4B3E75'},
+          {
+            color:
+              item.fullDate === selectedDate ? pallette.white : pallette.black,
+          },
         ]}>
         {item.date}
       </Text>
@@ -189,7 +203,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     borderRadius: 8,
-    width: 45,
+    width: w * 0.12,
   },
   dayText: {
     fontSize: adjust(10),
