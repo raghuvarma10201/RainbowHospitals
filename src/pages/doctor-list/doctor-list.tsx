@@ -92,7 +92,7 @@ const DoctorsList: React.FC = ({route}: any) => {
           <CategorySelection />
           <View style={styles.specialtyRibbonContainer}>
             <LinearGradient
-              colors={[pallette.white, pallette.light_amethyst]}
+              colors={[pallette.white, pallette.black]}
               start={{x: 0, y: 0.5}}
               end={{x: 1, y: 0.5}}
               style={styles.gradient}
@@ -101,7 +101,7 @@ const DoctorsList: React.FC = ({route}: any) => {
               <Text style={styles.specialtyName}>{specialityName}</Text>
             </View>
             <LinearGradient
-              colors={[pallette.light_amethyst, pallette.white]}
+              colors={[pallette.black, pallette.white]}
               start={{x: 0, y: 0.5}}
               end={{x: 1, y: 0.5}}
               style={styles.gradient}
@@ -166,23 +166,30 @@ const styles = StyleSheet.create({
     marginTop: h * 0.04,
   },
   gradient: {
-    width: w * 0.15,
-    backgroundColor: 'red',
-    height: h * 0.04,
+    width: w * 0.08,
+    height: h * 0.045,
+    opacity:0.1,
   },
   specialtyContainer: {
-    width: w * 0.6,
-    backgroundColor: pallette.amethyst,
-    height: h * 0.04,
+    width: w * 0.75,
+    backgroundColor: pallette.medium_turquoise,
+    height: h * 0.045,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal:w * 0.01,
   },
   specialtyName: {
-    fontSize: adjust(12),
-    color: pallette.white,
-    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: adjust(13),
+    color: pallette.black,
+    fontFamily: 'ProximaNovaA-Bold',
   },
   doctorsListContainer: {
-    paddingHorizontal: 15,
+    marginVertical:h*0.04,
+    paddingHorizontal:w * 0.01,  
+    justifyContent:'center',
+    flexDirection:'row',
+    flexWrap:'wrap',
+    gap:w*0.02,
+  
   },
 });

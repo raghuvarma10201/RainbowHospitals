@@ -49,26 +49,26 @@ const DoctorRow: React.FC<{
         />
 
         {/* Doctor Details */}
-        <View>
+        <View style={styles.doctorCardDetails}>
           <Text style={[styles.docName, styles.docNameHighlight]}>
             {doctor.name}
           </Text>
           <Text style={styles.docDesignation}>{doctor.designation}</Text>
-          <Text
+          {/* <Text
             style={styles.docSpeciality}
             numberOfLines={2}
             ellipsizeMode="tail">
             {doctor.doctor_specialities?.[0]?.speciality?.name ?? '—'}
-          </Text>
-          <Text style={styles.docExperience}>
+          </Text> */}
+          {/* <Text style={styles.docExperience}>
             {`Experience ${doctor.experience ?? '0'} Years`}
-          </Text>
+          </Text> */}
 
           {/* Appointment Button */}
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[styles.payBtn, {backgroundColor: pallette.dark_purple}]}>
             <Text style={styles.payBtnTxt}>Book Appointment</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
     </TouchableOpacity>
@@ -79,46 +79,56 @@ export default DoctorRow;
 
 const styles = StyleSheet.create({
   doctorContainer: {
-    width: '100%',
-    paddingVertical: h * 0.01,
-    marginTop: h * 0.01,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: w * 0.05,
-    alignSelf: 'center',
-    borderBottomWidth: 0.7,
-    borderColor: pallette.light_grey,
+    width:w * 0.29,
+    height:h * 0.25,
+    paddingVertical: h * 0.005,
+    paddingHorizontal:w * 0.01, 
+    flexDirection: 'column',
+    alignItems: 'flex-start', 
+    backgroundColor:'#43316D',
+    borderRadius: w * 0.03,
+    gap:w*0.01,
   },
+
+
   doctorImg: {
     height: h * 0.12,
-    width: h * 0.12,
-    resizeMode: 'cover',
-    borderRadius: w,
-    borderWidth: 1,
+    borderRadius: w * 0.03,
+    width: '100%',
+    resizeMode: 'contain',
     borderColor: pallette.light_grey,
   },
+
+  doctorCardDetails:{
+    width: '100%',
+    paddingHorizontal:w * 0.01, 
+    paddingTop:h*0.005,
+    paddingBottom:h*0.005,
+  },
   docName: {
-    fontSize: adjust(10),
-    color: pallette.black,
+    fontSize: adjust(9),
+    color: pallette.white,
   },
   docNameHighlight: {
-    color: pallette.medium_turquoise,
     fontFamily: 'ProximaNovaA-Semibold',
     marginBottom: 2,
+    color: pallette.white,
   },
   docDesignation: {
-    fontSize: adjust(10),
+    fontSize: adjust(9),
     fontFamily: 'ProximaNovaA-Regular',
+    color: pallette.white,
   },
   docSpeciality: {
     fontSize: adjust(10),
     fontFamily: 'ProximaNovaA-Regular',
+    color: pallette.white,
   },
   docExperience: {
     fontSize: adjust(10),
     fontFamily: 'ProximaNovaA-Regular',
-    color: pallette.medium_turquoise,
     marginTop: 2,
+    color: pallette.white,
   },
   payBtn: {
     paddingVertical: 5,
