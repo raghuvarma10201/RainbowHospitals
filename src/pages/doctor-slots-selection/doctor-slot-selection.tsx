@@ -304,36 +304,30 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               borderBottomRightRadius: !selectedPatient ? w * 0.1 : 0,
             },
           ]}>
-          <View style={styles.flex}>
-            <Image
+          <View style={styles.locationBlock}>
+            {/* <Image
               source={require('../../../assets/images/map-icon.png')}
               style={styles.flexImg}
-            />
-            <View>
+            /> */}
+            <View style={{alignItems:'center',gap:w*0.02}}>
               <Text
-                style={[
-                  styles.flexHead,
-                  {fontFamily: 'ProximaNovaA-Semibold'},
-                ]}>
+                style={styles.locationHeading}>
                 Location
               </Text>
-              <Text style={[styles.flexHead, {fontSize: adjust(12)}]}>
+              <Text style={styles.locationText}>
                 {branch?.name}
               </Text>
             </View>
           </View>
           {/* PATIENT DROPDOWN */}
-          <View style={styles.flex}>
-            <Image
+          <View style={styles.bookingBlock}>
+            {/* <Image
               source={require('../../../assets/images/booked-for-icon.png')}
               style={styles.flexImg}
-            />
+            /> */}
             <View>
               <Text
-                style={[
-                  styles.flexHead,
-                  {fontFamily: 'ProximaNovaA-Semibold'},
-                ]}>
+                style={[styles.bookingHeading]}>
                 {appointmentnumber ? 'Re-Scheduling' : 'Booking'} for
               </Text>
               <Dropdown
@@ -614,6 +608,11 @@ const styles = StyleSheet.create({
     marginTop: 5,
     width: w * 0.6,
     paddingHorizontal: 10,
+    margin:'auto',
+    display:'flex',
+    justifyContent:'center',
+    alignItems:'center',
+    borderRadius:w*0.05,
   },
   placeholderCountry: {
     fontFamily: 'ProximaNovaA-Regular',
@@ -629,4 +628,13 @@ const styles = StyleSheet.create({
     fontSize: adjust(12),
     backgroundColor: pallette.white,
   },
+  locationBlock:{textAlign:'center', marginTop:h*0.04,},
+  locationHeading:{fontFamily: 'ProximaNovaA-Bold', color:pallette.rainbow, fontSize: adjust(15)},
+  locationText:{textAlign:'center', fontSize: adjust(12), marginTop:h*0, borderWidth:1, 
+    fontFamily: 'ProximaNovaA-Semibold', color:pallette.black,
+     borderColor:pallette.black, paddingBottom:h*0.01, borderRadius:w*0.05, 
+     paddingHorizontal:w*0.03, paddingVertical:h*0.01, height:h*0.04,}, 
+
+     bookingBlock:{textAlign:'center', marginTop:h*0.02,},
+     bookingHeading:{fontFamily: 'ProximaNovaA-Bold', color:pallette.rainbow, fontSize: adjust(15), textAlign:'center',},
 });

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, ScrollView, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, ScrollView, TouchableOpacity, ImageBackground} from 'react-native';
 import {Text} from 'react-native-paper';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
@@ -7,10 +7,10 @@ import {registerUser} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ToastService} from '../../utils/service-handlers';
 import {useNavigation} from '@react-navigation/native';
-import {CombinedNavigationProp} from '../../navigation/types';
+import {CombinedNavigationProp} from '../../types/navigation';  
 import {useAuth} from '../../context/auth-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {pallette} from '../../constants/constants';
+import {h, pallette} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 import {FormInput, FormDropdown} from '.';
 
@@ -208,7 +208,34 @@ const Registration: React.FC = () => {
   ];
 
   return (
+    <>
+   
     <ScrollView contentContainerStyle={styles.scrollContent}>
+    <ImageBackground
+          source={require('../../../assets/images/topbg.png')}
+          style={{
+            height: h * 0.2,
+            width:'100%',
+            position: 'absolute',
+            top: -(h * 0.05),
+            right: 0,
+            left: 0,
+          }}
+          resizeMode="cover"
+        />
+
+        <ImageBackground
+          source={require('../../../assets/images/bottombg.png')}
+          style={{
+            height: h * 0.4,
+            width:'100%',
+            position: 'absolute',
+            bottom: -(h * 0.1),
+            right: 0,
+            left: 0,
+          }}
+          resizeMode="cover"
+        />
       <View style={styles.container}>
         <Text variant="headlineMedium" style={styles.title}>
           Registration
@@ -314,6 +341,7 @@ const Registration: React.FC = () => {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </>
   );
 };
 
@@ -321,20 +349,20 @@ export default Registration;
 
 // ---------- Styles ----------
 const styles = StyleSheet.create({
-  scrollContent: {paddingBottom: 20},
-  container: {flex: 1, paddingHorizontal: 15, paddingBottom: 10},
+  scrollContent: {paddingBottom: 20, backgroundColor:pallette.white},
+  container: {flex: 1, paddingHorizontal: 15, paddingBottom: 10, backgroundColor:'transparent'},
   title: {
     color: pallette.teal,
     fontSize: adjust(18),
     textAlign: 'center',
     textTransform: 'uppercase',
     fontFamily: 'ProximaNovaA-Bold',
-    marginTop: 60,
+    marginTop:30,
   },
   labelText: {
     fontSize: adjust(12),
     color: pallette.black,
-    marginBottom: 10,
+    marginBottom: 20,
     fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'center',
   },
@@ -359,9 +387,10 @@ const styles = StyleSheet.create({
   },
   formRow: {marginBottom: 12},
   formLabel: {
-    fontSize: adjust(10),
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Regular',
     color: pallette.black,
+    marginBottom: 5,
   },
   formInput: {
     height: 40,
