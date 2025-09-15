@@ -14,6 +14,7 @@ import {MainStackParamList} from '../../../types/navigation';
 import PaginationDots from '../../../components/pagination-dots';
 import {adjust} from '../../../utils/common-functions';
 import {h, pallette, w} from '../../../constants/constants';
+import {useApp} from '../../../context/app-context';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -27,6 +28,7 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
     'DoctorsList'
   >;
   const navigation = useNavigation<AppNavigationProp>();
+  const {category} = useApp();
 
   const scrollRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(0);
@@ -64,7 +66,20 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
           onPress={() => navigateToDoctors(item.id, item?.name)}>
           <View style={styles.itemContainer}>
             <View
-              style={[styles.iconBox, item.isSpecial && styles.specialItem]}>
+              style={[
+                styles.iconBox,
+                {
+                  borderColor:
+                    category == 'Child Care'
+                      ? pallette.medium_turquoise
+                      : pallette.amethyst,
+                  backgroundColor:
+                    category == 'Child Care'
+                      ? pallette.pale_turquoise
+                      : pallette.light_amethyst,
+                },
+                item.isSpecial && styles.specialItem,
+              ]}>
               <Image
                 source={
                   item.icon_image
@@ -115,9 +130,10 @@ const styles = StyleSheet.create({
   iconBox: {
     width: w * 0.25,
     height: w * 0.3,
-    backgroundColor: pallette.white,
-    borderWidth: 1,
-    borderColor: pallette.light_grey,
+    borderBottomLeftRadius: w * 0.05,
+    borderTopLeftRadius: w * 0.05,
+    borderTopRightRadius: w * 0.05,
+    borderWidth: 1.5,
     justifyContent: 'center',
     alignItems: 'center',
   },

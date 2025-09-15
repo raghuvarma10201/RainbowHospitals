@@ -141,6 +141,16 @@ export const getAppointments = async (payload: any) => {
     throw error;
   }
 };
+
+export const getCategories = async () => {
+  try {
+    const response = await api.post('/getCategories');
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 export const fetchAppointmentChat = async (BookingId: any) => {
   try {
     const response = await api.get('/appointmentChat/' + BookingId);
