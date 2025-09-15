@@ -25,7 +25,8 @@ import {h, pallette, w} from '../../constants/constants';
 import {MainStackParamList} from '../../types/navigation';
 import {adjust} from '../../utils/common-functions';
 import {useApp} from '../../context/app-context';
-import {routes} from '../../utils';
+import {routes, ToastService} from '../../utils';
+import {getCategories} from '../../services/common';
 
 // ---------- COMPONENT ----------
 const Category: React.FC = () => {
@@ -33,6 +34,25 @@ const Category: React.FC = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {profile, updateCategory} = useApp();
+  const [categories, setCategories] = useState([]);
+
+  const fetchCategries = useCallback(async () => {
+    try {
+      const {data = []} = await getCategories();
+      console.log(data);
+      setCategories(data);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+      ToastService.error('Error', 'Unable to fetch categoriess');
+      setCategories([]);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchCategries();
+    }, [fetchCategries]),
+  );
 
   return (
     <View style={styles.mainContainer}>

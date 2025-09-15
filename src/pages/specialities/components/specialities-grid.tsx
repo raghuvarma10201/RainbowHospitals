@@ -14,6 +14,7 @@ import {MainStackParamList} from '../../../types/navigation';
 import PaginationDots from '../../../components/pagination-dots';
 import {adjust} from '../../../utils/common-functions';
 import {h, pallette, w} from '../../../constants/constants';
+import {useApp} from '../../../context/app-context';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -27,6 +28,7 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
     'DoctorsList'
   >;
   const navigation = useNavigation<AppNavigationProp>();
+  const {category} = useApp();
 
   const scrollRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(0);
@@ -64,7 +66,20 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
           onPress={() => navigateToDoctors(item.id, item?.name)}>
           <View style={styles.itemContainer}>
             <View
-              style={[styles.iconBox, item.isSpecial && styles.specialItem]}>
+              style={[
+                styles.iconBox,
+                {
+                  borderColor:
+                    category == 'Child Care'
+                      ? pallette.medium_turquoise
+                      : pallette.amethyst,
+                  backgroundColor:
+                    category == 'Child Care'
+                      ? pallette.pale_turquoise
+                      : pallette.light_amethyst,
+                },
+                item.isSpecial && styles.specialItem,
+              ]}>
               <Image
                 source={
                   item.icon_image
@@ -110,15 +125,14 @@ const styles = StyleSheet.create({
   itemContainer: {
     // width: w * 0.3,
     alignItems: 'center',
-    marginVertical: 10, 
+    marginVertical: 10,
     justifyContent: 'space-between',
- 
   },
-  
+
   iconBox: {
     width: w * 0.29,
     height: w * 0.39,
-    backgroundColor:'#E1F1F2',
+    backgroundColor: '#E1F1F2',
     borderWidth: 1.2,
     borderColor: pallette.light_rainbow,
     justifyContent: 'flex-start',
@@ -129,7 +143,7 @@ const styles = StyleSheet.create({
     borderTopEndRadius: w * 0.05,
     paddingHorizontal: w * 0.01,
     paddingVertical: h * 0.015,
-    marginLeft: w * 0.026,  
+    marginLeft: w * 0.026,
   },
   specialItem: {
     backgroundColor: '#00bcd4',
