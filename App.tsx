@@ -1,6 +1,11 @@
 // App.tsx
 import React, {useEffect, useMemo, useState} from 'react';
-import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  ImageBackground,
+} from 'react-native';
 import dayjs from 'dayjs';
 import Toast from 'react-native-toast-message';
 import {NavigationContainer} from '@react-navigation/native';
@@ -32,7 +37,7 @@ import {
   setupNotificationListeners,
 } from './src/utils/service-handlers';
 import {fetchSettings} from './src/services/common';
-import {pallette} from './src/constants/constants';
+import {h, pallette} from './src/constants/constants';
 import {CustomStatusBar} from './src/components';
 import {AuthStack, MainStack, navigationRef} from './src/navigation/navigation';
 

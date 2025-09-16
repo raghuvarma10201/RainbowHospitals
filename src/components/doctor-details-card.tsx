@@ -36,7 +36,7 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
   about = false,
   onConsultationPress,
 }) => {
-  console.log(appointmentType);
+  console.log(appointmentType, doctorDetail?.physical_consultation_fee);
 
   // ---------- FALLBACK ----------
   const doctorImage: ImageSourcePropType = doctorDetail?.small_image
@@ -144,7 +144,7 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                             ? appointmentType == 'Video'
                               ? pallette.white
                               : pallette.teal
-                            : pallette.dark_grey,
+                            : pallette.white,
                         },
                       ]}
                     />

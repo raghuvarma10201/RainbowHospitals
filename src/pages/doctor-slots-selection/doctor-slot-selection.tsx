@@ -1,8 +1,9 @@
 // ---------- MODULE IMPORTS ----------
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Alert,
   Image,
+  ImageBackground,
   ScrollView,
   StyleSheet,
   Text,
@@ -16,7 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // ---------- COMPONENT IMPORTS ----------
 import {SlotSelection} from '.';
 import {useDoctorSlots} from './components/functions';
-import {Footer, Header, Loader} from '../../components';
+import {Footer, Header, Loader, NotFound} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
 import {
@@ -29,7 +30,11 @@ import {useApp} from '../../context/app-context';
 import {ToastService} from '../../utils/service-handlers';
 import {MainStackParamList} from '../../types/navigation';
 import {routes} from '../../utils/enums';
-import {AppointmentPayload, FamilyMember} from '../../utils/types';
+import {
+  AppointmentPayload,
+  AppointmentType,
+  FamilyMember,
+} from '../../utils/types';
 import {h, pallette, w} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 import DoctorDetailsCard from '../../components/doctor-details-card';
@@ -50,11 +55,16 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     details,
   } = route.params;
   console.log(details);
+  const headerRef = useRef<any>();
+  const scrollRef = useRef<ScrollView>(null);
 
   const {branch, updateAppointment} = useApp();
   const {settings} = useSettings();
   const {startTimer} = useTimer();
-  const [typeOfAppointment, setTypeOfAppointment] = useState(appointmentType);
+  const [typeOfAppointment, setTypeOfAppointment] = useState<AppointmentType>(
+    // appointmentType ||
+    'Video',
+  );
   const [selectedSlot, setSelectedSlot] = useState('');
   const [selectedD, setSelectedD] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -286,7 +296,19 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     <View style={styles.mainContainer}>
       {/* COMMON HEADER */}
       <Header showLocation />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent}>
+        <ImageBackground
+          source={require('../../../assets/images/bottombg.png')}
+          style={{
+            height: h * 0.4,
+            width: '100%',
+            position: 'absolute',
+            bottom: -(h * 0.1),
+            right: 0,
+            left: 0,
+          }}
+          resizeMode="cover"
+        />
         {/* DOCTOR DETAILS CARD */}
         <DoctorDetailsCard
           doctorDetail={doctorDetail}
@@ -351,6 +373,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                 activeColor={pallette.pale_turquoise}
                 onChange={(item: FamilyMember) => {
                   setSelectedPatient(item.PatientID);
+                  scrollRef.current?.scrollToEnd();
                   // getConsultationFee(item.PatientID);
                 }}
               />
@@ -358,20 +381,28 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           </View>
         </View>
         {/* SESSIONS AND SLOTS COMPONENT */}
-        {selectedPatient && (
-          <SlotSelection
-            sessions={sessions}
-            slots={slots}
-            selectedTime={selectedTime}
-            selectedSlot={selectedSlot}
-            onDateClick={loadSlots}
-            onSelectSlot={(slotId: string, time: string) => {
-              updateSlot(slotId);
-              setSelectedTime(time);
-            }}
-            styles={styles}
-          />
-        )}
+        {selectedPatient &&
+          (sessions.length ? (
+            <SlotSelection
+              sessions={sessions}
+              slots={slots}
+              selectedTime={selectedTime}
+              selectedSlot={selectedSlot}
+              onDateClick={loadSlots}
+              onSelectSlot={(slotId: string, time: string) => {
+                updateSlot(slotId);
+                setSelectedTime(time);
+                scrollRef.current?.scrollToEnd();
+              }}
+              styles={styles}
+            />
+          ) : (
+            <NotFound
+              text="No Sessions Found"
+              margin={h * 0.05}
+              change={() => headerRef.current?.openModal()}
+            />
+          ))}
 
         {/* PAYMENT SUMMARY */}
         {selectedSlot && (
@@ -475,7 +506,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 100,
-    minHeight: h,
+    minHeight: h * 0.8,
   },
   patientContainer: {
     backgroundColor: '#fff',
@@ -492,7 +523,11 @@ const styles = StyleSheet.create({
     paddingBottom: h * 0.03,
   },
   timeBtn: {
-    width: 65,
+    width: w * 0.18,
+    height: h * 0.03,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: w * 0.02,
   },
   timeTxt: {
     color: pallette.black,
@@ -613,7 +648,8 @@ const styles = StyleSheet.create({
     height: 30,
     marginTop: 5,
     width: w * 0.6,
-    paddingHorizontal: 10,
+    paddingHorizontal: w * 0.04,
+    borderRadius: w * 0.1,
   },
   placeholderCountry: {
     fontFamily: 'ProximaNovaA-Regular',

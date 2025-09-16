@@ -26,7 +26,7 @@ import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import {fetchAppointmentChat, sendAppointmentChat} from '../../services/common';
 import {ToastService} from '../../utils/service-handlers';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../navigation/types';
+import {MainStackParamList} from '../../types/navigation';
 import CommonHeader from '../../components/header';
 import {adjust} from '../../utils/common-functions';
 

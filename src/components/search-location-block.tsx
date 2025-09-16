@@ -35,16 +35,11 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
           placeholder="Doctor/Specialty"
           value={search}
           onChangeText={setSearch}
-          placeholderTextColor={pallette.light_grey}
+          placeholderTextColor={pallette.dark_grey}
+          textColor={pallette.black}
+          contentStyle={styles.input}
           underlineColor="transparent"
           activeUnderlineColor="transparent"
-          theme={{
-            colors: {
-              text: pallette.white,
-              placeholder: pallette.white,
-              background: 'transparent',
-            },
-          }}
         />
       </View>
       <View style={styles.container}>
@@ -59,6 +54,12 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
           selectedTextStyle={styles.selectedTextCountry}
           placeholderStyle={styles.placeholderCountry}
           containerStyle={styles.dropdownList}
+          itemTextStyle={{
+            fontSize: adjust(11),
+            color: pallette.black,
+            fontFamily: 'ProximaNovaA-Regular',
+          }}
+          iconStyle={styles.dropDownIcon}
           maxHeight={200}
           value={country}
           data={location_options}
@@ -83,24 +84,25 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: pallette.light_grey,
     paddingRight: w * 0.03,
+    alignItems: 'center',
   },
   iconContainer: {
-    backgroundColor: pallette.medium_turquoise,
-    width: w * 0.15,
-    height: h * 0.05,
+    backgroundColor: pallette.white,
+    width: w * 0.1,
+    height: h * 0.03,
     borderRadius: w * 0.1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   icon: {
-    height: '80%',
+    height: '60%',
     width: '50%',
     resizeMode: 'contain',
-    tintColor: pallette.white,
+    tintColor: pallette.medium_turquoise,
   },
   input: {
-    height: h * 0.045,
-    width: w * 0.25,
+    height: h * 0.04,
+    width: w * 0.4,
     color: pallette.black,
     backgroundColor: pallette.white,
     borderRadius: w * 0.1,
@@ -109,8 +111,8 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Regular',
   },
   dropdownSelect: {
-    height: h * 0.045,
-    width: w * 0.17,
+    height: h * 0.04,
+    width: w * 0.2,
     marginLeft: w * 0.01,
   },
   placeholderCountry: {
@@ -121,11 +123,16 @@ const styles = StyleSheet.create({
   selectedTextCountry: {
     fontSize: adjust(10),
     color: pallette.dark_grey,
+    fontFamily: 'ProximaNovaA-Regular',
   },
   dropdownList: {
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: adjust(11),
     width: w * 0.3,
     marginLeft: -(w * 0.1),
+  },
+  dropDownIcon: {
+    height: h * 0.02,
+    width: w * 0.02,
   },
 });

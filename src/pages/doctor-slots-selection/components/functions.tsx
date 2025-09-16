@@ -7,7 +7,7 @@ import {
   getDoctorSlots,
 } from '../../../services/common';
 import {ToastService} from '../../../utils/service-handlers';
-import { pallette } from '../../../constants/constants';
+import {pallette} from '../../../constants/constants';
 
 interface Slot {
   SlotID: string;
@@ -15,11 +15,17 @@ interface Slot {
 }
 
 // ---------- TIME FORMATTING ----------
-export const formatTime24Hour = (dateTimeString: string): string => {
-  const date = new Date(dateTimeString);
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  return `${hours}:${minutes}`;
+export const formatTo12Hour = (time: string) => {
+  const date = new Date(time);
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+
+  hours = hours % 12;
+  hours = hours === 0 ? 12 : hours;
+
+  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+  return `${hours}:${formattedMinutes} ${ampm}`;
 };
 
 // ---------- RENDER SLOT COMPONENT ----------
@@ -36,12 +42,19 @@ export const RenderSlot: React.FC<RenderSlotProps> = ({
   onSelect,
   styles,
 }) => {
-  const time = formatTime24Hour(item.SessionStartDttm);
+  const time = formatTo12Hour(item.SessionStartDttm);
   const isSelected = selectedTime === time;
 
   return (
     <TouchableOpacity
-      style={[styles.timeBtn,{backgroundColor: isSelected ? pallette.medium_turquoise : pallette.white}]}
+      style={[
+        styles.timeBtn,
+        {
+          backgroundColor: isSelected
+            ? pallette.medium_turquoise
+            : pallette.white,
+        },
+      ]}
       onPress={() => onSelect(item.SlotID, time)}>
       <Text style={[styles.timeTxt, isSelected && styles.selectedTime]}>
         {time}

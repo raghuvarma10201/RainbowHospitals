@@ -1,5 +1,11 @@
 // ---------- MODULE IMPORTS ----------
-import {Image, ScrollView, StyleSheet, View} from 'react-native';
+import {
+  Image,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -41,15 +47,23 @@ const Specialities: React.FC = ({route}: any) => {
   }, [branch, category]);
 
   // ---------- CALLBACK FUNCTIONS ----------
-  const loadSpecialities = async () => {
+  const loadSpecialities = async (filter?: string) => {
     await fetchData(
       () => getSpecialities(category?.coe_id?.toString()),
       data => {
-        setSpecialities(data);
-        loadDoctors(
-          selectedSpecialityId || data[0]?.speciality_id,
-          appointmentType,
-        );
+        if (filter) {
+          setSpecialities(
+            data.filter((items: any) =>
+              items.name.toLowerCase().includes(filter.toLowerCase()),
+            ),
+          );
+        } else {
+          setSpecialities(data);
+        }
+        // loadDoctors(
+        //   selectedSpecialityId || data[0]?.speciality_id,
+        //   appointmentType,
+        // );
       },
       'specialities',
     );
@@ -83,7 +97,7 @@ const Specialities: React.FC = ({route}: any) => {
     label: string,
   ) => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const res = await apiCall();
       res?.status === 200
         ? onSuccess(res.data)
@@ -95,7 +109,7 @@ const Specialities: React.FC = ({route}: any) => {
       console.error(`Failed to load ${label}:`, e);
       ToastService.error('Error', `Unable to fetch ${label}`);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -114,6 +128,10 @@ const Specialities: React.FC = ({route}: any) => {
     setActiveDocIndex(0);
   };
 
+  useEffect(() => {
+    loadSpecialities(search);
+  }, [search]);
+
   // ---------- LOADER ----------
   if (loading) return <Loader />;
 
@@ -123,6 +141,18 @@ const Specialities: React.FC = ({route}: any) => {
       {/* COMMON HEADER */}
       <Header showLocation ref={headerRef} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ImageBackground
+          source={require('../../../assets/images/bottombg.png')}
+          style={{
+            height: h * 0.4,
+            width: '100%',
+            position: 'absolute',
+            bottom: -(h * 0.1),
+            right: 0,
+            left: 0,
+          }}
+          resizeMode="cover"
+        />
         <View style={styles.container}>
           <SearchLocationBlock style={styles.searchLocationBlock} />
           <CategorySelection />
@@ -180,7 +210,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: h * 0.02,
-    width: w * 0.8,
+    width: w * 0.9,
     alignSelf: 'center',
   },
   quickActions: {
@@ -199,31 +229,30 @@ const styles = StyleSheet.create({
     borderColor: pallette.light_grey,
     paddingRight: w * 0.03,
     marginTop: h * 0.02,
-    width: w * 0.8,
-    alignSelf: 'center',
+    alignItems: 'center',
   },
   iconContainer: {
-    backgroundColor: pallette.medium_turquoise,
-    width: w * 0.15,
-    height: h * 0.05,
+    backgroundColor: pallette.white,
+    width: w * 0.1,
+    height: h * 0.03,
     borderRadius: w * 0.1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   icon: {
-    height: '80%',
+    height: '60%',
     width: '50%',
     resizeMode: 'contain',
-    tintColor: pallette.white,
+    tintColor: pallette.medium_turquoise,
   },
   input: {
-    height: h * 0.045,
-    width: w * 0.5,
+    height: h * 0.04,
+    width: w * 0.8,
     color: pallette.black,
     backgroundColor: pallette.white,
     borderRadius: w * 0.1,
-    marginVertical: h * 0.002,
     fontSize: adjust(10),
+    marginVertical: h * 0.002,
     fontFamily: 'ProximaNovaA-Regular',
   },
 });

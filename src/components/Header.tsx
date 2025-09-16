@@ -336,12 +336,17 @@ const Header = forwardRef<any, HeaderProps>(
               <View style={{marginLeft: w * 0.02}}>
                 <Text style={styles.locationText}>
                   {/* {branch?.name || 'Fetching location...'} */}
-                  {profile?.PatientName ?? 'User'}
+                  {profile?.PatientName ?? 'Fetching User...'}
                 </Text>
                 <View style={styles.locationInfo}>
                   <Image source={images.map} style={styles.mapIcon} />
+                  <Text
+                    numberOfLines={1}
+                    style={[styles.regionText, {width: '25%'}]}>
+                    {`${branch?.name},` || 'loading...'}
+                  </Text>
                   <Text style={styles.regionText}>
-                    {region?.name ?? 'loading...'}
+                    {`${region?.name}` || ''}
                   </Text>
                   <FontAwesome
                     name={'angle-down'}

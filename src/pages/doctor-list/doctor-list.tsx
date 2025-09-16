@@ -1,6 +1,13 @@
 // ---------- MODULE IMPORTS ----------
 import React, {useEffect, useState, useCallback, useRef} from 'react';
-import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Image,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
@@ -48,35 +55,47 @@ const DoctorsList: React.FC = ({route}: any) => {
   const [search, setSearch] = useState('');
 
   // ---------- CALLBACK FUNCTIONS ----------
-  const loadDoctors = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await getDoctors(
-        '',
-        specialityId,
-        branch?.id,
-        // '',
-        '',
-        // appointmentType,
-        '',
-        1,
-        10,
-      );
-      if (response?.status === 200) {
-        setDoctors(response.data.doctors ?? []);
-      } else {
-        ToastService.error(
-          'Error',
-          response?.message ?? 'Failed to fetch doctors',
+  const loadDoctors = useCallback(
+    async (filter?: string) => {
+      try {
+        setLoading(true);
+        const response = await getDoctors(
+          '',
+          specialityId,
+          branch?.id,
+          // '',
+          '',
+          // appointmentType,
+          '',
+          1,
+          10,
         );
+        if (response?.status === 200) {
+          // setDoctors(response.data.doctors ?? []);
+          if (filter) {
+            setDoctors(
+              response.data.doctors.filter((items: any) =>
+                items.name.toLowerCase().includes(filter.toLowerCase()),
+              ),
+            );
+          } else {
+            setDoctors(response.data.doctors);
+          }
+        } else {
+          ToastService.error(
+            'Error',
+            response?.message ?? 'Failed to fetch doctors',
+          );
+        }
+      } catch (error) {
+        console.error('Failed to load Doctors:', error);
+        ToastService.error('Error', 'Something went wrong');
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Failed to load Doctors:', error);
-      ToastService.error('Error', 'Something went wrong');
-    } finally {
-      setLoading(false);
-    }
-  }, [specialityId, appointmentType, branch]);
+    },
+    [specialityId, appointmentType, branch],
+  );
 
   // ---------- LIFECYCLE ----------
   useEffect(() => {
@@ -88,12 +107,28 @@ const DoctorsList: React.FC = ({route}: any) => {
     navigation.goBack();
   };
 
+  useEffect(() => {
+    loadDoctors(search);
+  }, [search]);
+
   // ---------- RENDER ----------
   return (
     <View style={styles.mainContainer}>
       {/* COMMON HEADER */}
       <Header showLocation ref={headerRef} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ImageBackground
+          source={require('../../../assets/images/bottombg.png')}
+          style={{
+            height: h * 0.4,
+            width: '100%',
+            position: 'absolute',
+            bottom: -(h * 0.1),
+            right: 0,
+            left: 0,
+          }}
+          resizeMode="cover"
+        />
         <View style={styles.container}>
           <SearchLocationBlock style={styles.searchLocationBlock} />
           <CategorySelection
@@ -192,7 +227,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: h * 0.02,
-    width: w * 0.8,
+    width: w * 0.9,
     alignSelf: 'center',
   },
   specialtyRibbonContainer: {
@@ -242,31 +277,30 @@ const styles = StyleSheet.create({
     borderColor: pallette.light_grey,
     paddingRight: w * 0.03,
     marginTop: h * 0.02,
-    width: w * 0.8,
-    alignSelf: 'center',
+    alignItems: 'center',
   },
   iconContainer: {
-    backgroundColor: pallette.medium_turquoise,
-    width: w * 0.15,
-    height: h * 0.05,
+    backgroundColor: pallette.white,
+    width: w * 0.1,
+    height: h * 0.03,
     borderRadius: w * 0.1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   icon: {
-    height: '80%',
+    height: '60%',
     width: '50%',
     resizeMode: 'contain',
-    tintColor: pallette.white,
+    tintColor: pallette.medium_turquoise,
   },
   input: {
-    height: h * 0.045,
-    width: w * 0.5,
+    height: h * 0.04,
+    width: w * 0.8,
     color: pallette.black,
     backgroundColor: pallette.white,
     borderRadius: w * 0.1,
-    marginVertical: h * 0.002,
     fontSize: adjust(10),
+    marginVertical: h * 0.002,
     fontFamily: 'ProximaNovaA-Regular',
   },
 });

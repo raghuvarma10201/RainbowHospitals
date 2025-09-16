@@ -53,7 +53,7 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
 
   const handleScroll = (event: any) => {
     const pageIndex = Math.round(
-      event.nativeEvent.contentOffset.x / (w * 0.95),
+      event.nativeEvent.contentOffset.x / (w * 0.96),
     );
     setCurrentPage(pageIndex);
   };
@@ -90,7 +90,9 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
                 }
                 style={styles.icon}
               />
-              <Text style={styles.itemText}>{item.name}</Text>
+              <Text numberOfLines={3} style={styles.itemText}>
+                {item.name}
+              </Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -117,10 +119,11 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
 
 const styles = StyleSheet.create({
   page: {
-    width: w * 0.95,
+    width: w * 0.96,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
+    gap: w * 0.01,
   },
   itemContainer: {
     alignItems: 'center',

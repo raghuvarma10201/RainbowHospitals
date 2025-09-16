@@ -7,6 +7,7 @@ import {
   View,
   FlatList,
   ScrollView,
+  ImageBackground,
 } from 'react-native';
 import {Text} from 'react-native-paper';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -111,6 +112,18 @@ const Dashboard: React.FC = () => {
       {/* COMMON HEADER */}
       <Header showLocation showBack={false} title="home" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ImageBackground
+          source={require('../../../assets/images/bottombg.png')}
+          style={{
+            height: h * 0.4,
+            width: '100%',
+            position: 'absolute',
+            bottom: -(h * 0.1),
+            right: 0,
+            left: 0,
+          }}
+          resizeMode="cover"
+        />
         <View style={styles.container}>
           <SearchLocationBlock style={styles.searchLocationBlock} />
           <CategorySelection />
@@ -119,10 +132,10 @@ const Dashboard: React.FC = () => {
             images={banners}
             activeindex={activeindex}
             setActiveindex={setActiveindex}
-            height={h * 0.28}
+            height={h * 0.35}
             width={w * 0.96}
-            itemWidth={w * 0.9}
-            resizeMode={'contain'}
+            itemWidth={w * 0.8}
+            resizeMode={'cover'}
           />
           <PaginationDots data={banners} activeIndex={activeindex} />
         </View>
@@ -151,7 +164,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: h * 0.02,
-    width: w * 0.8,
+    width: w * 0.9,
     alignSelf: 'center',
   },
 });
