@@ -163,5 +163,6 @@ const styles = StyleSheet.create({
     fontSize: adjust(12),
     color: pallette.dark_purple,
     fontFamily: 'ProximaNova-Regular',
+    paddingBottom: h * 0.012,
   },
 });

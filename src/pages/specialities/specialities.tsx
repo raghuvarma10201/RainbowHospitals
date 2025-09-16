@@ -124,7 +124,7 @@ const Specialities: React.FC = ({route}: any) => {
       <Header showLocation ref={headerRef} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
-          {/* <SearchLocationBlock style={styles.searchLocationBlock} /> */}
+          <SearchLocationBlock style={styles.searchLocationBlock} />
           <CategorySelection />
 
           <View style={styles.searchContainer}>
@@ -137,7 +137,7 @@ const Specialities: React.FC = ({route}: any) => {
             <TextInput
               mode="flat"
               style={styles.input}
-              placeholder="Doctor/Specialty"
+              placeholder="Specialty"
               value={search}
               onChangeText={setSearch}
               placeholderTextColor={pallette.light_grey}
@@ -198,7 +198,9 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: pallette.light_grey,
     paddingRight: w * 0.03,
-    marginVertical: h * 0.02,
+    marginTop: h * 0.02,
+    width: w * 0.8,
+    alignSelf: 'center',
   },
   iconContainer: {
     backgroundColor: pallette.medium_turquoise,
@@ -216,10 +218,11 @@ const styles = StyleSheet.create({
   },
   input: {
     height: h * 0.045,
-    width: w * 0.25,
+    width: w * 0.5,
     color: pallette.black,
     backgroundColor: pallette.white,
     borderRadius: w * 0.1,
+    marginVertical: h * 0.002,
     fontSize: adjust(10),
     fontFamily: 'ProximaNovaA-Regular',
   },

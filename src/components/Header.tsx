@@ -502,9 +502,9 @@ const styles = StyleSheet.create({
   locationOption: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: pallette.dark_grey,
+    borderBottomColor: '#e0e0e0ff',
   },
-  selectedLocationOption: {backgroundColor: pallette.light_grey},
+  selectedLocationOption: {backgroundColor: '#fbf1ffff'},
   locationOptionText: {fontSize: adjust(14), color: pallette.black},
   selectedLocationText: {color: pallette.amethyst, fontWeight: 'bold'},
   regionRow: {flexDirection: 'row', justifyContent: 'space-between'},

@@ -18,6 +18,7 @@ import NotFound from '../../components/empty-text';
 import CategorySelection from '../../components/category-selection';
 import {LinearGradient} from 'react-native-linear-gradient';
 import {adjust} from '../../utils';
+import {TextInput} from 'react-native-paper';
 
 // ---------- TYPES ----------
 interface DoctorSpeciality {
@@ -44,6 +45,7 @@ const DoctorsList: React.FC = ({route}: any) => {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [changeLocation, setChangeLocation] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState('');
 
   // ---------- CALLBACK FUNCTIONS ----------
   const loadDoctors = useCallback(async () => {
@@ -82,9 +84,9 @@ const DoctorsList: React.FC = ({route}: any) => {
   }, [loadDoctors]);
 
   const changeCategory = (cat: any) => {
-    updateCategory(cat)
-    navigation.goBack()
-  }
+    updateCategory(cat);
+    navigation.goBack();
+  };
 
   // ---------- RENDER ----------
   return (
@@ -94,7 +96,35 @@ const DoctorsList: React.FC = ({route}: any) => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <SearchLocationBlock style={styles.searchLocationBlock} />
-          <CategorySelection screen={'docList'} changeCategory={changeCategory} />
+          <CategorySelection
+            screen={'docList'}
+            changeCategory={changeCategory}
+          />
+          <View style={styles.searchContainer}>
+            <View style={styles.iconContainer}>
+              <Image
+                source={require('../../../assets/images/search-icon.png')}
+                style={styles.icon}
+              />
+            </View>
+            <TextInput
+              mode="flat"
+              style={styles.input}
+              placeholder="Doctors"
+              value={search}
+              onChangeText={setSearch}
+              placeholderTextColor={pallette.light_grey}
+              underlineColor="transparent"
+              activeUnderlineColor="transparent"
+              theme={{
+                colors: {
+                  text: pallette.white,
+                  placeholder: pallette.white,
+                  background: 'transparent',
+                },
+              }}
+            />
+          </View>
           <View style={styles.specialtyRibbonContainer}>
             <LinearGradient
               colors={[pallette.white, pallette.black]}
@@ -195,5 +225,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: w * 0.02,
+  },
+  quickActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    alignSelf: 'center',
+    width: '100%',
+  },
+  searchContainer: {
+    backgroundColor: pallette.white,
+    flexDirection: 'row',
+    borderRadius: w * 0.1,
+    borderWidth: 0.3,
+    borderColor: pallette.light_grey,
+    paddingRight: w * 0.03,
+    marginTop: h * 0.02,
+    width: w * 0.8,
+    alignSelf: 'center',
+  },
+  iconContainer: {
+    backgroundColor: pallette.medium_turquoise,
+    width: w * 0.15,
+    height: h * 0.05,
+    borderRadius: w * 0.1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    height: '80%',
+    width: '50%',
+    resizeMode: 'contain',
+    tintColor: pallette.white,
+  },
+  input: {
+    height: h * 0.045,
+    width: w * 0.5,
+    color: pallette.black,
+    backgroundColor: pallette.white,
+    borderRadius: w * 0.1,
+    marginVertical: h * 0.002,
+    fontSize: adjust(10),
+    fontFamily: 'ProximaNovaA-Regular',
   },
 });
