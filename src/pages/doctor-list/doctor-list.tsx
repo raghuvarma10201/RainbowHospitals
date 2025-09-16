@@ -40,7 +40,7 @@ const DoctorsList: React.FC = ({route}: any) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {specialityId, specialityName, appointmentType} = route.params;
-  const {branch} = useApp();
+  const {branch, updateCategory} = useApp();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [changeLocation, setChangeLocation] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
@@ -81,6 +81,11 @@ const DoctorsList: React.FC = ({route}: any) => {
     loadDoctors();
   }, [loadDoctors]);
 
+  const changeCategory = (cat: any) => {
+    updateCategory(cat)
+    navigation.goBack()
+  }
+
   // ---------- RENDER ----------
   return (
     <View style={styles.mainContainer}>
@@ -89,7 +94,7 @@ const DoctorsList: React.FC = ({route}: any) => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <SearchLocationBlock style={styles.searchLocationBlock} />
-          <CategorySelection />
+          <CategorySelection screen={'docList'} changeCategory={changeCategory} />
           <View style={styles.specialtyRibbonContainer}>
             <LinearGradient
               colors={[pallette.white, pallette.black]}
@@ -107,11 +112,7 @@ const DoctorsList: React.FC = ({route}: any) => {
               style={styles.gradient}
             />
           </View>
-          <View
-            style={[
-              styles.doctorsListContainer,
-              {justifyContent: doctors?.length > 2 ? 'center' : 'flex-start'},
-            ]}>
+          <View style={[styles.doctorsListContainer]}>
             {doctors.length > 0 ? (
               doctors.map(doctor => (
                 <DoctorRow
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
   doctorsListContainer: {
     marginVertical: h * 0.04,
     paddingHorizontal: w * 0.01,
-    // justifyContent:'center',
+    justifyContent: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: w * 0.02,

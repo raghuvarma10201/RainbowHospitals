@@ -6,6 +6,7 @@ import {useApp} from '../context/app-context';
 import {Category} from '../services/Region/api';
 import {getCategories} from '../services/common';
 import {useFocusEffect} from '@react-navigation/native';
+import {string} from 'yup';
 
 const images = {
   childCare: require('../../assets/images/child-care.png'),
@@ -13,8 +14,14 @@ const images = {
   fertility: require('../../assets/images/fertility.png'),
 };
 
-const CategorySelection = () => {
-  const {updateCategory, category, branch} = useApp();
+const CategorySelection = ({
+  screen,
+  changeCategory,
+}: {
+  screen?: string;
+  changeCategory?: any;
+}) => {
+  const {category, updateCategory, branch} = useApp();
   const [categories, setCategories] = useState<Category[]>([]);
 
   const fetchCategries = useCallback(async () => {
@@ -39,7 +46,7 @@ const CategorySelection = () => {
       {categories.map((cat, index) => (
         <TouchableOpacity
           onPress={() => {
-            updateCategory(cat);
+            screen == 'docList' ? changeCategory(cat) : updateCategory(cat);
           }}
           style={[
             styles.category,
@@ -131,6 +138,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomWidth: 0.7,
     borderColor: pallette.light_grey,
+    marginTop: h * 0.02,
   },
   category: {
     height: '100%',

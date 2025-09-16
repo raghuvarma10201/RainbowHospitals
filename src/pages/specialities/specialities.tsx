@@ -1,5 +1,5 @@
 // ---------- MODULE IMPORTS ----------
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {Image, ScrollView, StyleSheet, View} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -16,6 +16,8 @@ import {h, pallette, w} from '../../constants/constants';
 import {useApp} from '../../context/app-context';
 import SearchLocationBlock from '../../components/search-location-block';
 import CategorySelection from '../../components/category-selection';
+import {TextInput} from 'react-native-paper';
+import {adjust} from '../../utils';
 
 // ---------- COMPONENT ----------
 const Specialities: React.FC = ({route}: any) => {
@@ -23,6 +25,7 @@ const Specialities: React.FC = ({route}: any) => {
   const headerRef = useRef<any>();
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const [search, setSearch] = useState('');
   const {appointmentType} = route.params;
   const {branch, category} = useApp();
   const [specialities, setSpecialities] = useState<any[]>([]);
@@ -121,8 +124,34 @@ const Specialities: React.FC = ({route}: any) => {
       <Header showLocation ref={headerRef} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
-          <SearchLocationBlock style={styles.searchLocationBlock} />
+          {/* <SearchLocationBlock style={styles.searchLocationBlock} /> */}
           <CategorySelection />
+
+          <View style={styles.searchContainer}>
+            <View style={styles.iconContainer}>
+              <Image
+                source={require('../../../assets/images/search-icon.png')}
+                style={styles.icon}
+              />
+            </View>
+            <TextInput
+              mode="flat"
+              style={styles.input}
+              placeholder="Doctor/Specialty"
+              value={search}
+              onChangeText={setSearch}
+              placeholderTextColor={pallette.light_grey}
+              underlineColor="transparent"
+              activeUnderlineColor="transparent"
+              theme={{
+                colors: {
+                  text: pallette.white,
+                  placeholder: pallette.white,
+                  background: 'transparent',
+                },
+              }}
+            />
+          </View>
           <View style={styles.quickActions}>
             <SpecialityGrid items={specialities} type={appointmentType} />
           </View>
@@ -161,5 +190,37 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignSelf: 'center',
     width: '100%',
+  },
+  searchContainer: {
+    backgroundColor: pallette.white,
+    flexDirection: 'row',
+    borderRadius: w * 0.1,
+    borderWidth: 0.3,
+    borderColor: pallette.light_grey,
+    paddingRight: w * 0.03,
+    marginVertical: h * 0.02,
+  },
+  iconContainer: {
+    backgroundColor: pallette.medium_turquoise,
+    width: w * 0.15,
+    height: h * 0.05,
+    borderRadius: w * 0.1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    height: '80%',
+    width: '50%',
+    resizeMode: 'contain',
+    tintColor: pallette.white,
+  },
+  input: {
+    height: h * 0.045,
+    width: w * 0.25,
+    color: pallette.black,
+    backgroundColor: pallette.white,
+    borderRadius: w * 0.1,
+    fontSize: adjust(10),
+    fontFamily: 'ProximaNovaA-Regular',
   },
 });
