@@ -58,6 +58,8 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
           style={styles.dropdownSelect}
           selectedTextStyle={styles.selectedTextCountry}
           placeholderStyle={styles.placeholderCountry}
+          itemTextStyle={styles.itemTextStyle}
+          itemContainerStyle={styles.itemContainerStyle}
           containerStyle={styles.dropdownList}
           maxHeight={200}
           value={country}
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     backgroundColor: pallette.medium_turquoise,
-    width: w * 0.15,
+    width: w * 0.08,
     height: h * 0.05,
     borderRadius: w * 0.1,
     justifyContent: 'center',
@@ -94,27 +96,43 @@ const styles = StyleSheet.create({
   },
   icon: {
     height: '80%',
-    width: '50%',
+    width:w*0.05,
     resizeMode: 'contain',
     tintColor: pallette.white,
   },
   input: {
     height: h * 0.045,
-    width: w * 0.25,
+    width: w * 0.27,
     color: pallette.black,
     backgroundColor: pallette.white,
     borderRadius: w * 0.1,
-    fontSize: adjust(10),
+    fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Regular',
+    paddingHorizontal:10,
+  },
+  itemTextStyle: {
+    fontSize: adjust(15),
+    color: pallette.black,
+    fontFamily: 'ProximaNovaA-Regular',
+    padding: 0,
+    lineHeight: 18,
+    paddingHorizontal:0,
+    marginHorizontal:0,
+  },
+  itemContainerStyle:{
+    paddingVertical:0, 
+    marginVertical:0,
+    paddingHorizontal:0,
+    marginHorizontal:0,
   },
   dropdownSelect: {
     height: h * 0.045,
-    width: w * 0.17,
+    width: w * 0.27,
     marginLeft: w * 0.01,
   },
   placeholderCountry: {
     fontFamily: 'ProximaNovaA-Regular',
-    fontSize: adjust(11),
+    fontSize: adjust(12),
     color: pallette.light_grey,
   },
   selectedTextCountry: {
