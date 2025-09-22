@@ -405,6 +405,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                 labelField="PatientName"
                 placeholder="Select Patient"
                 containerStyle={styles.dropdownList}
+                itemTextStyle={styles.dropdownList}
                 activeColor={pallette.pale_turquoise}
                 onChange={(item: FamilyMember) => {
                   setSelectedPatient(item.PatientID);

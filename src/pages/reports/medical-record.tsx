@@ -74,6 +74,7 @@ const MedicalRecord: React.FC = () => {
                 <Dropdown
                   style={styles.dropdownSelect}
                   selectedTextStyle={styles.selectedTextContry}
+                  itemTextStyle={styles.selectedTextContry}
                   placeholderStyle={styles.placeholderCountry}
                   maxHeight={200}
                   value={country}
@@ -112,6 +113,7 @@ const MedicalRecord: React.FC = () => {
               <Dropdown
                 style={styles.userDopdownSelect}
                 selectedTextStyle={styles.userSelectedText}
+                itemTextStyle={styles.userSelectedText}
                 placeholderStyle={styles.userPlaceholder}
                 maxHeight={200}
                 value={country}

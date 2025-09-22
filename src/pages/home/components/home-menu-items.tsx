@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
   homeBlockTitle: {
     fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Semibold',
+    color: pallette.black,
   },
   rightArrow: {
     width: w * 0.03,

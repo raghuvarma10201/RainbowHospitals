@@ -110,6 +110,7 @@ export const AuthCommonComponent: FC<commonauth> = ({
                 style={styles.dropdown}
                 selectedTextStyle={styles.dropdownText}
                 placeholderStyle={styles.dropdownText}
+                itemTextStyle={styles.dropdownText}
                 maxHeight={h * 0.25}
                 value={country}
                 data={local_data}

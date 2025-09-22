@@ -203,6 +203,7 @@ const SlotConfirmation: React.FC = ({route}: any) => {
               <Dropdown
                 style={styles.dropdownSelect}
                 selectedTextStyle={styles.selectedTextContry}
+                itemTextStyle={styles.selectedTextContry}
                 placeholderStyle={styles.placeholderCountry}
                 maxHeight={200}
                 value={selectedPatient}
