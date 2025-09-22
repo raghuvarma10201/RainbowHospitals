@@ -30,17 +30,19 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel} = route.params;
+  console.log(appointmentData);
+
   const [visible, setVisible] = React.useState(cancel || false);
   const [loading, setLoading] = useState(false);
   const {showJitsi} = useJitsi();
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   const [bank_details, setBank_details] = useState({
-    bank_name: 'T',
-    account_number: 'T',
-    ifsc_code: 'T',
-    account_holder_name: 'T',
-    branch_name: 'T',
+    bank_name: '',
+    account_number: '',
+    ifsc_code: '',
+    account_holder_name: '',
+    branch_name: '',
   });
 
   const cancelAppointment = async () => {
@@ -53,8 +55,12 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       AppointmentType: appointmentData?.AppointmentType,
       bank_details,
     };
+    console.log(obj);
+
     try {
       const response = await bookAppointment(obj);
+      console.log(response);
+
       if (response?.status == 200 && response?.success) {
         setLoading(false);
         ToastService.success('Success', 'Appointment Cancelled Successfully');
@@ -72,7 +78,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   };
 
   const startVideoCall = () => {
-    console.log(`https://dev.rb.vc.demos.im/${appointmentData?.roomId}`);
     showJitsi({
       roomName: appointmentData?.roomId || 'SampleJitsiCall',
       token: '',
@@ -218,6 +223,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   appointmentType: appointmentData?.AppointmentType,
                   appointmentnumber: appointmentData?.appointmentnumber,
                   OrganisationID: appointmentData?.OrganisationUID,
+                  patientId: appointmentData?.PatientID,
                 })
               }
               style={[styles.payBtn, {backgroundColor: pallette.dark_purple}]}>

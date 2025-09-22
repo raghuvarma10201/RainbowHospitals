@@ -126,14 +126,11 @@ export const setupNotificationListeners = () => {
   const messaging = getMessaging();
 
   // App opened from background by tapping a notification
-  onNotificationOpenedApp(messaging, remoteMessage => {
-    console.log('Notification opened:', remoteMessage);
-  });
+  onNotificationOpenedApp(messaging, remoteMessage => {});
 
   // App opened from quit state
   getInitialNotification(messaging).then(remoteMessage => {
     if (remoteMessage) {
-      console.log('Initial notification:', remoteMessage);
     }
   });
 
@@ -157,7 +154,5 @@ export const setupNotificationListeners = () => {
   });
 
   // Background messages
-  setBackgroundMessageHandler(messaging, async remoteMessage => {
-    console.log('Background message:', remoteMessage);
-  });
+  setBackgroundMessageHandler(messaging, async remoteMessage => {});
 };

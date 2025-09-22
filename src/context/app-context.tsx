@@ -19,6 +19,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [region, setRegion] = useState<Region | null>(null);
   const [mrn, setMrn] = useState<string>('');
   const [category, setCategory] = useState<Category | null>(null);
+  const [categories, setCategories] = useState<Category[] | null>([]);
   const [profile, setProfile] = useState<PatientProfile | null>(null);
   const [doctorDetails, setDoctorDetails] =
     useState<DoctorDetailsResponse | null>(null);
@@ -39,6 +40,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
     region,
     mrn,
     category,
+    categories,
     profile,
     doctorDetails,
     isvideoconsulation,
@@ -55,6 +57,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
     updateRegion: setRegion,
     updateMrn: setMrn,
     updateCategory: setCategory,
+    updateCategories: setCategories,
     updateProfile: setProfile,
     updateDoctorDetails: setDoctorDetails,
     updateVideoConsult: setIsvideoconsulation,

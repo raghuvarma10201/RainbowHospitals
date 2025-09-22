@@ -11,7 +11,8 @@ interface AppContextProps {
   allbranch: Branch[];
   region: Region | null;
   mrn: string;
-  category: Category;
+  category: Category | null;
+  categories: Category[] | null;
   profile: PatientProfile | null;
   doctorDetails: DoctorDetailsResponse | null;
   isvideoconsulation: boolean;
@@ -30,6 +31,7 @@ interface AppContextProps {
   updateRegion: (r: Region | null) => void;
   updateMrn: (m: string) => void;
   updateCategory: (c: Category) => void;
+  updateCategories: (cs: Category[]) => void;
   updateProfile: (p: PatientProfile | null) => void;
   updateDoctorDetails: (d: DoctorDetailsResponse | null) => void;
   updateVideoConsult: (v: boolean) => void;

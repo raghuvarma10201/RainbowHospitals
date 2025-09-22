@@ -52,9 +52,8 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     appointmentType,
     OrganisationID,
     appointmentnumber,
-    details,
+    patientId,
   } = route.params;
-  console.log(details);
   const headerRef = useRef<any>();
   const scrollRef = useRef<ScrollView>(null);
 
@@ -71,7 +70,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   const [loadingPayment, setLoadingPayment] = useState(false);
   const [loadingCall, setLoadingCall] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<string | undefined>(
-    details?.PatientID || '',
+    patientId || '',
   );
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
@@ -122,6 +121,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     async (mrn: string | undefined, date: any, slot: any) => {
       if (!branch) return;
       try {
+        setLoadingCall(true);
         const payload = {
           orgcode: branch.organisation?.code || '11MN',
           OrganisationUID: branch?.organisation?.organisationid?.toString(),
@@ -146,6 +146,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
       } catch (error) {
         console.error('Failed to load Consultation Fee:', error);
       } finally {
+        setLoadingCall(false);
       }
     },
     [branch, doctorDetail, updateAppointment],
@@ -163,6 +164,8 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         time: selectedTime,
         AppointmentType: typeOfAppointment,
       };
+      console.log(commonPayload);
+
       if (appointmentnumber) {
         const mrn = (await AsyncStorage.getItem('mrn')) || '';
         const reschedulePayload: AppointmentPayload = {
@@ -209,15 +212,22 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               : settings?.physicalBookingInterval ?? 0) / 60,
           ...commonPayload,
         };
+        console.log(blockPayload);
 
         try {
           const response = await bookAppointment(blockPayload);
           console.log(response);
 
           if (response && response.status == 200 && response.success == true) {
+            console.log({
+              finalPayload: {...blockPayload, registrationFee},
+              bookingId: response?.data?.his_booking_id,
+              payuUrl: 'https://test.payu.in/_payment',
+            });
+
             if (paymenttype) {
-              // startTimer(settings?.onlineBookingInterval || 10);
-              startTimer(1);
+              startTimer(settings?.onlineBookingInterval || 10);
+              // startTimer(1);
               navigation.navigate('PayUWebView', {
                 finalPayload: {...blockPayload, registrationFee},
                 bookingId: response?.data?.his_booking_id,
@@ -239,7 +249,6 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
             );
           }
         } catch (error: any) {
-          console.log(error);
         } finally {
         }
       }
@@ -263,11 +272,11 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         AppointmentNumber: bookingId ?? 'BAHOP-2972192',
         transaction_id: '',
       };
-      console.log(payload);
+      console.log(finalPayload);
+
       setLoadingCall(true);
       try {
         const response = await advancePay(payload);
-        console.log(response, payload);
         if (response && response?.status == 200 && response?.success == true) {
           setLoadingCall(false);
           ToastService.success('appointment Booked Successfully');
@@ -279,7 +288,6 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         }
       } catch (error: any) {
         setLoadingCall(false);
-        console.log(error);
       } finally {
       }
     },

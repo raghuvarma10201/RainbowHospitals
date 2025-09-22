@@ -20,6 +20,7 @@ export type MainStackParamList = {
     appointmentType: string;
     OrganisationID: string;
     appointmentnumber?: string;
+    patientId?: string;
   };
   DoctorsList: {
     specialityId: number;

@@ -71,7 +71,6 @@ const DoctorsList: React.FC = ({route}: any) => {
           10,
         );
         if (response?.status === 200) {
-          // setDoctors(response.data.doctors ?? []);
           if (filter) {
             setDoctors(
               response.data.doctors.filter((items: any) =>

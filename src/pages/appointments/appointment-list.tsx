@@ -19,7 +19,7 @@ import {getAppointments} from '../../services/common';
 import {ToastService} from '../../utils/service-handlers';
 import {formatAppointmentDateTime} from '../../utils/common-functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {MainStackParamList} from '../../navigation/types';
+import {MainStackParamList} from '../../types/navigation';
 import {pallette} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 import NotFound from '../../components/empty-text';
@@ -30,9 +30,6 @@ const MyAppointments: React.FC = () => {
 
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const navigateTo = (path: keyof MainStackParamList, params: any) => {
-    navigation.navigate(path, params);
-  };
   const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const {branch} = useApp();

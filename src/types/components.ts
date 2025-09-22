@@ -42,7 +42,7 @@ interface DoctorDetailsCardProps {
   doctorSpecialitites: string;
   appointmentType: string;
   about?: boolean;
-  onConsultationPress: (type: string) => void;
+  onConsultationPress: (type: any) => void;
 }
 
 type FooterIcon = 'home' | 'calendar' | 'call' | 'reports';

@@ -34,16 +34,21 @@ const Category: React.FC = () => {
   // ---------- STATE AND CONTEXT DECLARATION ----------
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {profile, updateCategory} = useApp();
+  const {profile, updateCategory, updateCategories} = useApp();
   const [categories, setCategories] = useState<Cat[]>([]);
 
   const fetchCategries = useCallback(async () => {
     try {
-      const {data} = await getCategories();
-      console.log(data);
-      setCategories(data);
+      const response = await getCategories();
+      console.log(response);
+      if (response?.success && response?.status == 200) {
+        setCategories(response?.data);
+        updateCategories(response?.data);
+      } else {
+        ToastService.error('Error', 'Failed fetching categories');
+        setCategories([]);
+      }
     } catch (err) {
-      console.error('Error fetching categories:', err);
       ToastService.error('Error', 'Unable to fetch categoriess');
       setCategories([]);
     }
@@ -70,7 +75,6 @@ const Category: React.FC = () => {
           }}
           resizeMode="cover"
         />
-
         <ImageBackground
           source={require('../../../assets/images/bottombg.png')}
           style={{
@@ -123,44 +127,6 @@ const Category: React.FC = () => {
                 />
               </TouchableOpacity>
             ))}
-
-            {/* <TouchableOpacity
-              onPress={() => {
-                updateCategory('Women Care'),
-                  navigation.navigate(routes.Dashboard as never);
-              }}
-              style={styles.categoryButton}>
-              <View style={styles.imageCategoryView}>
-                <Image
-                  source={images.womenCare}
-                  style={styles.imageCategoryImage}
-                />
-              </View>
-              <Text style={styles.categoryText}>Women Care</Text>
-              <Image
-                source={images.arrowRightLight}
-                style={styles.arrowRightLight}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                updateCategory('Fertility'),
-                  navigation.navigate(routes.Dashboard as never);
-              }}
-              style={styles.categoryButton}>
-              <View style={styles.imageCategoryView}>
-                <Image
-                  source={images.fertility}
-                  style={styles.imageCategoryImage}
-                />
-              </View>
-              <Text style={styles.categoryText}>Fertility</Text>
-              <Image
-                source={images.arrowRightLight}
-                style={styles.arrowRightLight}
-              />
-            </TouchableOpacity> */}
           </View>
         </View>
       </ScrollView>

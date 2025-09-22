@@ -23,6 +23,7 @@ const FormDropdown = ({
       labelField="label"
       placeholder={placeholder}
       containerStyle={styles.dropdownList}
+      itemTextStyle={styles.dropdownList}
       onChange={item => onChange(item.value)}
     />
     {error && <Text style={styles.errorMessage}>{error}</Text>}

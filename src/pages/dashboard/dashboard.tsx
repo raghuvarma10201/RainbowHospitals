@@ -1,22 +1,11 @@
 // ---------- MODULE IMPORTS ----------
-import React, {useCallback, useState} from 'react';
-import {
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  FlatList,
-  ScrollView,
-  ImageBackground,
-} from 'react-native';
-import {Text} from 'react-native-paper';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import moment from 'moment';
+import React, {useState} from 'react';
+import {StyleSheet, View, ScrollView, ImageBackground} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 // ---------- COMPONENT IMPORTS ----------
-import {QuickActions, UpcomingAppointmentCard} from '.';
+import {QuickActions} from '.';
 import {
   Header,
   Banners,
@@ -28,11 +17,7 @@ import {
 // ---------- OTHER IMPORTS ----------
 import {useApp} from '../../context/app-context';
 import {h, pallette, w} from '../../constants/constants';
-import {getAppointments} from '../../services/common';
 import {MainStackParamList} from '../../types/navigation';
-import {ToastService} from '../../utils/service-handlers';
-import {upcomingApointment} from '../../utils/types';
-import {adjust} from '../../utils/common-functions';
 import CategorySelection from '../../components/category-selection';
 
 // ---------- STATIC DATA OUTSIDE COMPONENT ----------
@@ -59,52 +44,7 @@ const Dashboard: React.FC = () => {
       ? images.women_banner
       : images.fertility_banner,
   );
-  const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
   const [activeindex, setActiveindex] = useState(0);
-  const [activeAppointmentIndex, setActiveAppointmentIndex] = useState(0);
-
-  // ---------- CALLBACKS ----------
-  const fetchMyAppointments = useCallback(
-    async (date: string) => {
-      try {
-        const mrn = await AsyncStorage.getItem('mrn');
-        const {data = []} = await getAppointments({
-          mrn,
-          date,
-          OrganisationUID: branch?.organisation?.organisationid.toString(),
-        });
-        console.log(data);
-
-        setAppointments(
-          data
-            .filter((item: upcomingApointment) =>
-              moment(item.SlotStartDttm).isSameOrAfter(date, 'day'),
-            )
-            .sort((a: upcomingApointment, b: upcomingApointment) =>
-              moment(a.SlotStartDttm).diff(moment(b.SlotStartDttm)),
-            ),
-        );
-      } catch (err) {
-        console.error('Error fetching appointments:', err);
-        ToastService.error('Error', 'Unable to fetch upcoming appointments');
-        setAppointments([]);
-      }
-    },
-    [branch],
-  );
-
-  // ---------- LIFECYCLE ----------
-  useFocusEffect(
-    useCallback(() => {
-      fetchMyAppointments(moment().format('YYYY-MM-DD'));
-    }, [fetchMyAppointments]),
-  );
-
-  // ---------- EVENT HANDLERS ----------
-  const handleScrollEnd = useCallback((event: any) => {
-    const newIndex = Math.round(event.nativeEvent.contentOffset.x / w);
-    setActiveAppointmentIndex(newIndex);
-  }, []);
 
   // ---------- RENDER ----------
   return (

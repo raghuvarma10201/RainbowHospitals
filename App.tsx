@@ -57,7 +57,6 @@ const App: React.FC = () => {
       await requestUserPermission();
       const messaging = getMessaging();
       const FcmTtoken = await getToken(messaging);
-      console.log(FcmTtoken);
 
       // const FcmTtoken = await getMessaging().getToken();
       await AsyncStorage.setItem('FcmTtoken', FcmTtoken);
@@ -110,16 +109,15 @@ const App: React.FC = () => {
         AsyncStorage.getItem('accessToken'),
         AsyncStorage.getItem('tokenExpiry'),
       ]);
-
       const isValid =
         !!token &&
         !!expiry &&
         dayjs(expiry).isValid() &&
         dayjs().isBefore(dayjs(expiry));
-
       setLoggedIn(isValid);
     } catch (e) {
       console.error('Error checking auth status', e);
+      setLoggedIn(false);
     } finally {
       setBooting(false);
     }

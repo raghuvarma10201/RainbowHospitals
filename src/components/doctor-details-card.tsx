@@ -36,8 +36,6 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
   about = false,
   onConsultationPress,
 }) => {
-  console.log(appointmentType, doctorDetail?.physical_consultation_fee);
-
   // ---------- FALLBACK ----------
   const doctorImage: ImageSourcePropType = doctorDetail?.small_image
     ? {uri: `${IMG_BASE_URL}${doctorDetail.small_image}`}

@@ -52,8 +52,6 @@ export const getDoctors = async (
     page: page,
     pageSize: pageSize,
   };
-  console.log(params);
-
   try {
     const response = await api.get('/getDoctors', {params});
     return response.data;
@@ -145,7 +143,6 @@ export const getAppointments = async (payload: any) => {
 export const getCategories = async () => {
   try {
     const response = await api.get('/getCategories');
-    console.log(response);
     return response.data;
   } catch (error) {
     throw error;

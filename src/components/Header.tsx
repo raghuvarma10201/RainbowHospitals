@@ -19,6 +19,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useApp} from '../context/app-context';
 import {Branch} from '../services/Region/api';
 import {getBranches, getPatientProfile, getRegions} from '../services/common';
@@ -255,13 +256,23 @@ const Header = forwardRef<any, HeaderProps>(
                   setSelectedRegion(regionItem);
                 }}>
                 <View style={styles.regionRow}>
-                  <Text
-                    style={[
-                      styles.locationOptionText,
-                      isExpanded && styles.selectedLocationText,
-                    ]}>
-                    {regionItem.name}
-                  </Text>
+                  <View style={{flexDirection: 'row', gap: w * 0.02}}>
+                    <Text
+                      style={[
+                        styles.locationOptionText,
+                        isExpanded && styles.selectedLocationText,
+                      ]}>
+                      {regionItem.name}
+                    </Text>
+                    {region?.region_id == regionItem?.region_id &&
+                      !isExpanded && (
+                        <Ionicons
+                          name={'checkmark-circle-outline'}
+                          size={20}
+                          color="#000"
+                        />
+                      )}
+                  </View>
                   <FontAwesome
                     name={isExpanded ? 'angle-up' : 'angle-down'}
                     size={20}
@@ -269,7 +280,6 @@ const Header = forwardRef<any, HeaderProps>(
                   />
                 </View>
               </TouchableOpacity>
-
               <Animated.View
                 style={{height: animatedHeight, overflow: 'hidden'}}>
                 {isExpanded &&
@@ -477,7 +487,7 @@ const styles = StyleSheet.create({
     fontSize: adjust(12),
     color: pallette.white,
     fontFamily: 'ProximaNovaA-Regular',
-    textAlign: 'center',
+    textAlign: 'left',
   },
   locationInfo: {flexDirection: 'row', alignItems: 'center', gap: 5},
   mapIcon: {width: w * 0.032, height: w * 0.032},

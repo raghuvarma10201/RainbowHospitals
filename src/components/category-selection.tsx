@@ -1,12 +1,8 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React from 'react';
 import {h, pallette, w} from '../constants/constants';
-import {adjust, ToastService} from '../utils';
+import {adjust} from '../utils';
 import {useApp} from '../context/app-context';
-import {Category} from '../services/Region/api';
-import {getCategories} from '../services/common';
-import {useFocusEffect} from '@react-navigation/native';
-import {string} from 'yup';
 
 const images = {
   childCare: require('../../assets/images/child-care.png'),
@@ -21,29 +17,10 @@ const CategorySelection = ({
   screen?: string;
   changeCategory?: any;
 }) => {
-  const {category, updateCategory, branch} = useApp();
-  const [categories, setCategories] = useState<Category[]>([]);
-
-  const fetchCategries = useCallback(async () => {
-    try {
-      const {data} = await getCategories();
-      console.log(data);
-      setCategories(data);
-    } catch (err) {
-      console.error('Error fetching categories:', err);
-      ToastService.error('Error', 'Unable to fetch categoriess');
-      setCategories([]);
-    }
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchCategries();
-    }, [fetchCategries]),
-  );
+  const {category, updateCategory, categories} = useApp();
   return (
     <View style={styles.categoryContainer}>
-      {categories.map((cat, index) => (
+      {categories?.map((cat, index) => (
         <TouchableOpacity
           onPress={() => {
             screen == 'docList' ? changeCategory(cat) : updateCategory(cat);
@@ -84,46 +61,6 @@ const CategorySelection = ({
           <Text style={styles.categoryTxt}>{cat?.name}</Text>
         </TouchableOpacity>
       ))}
-      {/* <TouchableOpacity
-        onPress={() => updateCategory('Women Care')}
-        style={[
-          styles.category,
-          {borderBottomWidth: category == 'Women Care' ? 4 : 0},
-        ]}>
-        <View
-          style={[
-            styles.categoryImgContainer,
-            {
-              backgroundColor:
-                category == 'Women Care'
-                  ? pallette.amethyst
-                  : pallette.dark_purple,
-            },
-          ]}>
-          <Image source={images.womenCare} style={styles.categoryImg} />
-        </View>
-        <Text style={styles.categoryTxt}>Women Care</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => updateCategory('Fertility')}
-        style={[
-          styles.category,
-          {borderBottomWidth: category == 'Fertility' ? 4 : 0},
-        ]}>
-        <View
-          style={[
-            styles.categoryImgContainer,
-            {
-              backgroundColor:
-                category == 'Fertility'
-                  ? pallette.amethyst
-                  : pallette.dark_purple,
-            },
-          ]}>
-          <Image source={images.fertility} style={styles.categoryImg} />
-        </View>
-        <Text style={styles.categoryTxt}>Fertility Care</Text>
-      </TouchableOpacity> */}
     </View>
   );
 };
@@ -136,8 +73,8 @@ const styles = StyleSheet.create({
     width: w * 0.9,
     alignSelf: 'center',
     flexDirection: 'row',
-    borderBottomWidth: 0.7,
-    borderColor: pallette.light_grey,
+    borderBottomWidth: 1,
+    borderColor: '#ecebebff',
     marginTop: h * 0.02,
   },
   category: {

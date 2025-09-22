@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, ScrollView, TouchableOpacity, ImageBackground} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  ImageBackground,
+} from 'react-native';
 import {Text} from 'react-native-paper';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
@@ -7,7 +13,7 @@ import {registerUser} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ToastService} from '../../utils/service-handlers';
 import {useNavigation} from '@react-navigation/native';
-import {CombinedNavigationProp} from '../../types/navigation';  
+import {CombinedNavigationProp} from '../../types/navigation';
 import {useAuth} from '../../context/auth-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {h, pallette} from '../../constants/constants';
@@ -209,13 +215,12 @@ const Registration: React.FC = () => {
 
   return (
     <>
-   
-    <ScrollView contentContainerStyle={styles.scrollContent}>
-    <ImageBackground
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ImageBackground
           source={require('../../../assets/images/topbg.png')}
           style={{
             height: h * 0.2,
-            width:'100%',
+            width: '100%',
             position: 'absolute',
             top: -(h * 0.05),
             right: 0,
@@ -228,7 +233,7 @@ const Registration: React.FC = () => {
           source={require('../../../assets/images/bottombg.png')}
           style={{
             height: h * 0.4,
-            width:'100%',
+            width: '100%',
             position: 'absolute',
             bottom: -(h * 0.1),
             right: 0,
@@ -236,111 +241,113 @@ const Registration: React.FC = () => {
           }}
           resizeMode="cover"
         />
-      <View style={styles.container}>
-        <Text variant="headlineMedium" style={styles.title}>
-          Registration
-        </Text>
-        <Text style={styles.labelText}>
-          You need to register your account only once.
-        </Text>
-
-        {/* Render All Fields Dynamically */}
-        {fields.map(field => {
-          const value = formik.values[field.name as keyof typeof formik.values];
-          const error =
-            formik.touched[field.name as keyof typeof formik.touched] &&
-            formik.errors[field.name as keyof typeof formik.errors];
-
-          if (field.type === 'input') {
-            return (
-              <FormInput
-                key={field.name}
-                label={field.label}
-                placeholder={field.placeholder}
-                keyboardType={field.keyboardType}
-                maxLength={field.maxLength}
-                autoCapitalize={field.autoCapitalize}
-                value={String(value)}
-                onChangeText={formik.handleChange(field.name)}
-                onBlur={formik.handleBlur(field.name)}
-                error={error}
-                styles={styles}
-              />
-            );
-          }
-
-          if (field.type === 'dropdown') {
-            return (
-              <FormDropdown
-                key={field.name}
-                label={field.label}
-                data={field.data}
-                value={value}
-                placeholder={field.placeholder}
-                onChange={(val: string) =>
-                  formik.setFieldValue(field.name, val)
-                }
-                error={error}
-                styles={styles}
-              />
-            );
-          }
-
-          if (field.type === 'date') {
-            return (
-              <View key={field.name} style={styles.formRow}>
-                <Text style={styles.formLabel}>{field.label}</Text>
-                <TouchableOpacity onPress={() => setDatePickerVisibility(true)}>
-                  <Text style={styles.formInput}>
-                    {value
-                      ? new Date(value as string).toDateString()
-                      : 'Select Date'}
-                  </Text>
-                </TouchableOpacity>
-                <DateTimePickerModal
-                  isVisible={isDatePickerVisible}
-                  mode="date"
-                  onConfirm={date => {
-                    formik.setFieldValue(field.name, date.toISOString());
-                    setDatePickerVisibility(false);
-                  }}
-                  onCancel={() => setDatePickerVisibility(false)}
-                />
-                {error && <Text style={styles.errorMessage}>{error}</Text>}
-              </View>
-            );
-          }
-
-          if (field.type === 'checkbox') {
-            return (
-              <View key={field.name} style={styles.formRow}>
-                <TouchableOpacity
-                  style={styles.checkboxContainer}
-                  onPress={() => formik.setFieldValue(field.name, !value)}>
-                  <View style={[styles.checkbox, value && styles.checked]}>
-                    {value && <Text style={styles.checkmark}>✓</Text>}
-                  </View>
-                  <Text style={styles.checkBoxlabel}>{field.label}</Text>
-                </TouchableOpacity>
-                {error && <Text style={styles.errorMessage}>{error}</Text>}
-              </View>
-            );
-          }
-
-          return null;
-        })}
-
-        {/* Submit */}
-        <TouchableOpacity
-          style={styles.primaryBt}
-          onPress={formik.handleSubmit as any}
-          disabled={loading}>
-          <Text style={styles.primaryBtText}>
-            {loading ? 'Submitting...' : 'Submit'}
+        <View style={styles.container}>
+          <Text variant="headlineMedium" style={styles.title}>
+            Registration
           </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <Text style={styles.labelText}>
+            You need to register your account only once.
+          </Text>
+
+          {/* Render All Fields Dynamically */}
+          {fields.map(field => {
+            const value =
+              formik.values[field.name as keyof typeof formik.values];
+            const error =
+              formik.touched[field.name as keyof typeof formik.touched] &&
+              formik.errors[field.name as keyof typeof formik.errors];
+
+            if (field.type === 'input') {
+              return (
+                <FormInput
+                  key={field.name}
+                  label={field.label}
+                  placeholder={field.placeholder}
+                  keyboardType={field.keyboardType}
+                  maxLength={field.maxLength}
+                  autoCapitalize={field.autoCapitalize}
+                  value={String(value)}
+                  onChangeText={formik.handleChange(field.name)}
+                  onBlur={formik.handleBlur(field.name)}
+                  error={error}
+                  styles={styles}
+                />
+              );
+            }
+
+            if (field.type === 'dropdown') {
+              return (
+                <FormDropdown
+                  key={field.name}
+                  label={field.label}
+                  data={field.data}
+                  value={value}
+                  placeholder={field.placeholder}
+                  onChange={(val: string) =>
+                    formik.setFieldValue(field.name, val)
+                  }
+                  error={error}
+                  styles={styles}
+                />
+              );
+            }
+
+            if (field.type === 'date') {
+              return (
+                <View key={field.name} style={styles.formRow}>
+                  <Text style={styles.formLabel}>{field.label}</Text>
+                  <TouchableOpacity
+                    onPress={() => setDatePickerVisibility(true)}>
+                    <Text style={styles.formInput}>
+                      {value
+                        ? new Date(value as string).toDateString()
+                        : 'Select Date'}
+                    </Text>
+                  </TouchableOpacity>
+                  <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    onConfirm={date => {
+                      formik.setFieldValue(field.name, date.toISOString());
+                      setDatePickerVisibility(false);
+                    }}
+                    onCancel={() => setDatePickerVisibility(false)}
+                  />
+                  {error && <Text style={styles.errorMessage}>{error}</Text>}
+                </View>
+              );
+            }
+
+            if (field.type === 'checkbox') {
+              return (
+                <View key={field.name} style={styles.formRow}>
+                  <TouchableOpacity
+                    style={styles.checkboxContainer}
+                    onPress={() => formik.setFieldValue(field.name, !value)}>
+                    <View style={[styles.checkbox, value && styles.checked]}>
+                      {value && <Text style={styles.checkmark}>✓</Text>}
+                    </View>
+                    <Text style={styles.checkBoxlabel}>{field.label}</Text>
+                  </TouchableOpacity>
+                  {error && <Text style={styles.errorMessage}>{error}</Text>}
+                </View>
+              );
+            }
+
+            return null;
+          })}
+
+          {/* Submit */}
+          <TouchableOpacity
+            style={styles.primaryBt}
+            onPress={formik.handleSubmit as any}
+            disabled={loading}>
+            <Text style={styles.primaryBtText}>
+              {loading ? 'Submitting...' : 'Submit'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </>
   );
 };
@@ -349,15 +356,20 @@ export default Registration;
 
 // ---------- Styles ----------
 const styles = StyleSheet.create({
-  scrollContent: {paddingBottom: 20, backgroundColor:pallette.white},
-  container: {flex: 1, paddingHorizontal: 15, paddingBottom: 10, backgroundColor:'transparent'},
+  scrollContent: {paddingBottom: 20, backgroundColor: pallette.white},
+  container: {
+    flex: 1,
+    paddingHorizontal: 15,
+    paddingBottom: 10,
+    backgroundColor: 'transparent',
+  },
   title: {
     color: pallette.teal,
     fontSize: adjust(18),
     textAlign: 'center',
     textTransform: 'uppercase',
     fontFamily: 'ProximaNovaA-Bold',
-    marginTop:30,
+    marginTop: 30,
   },
   labelText: {
     fontSize: adjust(12),

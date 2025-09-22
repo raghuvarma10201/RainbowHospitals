@@ -58,6 +58,7 @@ const Otp: React.FC = () => {
 
   useEffect(() => {
     if (resendDisabled && timer > 0) {
+      console.log('timer running');
       const interval = setInterval(() => setTimer(prev => prev - 1), 1000);
       return () => clearInterval(interval);
     } else if (timer === 0) {
@@ -71,7 +72,7 @@ const Otp: React.FC = () => {
 
   // ---------- EVENT HANDLERS ----------
   const handleResend = useCallback(async () => {
-    if (!phoneNumber || !resendDisabled) return;
+    if (!phoneNumber || resendDisabled) return;
     try {
       setLoading(true);
       setTimer(30);
@@ -100,7 +101,6 @@ const Otp: React.FC = () => {
     onSubmit: async () => {
       if (!phoneNumber) return;
       setLoading(true);
-
       try {
         const fcmToken = (await AsyncStorage.getItem('FcmTtoken')) || '';
         const response = await VerifyOTP({
@@ -108,54 +108,51 @@ const Otp: React.FC = () => {
           otp: value,
           fcmToken,
         });
-        if (response?.status !== 200) {
+        console.log(response);
+        if (response?.success && response?.status === 200) {
+          ToastService.success('Success', 'OTP Verified Successfully');
+        } else {
           ToastService.error(
             'Error',
-            response?.data?.message || 'OTP verification failed',
+            response?.message || 'OTP Verification Failed',
           );
           return;
         }
-        ToastService.success(
-          'Success',
-          response.data.message || 'OTP verified successfully',
-        );
-
         const authResponse = await authenticateUser({MobileNo: phoneNumber});
-
-        if (authResponse.status !== 200) {
+        console.log(authResponse);
+        if (authResponse?.success && authResponse?.status == 200) {
+          ToastService.success('Success', 'User Authenticated Successfully');
+          const token = response.data.token;
+          if (!token) ToastService.error('Error', 'Token Missing!');
+          await AsyncStorage.multiSet([
+            ['accessToken', token],
+            ['refreshToken', token],
+            ['tokenExpiry', response.data.expiryTime],
+          ]);
+          updateMrn(authResponse.data.LoginName);
+          await AsyncStorage.setItem('mrn', authResponse.data.LoginName);
+          const profileData = await getPatientProfile({
+            mrn: authResponse.data.LoginName,
+          });
+          console.log(profileData);
+          if (profileData?.status == 200 && profileData?.success) {
+            if (profileData.data?.[0]) {
+              setLoggedIn(true);
+              updateProfile(profileData.data[0]);
+              navigation.navigate('Dashboard');
+            } else {
+              ToastService.error('Failed', 'Failed To Save Profile Details');
+            }
+          } else {
+            ToastService.error('Error', 'Could Not Fetch Profile Details');
+          }
+          await loadDetails();
+        } else {
           navigateTo(navigation, routes.Registration);
-          ToastService.error(
-            'Error',
-            authResponse?.error || 'Authentication failed',
-          );
-          return;
-        }
-
-        const token = response.data.token;
-        if (!token) throw new Error('Token missing in response');
-
-        await AsyncStorage.multiSet([
-          ['accessToken', token],
-          ['refreshToken', token],
-          ['tokenExpiry', response.data.expiryTime],
-        ]);
-
-        await loadDetails();
-        updateMrn(authResponse.data.LoginName);
-        await AsyncStorage.setItem('mrn', authResponse.data.LoginName);
-
-        const profileData = await getPatientProfile({
-          mrn: authResponse.data.LoginName,
-        });
-
-        if (profileData.data?.[0]) {
-          setLoggedIn(true);
-          updateProfile(profileData.data[0]);
-          navigation.navigate('Dashboard');
+          ToastService.error('', authResponse?.error || 'User Not Registered');
         }
       } catch (e) {
-        console.log(e);
-        ToastService.error('Error', 'Failed to verify OTP');
+        ToastService.error('Error', 'OTP Verification Failed');
       } finally {
         setLoading(false);
       }
@@ -165,28 +162,61 @@ const Otp: React.FC = () => {
   // ---------- CALLBACKS ----------
   const loadDetails = useCallback(async () => {
     try {
-      const regions = await getRegions();
-      const location = await getCurrentCoordinates();
-      if (!location) return;
-
+      const [regions, location] = await Promise.all([
+        getRegions().catch(err => {
+          ToastService.error('', `Failed to fetch regions: ${err}`);
+          return null;
+        }),
+        getCurrentCoordinates().catch(err => {
+          ToastService.error('', `Failed to get current location: ${err}`);
+          return null;
+        }),
+      ]);
+      if (regions?.length === 0) {
+        ToastService.error('', `Failed to get regions`);
+        return;
+      }
+      if (!location) {
+        ToastService.error('', `Location unavailable`);
+        return;
+      }
       const nearestRegion = findNearestRegion(
         regions,
         location.latitude,
         location.longitude,
       );
-      if (!nearestRegion) return;
+      if (!nearestRegion) {
+        ToastService.error('', `No nearest region found`);
+        return;
+      }
       updateRegion(nearestRegion);
-
-      const allBranches = await getBranches(nearestRegion.region_id);
+      const allBranches = await getBranches(nearestRegion.region_id).catch(
+        err => {
+          ToastService.error('', `Failed to fetch branches: ${err}`);
+          return null;
+        },
+      );
+      if (!allBranches || allBranches.length === 0) {
+        ToastService.error(
+          '',
+          `No branches found for region: ${nearestRegion.region_id}`,
+        );
+        return;
+      }
       updateAllBranch(allBranches);
-
       const nearestBranch = findNearestBranch(
         allBranches,
         location.latitude,
         location.longitude,
       );
-      if (nearestBranch) updateBranch(nearestBranch);
-    } catch {}
+      if (nearestBranch) {
+        updateBranch(nearestBranch);
+      } else {
+        ToastService.error('', `No nearest branch found`);
+      }
+    } catch (err) {
+      ToastService.error('', `Failed to fetch details: ${err}`);
+    }
   }, [updateBranch, updateAllBranch, updateRegion]);
 
   // ---------- LOADER ----------
@@ -210,6 +240,7 @@ const Otp: React.FC = () => {
           btnTxt={'Confirm'}
           handleNumberChange={setValue}
           handleNumberBlur={handleResend}
+          resendDisabled={resendDisabled}
           formik={formik}
         />
       </ScrollView>

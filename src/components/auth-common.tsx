@@ -32,6 +32,7 @@ interface commonauth {
   handleNumberChange?: any;
   handleNumberBlur?: any;
   formik: any;
+  resendDisabled?: boolean;
 }
 
 export const AuthCommonComponent: FC<commonauth> = ({
@@ -42,6 +43,7 @@ export const AuthCommonComponent: FC<commonauth> = ({
   handleNumberChange,
   handleNumberBlur,
   formik,
+  resendDisabled,
 }) => {
   const [country, setCountry] = useState('1');
   const [value, setValue] = useState('');
@@ -167,7 +169,9 @@ export const AuthCommonComponent: FC<commonauth> = ({
             {fontSize: adjust(11)},
           ]}>{`You will recieve an OTP on this mobile number / or on your registered email id as well`}</Text>
         {input != 'mobile' && (
-          <TouchableOpacity>
+          <TouchableOpacity
+            disabled={resendDisabled}
+            onPress={() => handleNumberBlur()}>
             <Text style={styles.resend}>{`Resend OTP`}</Text>
           </TouchableOpacity>
         )}

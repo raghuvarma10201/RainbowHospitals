@@ -5,7 +5,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
-  ImageBackground,
 } from 'react-native';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
@@ -45,6 +44,8 @@ const Login: React.FC = () => {
           await AsyncStorage.setItem('mobileNumber', values.mobileNumber);
           ToastService.success('Success', 'OTP sent successfully');
           navigation.navigate('Otp');
+        } else {
+          ToastService.error('Failure', 'Failed To Send OTP.');
         }
       } catch (e: any) {
         console.error('Login error:', e);
@@ -85,8 +86,6 @@ const Login: React.FC = () => {
       style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
-
-        
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,

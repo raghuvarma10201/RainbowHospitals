@@ -60,9 +60,9 @@ const PayUWebView: React.FC = ({route}: any) => {
   }, []);
 
   useEffect(() => {
-    console.log(secondsLeft);
-
     if (secondsLeft == 0) {
+      console.log('called');
+
       ToastService.error('Payment Timeout');
       navigation.dispatch(
         CommonActions.reset({
@@ -86,9 +86,7 @@ const PayUWebView: React.FC = ({route}: any) => {
         ToastService.error('Transaction failed. Please try again.');
         navigation.navigate('Dashboard');
       }
-    } catch (error) {
-      console.log('payu error', error);
-    }
+    } catch (error) {}
   };
 
   const updatePayment = useCallback(async () => {
@@ -102,14 +100,12 @@ const PayUWebView: React.FC = ({route}: any) => {
       AppointmentNumber: bookingId ?? 'BAHOP-2972192',
       transaction_id: finalPayload?.transaction_id,
     };
-    console.log(payload);
+    console.log(finalPayload);
     try {
       setLoading(true);
       const response = await advancePay(payload);
-      console.log(response, payload);
-
       if (response && response?.status == 200 && response?.success == true) {
-        ToastService.success('appointment Booked Successfully');
+        ToastService.success('Appointment Booked Successfully');
         navigation.navigate('AppointmentConfirmed');
       } else {
         ToastService.error(response.message);
