@@ -69,9 +69,14 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
         setLoading(false);
         ToastService.error('Error', response.message);
       }
-    } catch (error) {
+    } catch (error: any) {
       setLoading(false);
-      console.error('Failed to cancel:', error);
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     } finally {
       setLoading(false);
     }
@@ -82,8 +87,15 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       roomName: appointmentData?.roomId || 'SampleJitsiCall',
       token: '',
       serverURL: 'https://dev.rb.vc.demos.im/', // room url - https://dev.rb.vc.demos.im/SampleJitsiCall
-      userInfo: {
-        displayName: appointmentData?.PatientName || 'Test User',
+      patient: {
+        name: appointmentData?.PatientName,
+        mobile: appointmentData?.patient?.mobile_no,
+        email: appointmentData?.patient?.email_id,
+        time: formatAppointmentTime(appointmentData?.SlotStartDttm),
+      },
+      doctor: {
+        name: appointmentData?.SessionName,
+        time: formatAppointmentTime(appointmentData?.SlotStartDttm),
       },
     });
   };

@@ -47,9 +47,13 @@ const Login: React.FC = () => {
         } else {
           ToastService.error('Failure', 'Failed To Send OTP.');
         }
-      } catch (e: any) {
-        console.error('Login error:', e);
-        ToastService.error('Invalid credentials', 'Please try again');
+      } catch (error: any) {
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
         setErrors({mobileNumber: 'Invalid credentials'});
       } finally {
         setSubmitting(false);

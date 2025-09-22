@@ -86,9 +86,13 @@ const DoctorsList: React.FC = ({route}: any) => {
             response?.message ?? 'Failed to fetch doctors',
           );
         }
-      } catch (error) {
-        console.error('Failed to load Doctors:', error);
-        ToastService.error('Error', 'Something went wrong');
+      } catch (error: any) {
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
       } finally {
         setLoading(false);
       }

@@ -84,8 +84,13 @@ const Otp: React.FC = () => {
       } else {
         ToastService.error('Error', response.message || 'Failed to resend OTP');
       }
-    } catch {
-      ToastService.error('Error', 'Failed to resend OTP');
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     } finally {
       setLoading(false);
     }
@@ -151,8 +156,13 @@ const Otp: React.FC = () => {
           navigateTo(navigation, routes.Registration);
           ToastService.error('', authResponse?.error || 'User Not Registered');
         }
-      } catch (e) {
-        ToastService.error('Error', 'OTP Verification Failed');
+      } catch (error: any) {
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
       } finally {
         setLoading(false);
       }
@@ -214,8 +224,13 @@ const Otp: React.FC = () => {
       } else {
         ToastService.error('', `No nearest branch found`);
       }
-    } catch (err) {
-      ToastService.error('', `Failed to fetch details: ${err}`);
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     }
   }, [updateBranch, updateAllBranch, updateRegion]);
 

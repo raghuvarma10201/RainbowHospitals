@@ -105,9 +105,13 @@ const Specialities: React.FC = ({route}: any) => {
             'Error',
             res?.message || `Failed to fetch ${label}`,
           );
-    } catch (e) {
-      console.error(`Failed to load ${label}:`, e);
-      ToastService.error('Error', `Unable to fetch ${label}`);
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     } finally {
       // setLoading(false);
     }

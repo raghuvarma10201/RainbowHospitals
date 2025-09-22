@@ -67,8 +67,13 @@ const AppointmentChat: React.FC<any> = ({route}) => {
           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
           PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
         ]);
-      } catch (err) {
-        console.warn(err);
+      } catch (error: any) {
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
       }
     }
   };
@@ -78,8 +83,13 @@ const AppointmentChat: React.FC<any> = ({route}) => {
       const data = await fetchAppointmentChat(bookingId);
       const chat = data?.data?.reverse() || [];
       setMessages(chat);
-    } catch (error) {
-      console.error('Error fetching chat:', error);
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
       setMessages([]);
     }
   };
@@ -105,8 +115,13 @@ const AppointmentChat: React.FC<any> = ({route}) => {
       } else {
         ToastService.error('Error', response.message);
       }
-    } catch (error) {
-      console.error('Error sending chat:', error);
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     } finally {
       setIsSending(false);
     }
@@ -149,8 +164,13 @@ const AppointmentChat: React.FC<any> = ({route}) => {
         default:
           console.warn(`Unsupported media type: ${mediaType}`);
       }
-    } catch (err) {
-      console.error('Error selecting media:', err);
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     }
   };
 

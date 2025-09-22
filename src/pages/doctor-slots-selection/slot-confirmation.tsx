@@ -59,8 +59,13 @@ const SlotConfirmation: React.FC = ({route}: any) => {
           response?.message || 'Unable to fetch patients',
         );
       }
-    } catch (error) {
-      console.error('Failed to load Family Members:', error);
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     } finally {
       setLoading(false);
     }
@@ -103,8 +108,13 @@ const SlotConfirmation: React.FC = ({route}: any) => {
             response?.message || 'Unable to fetch fee',
           );
         }
-      } catch (error) {
-        console.error('Failed to load Consultation Fee:', error);
+      } catch (error: any) {
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
       } finally {
         setLoading(false);
       }

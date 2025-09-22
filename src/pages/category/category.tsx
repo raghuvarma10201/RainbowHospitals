@@ -48,8 +48,13 @@ const Category: React.FC = () => {
         ToastService.error('Error', 'Failed fetching categories');
         setCategories([]);
       }
-    } catch (err) {
-      ToastService.error('Error', 'Unable to fetch categoriess');
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
       setCategories([]);
     }
   }, []);

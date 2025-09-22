@@ -56,9 +56,14 @@ const MyAppointments: React.FC = () => {
         setLoading(false);
         ToastService.error('Error', response.message);
       }
-    } catch (error) {
+    } catch (error: any) {
       setLoading(false);
-      console.error('Failed to load Appointments', error);
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     } finally {
       setLoading(false);
     }

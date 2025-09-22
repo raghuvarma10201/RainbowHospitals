@@ -280,6 +280,11 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
             'live-streaming.enabled': true,
             'videoMute.enabled': true,
           }}
+          userInfo={{
+            displayName: options.patient.name || 'Patient',
+            email: '',
+            avatarURL: '',
+          }}
         />
       </View>
     </Animated.View>

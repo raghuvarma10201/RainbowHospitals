@@ -73,8 +73,13 @@ export const getCityNameFromCoords = async (
     const fullLocation = suburb || city || state.filter(Boolean).join(', ');
 
     return fullLocation || 'Unknown';
-  } catch (err) {
-    console.error('Reverse Geocoding Error:', err);
+  } catch (error: any) {
+    ToastService.error(
+      'Error',
+      error?.response?.data?.message ||
+        error?.message ||
+        'Something went wrong',
+    );
     return null;
   }
 };

@@ -86,7 +86,14 @@ const PayUWebView: React.FC = ({route}: any) => {
         ToastService.error('Transaction failed. Please try again.');
         navigation.navigate('Dashboard');
       }
-    } catch (error) {}
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
+    }
   };
 
   const updatePayment = useCallback(async () => {
@@ -112,7 +119,12 @@ const PayUWebView: React.FC = ({route}: any) => {
         // navigation.navigate('Dashboard');
       }
     } catch (error: any) {
-      console.log(error);
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     } finally {
       setLoading(false);
     }

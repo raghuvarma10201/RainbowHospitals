@@ -101,8 +101,13 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           response?.message || 'Unable to fetch patients',
         );
       }
-    } catch (error) {
-      console.error('Failed to load Family Members:', error);
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     } finally {
     }
   }, []);
@@ -143,8 +148,13 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
             response?.message || 'Unable to fetch fee',
           );
         }
-      } catch (error) {
-        console.error('Failed to load Consultation Fee:', error);
+      } catch (error: any) {
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
       } finally {
         setLoadingCall(false);
       }
@@ -249,12 +259,23 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
             );
           }
         } catch (error: any) {
+          console.log(error);
+          ToastService.error(
+            'Error',
+            error?.response?.data?.message ||
+              error?.message ||
+              'Something went wrong',
+          );
         } finally {
         }
       }
-    } catch (error) {
-      console.error('Error in proceedPayment:', error);
-      ToastService.error('Error', 'Something went wrong. Please try again.');
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     } finally {
       setLoadingPayment(false);
     }
@@ -288,6 +309,12 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         }
       } catch (error: any) {
         setLoadingCall(false);
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
       } finally {
       }
     },
@@ -413,7 +440,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           ))}
 
         {/* PAYMENT SUMMARY */}
-        {selectedSlot && (
+        {selectedSlot && !appointmentnumber && (
           <View style={{marginVertical: h * 0.02}}>
             <View
               style={[styles.paymentBlock, {backgroundColor: pallette.teal}]}>

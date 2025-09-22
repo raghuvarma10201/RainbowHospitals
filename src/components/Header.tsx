@@ -28,7 +28,7 @@ import {
   findNearestRegion,
   findNearestBranch,
 } from '../services/Region/location';
-import {getCurrentCoordinates} from '../utils/service-handlers';
+import {getCurrentCoordinates, ToastService} from '../utils/service-handlers';
 import {pallette, w} from '../constants/constants';
 import {adjust, navigateTo} from '../utils/common-functions';
 import {HeaderProps, NavProp} from '../types/components';
@@ -92,8 +92,13 @@ const Header = forwardRef<any, HeaderProps>(
           if (data?.data?.[0]?.PatientID) {
             updateProfile(data.data[0]);
           }
-        } catch (err) {
-          console.error('Failed to fetch profile:', err);
+        } catch (err: any) {
+          ToastService.error(
+            'Error',
+            err?.response?.data?.message ||
+              err?.message ||
+              'Something went wrong while fetching profile',
+          );
         }
       };
       getProfile();
@@ -147,8 +152,13 @@ const Header = forwardRef<any, HeaderProps>(
               );
             }
           }
-        } catch (err) {
-          console.error('Error loading details:', err);
+        } catch (error: any) {
+          ToastService.error(
+            'Error',
+            error?.response?.data?.message ||
+              error?.message ||
+              'Something went wrong',
+          );
         }
       };
       loadDetails();

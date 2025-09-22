@@ -126,9 +126,13 @@ const Registration: React.FC = () => {
           ToastService.success('Success', 'Registration sent successfully');
           setLoggedIn(true);
         }
-      } catch (e) {
-        console.error('Registration failed', e);
-        ToastService.error('Invalid credentials', 'Please try again');
+      } catch (error: any) {
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
       } finally {
         setLoading(false);
       }

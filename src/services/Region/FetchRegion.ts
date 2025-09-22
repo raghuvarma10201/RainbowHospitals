@@ -7,6 +7,7 @@ import {
 } from './location';
 import {useApp} from '../../context/app-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {ToastService} from '../../utils';
 
 export const loadDetails = async () => {
   const {updateBranch, updateAllBranch, updateRegion} = useApp();
@@ -43,6 +44,10 @@ export const loadDetails = async () => {
     updateBranch(nearestBranch); // ✅ Store selected branch
   } catch (err: any) {
     setError(err.message);
+    ToastService.error(
+      'Error',
+      err?.response?.data?.message || err?.message || 'Something went wrong',
+    );
   } finally {
     setLoading(false);
   }

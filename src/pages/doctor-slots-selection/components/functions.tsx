@@ -92,8 +92,13 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
           response?.message || 'Failed to load doctor',
         );
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     } finally {
       setLoading(false);
     }
@@ -127,8 +132,13 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
           setSlots([]);
           ToastService.error('Error', 'No Sessions Available');
         }
-      } catch (e) {
-        console.error(e);
+      } catch (error: any) {
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
       }
     },
     [branch?.organisation?.organisationid, typeOfAppointment],
@@ -153,8 +163,13 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
         } else {
           ToastService.error('Error', response?.message || 'No slots found');
         }
-      } catch (e) {
-        console.error(e);
+      } catch (error: any) {
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
       }
     },
     [branch?.organisation?.organisationid, typeOfAppointment],

@@ -13,6 +13,7 @@ import {CombinedNavigationProp} from '../../types/navigation';
 import {useAuth} from '../../context/auth-context';
 import {useApp} from '../../context/app-context';
 import {h, pallette} from '../../constants/constants';
+import {ToastService} from '../../utils';
 
 // ---------- COMPONENT ----------
 const Home: React.FC = () => {
@@ -31,8 +32,13 @@ const Home: React.FC = () => {
       ]);
       setLoggedIn(false);
       navigation.navigate('Login');
-    } catch (error) {
-      console.error('Logout failed:', error);
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     }
   }, [navigation, setLoggedIn]);
 
