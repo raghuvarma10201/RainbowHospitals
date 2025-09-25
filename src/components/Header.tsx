@@ -340,13 +340,13 @@ const Header = forwardRef<any, HeaderProps>(
               />
             </TouchableOpacity>
           ) : (
-            <View style={styles.profileIconBlock}>
+            <TouchableOpacity style={styles.profileIconBlock}>
               <Image
                 source={images.profile}
                 style={styles.profileIcon}
                 resizeMode="contain"
               />
-            </View>
+            </TouchableOpacity>
           )}
 
           {showLocation ? (

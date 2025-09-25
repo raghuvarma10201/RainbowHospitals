@@ -77,9 +77,14 @@ const Dashboard: React.FC = () => {
               moment(a.SlotStartDttm).diff(moment(b.SlotStartDttm)),
             ),
         );
-      } catch (err) {
-        console.error('Error fetching appointments:', err);
-        ToastService.error('Error', 'Unable to fetch upcoming appointments');
+      } catch (error: any) {
+        console.error('Error fetching appointments:', error);
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
         setAppointments([]);
       }
     },
