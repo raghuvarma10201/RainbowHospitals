@@ -15,7 +15,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 import {useApp} from '../../context/app-context';
-import {getAppointments} from '../../services/common';
+import {fetchFamilyMembers, getAppointments} from '../../services/common';
 import {ToastService} from '../../utils/service-handlers';
 import {formatAppointmentDateTime} from '../../utils/common-functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,27 +23,36 @@ import {MainStackParamList} from '../../types/navigation';
 import {pallette} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 import NotFound from '../../components/empty-text';
+import {FamilyMember} from '../../utils/types';
+import {Dropdown} from 'react-native-element-dropdown';
 
-const MyAppointments: React.FC = () => {
+const MyAppointments: React.FC = ({route}: any) => {
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
+  const {mrn} = route?.params;
 
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const [appointments, setAppointments] = useState<any[]>([]);
+  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
+  const [selectedPatient, setSelectedPatient] = useState<string | undefined>(
+    mrn || '',
+  );
   const [loading, setLoading] = useState(false);
   const {branch} = useApp();
 
   useFocusEffect(
     useCallback(() => {
-      loadAppointments();
+      loadAppointments(mrn);
+      getFamilyMembers();
     }, []),
   );
 
-  const loadAppointments = async () => {
+  const loadAppointments = async (id: string | undefined) => {
     try {
       const payload = {
-        patientId: await AsyncStorage.getItem('mrn'),
+        // patientId: await AsyncStorage.getItem('mrn'),
+        patientId: id || 'MAHTMP-182297',
         OrganisationUID: branch?.organisation?.organisationid.toString(),
       };
 
@@ -68,11 +77,55 @@ const MyAppointments: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const getFamilyMembers = useCallback(async () => {
+    try {
+      const response = await fetchFamilyMembers({
+        MobileNo: await AsyncStorage.getItem('mobileNumber'),
+      });
+
+      if (response?.status === 200) {
+        setFamilyMembers(response.data);
+      } else {
+        ToastService.error(
+          'Error',
+          response?.message || 'Unable to fetch patients',
+        );
+      }
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
+    } finally {
+    }
+  }, []);
   return (
     <View style={styles.mainContainer}>
       <Header showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
+          <Dropdown
+            style={styles.dropdownSelect}
+            selectedTextStyle={styles.selectedTextContry}
+            placeholderStyle={styles.placeholderCountry}
+            maxHeight={200}
+            value={selectedPatient}
+            data={familyMembers}
+            valueField="PatientID"
+            labelField="PatientName"
+            placeholder="Select Patient"
+            containerStyle={styles.dropdownList}
+            itemTextStyle={styles.selectedTextContry}
+            activeColor={pallette.pale_turquoise}
+            iconColor={pallette.black}
+            onChange={(item: FamilyMember) => {
+              setSelectedPatient(item.PatientID);
+              loadAppointments(item.PatientID);
+            }}
+          />
           <View style={styles.doctorsListContainer}>
             {appointments.length > 0 ? (
               appointments.map((appointment, index) => (
@@ -265,5 +318,30 @@ const styles = StyleSheet.create({
     width: 'auto',
     fontFamily: 'ProximaNovaA-Regular',
     marginBottom: 5,
+  },
+  dropdownSelect: {
+    backgroundColor: pallette.white,
+    borderWidth: 1,
+    borderColor: pallette.dark_grey,
+    height: h * 0.05,
+    marginTop: 5,
+    width: w * 0.95,
+    alignSelf: 'center',
+    paddingHorizontal: w * 0.04,
+    borderRadius: w * 0.05,
+  },
+  placeholderCountry: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: adjust(12),
+    color: pallette.black,
+  },
+  selectedTextContry: {
+    fontSize: adjust(12),
+    color: pallette.black,
+  },
+  dropdownList: {
+    fontFamily: 'ProximaNovaA-Regular',
+    fontSize: adjust(12),
+    backgroundColor: pallette.white,
   },
 });

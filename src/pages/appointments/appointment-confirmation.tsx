@@ -9,7 +9,7 @@ import {
 import React, {useCallback, useState} from 'react';
 import {Text, Modal, Portal} from 'react-native-paper';
 import {Header, Footer, Banners} from '../../components';
-import {pallette} from '../../constants/constants';
+import {pallette, w} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 import {
   CommonActions,
@@ -26,8 +26,7 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
   const h = Dimensions.get('window').height;
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {status} = route.params ?? 'Confirmed';
-
+  const {appointment, mrn} = route.params;
   const [visible, setVisible] = React.useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -38,32 +37,161 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
     require('../../../assets/images/slide1.png'),
   ];
 
-  useFocusEffect(
-    useCallback(() => {
-      setTimeout(() => {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 1,
-            routes: [{name: routes.Dashboard}, {name: routes.MyAppointments}],
-          }),
-        );
-      }, 3000);
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     setTimeout(() => {
+  //       navigation.dispatch(
+  //         CommonActions.reset({
+  //           index: 1,
+  //           routes: [
+  //             {name: routes.Dashboard},
+  //             {name: routes.MyAppointments, params: {mrn: mrn}},
+  //           ],
+  //         }),
+  //       );
+  //     }, 3000);
+  //   }, []),
+  // );
 
   return (
     <View style={styles.mainContainer}>
       <Header showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
-          <Text style={styles.acTitle}>
-            Appointment {status ?? 'Confirmed'}
-          </Text>
+          <Text style={styles.acTitle}>Appointment Confirmed</Text>
           <Text style={styles.acSubTitle}>
             Thank you for booking your appointment. We appreciate your trust and
             look forward to serving you.
           </Text>
+          <View style={{marginVertical: h * 0.02}}>
+            <View style={styles.rowItems}>
+              <View
+                style={[
+                  styles.rowItem,
+                  {borderTopWidth: 0.7, borderLeftWidth: 0.7},
+                ]}>
+                <Text style={styles.acSubTitle}>Booking Id</Text>
+              </View>
+              <View
+                style={[
+                  styles.rowItem,
+                  {
+                    borderTopWidth: 0.7,
+                    borderLeftWidth: 0.7,
+                    borderRightWidth: 0.7,
+                  },
+                ]}>
+                <Text style={styles.acSubTitle}>{appointment?.bookingId}</Text>
+              </View>
+            </View>
+            <View style={styles.rowItems}>
+              <View
+                style={[
+                  styles.rowItem,
+                  {borderTopWidth: 0.7, borderLeftWidth: 0.7},
+                ]}>
+                <Text style={styles.acSubTitle}>Doctor Name</Text>
+              </View>
+              <View
+                style={[
+                  styles.rowItem,
+                  {
+                    borderTopWidth: 0.7,
+                    borderLeftWidth: 0.7,
+                    borderRightWidth: 0.7,
+                  },
+                ]}>
+                <Text style={styles.acSubTitle}>
+                  {appointment?.doctor_name}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.rowItems}>
+              <View
+                style={[
+                  styles.rowItem,
+                  {borderTopWidth: 0.7, borderLeftWidth: 0.7},
+                ]}>
+                <Text style={styles.acSubTitle}>Patient Id</Text>
+              </View>
+              <View
+                style={[
+                  styles.rowItem,
+                  {
+                    borderTopWidth: 0.7,
+                    borderLeftWidth: 0.7,
+                    borderRightWidth: 0.7,
+                  },
+                ]}>
+                <Text style={styles.acSubTitle}>{appointment?.mrn}</Text>
+              </View>
+            </View>
+            <View style={styles.rowItems}>
+              <View
+                style={[
+                  styles.rowItem,
+                  {borderTopWidth: 0.7, borderLeftWidth: 0.7},
+                ]}>
+                <Text style={styles.acSubTitle}>Appointment Type</Text>
+              </View>
+              <View
+                style={[
+                  styles.rowItem,
+                  {
+                    borderTopWidth: 0.7,
+                    borderLeftWidth: 0.7,
+                    borderRightWidth: 0.7,
+                  },
+                ]}>
+                <Text style={styles.acSubTitle}>
+                  {appointment?.AppointmentType}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.rowItems}>
+              <View
+                style={[
+                  styles.rowItem,
+                  {
+                    borderTopWidth: 0.7,
+                    borderLeftWidth: 0.7,
+                    borderBottomWidth: 0.7,
+                  },
+                ]}>
+                <Text style={styles.acSubTitle}>Scheduled Time</Text>
+              </View>
+              <View
+                style={[
+                  styles.rowItem,
+                  {
+                    borderWidth: 0.7,
+                  },
+                ]}>
+                <Text style={styles.acSubTitle}>
+                  {appointment?.date},{appointment?.time}
+                </Text>
+              </View>
+            </View>
+          </View>
 
+          <TouchableOpacity
+            onPress={() =>
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 1,
+                  routes: [
+                    {name: routes.Dashboard},
+                    {
+                      name: routes.MyAppointments,
+                      params: {mrn: appointment?.mrn},
+                    },
+                  ],
+                }),
+              )
+            }
+            style={styles.payBtn}>
+            <Text style={styles.payBtnTxt}>View All Appointments</Text>
+          </TouchableOpacity>
           <View style={styles.imgTextGroup}>
             <View style={styles.imgTextBox}>
               <View style={styles.textbeforeDot}>
@@ -241,9 +369,23 @@ const styles = StyleSheet.create({
     color: pallette.black,
     textAlign: 'center',
     marginTop: 0,
-    marginBottom: '10%',
+    // marginBottom: '10%',
     width: '80%',
     margin: 'auto',
+  },
+  payBtn: {
+    padding: w * 0.03,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: '90%',
+    borderRadius: w * 0.04,
+    backgroundColor: pallette.dark_purple,
+  },
+  payBtnTxt: {
+    fontSize: adjust(12),
+    color: pallette.white,
+    fontFamily: 'ProximaNovaA-Semibold',
   },
 
   sliderBlock: {
@@ -279,5 +421,14 @@ const styles = StyleSheet.create({
     width: 17,
     height: 17,
     resizeMode: 'contain',
+  },
+  rowItems: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  rowItem: {
+    padding: w * 0.02,
+    borderColor: pallette.black,
+    width: w * 0.4,
   },
 });

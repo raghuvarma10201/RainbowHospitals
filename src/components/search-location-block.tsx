@@ -32,7 +32,7 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
         <TextInput
           mode="flat"
           style={styles.input}
-          placeholder="Doctor/Specialty"
+          placeholder="Search"
           value={search}
           onChangeText={setSearch}
           placeholderTextColor={pallette.dark_grey}
@@ -42,7 +42,7 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
           activeUnderlineColor="transparent"
         />
       </View>
-      <View style={styles.container}>
+      {/* <View style={styles.container}>
         <View style={styles.iconContainer}>
           <Image
             source={require('../../assets/images/map-icon.png')}
@@ -69,7 +69,7 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
           activeColor={pallette.white}
           onChange={e => setCountry(e.value)}
         />
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: h * 0.04,
-    width: w * 0.4,
+    width: w * 0.77,
     color: pallette.black,
     backgroundColor: pallette.white,
     borderRadius: w * 0.1,

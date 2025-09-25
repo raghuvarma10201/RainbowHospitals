@@ -40,7 +40,6 @@ const Category: React.FC = () => {
   const fetchCategries = useCallback(async () => {
     try {
       const response = await getCategories();
-      console.log(response);
       if (response?.success && response?.status == 200) {
         setCategories(response?.data);
         updateCategories(response?.data);

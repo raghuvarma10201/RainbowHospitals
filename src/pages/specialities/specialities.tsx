@@ -158,9 +158,6 @@ const Specialities: React.FC = ({route}: any) => {
           resizeMode="cover"
         />
         <View style={styles.container}>
-          <SearchLocationBlock style={styles.searchLocationBlock} />
-          <CategorySelection />
-
           <View style={styles.searchContainer}>
             <View style={styles.iconContainer}>
               <Image
@@ -186,6 +183,9 @@ const Specialities: React.FC = ({route}: any) => {
               }}
             />
           </View>
+          {/* <SearchLocationBlock style={styles.searchLocationBlock} /> */}
+          <CategorySelection />
+
           <View style={styles.quickActions}>
             <SpecialityGrid items={specialities} type={appointmentType} />
           </View>

@@ -360,13 +360,13 @@ const Header = forwardRef<any, HeaderProps>(
                 </Text>
                 <View style={styles.locationInfo}>
                   <Image source={images.map} style={styles.mapIcon} />
-                  <Text
+                  {/* <Text
                     numberOfLines={1}
                     style={[styles.regionText, {width: '25%'}]}>
                     {`${branch?.name},` || 'loading...'}
-                  </Text>
+                  </Text> */}
                   <Text style={styles.regionText}>
-                    {`${region?.name}` || ''}
+                    {`${branch?.name}` || 'Fetching...'}
                   </Text>
                   <FontAwesome
                     name={'angle-down'}

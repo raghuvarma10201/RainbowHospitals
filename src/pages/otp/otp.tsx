@@ -58,7 +58,6 @@ const Otp: React.FC = () => {
 
   useEffect(() => {
     if (resendDisabled && timer > 0) {
-      console.log('timer running');
       const interval = setInterval(() => setTimer(prev => prev - 1), 1000);
       return () => clearInterval(interval);
     } else if (timer === 0) {
@@ -113,7 +112,6 @@ const Otp: React.FC = () => {
           otp: value,
           fcmToken,
         });
-        console.log(response);
         if (response?.success && response?.status === 200) {
           ToastService.success('Success', 'OTP Verified Successfully');
         } else {
@@ -124,7 +122,6 @@ const Otp: React.FC = () => {
           return;
         }
         const authResponse = await authenticateUser({MobileNo: phoneNumber});
-        console.log(authResponse);
         if (authResponse?.success && authResponse?.status == 200) {
           ToastService.success('Success', 'User Authenticated Successfully');
           const token = response.data.token;
@@ -139,7 +136,6 @@ const Otp: React.FC = () => {
           const profileData = await getPatientProfile({
             mrn: authResponse.data.LoginName,
           });
-          console.log(profileData);
           if (profileData?.status == 200 && profileData?.success) {
             if (profileData.data?.[0]) {
               setLoggedIn(true);

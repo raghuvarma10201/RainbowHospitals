@@ -1,11 +1,17 @@
 // ---------- MODULE IMPORTS ----------
-import React, {useState} from 'react';
-import {StyleSheet, View, ScrollView, ImageBackground} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import React, {useCallback, useState} from 'react';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  ImageBackground,
+  FlatList,
+} from 'react-native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 // ---------- COMPONENT IMPORTS ----------
-import {QuickActions} from '.';
+import {QuickActions, UpcomingAppointmentCard} from '.';
 import {
   Header,
   Banners,
@@ -19,6 +25,11 @@ import {useApp} from '../../context/app-context';
 import {h, pallette, w} from '../../constants/constants';
 import {MainStackParamList} from '../../types/navigation';
 import CategorySelection from '../../components/category-selection';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getAppointments} from '../../services/common';
+import {ToastService} from '../../utils';
+import {upcomingApointment} from '../../utils/types';
+import moment from 'moment';
 
 // ---------- STATIC DATA OUTSIDE COMPONENT ----------
 const images = {
@@ -45,6 +56,46 @@ const Dashboard: React.FC = () => {
       : images.fertility_banner,
   );
   const [activeindex, setActiveindex] = useState(0);
+  const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
+  const [activeAppointmentIndex, setActiveAppointmentIndex] = useState(0);
+
+  const fetchMyAppointments = useCallback(
+    async (date: string) => {
+      try {
+        const mrn = await AsyncStorage.getItem('mrn');
+        const {data = []} = await getAppointments({
+          mrn,
+          date,
+          OrganisationUID: branch?.organisation?.organisationid.toString(),
+        });
+        setAppointments(
+          data
+            .filter((item: upcomingApointment) =>
+              moment(item.SlotStartDttm).isSameOrAfter(date, 'day'),
+            )
+            .sort((a: upcomingApointment, b: upcomingApointment) =>
+              moment(a.SlotStartDttm).diff(moment(b.SlotStartDttm)),
+            ),
+        );
+      } catch (err) {
+        console.error('Error fetching appointments:', err);
+        ToastService.error('Error', 'Unable to fetch upcoming appointments');
+        setAppointments([]);
+      }
+    },
+    [branch],
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchMyAppointments(moment().format('YYYY-MM-DD'));
+    }, [fetchMyAppointments]),
+  );
+
+  const handleScrollEnd = useCallback((event: any) => {
+    const newIndex = Math.round(event.nativeEvent.contentOffset.x / w);
+    setActiveAppointmentIndex(newIndex);
+  }, []);
 
   // ---------- RENDER ----------
   return (
@@ -68,6 +119,28 @@ const Dashboard: React.FC = () => {
           <SearchLocationBlock style={styles.searchLocationBlock} />
           <CategorySelection />
           <QuickActions navigation={navigation} />
+          <View style={styles.appointentsContainer}>
+            <FlatList
+              data={appointments}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={({item}) => (
+                <UpcomingAppointmentCard
+                  appointment={item}
+                  navigation={navigation}
+                />
+              )}
+              onMomentumScrollEnd={handleScrollEnd}
+            />
+            {appointments.length > 1 && (
+              <PaginationDots
+                data={appointments}
+                activeIndex={activeAppointmentIndex}
+              />
+            )}
+          </View>
           <Banners
             images={banners}
             activeindex={activeindex}
@@ -106,5 +179,8 @@ const styles = StyleSheet.create({
     marginVertical: h * 0.02,
     width: w * 0.9,
     alignSelf: 'center',
+  },
+  appointentsContainer: {
+    marginVertical: h * 0.02,
   },
 });

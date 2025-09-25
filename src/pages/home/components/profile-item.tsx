@@ -52,9 +52,11 @@ const styles = StyleSheet.create({
     fontSize: adjust(14),
     marginBottom: 2,
     fontFamily: 'ProximaNovaA-Bold',
+    color: pallette.black,
   },
   homeHpsubTitle: {
     fontSize: adjust(10),
     fontFamily: 'ProximaNovaA-Regular',
+    color: pallette.black,
   },
 });

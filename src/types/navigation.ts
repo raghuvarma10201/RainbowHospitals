@@ -14,7 +14,7 @@ export type MainStackParamList = {
   Dashboard: undefined;
   Category: undefined;
   Specialities: {appointmentType: string};
-  AppointmentConfirmed: undefined;
+  AppointmentConfirmed: {mrn: string; appointment: any};
   DoctorSlots: {
     doctorId: number;
     appointmentType: string;

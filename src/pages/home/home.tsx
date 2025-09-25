@@ -56,7 +56,11 @@ const Home: React.FC = () => {
               uid={profile?.PatientUID}
             />
             {/* OTHER MENU ITEMS */}
-            <MenuItems navigation={navigation} logout={logout} />
+            <MenuItems
+              navigation={navigation}
+              logout={logout}
+              uid={profile?.PatientUID}
+            />
           </View>
         </View>
       </ScrollView>

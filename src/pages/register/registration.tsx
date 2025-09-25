@@ -143,16 +143,16 @@ const Registration: React.FC = () => {
   const fields = [
     {
       type: 'input',
-      name: 'foreName',
-      label: 'Fore Name *',
-      placeholder: 'Enter Fore Name',
+      name: 'firstName',
+      label: 'First Name *',
+      placeholder: 'Enter First Name',
       keyboardType: 'default',
       maxLength: 30,
     },
     {
       type: 'input',
       name: 'middleName',
-      label: 'Middle Name *',
+      label: 'Middle Name',
       placeholder: 'Enter Middle Name',
       keyboardType: 'default',
       maxLength: 30,
@@ -199,17 +199,17 @@ const Registration: React.FC = () => {
     {
       type: 'dropdown',
       name: 'bloodgroup',
-      label: 'Blood Group *',
+      label: 'Blood Group',
       data: bloodGroups,
       placeholder: 'Select Blood Group',
     },
-    {
-      type: 'dropdown',
-      name: 'rhfactor',
-      label: 'RH Factor *',
-      data: rhFactors,
-      placeholder: 'Select RH Factor',
-    },
+    // {
+    //   type: 'dropdown',
+    //   name: 'rhfactor',
+    //   label: 'RH Factor *',
+    //   data: rhFactors,
+    //   placeholder: 'Select RH Factor',
+    // },
     {
       type: 'checkbox',
       name: 'checked',

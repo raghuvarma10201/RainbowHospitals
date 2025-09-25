@@ -22,6 +22,7 @@ interface HomeMenuItemProps {
 interface MenuItemsProps {
   navigation: any; // You can strongly type this with React Navigation if desired
   logout: () => void;
+  uid: string | undefined;
 }
 
 //
@@ -54,13 +55,13 @@ HomeMenuItem.displayName = 'HomeMenuItem';
 //
 // ---------- Menu List Component ----------
 //
-const MenuItems: React.FC<MenuItemsProps> = ({navigation, logout}) => {
+const MenuItems: React.FC<MenuItemsProps> = ({navigation, logout, uid}) => {
   // Define all available menu items in one place
   const menuItems: HomeMenuItemProps[] = [
     {
       title: 'My Appointments',
       icon: require('../../../../assets/images/home-appointments.png'),
-      onPress: () => navigateTo(navigation, 'MyAppointments'),
+      onPress: () => navigateTo(navigation, 'MyAppointments', {mrn: uid}),
     },
     {
       title: 'My Medical Record',

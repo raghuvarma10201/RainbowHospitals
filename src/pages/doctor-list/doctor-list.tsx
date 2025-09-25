@@ -133,11 +133,6 @@ const DoctorsList: React.FC = ({route}: any) => {
           resizeMode="cover"
         />
         <View style={styles.container}>
-          <SearchLocationBlock style={styles.searchLocationBlock} />
-          <CategorySelection
-            screen={'docList'}
-            changeCategory={changeCategory}
-          />
           <View style={styles.searchContainer}>
             <View style={styles.iconContainer}>
               <Image
@@ -163,6 +158,11 @@ const DoctorsList: React.FC = ({route}: any) => {
               }}
             />
           </View>
+          {/* <SearchLocationBlock style={styles.searchLocationBlock} /> */}
+          <CategorySelection
+            screen={'docList'}
+            changeCategory={changeCategory}
+          />
           <View style={styles.specialtyRibbonContainer}>
             <LinearGradient
               colors={[pallette.white, pallette.black]}
