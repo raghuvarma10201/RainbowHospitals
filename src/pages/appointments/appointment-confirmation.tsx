@@ -190,7 +190,19 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
               )
             }
             style={styles.payBtn}>
-            <Text style={styles.payBtnTxt}>View All Appointments</Text>
+            <Text style={styles.payBtnTxt}>Continue to Upload Vitals</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{name: routes.Dashboard}],
+                }),
+              )
+            }
+            style={styles.payBtn}>
+            <Text style={styles.payBtnTxt}>Back To Home</Text>
           </TouchableOpacity>
           <View style={styles.imgTextGroup}>
             <View style={styles.imgTextBox}>
@@ -378,6 +390,7 @@ const styles = StyleSheet.create({
     width: '90%',
     borderRadius: w * 0.04,
     backgroundColor: pallette.dark_purple,
+    marginVertical: 10,
   },
   payBtnTxt: {
     fontSize: adjust(12),
