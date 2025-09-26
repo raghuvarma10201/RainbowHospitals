@@ -52,9 +52,9 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     branch_name: 't',
   });
   const [vitals, setVitals] = useState({
-    height: '',
-    weight: '',
-    temperature: '',
+    height: appointmentData?.vitals?.height || '',
+    weight: appointmentData?.vitals?.weight || '',
+    temperature: appointmentData?.vitals?.temperature || '',
   });
   const vitalFields = [
     {key: 'height', label: 'Height (in cm)'},
@@ -100,7 +100,11 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       appointmentnumber: appointmentData?.BookingUID,
       mrn: (await AsyncStorage.getItem('mrn')) || '',
       OrganisationUID: appointmentData?.OrganisationUID,
-      ...vitals,
+      height: vitals.height ? parseFloat(vitals.height) : undefined,
+      weight: vitals.weight ? parseFloat(vitals.weight) : undefined,
+      temperature: vitals.temperature
+        ? parseFloat(vitals.temperature)
+        : undefined,
     };
     console.log(obj);
 
@@ -475,12 +479,13 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                 <TextInput
                   mode="flat"
                   underlineColor="transparent"
+                  value={vitals[key] ? String(vitals[key]) : ''}
                   style={styles.formInput}
                   keyboardType={'decimal-pad'}
                   onChangeText={text =>
                     setVitals(prev => ({
                       ...prev,
-                      [key]: parseFloat(text), // ✅ always updates correct key
+                      [key]: text, // ✅ always updates correct key
                     }))
                   }
                 />
