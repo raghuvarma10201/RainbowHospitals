@@ -31,7 +31,10 @@ interface MenuItemsProps {
 const HomeMenuItem: React.FC<HomeMenuItemProps> = memo(
   ({title, icon, onPress}) => {
     return (
-      <TouchableOpacity style={styles.row} onPress={onPress}>
+      <TouchableOpacity
+        disabled={!onPress}
+        style={styles.row}
+        onPress={onPress}>
         {/* Left block with icon + title */}
         <View style={styles.leftHomeBlock}>
           <View style={styles.iconLeft}>
@@ -66,10 +69,12 @@ const MenuItems: React.FC<MenuItemsProps> = ({navigation, logout, uid}) => {
     {
       title: 'My Medical Record',
       icon: require('../../../../assets/images/home-medical-record.png'),
+      onPress: () => navigateTo(navigation, 'Records', {mrn: uid}),
     },
     {
       title: 'My Family',
       icon: require('../../../../assets/images/home-family.png'),
+      onPress: () => navigateTo(navigation, 'Family'),
     },
     {
       title: 'My Pregnancy Journey',

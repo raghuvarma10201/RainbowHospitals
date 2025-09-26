@@ -6,7 +6,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -22,7 +22,12 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useApp} from '../context/app-context';
 import {Branch} from '../services/Region/api';
-import {getBranches, getPatientProfile, getRegions} from '../services/common';
+import {
+  fetchFamilyMembers,
+  getBranches,
+  getPatientProfile,
+  getRegions,
+} from '../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   findNearestRegion,
@@ -38,6 +43,7 @@ import {MainStackParamList} from '../types/navigation';
 const STORAGE_KEYS = {
   BRANCH: 'branch',
   REGION: 'region',
+  PATIENT: 'patient',
 };
 
 const images = {
@@ -55,9 +61,12 @@ const Header = forwardRef<any, HeaderProps>(
     const navigation = useNavigation<NavProp>();
 
     const [locationModalVisible, setLocationModalVisible] = useState(false);
+    const [patientModalVisible, setPatientModalVisible] = useState(false);
     const [selectedRegion, setSelectedRegion] = useState<any>(null);
+    const [selectedPatient, setSelectedPatient] = useState<any>(null);
     const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
     const [regions, setRegions] = useState<any[]>([]);
+    const [familyMembers, setFamilyMembers] = useState<any[]>([]);
     const [branchesForRegion, setBranchesForRegion] = useState<Branch[]>([]);
     const [expandedRegionId, setExpandedRegionId] = useState<string | null>(
       null,
@@ -69,10 +78,12 @@ const Header = forwardRef<any, HeaderProps>(
     const {
       branch,
       region,
+      patient,
       profile,
       updateAllBranch,
       updateBranch,
       updateRegion,
+      updatePatient,
       updateProfile,
     } = useApp();
 
@@ -178,6 +189,34 @@ const Header = forwardRef<any, HeaderProps>(
         .catch(err => console.error('Failed to load regions:', err));
     }, []);
 
+    useEffect(() => {
+      const fetchMembers = async () => {
+        try {
+          const response = await fetchFamilyMembers({
+            MobileNo: await AsyncStorage.getItem('mobileNumber'),
+          });
+
+          if (response?.status === 200) {
+            setFamilyMembers(response.data);
+          } else {
+            ToastService.error(
+              'Error',
+              response?.message || 'Unable to fetch patients',
+            );
+          }
+        } catch (error: any) {
+          ToastService.error(
+            'Error',
+            error?.response?.data?.message ||
+              error?.message ||
+              'Something went wrong',
+          );
+        }
+      };
+
+      fetchMembers();
+    }, []);
+
     /** Sync local selections with context */
     useEffect(() => {
       setSelectedBranch(branch || null);
@@ -197,6 +236,14 @@ const Header = forwardRef<any, HeaderProps>(
       setLocationModalVisible(false);
     }, []);
 
+    const handleOpenPatientModal = useCallback(() => {
+      setPatientModalVisible(true);
+    }, []);
+
+    const handleClosePatientModal = useCallback(() => {
+      setPatientModalVisible(false);
+    }, []);
+
     const handleBranchUpdate = useCallback(async () => {
       if (selectedBranch && selectedRegion) {
         updateBranch(selectedBranch);
@@ -213,6 +260,18 @@ const Header = forwardRef<any, HeaderProps>(
         );
       }
     }, [selectedBranch, selectedRegion, updateBranch, updateRegion]);
+
+    const handlePatientUpdate = useCallback(async () => {
+      if (selectedBranch && selectedRegion) {
+        updatePatient(selectedRegion);
+        setPatientModalVisible(false);
+
+        await AsyncStorage.setItem(
+          STORAGE_KEYS.PATIENT,
+          JSON.stringify(selectedPatient),
+        );
+      }
+    }, [selectedPatient, updateRegion]);
 
     const toggleRegion = useCallback(
       async (regionItem: any) => {
@@ -326,6 +385,46 @@ const Header = forwardRef<any, HeaderProps>(
       ],
     );
 
+    const familyList = useMemo(
+      () =>
+        familyMembers.map(familyMember => {
+          return (
+            <View key={familyMember.region_id}>
+              <TouchableOpacity
+                style={[styles.locationOption]}
+                onPress={() => {
+                  handlePatientUpdate();
+                  setSelectedPatient(familyMember);
+                }}>
+                <View style={styles.regionRow}>
+                  <View style={{flexDirection: 'row', gap: w * 0.02}}>
+                    <Text style={[styles.locationOptionText]}>
+                      {familyMember.PatientName}
+                    </Text>
+                    {/* {region?.region_id == regionItem?.region_id &&
+                      !isExpanded && (
+                        <Ionicons
+                          name={'checkmark-circle-outline'}
+                          size={20}
+                          color="#000"
+                        />
+                      )} */}
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
+          );
+        }),
+      [
+        regions,
+        expandedRegionId,
+        branchHeights,
+        branchesForRegion,
+        selectedBranch,
+        toggleRegion,
+      ],
+    );
+
     return (
       <View style={styles.header}>
         <View style={styles.headerLeft}>
@@ -340,13 +439,16 @@ const Header = forwardRef<any, HeaderProps>(
               />
             </TouchableOpacity>
           ) : (
-            <View style={styles.profileIconBlock}>
+            <TouchableOpacity
+              onPress={handleOpenPatientModal}
+              disabled={true}
+              style={styles.profileIconBlock}>
               <Image
                 source={images.profile}
                 style={styles.profileIcon}
                 resizeMode="contain"
               />
-            </View>
+            </TouchableOpacity>
           )}
 
           {showLocation ? (
@@ -448,6 +550,38 @@ const Header = forwardRef<any, HeaderProps>(
                       <Text style={styles.cancelButtonText}>Cancel</Text>
                     </TouchableOpacity>
                   </View>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+
+        {/* Patient Modal */}
+        <Modal
+          animationType="slide"
+          transparent
+          visible={patientModalVisible}
+          onRequestClose={handleClosePatientModal}>
+          <TouchableWithoutFeedback onPress={handleClosePatientModal}>
+            <View style={styles.modalOverlay}>
+              <TouchableWithoutFeedback>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>Select Patient</Text>
+                  <ScrollView style={{maxHeight: 400}}>{familyList}</ScrollView>
+
+                  {/* <View style={styles.buttonRow}>
+                    <TouchableOpacity
+                      style={[styles.updateButton, {marginRight: 8}]}
+                      disabled={!selectedBranch}
+                      onPress={handleBranchUpdate}>
+                      <Text style={styles.updateButtonText}>Update</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.cancelButton}
+                      onPress={handleClosePatientModal}>
+                      <Text style={styles.cancelButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View> */}
                 </View>
               </TouchableWithoutFeedback>
             </View>

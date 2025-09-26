@@ -37,6 +37,7 @@
     "react-native": "0.75.5",
     "react-native-audio-recorder-player": "^3.5.4",
     "react-native-background-timer": "https://github.com/jitsi/react-native-background-timer.git#d180dfaa4486ae3ee17d01242db92cb3195f4718",
+    "react-native-blob-util": "^0.22.2",
     "react-native-bootsplash": "^6.3.10",
     "react-native-calendar-events": "https://github.com/jitsi/react-native-calendar-events.git#47f068dedfed7c0f72042e093f688eb11624eb7b",
     "react-native-confirmation-code-field": "^8.0.1",

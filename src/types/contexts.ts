@@ -10,6 +10,7 @@ interface AppContextProps {
   branch: Branch | null;
   allbranch: Branch[];
   region: Region | null;
+  patient: Region | null;
   mrn: string;
   category: Category | null;
   categories: Category[] | null;
@@ -29,6 +30,7 @@ interface AppContextProps {
   updateBranch: (b: Branch | null) => void;
   updateAllBranch: (b: Branch[]) => void;
   updateRegion: (r: Region | null) => void;
+  updatePatient: (r: Region | null) => void;
   updateMrn: (m: string) => void;
   updateCategory: (c: Category) => void;
   updateCategories: (cs: Category[]) => void;

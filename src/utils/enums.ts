@@ -20,6 +20,8 @@ import {
   Otp,
   Registration,
 } from '../pages';
+import PatientFamily from '../pages/patient-family/patient-family';
+import PatientRecords from '../pages/patient-records/patient-records';
 import {AuthStackParamList, MainStackParamList} from '../types/navigation';
 
 type CombinedRouteNames = keyof (AuthStackParamList & MainStackParamList);
@@ -47,6 +49,8 @@ export const routes: Record<CombinedRouteNames, CombinedRouteNames> = {
   AppointmentChat: 'AppointmentChat',
   JitsiCall: 'JitsiCall',
   PayUWebView: 'PayUWebView',
+  Family: 'Family',
+  Records: 'Records',
 };
 
 export const auth_screens = [
@@ -75,6 +79,8 @@ export const app_screens = [
   {name: routes.AppointmentChat, component: AppointmentChat},
   {name: routes.VaccinesPediatric, component: VaccinesPediatric},
   {name: routes.AppointmentConfirmed, component: AppointmentConfirmed},
+  {name: routes.Family, component: PatientFamily},
+  {name: routes.Records, component: PatientRecords},
 ];
 
 export const API_BASE_URL = 'https://rainbow.exwyn.com/api';

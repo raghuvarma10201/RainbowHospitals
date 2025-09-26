@@ -45,6 +45,8 @@ export type MainStackParamList = {
     // amount: string;
     payuUrl: string;
   };
+  Family: undefined;
+  Records: undefined;
 };
 
 export type CombinedNavigationProp = CompositeNavigationProp<

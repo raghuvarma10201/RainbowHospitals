@@ -63,6 +63,8 @@ const Dashboard: React.FC = () => {
     async (date: string) => {
       try {
         const mrn = await AsyncStorage.getItem('mrn');
+        console.log('Patient MRN ====>', mrn);
+
         const {data = []} = await getAppointments({
           mrn,
           date,

@@ -250,9 +250,7 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
           </View>
         </View>
       </ScrollView>
-
       <Footer />
-
       <Portal>
         <Modal
           visible={visible}
@@ -355,7 +353,6 @@ const styles = StyleSheet.create({
     height: 85,
     resizeMode: 'contain',
   },
-
   acTitle: {
     fontSize: adjust(18),
     fontWeight: 'bold',

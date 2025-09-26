@@ -104,6 +104,15 @@ export const bookAppointment = async (payload: AppointmentPayload) => {
   }
 };
 
+export const uploadPatientVitals = async (payload: any) => {
+  try {
+    const response = await api.post('/uploadPatientVitals', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const advancePay = async (payload: any) => {
   try {
     const response = await api.post('/patientAdvancePay', payload);
@@ -180,6 +189,24 @@ export const fetchSettings = async () => {
 export const registerUser = async (payload: any) => {
   try {
     const response = await api.post('/registerNewPatient', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getPatientVisits = async (payload: any) => {
+  try {
+    const response = await api.post('/getPatientVisits', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAllLabReports = async (payload: any) => {
+  try {
+    const response = await api.post('/getAllLabReports', payload);
     return response.data;
   } catch (error) {
     throw error;

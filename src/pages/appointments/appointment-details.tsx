@@ -5,8 +5,10 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
+  Animated,
+  Easing,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {Text, Modal, Portal, TextInput} from 'react-native-paper';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
@@ -17,7 +19,7 @@ import {
   formatAppointmentDate,
   formatAppointmentTime,
 } from '../../utils/common-functions';
-import {bookAppointment} from '../../services/common';
+import {bookAppointment, uploadPatientVitals} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ToastService} from '../../utils/service-handlers';
 import {pallette} from '../../constants/constants';
@@ -31,16 +33,26 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel} = route.params;
   const [visible, setVisible] = React.useState(cancel || false);
+  const [vitalsModalVisible, setvitalsModalVisible] = React.useState(false);
   const [loading, setLoading] = useState(false);
   const {showJitsi} = useJitsi();
+
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+  const showVitalsModal = () => setvitalsModalVisible(true);
+  const hideVitalsModal = () => setvitalsModalVisible(false);
+
   const [bank_details, setBank_details] = useState({
     bank_name: 'T',
     account_number: 't',
     ifsc_code: 't',
     account_holder_name: 't',
     branch_name: 't',
+  });
+  const [vitals, setVitals] = useState({
+    height: '',
+    weight: '',
+    temperature: '',
   });
 
   const cancelAppointment = async () => {
@@ -76,11 +88,41 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     }
   };
 
+  const uploadVitals = async () => {
+    const obj = {
+      appointmentnumber: appointmentData?.BookingUID,
+      mrn: (await AsyncStorage.getItem('mrn')) || '',
+      OrganisationUID: appointmentData?.OrganisationUID,
+      ...vitals,
+    };
+    try {
+      const response = await uploadPatientVitals(obj);
+      if (response?.status == 200 && response?.success) {
+        setLoading(false);
+        ToastService.success('Success', 'Vitals Uploaded Successfully');
+        navigation.goBack();
+      } else {
+        setLoading(false);
+        ToastService.error('Error', response.message);
+      }
+    } catch (error: any) {
+      setLoading(false);
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const startVideoCall = () => {
     showJitsi({
       roomName: appointmentData?.roomId || 'SampleJitsiCall',
       token: '',
-      serverURL: 'https://dev.rb.vc.demos.im/', // room url - https://dev.rb.vc.demos.im/SampleJitsiCall
+      serverURL: 'https://dev.rb.vc.demos.im/',
       patient: {
         name: appointmentData?.PatientName,
         mobile: appointmentData?.patient?.mobile_no,
@@ -94,11 +136,68 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     });
   };
 
+  // ---- Radial Menu State ----
+  const [menuOpen, setMenuOpen] = useState(false);
+  const anim = useRef(new Animated.Value(0)).current;
+
+  const toggleMenu = () => {
+    if (menuOpen) {
+      Animated.timing(anim, {
+        toValue: 0,
+        duration: 250,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start(() => setMenuOpen(false));
+    } else {
+      setMenuOpen(true);
+      Animated.timing(anim, {
+        toValue: 1,
+        duration: 250,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  // Pre-calculate positions for 3 buttons in a 90° arc
+  const radius = 100;
+  const options = [
+    {
+      label: 'Chat',
+      angle: -80,
+      img: require('../../../assets/images/chat-icon.png'),
+      action: () => {
+        navigation.navigate('AppointmentChat', {
+          bookingId: appointmentData.appointmentnumber,
+          doctor: appointmentData.CareProviderName,
+        }),
+          toggleMenu();
+      },
+    },
+    {
+      label: 'Join Call',
+      angle: -135,
+      img: require('../../../assets/images/videocall-icon.png'),
+      action: () => {
+        toggleMenu(), startVideoCall();
+      },
+    },
+    {
+      label: 'Upload Vitals',
+      angle: -190,
+      img: require('../../../assets/images/vitals.png'),
+      action: () => {
+        toggleMenu(), showVitalsModal();
+      },
+    },
+  ];
+
   return (
     <View style={styles.mainContainer}>
       <Header showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
+          {/* doctor details */}
           <View style={styles.doctorDetailsContainer}>
             <View style={styles.doctorImgContainer}>
               <Image
@@ -144,6 +243,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
             </View>
           </View>
 
+          {/* patient info */}
           <View style={styles.patientInfo}>
             <Text style={styles.patientInfoHeaderText}>Patient Info</Text>
             <View>
@@ -179,6 +279,8 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
               </View>
             </View>
           </View>
+
+          {/* time/date */}
           <View style={[styles.patientInfo, {marginTop: 15, borderRadius: 10}]}>
             <Text style={styles.patientInfoHeaderText}>Time Date</Text>
             <View style={styles.timeDateItem}>
@@ -216,6 +318,8 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
               </View>
             </View>
           </View>
+
+          {/* cancel + reschedule */}
           <View style={styles.payBtnsContainer}>
             <TouchableOpacity
               onPress={() => showModal()}
@@ -236,32 +340,60 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
               <Text style={styles.payBtnTxt}>Reschedule</Text>
             </TouchableOpacity>
           </View>
-          {appointmentData?.AppointmentType == 'Video' && (
-            <TouchableOpacity
-              style={styles.vcBtn}
-              onPress={() => startVideoCall()}>
-              <Image
-                source={require('../../../assets/images/videocall-icon.png')}
-                style={styles.chatIcon}
-              />
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity
-            style={styles.chatBtn}
-            onPress={() =>
-              navigation.navigate('AppointmentChat', {
-                bookingId: appointmentData.appointmentnumber,
-                doctor: appointmentData.CareProviderName,
-              })
-            }>
-            <Image
-              source={require('../../../assets/images/chat-icon.png')}
-              style={styles.chatIcon}
-            />
-          </TouchableOpacity>
         </View>
       </ScrollView>
       <Footer />
+
+      {/* Floating Options Button */}
+      <View style={{position: 'absolute', bottom: h * 0.12, right: w * 0.05}}>
+        {menuOpen &&
+          options.map((opt, index) => {
+            const x = Math.cos((opt.angle * Math.PI) / 180) * radius;
+            const y = Math.sin((opt.angle * Math.PI) / 180) * radius;
+
+            return (
+              <Animated.View
+                key={index}
+                style={{
+                  position: 'absolute',
+                  transform: [
+                    {
+                      translateX: anim.interpolate({
+                        inputRange: [0, 1.2],
+                        outputRange: [0, x],
+                      }),
+                    },
+                    {
+                      translateY: anim.interpolate({
+                        inputRange: [0, 1.2],
+                        outputRange: [0, y],
+                      }),
+                    },
+                  ],
+                  opacity: anim,
+                }}>
+                <TouchableOpacity style={styles.radialBtn} onPress={opt.action}>
+                  <Image source={opt?.img} style={styles.radialBtnImg} />
+                </TouchableOpacity>
+                <Text style={styles.radialBtnText}>{opt.label}</Text>
+              </Animated.View>
+            );
+          })}
+
+        <TouchableOpacity style={styles.optionsBtn} onPress={toggleMenu}>
+          <Image
+            source={
+              menuOpen
+                ? require('../../../assets/images/close.png')
+                : require('../../../assets/images/options.png')
+            }
+            style={styles.optBtnImg}
+          />
+          {/* <Text style={{color: 'white', fontSize: 40}}>⋮</Text> */}
+        </TouchableOpacity>
+      </View>
+
+      {/* Cancel Modal */}
       <Portal>
         <Modal
           visible={visible}
@@ -273,80 +405,29 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           </Text>
 
           <View style={styles.formContainer}>
-            <View style={styles.formRow}>
-              <Text style={styles.formLabel}>Bank Name</Text>
-              <TextInput
-                mode="flat"
-                underlineColor="transparent"
-                style={[styles.formInput]}
-                onChangeText={text =>
-                  setBank_details(prev => ({
-                    ...prev,
-                    bank_name: text,
-                  }))
-                }
-              />
-            </View>
+            {[
+              'bank_name',
+              'account_number',
+              'ifsc_code',
+              'account_holder_name',
+              'branch_name',
+            ].map((field, idx) => (
+              <View style={styles.formRow} key={idx}>
+                <Text style={styles.formLabel}>{field.replace(/_/g, ' ')}</Text>
+                <TextInput
+                  mode="flat"
+                  underlineColor="transparent"
+                  style={styles.formInput}
+                  onChangeText={text =>
+                    setBank_details(prev => ({
+                      ...prev,
+                      [field]: text,
+                    }))
+                  }
+                />
+              </View>
+            ))}
 
-            <View style={styles.formRow}>
-              <Text style={styles.formLabel}>Account Number</Text>
-              <TextInput
-                mode="flat"
-                underlineColor="transparent"
-                style={styles.formInput}
-                onChangeText={text =>
-                  setBank_details(prev => ({
-                    ...prev,
-                    account_number: text,
-                  }))
-                }
-              />
-            </View>
-
-            <View style={styles.formRow}>
-              <Text style={styles.formLabel}>IFSC Code</Text>
-              <TextInput
-                mode="flat"
-                underlineColor="transparent"
-                style={styles.formInput}
-                onChangeText={text =>
-                  setBank_details(prev => ({
-                    ...prev,
-                    ifsc_code: text,
-                  }))
-                }
-              />
-            </View>
-
-            <View style={styles.formRow}>
-              <Text style={styles.formLabel}>Account Holder Name</Text>
-              <TextInput
-                mode="flat"
-                underlineColor="transparent"
-                style={styles.formInput}
-                onChangeText={text =>
-                  setBank_details(prev => ({
-                    ...prev,
-                    account_holder_name: text,
-                  }))
-                }
-              />
-            </View>
-
-            <View style={styles.formRow}>
-              <Text style={styles.formLabel}>Branch Name </Text>
-              <TextInput
-                mode="flat"
-                underlineColor="transparent"
-                style={styles.formInput}
-                onChangeText={text =>
-                  setBank_details(prev => ({
-                    ...prev,
-                    branch_name: text,
-                  }))
-                }
-              />
-            </View>
             <View style={styles.formRowBtn}>
               <TouchableOpacity
                 onPress={() => hideModal()}
@@ -356,6 +437,52 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
 
               <TouchableOpacity
                 onPress={() => cancelAppointment()}
+                style={styles.formButton}>
+                <Text style={styles.formButtonText}>Submit</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </Portal>
+
+      {/* Upload Vitals Modal */}
+      <Portal>
+        <Modal
+          visible={vitalsModalVisible}
+          onDismiss={hideVitalsModal}
+          contentContainerStyle={styles.modalWrapp}>
+          <Text style={styles.formTitle}>Upload Vitals</Text>
+          <Text style={styles.formSubTitle}>
+            Need Vital Details For Diagnosis
+          </Text>
+
+          <View style={styles.formContainer}>
+            {['height', 'weight', 'temperature'].map((field, idx) => (
+              <View style={styles.formRow} key={idx}>
+                <Text style={styles.formLabel}>{field.replace(/_/g, ' ')}</Text>
+                <TextInput
+                  mode="flat"
+                  underlineColor="transparent"
+                  style={styles.formInput}
+                  onChangeText={text =>
+                    setVitals(prev => ({
+                      ...prev,
+                      [field]: text,
+                    }))
+                  }
+                />
+              </View>
+            ))}
+
+            <View style={styles.formRowBtn}>
+              <TouchableOpacity
+                onPress={() => hideVitalsModal()}
+                style={[styles.formButton, {backgroundColor: 'grey'}]}>
+                <Text style={styles.formButtonText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => uploadVitals()}
                 style={styles.formButton}>
                 <Text style={styles.formButtonText}>Submit</Text>
               </TouchableOpacity>
@@ -378,23 +505,11 @@ const styles = StyleSheet.create({
     backgroundColor: pallette.white,
     flex: 1,
   },
+  scrollContent: {padding: 0, paddingBottom: 0},
+  container: {flex: 1, paddingBottom: 50, paddingTop: 0, position: 'relative'},
 
-  scrollContent: {
-    padding: 0,
-    paddingBottom: 0,
-  },
-
-  container: {
-    flex: 1,
-    paddingBottom: 50,
-    paddingTop: 0,
-    position: 'relative',
-  },
-
-  //---
   doctorDetailsContainer: {
     backgroundColor: pallette.dark_purple,
-
     paddingHorizontal: 15,
     alignSelf: 'center',
     marginTop: h * 0.12,
@@ -432,12 +547,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  dot: {
-    height: 13,
-    width: 13,
-    borderRadius: 100,
-    backgroundColor: '#4CC2BF',
-  },
+  dot: {height: 13, width: 13, borderRadius: 100, backgroundColor: '#4CC2BF'},
   doctorDetails: {
     padding: 8,
     backgroundColor: pallette.dark_purple,
@@ -449,7 +559,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Regular',
     textAlign: 'center',
   },
-  //--
+
   patientInfo: {
     backgroundColor: '#F5F5FF',
     paddingHorizontal: 15,
@@ -458,7 +568,6 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
   },
-
   patientInfoHeaderText: {
     fontSize: adjust(14),
     marginTop: 10,
@@ -466,7 +575,6 @@ const styles = StyleSheet.create({
     color: pallette.dark_purple,
     textAlign: 'left',
   },
-
   location: {
     borderTopWidth: 1,
     borderTopColor: '#5B52A3',
@@ -484,13 +592,7 @@ const styles = StyleSheet.create({
     color: pallette.white,
     textAlign: 'left',
   },
-
-  patientItem: {
-    marginTop: 15,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-
+  patientItem: {marginTop: 15, flexDirection: 'row', alignItems: 'flex-start'},
   patientImg: {
     height: w * 0.1,
     width: w * 0.1,
@@ -500,12 +602,7 @@ const styles = StyleSheet.create({
     borderColor: pallette.dark_purple,
     marginRight: 10,
   },
-
-  patientReports: {
-    marginTop: 5,
-    flexDirection: 'row',
-    gap: 10,
-  },
+  patientReports: {marginTop: 5, flexDirection: 'row', gap: 10},
   reports: {
     backgroundColor: '#E2EDEC',
     paddingHorizontal: 10,
@@ -516,13 +613,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Regular',
     marginBottom: 10,
   },
-  timeIcon: {
-    width: 30,
-    height: 30,
-    resizeMode: 'contain',
-    marginRight: 5,
-  },
-
+  timeIcon: {width: 30, height: 30, resizeMode: 'contain', marginRight: 5},
   timeDateItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -531,13 +622,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
-
   timeFlexRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-
   payBtnsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -559,7 +648,6 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Semibold',
   },
 
-  //--
   modalWrapp: {
     backgroundColor: pallette.white,
     paddingHorizontal: 15,
@@ -567,16 +655,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '90%',
     alignSelf: 'center',
-
     justifyContent: 'flex-start',
   },
-
-  //---
-
   formTitle: {
     fontSize: adjust(16),
     textAlign: 'center',
-    marginTop: 0,
     fontFamily: 'ProximaNovaA-Bold',
     fontWeight: 'bold',
     color: pallette.black,
@@ -589,25 +672,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
   },
-
   formContainer: {
     backgroundColor: pallette.white,
     borderRadius: 10,
     padding: 10,
     marginTop: 10,
   },
-
-  formRow: {
-    marginBottom: 15,
-  },
-
+  formRow: {marginBottom: 15},
   formLabel: {
     fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Regular',
     color: pallette.black,
     marginBottom: 5,
+    textTransform: 'capitalize',
   },
-
   formInput: {
     height: 36,
     borderWidth: 0,
@@ -615,14 +693,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: pallette.pale_turquoise,
   },
-
   formRowBtn: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 10,
   },
-
   formButton: {
     backgroundColor: pallette.dark_purple,
     borderRadius: 10,
@@ -640,41 +716,43 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  chatBtn: {
+  optionsBtn: {
     backgroundColor: pallette.teal,
-    borderRadius: 100,
-    width: 62,
-    height: 62,
+    borderRadius: h * 0.06,
+    width: h * 0.08,
+    height: h * 0.08,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center',
-    position: 'absolute',
-    bottom: -(h * 0.04),
-    right: 18,
-    zIndex: 2,
     borderWidth: 3,
-    borderColor: '#00A69E',
+    borderColor: pallette.medium_turquoise,
   },
-
-  chatIcon: {
-    width: 35,
-    height: 35,
+  optBtnImg: {
+    height: '30%',
+    width: '30%',
     resizeMode: 'contain',
+    tintColor: pallette.white,
   },
 
-  vcBtn: {
-    backgroundColor: pallette.teal,
-    borderRadius: 100,
-    width: 62,
-    height: 62,
+  radialBtn: {
+    backgroundColor: pallette.medium_turquoise,
+    borderRadius: 30,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    height: h * 0.06,
+    width: h * 0.06,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center',
-    position: 'absolute',
-    bottom: -(h * 0.04),
-    left: 18,
-    zIndex: 2,
-    borderWidth: 3,
-    borderColor: '#00A69E',
+  },
+  radialBtnImg: {
+    height: '80%',
+    width: '80%',
+    resizeMode: 'contain',
+    tintColor: pallette.white,
+  },
+  radialBtnText: {
+    color: pallette.black,
+    fontSize: adjust(10),
+    fontFamily: 'ProximaNovaA-Semibold',
+    textAlign: 'center',
   },
 });
