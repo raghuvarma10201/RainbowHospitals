@@ -73,6 +73,8 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
   const [selectedDate, setSelectedDate] = useState('');
 
   const loadDoctor = useCallback(async () => {
+    console.log('called');
+
     setLoading(true);
     try {
       const response = await getDoctorDetail(doctorId);

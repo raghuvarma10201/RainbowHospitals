@@ -131,7 +131,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                     appointmentType: appointment?.AppointmentType,
                     appointmentnumber: appointment?.appointmentnumber,
                     OrganisationID: appointment?.OrganisationUID,
-                    details: appointment,
+                    patientId: appointment?.PatientID,
                   },
                 )
               }>

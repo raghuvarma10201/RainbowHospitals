@@ -32,6 +32,8 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel} = route.params;
+  console.log(appointmentData);
+
   const [visible, setVisible] = React.useState(cancel || false);
   const [vitalsModalVisible, setvitalsModalVisible] = React.useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,6 +56,11 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     weight: '',
     temperature: '',
   });
+  const vitalFields = [
+    {key: 'height', label: 'Height (in cm)'},
+    {key: 'weight', label: 'Weight (in Kgs)'},
+    {key: 'temperature', label: 'Temperature (in °F)'},
+  ];
 
   const cancelAppointment = async () => {
     const obj: AppointmentPayload = {
@@ -95,8 +102,12 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       OrganisationUID: appointmentData?.OrganisationUID,
       ...vitals,
     };
+    console.log(obj);
+
     try {
       const response = await uploadPatientVitals(obj);
+      console.log(response);
+
       if (response?.status == 200 && response?.success) {
         setLoading(false);
         ToastService.success('Success', 'Vitals Uploaded Successfully');
@@ -108,7 +119,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     } catch (error: any) {
       setLoading(false);
       ToastService.error(
-        'Error',
+        'Error Uploading Vitals',
         error?.response?.data?.message ||
           error?.message ||
           'Something went wrong',
@@ -418,12 +429,13 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   mode="flat"
                   underlineColor="transparent"
                   style={styles.formInput}
-                  onChangeText={text =>
-                    setBank_details(prev => ({
-                      ...prev,
-                      [field]: text,
-                    }))
-                  }
+                  onChangeText={text => {
+                    console.log(text),
+                      setBank_details(prev => ({
+                        ...prev,
+                        [field]: text,
+                      }));
+                  }}
                 />
               </View>
             ))}
@@ -457,17 +469,18 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           </Text>
 
           <View style={styles.formContainer}>
-            {['height', 'weight', 'temperature'].map((field, idx) => (
+            {vitalFields.map(({key, label}, idx) => (
               <View style={styles.formRow} key={idx}>
-                <Text style={styles.formLabel}>{field.replace(/_/g, ' ')}</Text>
+                <Text style={styles.formLabel}>{label}</Text>
                 <TextInput
                   mode="flat"
                   underlineColor="transparent"
                   style={styles.formInput}
+                  keyboardType={'decimal-pad'}
                   onChangeText={text =>
                     setVitals(prev => ({
                       ...prev,
-                      [field]: text,
+                      [key]: parseFloat(text), // ✅ always updates correct key
                     }))
                   }
                 />

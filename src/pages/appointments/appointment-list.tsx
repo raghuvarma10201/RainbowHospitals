@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {Text} from 'react-native-paper';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
@@ -30,6 +30,7 @@ const MyAppointments: React.FC = ({route}: any) => {
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
   const {mrn} = route?.params;
+  const headerRef = useRef<any>();
 
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
@@ -45,7 +46,7 @@ const MyAppointments: React.FC = ({route}: any) => {
     useCallback(() => {
       loadAppointments(mrn);
       getFamilyMembers();
-    }, []),
+    }, [branch]),
   );
 
   const loadAppointments = async (id: string | undefined) => {
@@ -104,7 +105,7 @@ const MyAppointments: React.FC = ({route}: any) => {
   }, []);
   return (
     <View style={styles.mainContainer}>
-      <Header showLocation title={undefined} />
+      <Header ref={headerRef} showLocation title={undefined} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           <Dropdown
@@ -221,6 +222,7 @@ const MyAppointments: React.FC = ({route}: any) => {
               <NotFound
                 text={'No appointments scheduled in this branch.'}
                 margin={h * 0.35}
+                change={() => headerRef.current?.openModal()}
               />
             )}
           </View>

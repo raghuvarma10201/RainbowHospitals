@@ -48,8 +48,8 @@ const countries = [
 
 // ---------- Validation ----------
 const RegistrationSchema = Yup.object({
-  foreName: Yup.string().required('Fore Name is required'),
-  middleName: Yup.string().required('Middle Name is required'),
+  firstName: Yup.string().required('First Name is required'),
+  middleName: Yup.string(),
   lastName: Yup.string().required('Last Name is required'),
   email: Yup.string()
     .email('Invalid email address')
@@ -58,8 +58,8 @@ const RegistrationSchema = Yup.object({
   dob: Yup.string().required('Date of Birth is required'),
   phoneNumber: Yup.string().required('Phone Number is required'),
   gender: Yup.string().required('Gender is required'),
-  bloodgroup: Yup.string().required('Blood Group is required'),
-  rhfactor: Yup.string().required('RH factor is required'),
+  bloodgroup: Yup.string(),
+  rhfactor: Yup.string(),
   checked: Yup.boolean().oneOf(
     [true],
     'Please agree to Terms & Privacy Policy',
@@ -84,7 +84,7 @@ const Registration: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      foreName: '',
+      firstName: '',
       middleName: '',
       lastName: '',
       email: '',
@@ -101,7 +101,7 @@ const Registration: React.FC = () => {
       setLoading(true);
       try {
         const response = await registerUser({
-          ForeName: values.foreName,
+          ForeName: values.firstName,
           MiddleName: values.middleName,
           LastName: values.lastName,
           Gender: values.gender,

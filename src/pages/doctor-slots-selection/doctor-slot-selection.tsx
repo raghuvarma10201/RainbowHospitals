@@ -342,7 +342,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   return (
     <View style={styles.mainContainer}>
       {/* COMMON HEADER */}
-      <Header showLocation />
+      <Header showLocation ref={headerRef} />
       <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent}>
         <ImageBackground
           source={require('../../../assets/images/bottombg.png')}
@@ -407,6 +407,9 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               </Text>
               <Dropdown
                 style={styles.dropdownSelect}
+                iconColor={
+                  appointmentnumber ? pallette.pale_turquoise : pallette.black
+                }
                 selectedTextStyle={styles.selectedTextContry}
                 placeholderStyle={styles.placeholderCountry}
                 maxHeight={200}
