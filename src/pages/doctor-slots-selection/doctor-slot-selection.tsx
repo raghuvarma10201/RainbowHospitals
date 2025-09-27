@@ -530,9 +530,20 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                 <Text style={styles.payBtnTxt}>Pay Now</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                disabled={!doctorDetail?.name}
+                disabled={
+                  !doctorDetail?.name ||
+                  typeOfAppointment.toLowerCase() == 'video'
+                }
                 onPress={() => proceedPayment(false)}
-                style={styles.payBtn}>
+                style={[
+                  styles.payBtn,
+                  {
+                    backgroundColor:
+                      typeOfAppointment.toLowerCase() == 'video'
+                        ? pallette.dark_grey
+                        : pallette.dark_purple,
+                  },
+                ]}>
                 <Text style={styles.payBtnTxt}>Pay At Hospital</Text>
               </TouchableOpacity>
             </View>
