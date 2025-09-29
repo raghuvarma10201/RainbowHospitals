@@ -82,18 +82,18 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                     },
                   ]}
                   onPress={() => onConsultationPress('Physical')}>
-                  <View
-                    style={[
-                      styles.iconContainer,
-                      {
-                        backgroundColor: doctorDetail?.physical_consultation_fee
-                          ? pallette.rainbow
-                          : pallette.dark_grey,
-                      },
-                    ]}>
+                  <View style={[styles.iconContainer]}>
                     <Image
                       source={images.physical}
-                      style={styles.consultBtnImg}
+                      style={[
+                        styles.consultBtnImg,
+                        {
+                          tintColor:
+                            appointmentType == 'Physical'
+                              ? pallette.white
+                              : pallette.black,
+                        },
+                      ]}
                     />
                   </View>
 
@@ -119,22 +119,12 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                       backgroundColor: doctorDetail?.video_consultation_fee
                         ? appointmentType == 'Video'
                           ? pallette.teal
-                          : pallette.white
+                          : pallette.pale_turquoise
                         : pallette.dark_grey,
                     },
                   ]}
                   onPress={() => onConsultationPress('Video')}>
-                  <View
-                    style={[
-                      styles.iconContainer,
-                      {
-                        backgroundColor: doctorDetail?.video_consultation_fee
-                          ? appointmentType == 'Video'
-                            ? pallette.teal
-                            : pallette.white
-                          : pallette.dark_grey,
-                      },
-                    ]}>
+                  <View style={[styles.iconContainer]}>
                     <Image
                       source={images.video}
                       style={[
@@ -268,11 +258,12 @@ const styles = StyleSheet.create({
   consultBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     marginVertical: h * 0.003,
     borderRadius: w * 0.05,
     borderWidth: 1,
     borderColor: pallette.teal,
+    paddingHorizontal: w * 0.08,
   },
   consultBtnTxt: {
     fontSize: adjust(12),
@@ -282,7 +273,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   iconContainer: {
-    backgroundColor: 'red',
     height: h * 0.05,
     flexDirection: 'row',
     alignItems: 'center',
@@ -290,7 +280,6 @@ const styles = StyleSheet.create({
   },
   consultBtnImg: {
     resizeMode: 'contain',
-    tintColor: 'white',
     width: w * 0.05,
   },
   divider: {

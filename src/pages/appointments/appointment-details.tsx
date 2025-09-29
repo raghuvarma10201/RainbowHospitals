@@ -18,6 +18,7 @@ import {MainStackParamList} from '../../types/navigation';
 import {
   formatAppointmentDate,
   formatAppointmentTime,
+  isBeforeTwoHours,
 } from '../../utils/common-functions';
 import {bookAppointment, uploadPatientVitals} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,12 +28,15 @@ import Loader from '../../components/loader';
 import {adjust} from '../../utils/common-functions';
 import {useJitsi} from '../../context/jitsi-context';
 import {AppointmentPayload} from '../../utils/types';
+import moment from 'moment';
 
 const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel} = route.params;
   console.log(appointmentData);
+  const dateTime = moment().format();
+  console.log(dateTime);
 
   const [visible, setVisible] = React.useState(cancel || false);
   const [vitalsModalVisible, setvitalsModalVisible] = React.useState(false);
@@ -179,7 +183,10 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const options = [
     {
       label: 'Chat',
-      angle: -80,
+      angle:
+        appointmentData?.AppointmentType.toLowerCase() == 'physical'
+          ? -90
+          : -75,
       img: require('../../../assets/images/chat-icon.png'),
       action: () => {
         navigation.navigate('AppointmentChat', {
@@ -190,19 +197,22 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       },
     },
     {
-      label: 'Join Call',
-      angle: -135,
-      img: require('../../../assets/images/videocall-icon.png'),
-      action: () => {
-        toggleMenu(), startVideoCall();
-      },
-    },
-    {
       label: 'Upload Vitals',
-      angle: -190,
+      angle:
+        appointmentData?.AppointmentType.toLowerCase() == 'physical'
+          ? -180
+          : -130,
       img: require('../../../assets/images/vitals.png'),
       action: () => {
         toggleMenu(), showVitalsModal();
+      },
+    },
+    {
+      label: 'Join Call',
+      angle: -190,
+      img: require('../../../assets/images/videocall-icon.png'),
+      action: () => {
+        toggleMenu(), startVideoCall();
       },
     },
   ];
@@ -337,11 +347,27 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           {/* cancel + reschedule */}
           <View style={styles.payBtnsContainer}>
             <TouchableOpacity
+              // disabled={
+              //   !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm)
+              // }
               onPress={() => showModal()}
-              style={[styles.payBtn, {backgroundColor: 'grey'}]}>
+              style={[
+                styles.payBtn,
+                {
+                  backgroundColor: isBeforeTwoHours(
+                    dateTime,
+                    appointmentData?.SlotStartDttm,
+                  )
+                    ? pallette.dark_purple
+                    : pallette.dark_grey,
+                },
+              ]}>
               <Text style={styles.payBtnTxt}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              disabled={
+                !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm)
+              }
               onPress={() =>
                 navigation.navigate('DoctorSlots', {
                   doctorId: appointmentData?.id,
@@ -351,7 +377,17 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   patientId: appointmentData?.PatientID,
                 })
               }
-              style={[styles.payBtn, {backgroundColor: pallette.dark_purple}]}>
+              style={[
+                styles.payBtn,
+                {
+                  backgroundColor: isBeforeTwoHours(
+                    dateTime,
+                    appointmentData?.SlotStartDttm,
+                  )
+                    ? pallette.dark_purple
+                    : pallette.dark_grey,
+                },
+              ]}>
               <Text style={styles.payBtnTxt}>Reschedule</Text>
             </TouchableOpacity>
           </View>
@@ -362,7 +398,10 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       {/* Floating Options Button */}
       <View style={{position: 'absolute', bottom: h * 0.12, right: w * 0.05}}>
         {menuOpen &&
-          options.map((opt, index) => {
+          (appointmentData?.AppointmentType.toLowerCase() != 'physical'
+            ? options
+            : options.slice(0, -1)
+          ).map((opt, index) => {
             const x = Math.cos((opt.angle * Math.PI) / 180) * radius;
             const y = Math.sin((opt.angle * Math.PI) / 180) * radius;
 
@@ -753,17 +792,16 @@ const styles = StyleSheet.create({
 
   radialBtn: {
     backgroundColor: pallette.medium_turquoise,
-    borderRadius: 30,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    height: h * 0.06,
-    width: h * 0.06,
+    borderRadius: w,
+    padding: w * 0.01,
+    height: h * 0.07,
+    width: h * 0.07,
     justifyContent: 'center',
     alignItems: 'center',
   },
   radialBtnImg: {
-    height: '80%',
-    width: '80%',
+    height: '70%',
+    width: '70%',
     resizeMode: 'contain',
     tintColor: pallette.white,
   },

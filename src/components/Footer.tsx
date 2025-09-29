@@ -1,6 +1,6 @@
 // ---------- MODULE IMPORTS ----------
 import React, {FC} from 'react';
-import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Image, TouchableOpacity, Linking} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 // ---------- TYPE IMPORTS ----------
@@ -10,10 +10,12 @@ import {MainStackParamList} from '../types/navigation';
 // ---------- VALUE IMPORTS ----------
 import {h, pallette, w} from '../constants/constants';
 import {navigateTo, routes} from '../utils';
+import {useApp} from '../context/app-context';
 
 // ---------- COMPONENT ----------
 const Footer: FC<FooterProps> = ({activeIcon}) => {
   const navigation = useNavigation<NavProp>();
+  const {profile} = useApp();
 
   const buttons: FooterButtonProps[] = [
     {
@@ -35,10 +37,13 @@ const Footer: FC<FooterProps> = ({activeIcon}) => {
     {
       icon: 'call',
       source: require('../../assets/images/footer-call-icon.png'),
+      onPress: () => Linking.openURL(`tel:${9090909090}`),
     },
     {
       icon: 'reports',
       source: require('../../assets/images/footer-reports-icon.png'),
+      onPress: () =>
+        navigateTo(navigation, 'Records', {mrn: profile?.PatientUID}),
     },
   ];
 
