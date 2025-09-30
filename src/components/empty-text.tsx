@@ -4,7 +4,7 @@ import {adjust} from '../utils/common-functions';
 import {h, pallette, w} from '../constants/constants';
 import {NotFoundProps} from '../types/components';
 
-const NotFound: FC<NotFoundProps> = ({text, margin, change}) => {
+const NotFound: FC<NotFoundProps> = ({text, margin, change, showBtn}) => {
   return (
     <View style={[styles.container, {marginTop: margin}]}>
       <Image
@@ -12,11 +12,13 @@ const NotFound: FC<NotFoundProps> = ({text, margin, change}) => {
         style={styles.icon}
       />
       <Text style={[styles.emptyTxt]}>{text}</Text>
-      <TouchableOpacity
-        onPress={change}
-        style={[styles.formButton, {backgroundColor: pallette.dark_purple}]}>
-        <Text style={styles.formButtonText}>Change Location</Text>
-      </TouchableOpacity>
+      {showBtn && (
+        <TouchableOpacity
+          onPress={change}
+          style={[styles.formButton, {backgroundColor: pallette.dark_purple}]}>
+          <Text style={styles.formButtonText}>Change Location</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

@@ -82,7 +82,6 @@ const PatientRecords: FC = ({route}: any) => {
         // mrn: patientId || 'MAHTMP-169649',
         mrn: 'BAH-00519630',
       });
-      console.log(response.data);
       if (response?.status == 200 && response.success) {
         const visitOptions = response.data.map((e: any) => ({
           ...e,

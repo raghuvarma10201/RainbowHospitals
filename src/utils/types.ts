@@ -265,7 +265,7 @@ export type ActionItem = {
 };
 
 export type BookingStatus = 'BLOCK' | 'RESCHEDULE' | 'CANCEL';
-export type AppointmentType = 'Video' | 'Physical';
+export type AppointmentType = 'Video' | 'Physical' | '';
 export type PaymentType = 'PayU' | 'PAYATHOSPITAL';
 
 export interface BankDetails {

@@ -27,7 +27,6 @@ const PatientFamily: FC = () => {
       const response = await fetchFamilyMembers({
         MobileNo: await AsyncStorage.getItem('mobileNumber'),
       });
-      console.log(response.data[0]);
       if (response?.status === 200) {
         setFamilyMembers(response.data);
       } else {

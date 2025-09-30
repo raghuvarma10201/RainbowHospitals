@@ -220,9 +220,9 @@ const MyAppointments: React.FC = ({route}: any) => {
               ))
             ) : (
               <NotFound
-                text={'No appointments scheduled in this branch.'}
+                text={'No appointments found.'}
                 margin={h * 0.35}
-                change={() => headerRef.current?.openModal()}
+                // change={() => headerRef.current?.openModal()}
               />
             )}
           </View>

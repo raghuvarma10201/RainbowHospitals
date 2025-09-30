@@ -68,18 +68,27 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
   const [doctorDetail, setDoctorDetail] = useState<any>({});
   const [doctorSpecialities, setDoctorSpecialities] = useState('');
   const [sessions, setSessions] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
 
   const loadDoctor = useCallback(async () => {
-    console.log('called');
-
     setLoading(true);
     try {
       const response = await getDoctorDetail(doctorId);
+      console.log(response?.data);
+
       if (response?.status === 200 && response.data) {
         const detail = response.data;
+        const doctorLocations = response.data.doctor_branches.map((e: any) => ({
+          ...e,
+          value: e.branch.organisation.organisationid.toString(),
+          label: `${e.branch.name},${e.branch.organisation.city}`,
+        }));
+        console.log(doctorLocations);
+
+        setLocations(doctorLocations);
         setDoctorDetail(detail);
         setDoctorSpecialities(
           detail.doctor_specialities
@@ -189,5 +198,6 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
     selectedDate,
     loadSlots,
     loading,
+    locations,
   };
 };

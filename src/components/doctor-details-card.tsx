@@ -36,6 +36,8 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
   about = false,
   onConsultationPress,
 }) => {
+  console.log(doctorDetail);
+
   // ---------- FALLBACK ----------
   const doctorImage: ImageSourcePropType = doctorDetail?.small_image
     ? {uri: `${IMG_BASE_URL}${doctorDetail.small_image}`}
@@ -70,11 +72,11 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
               {/* Consultation Buttons */}
               <View style={styles.consultBtnsContainer}>
                 <TouchableOpacity
-                  disabled={!doctorDetail?.physical_consultation_fee}
+                  disabled={!doctorDetail?.pay_hospital}
                   style={[
                     styles.consultBtn,
                     {
-                      backgroundColor: doctorDetail?.physical_consultation_fee
+                      backgroundColor: doctorDetail?.pay_hospital
                         ? appointmentType == 'Physical'
                           ? pallette.teal
                           : pallette.pale_turquoise
@@ -88,10 +90,11 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                       style={[
                         styles.consultBtnImg,
                         {
-                          tintColor:
-                            appointmentType == 'Physical'
+                          tintColor: doctorDetail?.pay_hospital
+                            ? appointmentType == 'Physical'
                               ? pallette.white
-                              : pallette.black,
+                              : pallette.black
+                            : pallette.white,
                         },
                       ]}
                     />
@@ -101,7 +104,7 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                     style={[
                       styles.consultBtnTxt,
                       {
-                        color: doctorDetail?.physical_consultation_fee
+                        color: doctorDetail?.pay_hospital
                           ? appointmentType == 'Physical'
                             ? pallette.white
                             : pallette.black
@@ -112,11 +115,11 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  disabled={!doctorDetail?.video_consultation_fee}
+                  disabled={!doctorDetail?.pay_now}
                   style={[
                     styles.consultBtn,
                     {
-                      backgroundColor: doctorDetail?.video_consultation_fee
+                      backgroundColor: doctorDetail?.pay_now
                         ? appointmentType == 'Video'
                           ? pallette.teal
                           : pallette.pale_turquoise
@@ -130,10 +133,10 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                       style={[
                         styles.consultBtnImg,
                         {
-                          tintColor: doctorDetail?.video_consultation_fee
+                          tintColor: doctorDetail?.pay_now
                             ? appointmentType == 'Video'
                               ? pallette.white
-                              : pallette.teal
+                              : pallette.black
                             : pallette.white,
                         },
                       ]}
@@ -144,7 +147,7 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                     style={[
                       styles.consultBtnTxt,
                       {
-                        color: doctorDetail?.video_consultation_fee
+                        color: doctorDetail?.pay_now
                           ? appointmentType == 'Video'
                             ? pallette.white
                             : pallette.black

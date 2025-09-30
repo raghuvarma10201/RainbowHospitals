@@ -41,6 +41,13 @@ import DoctorDetailsCard from '../../components/doctor-details-card';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useSettings} from '../../context/settings-context';
 import {useTimer} from '../../context/timer-context';
+import AnimatedClock from '../../components/animated-timer';
+import CountdownCircle from '../../components/animated-timer';
+
+const payment_types = [
+  {value: '1', label: 'Pay Now'},
+  {value: '2', label: 'Pay At Hospital'},
+];
 
 // ---------- COMPONENT ----------
 const DoctorSlotSelection: React.FC = ({route}: any) => {
@@ -59,10 +66,10 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
 
   const {branch, profile, updateAppointment} = useApp();
   const {settings} = useSettings();
-  const {startTimer} = useTimer();
+  const {startTimer, secondsLeft} = useTimer();
   const [typeOfAppointment, setTypeOfAppointment] = useState<AppointmentType>(
     // appointmentType ||
-    'Video',
+    '',
   );
   const [selectedSlot, setSelectedSlot] = useState('');
   const [selectedD, setSelectedD] = useState('');
@@ -72,10 +79,14 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   const [selectedPatient, setSelectedPatient] = useState<string | undefined>(
     patientId || '',
   );
+  const [selectedLocation, setSelectedLocation] = useState<string | undefined>(
+    '',
+  );
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [consultationFee, setConsultationFee] = useState<number>(0);
   const [registrationFee, setRegistrationFee] = useState<number>(0);
+  const [typeOfPayment, setTypeOfPayment] = useState<string>('');
 
   // ---------- LIFECYCLE ----------
   const {
@@ -83,10 +94,38 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     doctorSpecialities,
     sessions,
     slots,
+    locations,
     selectedDate,
     loadSlots,
     loading,
   } = useDoctorSlots(doctorId, typeOfAppointment);
+
+  const resetState = useCallback(() => {
+    setTypeOfAppointment('Physical');
+    setSelectedSlot('');
+    setSelectedD('');
+    setSelectedTime('');
+    setLoadingPayment(false);
+    setLoadingCall(false);
+    setSelectedPatient(patientId || '');
+    setConsultationFee(0);
+    setRegistrationFee(0);
+    setTypeOfPayment('');
+  }, [patientId]);
+
+  const didMount = useRef(false);
+
+  useEffect(() => {
+    if (!didMount.current) {
+      didMount.current = true;
+      return; // skip on mount
+    }
+
+    if (secondsLeft === 0) {
+      resetState();
+      ToastService.error('Session expired. Please book again.');
+    }
+  }, [secondsLeft, resetState]);
 
   // ---------- CALLBACK FUNCTIONS ----------
   const getFamilyMembers = useCallback(async (mobile: string) => {
@@ -163,7 +202,9 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   );
 
   // ---------- EVENT HANDLERS ----------
-  const proceedPayment = async (paymenttype?: boolean) => {
+  const proceedPayment = async (paymenttype?: string) => {
+    console.log(paymenttype);
+
     if (!selectedSlot) return;
     setLoadingPayment(true);
     const txnid = `TXN_${Date.now()}`;
@@ -208,14 +249,14 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           comment: '',
           mrn: selectedPatient ?? '',
           OrganisationUID: branch?.organisation?.organisationid.toString(),
-          transaction_id: paymenttype ? txnid ?? '' : '',
+          transaction_id: paymenttype == 'Pay Now' ? txnid ?? '' : '',
           price: consultationFee ?? 0,
-          payment_type: paymenttype ? 'PayU' : 'PAYATHOSPITAL',
+          payment_type: paymenttype == 'Pay Now' ? 'PayU' : 'PAYATHOSPITAL',
           orgcode: branch?.organisation?.code || '',
           Visittype: 'First Visit',
           careprovider_code: doctorDetail.new_doctor_UID,
           expirytime:
-            (paymenttype
+            (paymenttype == 'Pay Now'
               ? settings?.onlineBookingInterval ?? 0
               : settings?.physicalBookingInterval ?? 0) / 60,
           ...commonPayload,
@@ -223,23 +264,24 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         try {
           const response = await bookAppointment(blockPayload);
           if (response && response.status == 200 && response.success == true) {
-            if (paymenttype) {
-              startTimer(settings?.onlineBookingInterval || 10);
-              // startTimer(1);
-              navigation.navigate('PayUWebView', {
-                finalPayload: {
-                  ...blockPayload,
-                  registrationFee,
-                  doctor_name: doctorDetail?.name,
-                },
-                bookingId: response?.data?.his_booking_id,
-                payuUrl: 'https://test.payu.in/_payment',
-              });
+            if (paymenttype == 'Pay Now') {
+              startTimer(settings?.onlineBookingInterval || 600);
+              // startTimer(60);
+              // navigation.navigate('PayUWebView', {
+              //   finalPayload: {
+              //     ...blockPayload,
+              //     registrationFee,
+              //     doctor_name: doctorDetail?.name,
+              //   },
+              //   bookingId: response?.data?.his_booking_id,
+              //   payuUrl: 'https://test.payu.in/_payment',
+              // });
             } else {
-              updatePayment(
-                {...blockPayload, registrationFee},
-                response?.data?.his_booking_id,
-              );
+              startTimer(settings?.physicalBookingInterval || 180);
+              // updatePayment(
+              //   {...blockPayload, registrationFee},
+              //   response?.data?.his_booking_id,
+              // );
             }
           } else {
             ToastService.error(response.message);
@@ -373,66 +415,213 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               borderBottomRightRadius: !selectedPatient ? w * 0.1 : 0,
             },
           ]}>
-          <View style={styles.flex}>
-            <Image
-              source={require('../../../assets/images/map-icon.png')}
-              style={styles.flexImg}
-            />
-            <View>
-              <Text
-                style={[
-                  styles.flexHead,
-                  {fontFamily: 'ProximaNovaA-Semibold'},
-                ]}>
-                Location
-              </Text>
-              <Text style={[styles.flexHead, {fontSize: adjust(12)}]}>
-                {branch?.name}
-              </Text>
-            </View>
-          </View>
-          {/* PATIENT DROPDOWN */}
-          <View style={styles.flex}>
-            <Image
-              source={require('../../../assets/images/booked-for-icon.png')}
-              style={styles.flexImg}
-            />
-            <View>
-              <Text
-                style={[
-                  styles.flexHead,
-                  {fontFamily: 'ProximaNovaA-Semibold'},
-                ]}>
-                {appointmentnumber ? 'Re-Scheduling' : 'Booking'} for
-              </Text>
-              <Dropdown
-                style={styles.dropdownSelect}
-                iconColor={
-                  appointmentnumber ? pallette.pale_turquoise : pallette.black
-                }
-                selectedTextStyle={styles.selectedTextContry}
-                placeholderStyle={styles.placeholderCountry}
-                maxHeight={200}
-                disable={appointmentnumber}
-                value={selectedPatient}
-                data={familyMembers}
-                valueField="PatientID"
-                labelField="PatientName"
-                placeholder="Select Patient"
-                containerStyle={styles.dropdownList}
-                itemTextStyle={styles.selectedTextContry}
-                activeColor={pallette.pale_turquoise}
-                onChange={(item: FamilyMember) => {
-                  setSelectedPatient(item.PatientID);
-                  scrollRef.current?.scrollToEnd();
-                  // getConsultationFee(item.PatientID);
-                }}
+          {typeOfAppointment ? (
+            <View style={styles.flex}>
+              <Image
+                source={require('../../../assets/images/map-icon.png')}
+                style={styles.flexImg}
               />
+              <View>
+                <Text
+                  style={[
+                    styles.flexHead,
+                    {fontFamily: 'ProximaNovaA-Semibold'},
+                  ]}>
+                  Location
+                </Text>
+                {/* <Text style={[styles.flexHead, {fontSize: adjust(12)}]}>
+                {branch?.name}
+              </Text> */}
+
+                <Dropdown
+                  style={styles.dropdownSelect}
+                  iconColor={
+                    appointmentnumber ? pallette.pale_turquoise : pallette.black
+                  }
+                  selectedTextStyle={styles.selectedTextContry}
+                  placeholderStyle={styles.placeholderCountry}
+                  maxHeight={200}
+                  value={selectedLocation}
+                  data={locations}
+                  valueField={'value'}
+                  labelField={'label'}
+                  placeholder="Select Location"
+                  containerStyle={styles.dropdownList}
+                  itemTextStyle={styles.selectedTextContry}
+                  activeColor={pallette.pale_turquoise}
+                  onChange={(item: FamilyMember) => {
+                    setSelectedLocation(item.value);
+                    scrollRef.current?.scrollToEnd();
+                    // getConsultationFee(item.PatientID);
+                  }}
+                />
+              </View>
             </View>
-          </View>
+          ) : (
+            <Text
+              style={[
+                styles.flexHead,
+                {
+                  fontFamily: 'ProximaNovaA-Semibold',
+                  marginVertical: h * 0.02,
+                  textAlign: 'center',
+                },
+              ]}>
+              Please select an appointment type.
+            </Text>
+          )}
+          {/* PATIENT DROPDOWN */}
+          {selectedLocation && (
+            <View style={styles.flex}>
+              <Image
+                source={require('../../../assets/images/booked-for-icon.png')}
+                style={styles.flexImg}
+              />
+              <View>
+                <Text
+                  style={[
+                    styles.flexHead,
+                    {fontFamily: 'ProximaNovaA-Semibold'},
+                  ]}>
+                  {appointmentnumber ? 'Re-Scheduling' : 'Booking'} for
+                </Text>
+                <Dropdown
+                  style={styles.dropdownSelect}
+                  iconColor={
+                    appointmentnumber ? pallette.pale_turquoise : pallette.black
+                  }
+                  selectedTextStyle={styles.selectedTextContry}
+                  placeholderStyle={styles.placeholderCountry}
+                  maxHeight={200}
+                  disable={appointmentnumber}
+                  value={selectedPatient}
+                  data={familyMembers}
+                  valueField="PatientID"
+                  labelField="PatientName"
+                  placeholder="Select Patient"
+                  containerStyle={styles.dropdownList}
+                  itemTextStyle={styles.selectedTextContry}
+                  activeColor={pallette.pale_turquoise}
+                  onChange={(item: FamilyMember) => {
+                    setSelectedPatient(item.PatientID);
+                    scrollRef.current?.scrollToEnd();
+                    // getConsultationFee(item.PatientID);
+                  }}
+                />
+              </View>
+            </View>
+          )}
+          {/* PAYMENT TYPE DROPDOWN */}
+          {selectedPatient && (
+            <View style={styles.flex}>
+              <Image
+                source={require('../../../assets/images/booked-for-icon.png')}
+                style={styles.flexImg}
+              />
+              <View>
+                <Text
+                  style={[
+                    styles.flexHead,
+                    {fontFamily: 'ProximaNovaA-Semibold'},
+                  ]}>
+                  Payment Type
+                </Text>
+                <Dropdown
+                  style={styles.dropdownSelect}
+                  iconColor={
+                    appointmentnumber ? pallette.pale_turquoise : pallette.black
+                  }
+                  selectedTextStyle={styles.selectedTextContry}
+                  placeholderStyle={styles.placeholderCountry}
+                  maxHeight={200}
+                  value={selectedPatient}
+                  data={payment_types}
+                  valueField="value"
+                  labelField="label"
+                  placeholder="Select Payment Type"
+                  containerStyle={styles.dropdownList}
+                  itemTextStyle={styles.selectedTextContry}
+                  activeColor={pallette.pale_turquoise}
+                  onChange={item => {
+                    setTypeOfPayment(item?.label);
+                    scrollRef.current?.scrollToEnd();
+                  }}
+                />
+              </View>
+            </View>
+          )}
         </View>
+
+        {/* PROCEED BUTTON */}
+        {appointmentnumber ? (
+          <TouchableOpacity
+            disabled={!selectedSlot}
+            onPress={() => proceedPayment()}
+            style={[
+              styles.formButton,
+              {backgroundColor: selectedSlot ? pallette.dark_purple : 'grey'},
+            ]}>
+            <Text style={styles.formButtonText}>Confirm Reschedule</Text>
+          </TouchableOpacity>
+        ) : (
+          selectedPatient && (
+            // <View style={styles.payBtnsContainer}>
+            //   <TouchableOpacity
+            //     disabled={!doctorDetail?.name}
+            //     onPress={() =>
+            //       Alert.alert(
+            //         'Confirmation',
+            //         'Please confirm if you want to proceed to payment.',
+            //         [
+            //           {
+            //             text: 'Cancel',
+            //             onPress: () => {
+            //               return;
+            //             },
+            //           },
+            //           {
+            //             text: 'Confirm',
+            //             onPress: () => setTypeOfPayment('payNow'),
+            //           },
+            //         ],
+            //       )
+            //     }
+            //     style={[
+            //       styles.payBtn,
+            //       {
+            //         backgroundColor:
+            //           typeOfPayment == 'payNow'
+            //             ? pallette.dark_purple
+            //             : pallette.dark_grey,
+            //       },
+            //     ]}>
+            //     <Text style={styles.payBtnTxt}>Pay Now</Text>
+            //   </TouchableOpacity>
+            //   <TouchableOpacity
+            //     disabled={
+            //       !doctorDetail?.name ||
+            //       typeOfAppointment.toLowerCase() == 'video'
+            //     }
+            //     onPress={() => setTypeOfPayment('payLater')}
+            //     style={[
+            //       styles.payBtn,
+            //       {
+            //         backgroundColor:
+            //           typeOfAppointment.toLowerCase() == 'video'
+            //             ? pallette.dark_grey
+            //             : typeOfPayment == 'payLater'
+            //             ? pallette.dark_purple
+            //             : pallette.dark_grey,
+            //       },
+            //     ]}>
+            //     <Text style={styles.payBtnTxt}>Pay At Hospital</Text>
+            //   </TouchableOpacity>
+            // </View>
+            <></>
+          )
+        )}
         {/* SESSIONS AND SLOTS COMPONENT */}
-        {selectedPatient &&
+        {typeOfPayment &&
           (sessions.length ? (
             <SlotSelection
               sessions={sessions}
@@ -492,68 +681,35 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
             </View>
           </View>
         )}
-        {/* PROCEED BUTTON */}
-        {appointmentnumber ? (
+        {selectedSlot && (
           <TouchableOpacity
             disabled={!selectedSlot}
-            onPress={() => proceedPayment()}
+            onPress={() => proceedPayment(typeOfPayment)}
             style={[
               styles.formButton,
-              {backgroundColor: selectedSlot ? pallette.dark_purple : 'grey'},
+              {backgroundColor: pallette.dark_purple},
             ]}>
-            <Text style={styles.formButtonText}>Confirm Reschedule</Text>
+            <Text style={styles.formButtonText}>Confirm Booking</Text>
           </TouchableOpacity>
-        ) : (
-          selectedSlot && (
-            <View style={styles.payBtnsContainer}>
-              <TouchableOpacity
-                disabled={!doctorDetail?.name}
-                onPress={() =>
-                  Alert.alert(
-                    'Confirmation',
-                    'Please confirm if you want to proceed to payment.',
-                    [
-                      {
-                        text: 'Cancel',
-                        onPress: () => {
-                          return;
-                        },
-                      },
-                      {
-                        text: 'Confirm',
-                        onPress: () => proceedPayment(true),
-                      },
-                    ],
-                  )
-                }
-                style={styles.payBtn}>
-                <Text style={styles.payBtnTxt}>Pay Now</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                disabled={
-                  !doctorDetail?.name ||
-                  typeOfAppointment.toLowerCase() == 'video'
-                }
-                onPress={() => proceedPayment(false)}
-                style={[
-                  styles.payBtn,
-                  {
-                    backgroundColor:
-                      typeOfAppointment.toLowerCase() == 'video'
-                        ? pallette.dark_grey
-                        : pallette.dark_purple,
-                  },
-                ]}>
-                <Text style={styles.payBtnTxt}>Pay At Hospital</Text>
-              </TouchableOpacity>
-            </View>
-          )
         )}
       </ScrollView>
       {/* COMMON FOOTER */}
       <Footer />
       {/* LOADER */}
       {(loading || loadingPayment || loadingCall) && <Loader />}
+
+      {/* Sticky Timer */}
+      {secondsLeft > 0 && (
+        <View style={styles.timerContainer}>
+          <CountdownCircle
+            secondsLeft={secondsLeft}
+            totalSeconds={60} // pass your actual total time
+            size={60}
+            strokeWidth={6}
+            color={pallette.dark_purple}
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -726,5 +882,24 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: adjust(12),
     backgroundColor: pallette.white,
+  },
+  timerContainer: {
+    position: 'absolute',
+    top: h * 0.07,
+    right: 0,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    zIndex: 999, // stays on top
+    // elevation: 5, // Android shadow
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    shadowOffset: {width: 0, height: 2},
+  },
+  timerText: {
+    color: pallette.white,
+    fontSize: adjust(12),
+    fontFamily: 'ProximaNovaA-Bold',
   },
 });

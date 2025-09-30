@@ -34,9 +34,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel} = route.params;
-  console.log(appointmentData);
   const dateTime = moment().format();
-  console.log(dateTime);
 
   const [visible, setVisible] = React.useState(cancel || false);
   const [vitalsModalVisible, setvitalsModalVisible] = React.useState(false);
@@ -110,12 +108,8 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
         ? parseFloat(vitals.temperature)
         : undefined,
     };
-    console.log(obj);
-
     try {
       const response = await uploadPatientVitals(obj);
-      console.log(response);
-
       if (response?.status == 200 && response?.success) {
         setLoading(false);
         ToastService.success('Success', 'Vitals Uploaded Successfully');
@@ -473,7 +467,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   underlineColor="transparent"
                   style={styles.formInput}
                   onChangeText={text => {
-                    console.log(text),
                       setBank_details(prev => ({
                         ...prev,
                         [field]: text,

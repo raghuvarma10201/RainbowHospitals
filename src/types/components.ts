@@ -35,6 +35,8 @@ interface DoctorDetail {
   short_info?: string;
   physical_consultation_fee?: string | undefined;
   video_consultation_fee?: string | undefined;
+  pay_hospital?: any;
+  pay_now?: any;
 }
 
 interface DoctorDetailsCardProps {
@@ -61,6 +63,7 @@ interface NotFoundProps {
   text: string;
   margin: any;
   change?: any;
+  showBtn?: any;
 }
 
 interface HeaderProps {
