@@ -10,7 +10,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import {
+  CommonActions,
+  useNavigation,
+  useIsFocused,
+} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -41,7 +45,6 @@ import DoctorDetailsCard from '../../components/doctor-details-card';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useSettings} from '../../context/settings-context';
 import {useTimer} from '../../context/timer-context';
-import AnimatedClock from '../../components/animated-timer';
 import CountdownCircle from '../../components/animated-timer';
 
 const payment_types = [
@@ -49,11 +52,18 @@ const payment_types = [
   {value: '2', label: 'Pay At Hospital'},
 ];
 
+interface payload {
+  final: AppointmentPayload;
+  bookingID: any;
+}
+
 // ---------- COMPONENT ----------
 const DoctorSlotSelection: React.FC = ({route}: any) => {
   // ---------- STATE AND CONTEXT DECLARATION ----------
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const isFocused = useIsFocused(); // NEW: Track if screen is focused
+
   const {
     doctorId,
     appointmentType,
@@ -66,15 +76,14 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
 
   const {branch, profile, updateAppointment} = useApp();
   const {settings} = useSettings();
-  const {startTimer, secondsLeft} = useTimer();
-  const [typeOfAppointment, setTypeOfAppointment] = useState<AppointmentType>(
-    // appointmentType ||
-    '',
-  );
+  const {startTimer, secondsLeft, clearTimers} = useTimer();
+  const [typeOfAppointment, setTypeOfAppointment] =
+    useState<AppointmentType>('');
   const [selectedSlot, setSelectedSlot] = useState('');
   const [selectedD, setSelectedD] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [loadingPayment, setLoadingPayment] = useState(false);
+  const [timerStarted, setTimerStarted] = useState(false);
   const [loadingCall, setLoadingCall] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<string | undefined>(
     patientId || '',
@@ -87,6 +96,19 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   const [consultationFee, setConsultationFee] = useState<number>(0);
   const [registrationFee, setRegistrationFee] = useState<number>(0);
   const [typeOfPayment, setTypeOfPayment] = useState<string>('');
+  const [selectedPayment, setSelectedPayment] = useState<string>('');
+
+  const [payloadState, setPayloadState] = useState<payload>({
+    final: {
+      orgcode: '',
+      mrn: '',
+      payment_type: undefined,
+      price: undefined,
+      registrationFee: undefined,
+      doctor_name: '',
+    },
+    bookingID: '',
+  });
 
   // ---------- LIFECYCLE ----------
   const {
@@ -101,16 +123,19 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   } = useDoctorSlots(doctorId, typeOfAppointment);
 
   const resetState = useCallback(() => {
-    setTypeOfAppointment('Physical');
+    setTypeOfAppointment('');
     setSelectedSlot('');
     setSelectedD('');
     setSelectedTime('');
+    setSelectedLocation('');
     setLoadingPayment(false);
     setLoadingCall(false);
     setSelectedPatient(patientId || '');
     setConsultationFee(0);
     setRegistrationFee(0);
     setTypeOfPayment('');
+    setTimerStarted(false);
+    clearTimers();
   }, [patientId]);
 
   const didMount = useRef(false);
@@ -118,14 +143,23 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   useEffect(() => {
     if (!didMount.current) {
       didMount.current = true;
-      return; // skip on mount
+      return;
     }
-
-    if (secondsLeft === 0) {
+    if (isFocused && secondsLeft === 0) {
       resetState();
       ToastService.error('Session expired. Please book again.');
     }
-  }, [secondsLeft, resetState]);
+    if (!isFocused && secondsLeft === 0) {
+      resetState();
+    }
+  }, [secondsLeft, isFocused, resetState]);
+
+  // Reset on unmount (silent reset)
+  useEffect(() => {
+    return () => {
+      resetState();
+    };
+  }, [resetState]);
 
   // ---------- CALLBACK FUNCTIONS ----------
   const getFamilyMembers = useCallback(async (mobile: string) => {
@@ -147,7 +181,6 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           error?.message ||
           'Something went wrong',
       );
-    } finally {
     }
   }, []);
 
@@ -162,7 +195,13 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   }, [getFamilyMembers]);
 
   const getConsultationFee = useCallback(
-    async (mrn: string | undefined, date: any, slot: any) => {
+    async (
+      mrn: string | undefined,
+      date: any,
+      slot: any,
+      paymenttype: string,
+      time: any,
+    ) => {
       if (!branch) return;
       try {
         setLoadingCall(true);
@@ -181,6 +220,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           const regFee = response.data.RegistrationFee || 0;
           setConsultationFee(fee);
           setRegistrationFee(regFee);
+          proceedPayment(paymenttype, slot, time, mrn, fee, regFee);
         } else {
           ToastService.error(
             'Error',
@@ -202,17 +242,22 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   );
 
   // ---------- EVENT HANDLERS ----------
-  const proceedPayment = async (paymenttype?: string) => {
-    console.log(paymenttype);
-
-    if (!selectedSlot) return;
+  const proceedPayment = async (
+    paymenttype?: string,
+    slot?: any,
+    time?: any,
+    mrn?: any,
+    cons_fee?: any,
+    reg_fee?: any,
+  ) => {
+    if (!slot) return;
     setLoadingPayment(true);
     const txnid = `TXN_${Date.now()}`;
     try {
       const commonPayload = {
-        slotid: selectedSlot,
+        slotid: slot,
         date: selectedDate,
-        time: selectedTime,
+        time: time,
         AppointmentType: typeOfAppointment,
       };
       if (appointmentnumber) {
@@ -225,6 +270,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           OrganisationUID: OrganisationID,
           ...commonPayload,
         };
+
         const response = await bookAppointment(reschedulePayload);
         if (response?.status === 200 && response?.success) {
           ToastService.success(
@@ -247,10 +293,10 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         const blockPayload: AppointmentPayload = {
           status: 'BLOCK',
           comment: '',
-          mrn: selectedPatient ?? '',
+          mrn: mrn ?? '',
           OrganisationUID: branch?.organisation?.organisationid.toString(),
           transaction_id: paymenttype == 'Pay Now' ? txnid ?? '' : '',
-          price: consultationFee ?? 0,
+          price: cons_fee ?? 0,
           payment_type: paymenttype == 'Pay Now' ? 'PayU' : 'PAYATHOSPITAL',
           orgcode: branch?.organisation?.code || '',
           Visittype: 'First Visit',
@@ -264,25 +310,22 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         try {
           const response = await bookAppointment(blockPayload);
           if (response && response.status == 200 && response.success == true) {
+            ToastService.success('Success', 'Slot Blocked Successfully.');
             if (paymenttype == 'Pay Now') {
               startTimer(settings?.onlineBookingInterval || 600);
-              // startTimer(60);
-              // navigation.navigate('PayUWebView', {
-              //   finalPayload: {
-              //     ...blockPayload,
-              //     registrationFee,
-              //     doctor_name: doctorDetail?.name,
-              //   },
-              //   bookingId: response?.data?.his_booking_id,
-              //   payuUrl: 'https://test.payu.in/_payment',
-              // });
+              setTimerStarted(true);
             } else {
               startTimer(settings?.physicalBookingInterval || 180);
-              // updatePayment(
-              //   {...blockPayload, registrationFee},
-              //   response?.data?.his_booking_id,
-              // );
+              setTimerStarted(true);
             }
+            setPayloadState({
+              final: {
+                ...blockPayload,
+                registrationFee: reg_fee,
+                doctor_name: doctorDetail?.name,
+              },
+              bookingID: response?.data?.his_booking_id,
+            });
           } else {
             ToastService.error(response.message);
             navigation.dispatch(
@@ -299,7 +342,6 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               error?.message ||
               'Something went wrong',
           );
-        } finally {
         }
       }
     } catch (error: any) {
@@ -314,70 +356,73 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     }
   };
 
-  const updatePayment = async (finalPayload: any, bookingId: any) => {
-    const payload = {
-      orgcode: finalPayload?.orgcode ?? '40FD',
-      mrn: finalPayload?.mrn ?? 'BAHTMP-761149',
-      paidby: finalPayload?.payment_type == 'CASH' ? 'PAYATHOSPOTAL' : 'PAYU',
-      ConsultationFee: finalPayload?.price.toString() ?? '0',
-      RegistrationFee: finalPayload.registrationFee.toString() ?? '0',
-      comments: `Transaction ID:${''},Booking Number:${bookingId},`,
-      AppointmentNumber: bookingId ?? 'BAHOP-2972192',
-      transaction_id: '',
-    };
-    setLoadingCall(true);
-    try {
-      const response = await advancePay(payload);
-      if (response && response?.status == 200 && response?.success == true) {
-        setLoadingCall(false);
-        ToastService.success('Appointment Booked Successfully');
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 1,
-            routes: [
-              {name: routes.Dashboard},
-              {
-                name: routes.AppointmentConfirmed,
-                params: {
-                  mrn: finalPayload?.mrn || 'BAHTMP-761149',
-                  appointment: {
-                    ...finalPayload,
-                    doctor_name: doctorDetail?.name,
-                    bookingId,
+  const updatePayment = async (paymenttype: string) => {
+    if (paymenttype == 'Pay Now') {
+      navigation.navigate('PayUWebView', {
+        finalPayload: payloadState.final,
+        bookingId: payloadState.bookingID,
+        payuUrl: 'https://test.payu.in/_payment',
+      });
+    } else {
+      const payload = {
+        orgcode: payloadState?.final?.orgcode ?? '40FD',
+        mrn: payloadState?.final?.mrn ?? 'BAHTMP-761149',
+        paidby:
+          payloadState?.final?.payment_type == 'CASH'
+            ? 'PAYATHOSPITAL'
+            : 'PAYU',
+        ConsultationFee: payloadState?.final?.price?.toString() ?? '0',
+        RegistrationFee: payloadState?.final.registrationFee.toString() ?? '0',
+        comments: `Transaction ID:${''},Booking Number:${
+          payloadState?.bookingID
+        },`,
+        AppointmentNumber: payloadState?.bookingID ?? 'BAHOP-2972192',
+        transaction_id: '',
+      };
+      setLoadingCall(true);
+      try {
+        const response = await advancePay(payload);
+        if (response && response?.status == 200 && response?.success == true) {
+          setLoadingCall(false);
+          ToastService.success('Appointment Booked Successfully');
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 1,
+              routes: [
+                {name: routes.Dashboard},
+                {
+                  name: routes.AppointmentConfirmed,
+                  params: {
+                    mrn: payloadState?.final?.mrn || 'BAHTMP-761149',
+                    appointment: {
+                      ...payloadState?.final,
+                      doctor_name: doctorDetail?.name,
+                      bookingId: payloadState?.bookingID,
+                    },
                   },
                 },
-              },
-            ],
-          }),
-        );
-        // navigation.navigate('AppointmentConfirmed', {
-        //   mrn: finalPayload?.mrn || 'BAHTMP-761149',
-        //   appointment: {
-        //     ...finalPayload,
-        //     doctor_name: doctorDetail?.name,
-        //     bookingId,
-        //   },
-        // });
-      } else {
+              ],
+            }),
+          );
+        } else {
+          setLoadingCall(false);
+          ToastService.error(response.message);
+        }
+      } catch (error: any) {
         setLoadingCall(false);
-        ToastService.error(response.message);
-        // navigation.navigate('Dashboard');
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
       }
-    } catch (error: any) {
-      setLoadingCall(false);
-      ToastService.error(
-        'Error',
-        error?.response?.data?.message ||
-          error?.message ||
-          'Something went wrong',
-      );
-    } finally {
     }
   };
 
-  const updateSlot = (slot: any) => {
+  const updateSlot = (slot: any, paymenttype: string, time: any) => {
     setSelectedSlot(slot);
-    getConsultationFee(selectedPatient, selectedDate, slot);
+    getConsultationFee(selectedPatient, selectedDate, slot, paymenttype, time);
   };
 
   // ---------- RENDER ----------
@@ -450,7 +495,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                   itemTextStyle={styles.selectedTextContry}
                   activeColor={pallette.pale_turquoise}
                   onChange={(item: FamilyMember) => {
-                    setSelectedLocation(item.value);
+                    setSelectedLocation(item?.value);
                     scrollRef.current?.scrollToEnd();
                     // getConsultationFee(item.PatientID);
                   }}
@@ -534,8 +579,12 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                   selectedTextStyle={styles.selectedTextContry}
                   placeholderStyle={styles.placeholderCountry}
                   maxHeight={200}
-                  value={selectedPatient}
-                  data={payment_types}
+                  value={typeOfPayment}
+                  data={
+                    typeOfAppointment == 'Video'
+                      ? payment_types.slice(0, -1)
+                      : payment_types
+                  }
                   valueField="value"
                   labelField="label"
                   placeholder="Select Payment Type"
@@ -543,7 +592,8 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                   itemTextStyle={styles.selectedTextContry}
                   activeColor={pallette.pale_turquoise}
                   onChange={item => {
-                    setTypeOfPayment(item?.label);
+                    setTypeOfPayment(item?.value);
+                    setSelectedPayment(item?.label);
                     scrollRef.current?.scrollToEnd();
                   }}
                 />
@@ -630,7 +680,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               selectedSlot={selectedSlot}
               onDateClick={loadSlots}
               onSelectSlot={(slotId: string, time: string) => {
-                updateSlot(slotId);
+                updateSlot(slotId, selectedPayment, time);
                 setSelectedTime(time);
                 scrollRef.current?.scrollToEnd();
               }}
@@ -643,6 +693,23 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               change={() => headerRef.current?.openModal()}
             />
           ))}
+
+        {/* Sticky Timer */}
+        {isFocused && secondsLeft > 0 && timerStarted && (
+          <View style={styles.timerContainer}>
+            <Text
+              style={{
+                fontSize: adjust(12),
+                fontWeight: 'bold',
+                color: pallette.black,
+                textAlign: 'center',
+              }}>
+              You have {String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:
+              {String(secondsLeft % 60).padStart(2, '0')} seconds to confirm
+              this booking.
+            </Text>
+          </View>
+        )}
 
         {/* PAYMENT SUMMARY */}
         {selectedSlot && !appointmentnumber && (
@@ -684,7 +751,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         {selectedSlot && (
           <TouchableOpacity
             disabled={!selectedSlot}
-            onPress={() => proceedPayment(typeOfPayment)}
+            onPress={() => updatePayment(selectedPayment)}
             style={[
               styles.formButton,
               {backgroundColor: pallette.dark_purple},
@@ -693,29 +760,15 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           </TouchableOpacity>
         )}
       </ScrollView>
-      {/* COMMON FOOTER */}
       <Footer />
-      {/* LOADER */}
       {(loading || loadingPayment || loadingCall) && <Loader />}
-
-      {/* Sticky Timer */}
-      {secondsLeft > 0 && (
-        <View style={styles.timerContainer}>
-          <CountdownCircle
-            secondsLeft={secondsLeft}
-            totalSeconds={60} // pass your actual total time
-            size={60}
-            strokeWidth={6}
-            color={pallette.dark_purple}
-          />
-        </View>
-      )}
     </View>
   );
 };
 
 export default DoctorSlotSelection;
 
+// ---------- STYLES ----------
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: pallette.white,
@@ -884,18 +937,12 @@ const styles = StyleSheet.create({
     backgroundColor: pallette.white,
   },
   timerContainer: {
-    position: 'absolute',
-    top: h * 0.07,
-    right: 0,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    zIndex: 999, // stays on top
-    // elevation: 5, // Android shadow
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    shadowOffset: {width: 0, height: 2},
+    width: w * 0.9,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: w * 0.02,
+    backgroundColor: '#e5e5e5',
   },
   timerText: {
     color: pallette.white,

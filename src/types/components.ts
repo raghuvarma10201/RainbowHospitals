@@ -63,7 +63,7 @@ interface NotFoundProps {
   text: string;
   margin: any;
   change?: any;
-  showBtn?: any;
+  hideBtn?: any;
 }
 
 interface HeaderProps {

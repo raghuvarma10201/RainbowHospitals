@@ -49,7 +49,7 @@ const Specialities: React.FC = ({route}: any) => {
   // ---------- CALLBACK FUNCTIONS ----------
   const loadSpecialities = async (filter?: string) => {
     await fetchData(
-      () => getSpecialities(category?.coe_id?.toString()),
+      () => getSpecialities(category.coe_id.toString()),
       data => {
         if (filter) {
           setSpecialities(

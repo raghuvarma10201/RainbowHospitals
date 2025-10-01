@@ -5,11 +5,13 @@ import {upcomingApointment} from '../../../utils/types';
 import {
   formatAppointmentDate,
   formatAppointmentTime,
+  isBeforeTwoHours,
 } from '../../../utils/common-functions';
 import {pallette, w} from '../../../constants/constants';
 import {adjust, navigateTo} from '../../../utils/common-functions';
 import {routes} from '../../../utils/enums';
 import {MainStackParamList} from '../../../types/navigation';
+import moment from 'moment';
 
 interface Props {
   appointment: upcomingApointment;
@@ -20,6 +22,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
   appointment,
   navigation,
 }) => {
+  const dateTime = moment().format();
   return (
     <Card.Content style={[styles.upcomingAppBlockcard, {elevation: 0}]}>
       <TouchableOpacity
@@ -120,8 +123,20 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
             </Text>
           </View>
 
-          <View style={styles.bottomUABlock}>
+          <View
+            style={[
+              styles.bottomUABlock,
+              {
+                backgroundColor: isBeforeTwoHours(
+                  dateTime,
+                  appointment?.SlotStartDttm,
+                )
+                  ? pallette.dark_purple
+                  : pallette.dark_grey,
+              },
+            ]}>
             <TouchableOpacity
+              disabled={!isBeforeTwoHours(dateTime, appointment?.SlotStartDttm)}
               onPress={() =>
                 navigateTo(
                   navigation,
@@ -139,6 +154,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity
+              // disabled={!isBeforeTwoHours(dateTime, appointment?.SlotStartDttm)}
               onPress={() =>
                 navigateTo(
                   navigation,

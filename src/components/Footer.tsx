@@ -74,7 +74,7 @@ const Footer: FC<FooterProps> = ({activeIcon}) => {
 const styles = StyleSheet.create({
   footer: {
     position: 'absolute',
-    bottom: h * 0.03,
+    bottom: 0,
     left: 0,
     right: 0,
     flexDirection: 'row',

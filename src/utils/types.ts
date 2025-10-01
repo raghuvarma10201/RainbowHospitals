@@ -23,6 +23,7 @@ export type FamilyMember = {
   mrn: string;
   sex: string;
   PatientID?: string | undefined;
+  value?: string;
 };
 
 //Get Doctor
@@ -266,7 +267,7 @@ export type ActionItem = {
 
 export type BookingStatus = 'BLOCK' | 'RESCHEDULE' | 'CANCEL';
 export type AppointmentType = 'Video' | 'Physical' | '';
-export type PaymentType = 'PayU' | 'PAYATHOSPITAL';
+export type PaymentType = 'PayU' | 'PAYATHOSPITAL' | 'CASH';
 
 export interface BankDetails {
   bank_name: string | null;
@@ -277,13 +278,13 @@ export interface BankDetails {
 }
 
 export interface AppointmentPayload {
-  status: BookingStatus;
+  status?: BookingStatus;
   appointmentnumber?: string;
   slotid?: string;
-  comment: string | null;
+  comment?: string | null;
   mrn: string;
-  OrganisationUID: string;
-  AppointmentType: AppointmentType;
+  OrganisationUID?: string;
+  AppointmentType?: AppointmentType;
   Visittype?: string;
   careprovider_code?: string;
   date?: string;
@@ -295,4 +296,6 @@ export interface AppointmentPayload {
   bank_details?: BankDetails;
   expirytime?: number;
   orgcode?: string;
+  registrationFee?: any;
+  doctor_name?: any;
 }

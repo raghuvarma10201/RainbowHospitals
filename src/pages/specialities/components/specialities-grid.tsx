@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {IMG_BASE_URL} from '../../../utils/enums';
+import {API_IMG_URL, IMG_BASE_URL} from '../../../utils/enums';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../../types/navigation';
@@ -81,7 +81,7 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
               <Image
                 source={
                   item.icon_image
-                    ? {uri: `${IMG_BASE_URL}${item.icon_image}`}
+                    ? {uri: `${API_IMG_URL}${item.icon_image}`}
                     : {
                         uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
                       }

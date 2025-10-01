@@ -12,7 +12,7 @@ interface AppContextProps {
   region: Region | null;
   patient: Region | null;
   mrn: string;
-  category: Category | null;
+  category: Category;
   categories: Category[] | null;
   profile: PatientProfile | null;
   doctorDetails: DoctorDetailsResponse | null;

@@ -19,6 +19,9 @@ import {
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../types/navigation';
 import {routes} from '../../utils/enums';
+import {useApp} from '../../context/app-context';
+import {getAppointments} from '../../services/common';
+import {ToastService} from '../../utils';
 
 const AppointmentConfirmed: React.FC = ({route}: any) => {
   const [activeindex, setActiveindex] = useState(0);
@@ -30,6 +33,9 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
   const [visible, setVisible] = React.useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [filteredappointment, setFilteredappointment] = useState<any>({});
+  const {branch} = useApp();
 
   const banners = [
     require('../../../assets/images/slide1.png'),
@@ -37,21 +43,41 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
     require('../../../assets/images/slide1.png'),
   ];
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     setTimeout(() => {
-  //       navigation.dispatch(
-  //         CommonActions.reset({
-  //           index: 1,
-  //           routes: [
-  //             {name: routes.Dashboard},
-  //             {name: routes.MyAppointments, params: {mrn: mrn}},
-  //           ],
-  //         }),
-  //       );
-  //     }, 3000);
-  //   }, []),
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      loadAppointments(mrn);
+    }, [branch]),
+  );
+
+  const loadAppointments = async (id: string | undefined) => {
+    try {
+      const payload = {
+        // patientId: await AsyncStorage.getItem('mrn'),
+        patientId: id || 'MAHTMP-182297',
+        OrganisationUID: branch?.organisation?.organisationid.toString(),
+      };
+
+      const response = await getAppointments(payload);
+      if (response && response.status == 200) {
+        setAppointments(response.data);
+        setFilteredappointment(
+          response.data.filter(
+            (item: any) => item?.BookingUID == appointment?.bookingId,
+          )[0],
+        );
+      } else {
+        ToastService.error('Error', response.message);
+      }
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
+    } finally {
+    }
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -178,12 +204,19 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
             onPress={() =>
               navigation.dispatch(
                 CommonActions.reset({
-                  index: 1,
+                  index: 2,
                   routes: [
                     {name: routes.Dashboard},
                     {
                       name: routes.MyAppointments,
                       params: {mrn: appointment?.mrn},
+                    },
+                    {
+                      name: routes.MyAppointmentDetails,
+                      params: {
+                        appointmentData: filteredappointment,
+                        vitalsUpload: true,
+                      },
                     },
                   ],
                 }),

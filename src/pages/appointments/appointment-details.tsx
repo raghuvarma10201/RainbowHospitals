@@ -33,11 +33,13 @@ import moment from 'moment';
 const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const {appointmentData, cancel} = route.params;
+  const {appointmentData, cancel, vitalsUpload} = route.params;
   const dateTime = moment().format();
 
   const [visible, setVisible] = React.useState(cancel || false);
-  const [vitalsModalVisible, setvitalsModalVisible] = React.useState(false);
+  const [vitalsModalVisible, setvitalsModalVisible] = React.useState(
+    vitalsUpload || false,
+  );
   const [loading, setLoading] = useState(false);
   const {showJitsi} = useJitsi();
 
@@ -341,9 +343,9 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           {/* cancel + reschedule */}
           <View style={styles.payBtnsContainer}>
             <TouchableOpacity
-              // disabled={
-              //   !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm)
-              // }
+              disabled={
+                !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm)
+              }
               onPress={() => showModal()}
               style={[
                 styles.payBtn,
@@ -467,10 +469,10 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   underlineColor="transparent"
                   style={styles.formInput}
                   onChangeText={text => {
-                      setBank_details(prev => ({
-                        ...prev,
-                        [field]: text,
-                      }));
+                    setBank_details(prev => ({
+                      ...prev,
+                      [field]: text,
+                    }));
                   }}
                 />
               </View>
@@ -575,7 +577,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     borderWidth: 0.3,
     borderColor: 'grey',
-    padding: 5,
     marginTop: -50,
     position: 'relative',
     marginBottom: 10,
@@ -592,7 +593,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: pallette.white,
     position: 'absolute',
-    right: 0,
+    right: 10,
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',

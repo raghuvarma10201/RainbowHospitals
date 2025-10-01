@@ -77,8 +77,6 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
     setLoading(true);
     try {
       const response = await getDoctorDetail(doctorId);
-      console.log(response?.data);
-
       if (response?.status === 200 && response.data) {
         const detail = response.data;
         const doctorLocations = response.data.doctor_branches.map((e: any) => ({
@@ -86,8 +84,6 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
           value: e.branch.organisation.organisationid.toString(),
           label: `${e.branch.name},${e.branch.organisation.city}`,
         }));
-        console.log(doctorLocations);
-
         setLocations(doctorLocations);
         setDoctorDetail(detail);
         setDoctorSpecialities(

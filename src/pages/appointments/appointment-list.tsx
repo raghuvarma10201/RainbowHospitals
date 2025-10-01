@@ -222,6 +222,7 @@ const MyAppointments: React.FC = ({route}: any) => {
               <NotFound
                 text={'No appointments found.'}
                 margin={h * 0.35}
+                hideBtn={true}
                 // change={() => headerRef.current?.openModal()}
               />
             )}

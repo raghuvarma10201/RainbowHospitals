@@ -36,8 +36,6 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
   about = false,
   onConsultationPress,
 }) => {
-  console.log(doctorDetail);
-
   // ---------- FALLBACK ----------
   const doctorImage: ImageSourcePropType = doctorDetail?.small_image
     ? {uri: `${IMG_BASE_URL}${doctorDetail.small_image}`}
