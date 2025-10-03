@@ -9,12 +9,13 @@ import React, {FC, useCallback, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {fetchFamilyMembers} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {adjust, ToastService} from '../../utils';
+import {adjust, routes, ToastService} from '../../utils';
 import {h, pallette, w} from '../../constants/constants';
 import Header from '../../components/header';
 import moment from 'moment';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const PatientFamily: FC = () => {
+const PatientFamily: FC = ({navigation}: any) => {
   const [familyMembers, setFamilyMembers] = useState<any[]>([]);
   useFocusEffect(
     useCallback(() => {
@@ -45,75 +46,89 @@ const PatientFamily: FC = () => {
     } finally {
     }
   }, []);
+
+  const handleAddFamilyMember = () => {
+    // Navigate or open modal here
+    ToastService.success('Add', 'Add family member clicked');
+  };
+
   return (
-    <ScrollView contentContainerStyle={{paddingBottom: h * 0.03}}>
-      <Header title="menu" showLocation />
-      {familyMembers.map(familyMember => (
-        <View key={familyMember.region_id}>
-          <View style={[styles.locationOption]}>
-            <Text style={[styles.locationOptionText]}>
-              {familyMember.PatientName}
-            </Text>
-            <View>
-              <View
-                style={[styles.rowItems, {justifyContent: 'space-between'}]}>
+    <View style={{flex: 1}}>
+      <ScrollView contentContainerStyle={{paddingBottom: h * 0.1}}>
+        <Header title="menu" showLocation />
+        {familyMembers.map(familyMember => (
+          <View key={familyMember.region_id}>
+            <View style={[styles.locationOption]}>
+              <Text style={[styles.locationOptionText]}>
+                {familyMember.PatientName}
+              </Text>
+              <View>
+                <View
+                  style={[styles.rowItems, {justifyContent: 'space-between'}]}>
+                  <View style={styles.rowItems}>
+                    <View style={[styles.rowItem]}>
+                      <Text style={styles.acSubTitle}>Relation :</Text>
+                    </View>
+                    <View style={[styles.rowItem]}>
+                      <Text style={styles.subTitle}>
+                        {familyMember?.relation || 'Not-Mentioned'}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.rowItems}>
+                    <View style={[styles.rowItem]}>
+                      <Text style={styles.acSubTitle}>Mobile :</Text>
+                    </View>
+                    <View style={[styles.rowItem]}>
+                      <Text style={styles.subTitle}>
+                        +91 {familyMember?.PhoneNumber}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                <View
+                  style={[styles.rowItems, {justifyContent: 'space-between'}]}>
+                  <View style={styles.rowItems}>
+                    <View style={[styles.rowItem]}>
+                      <Text style={styles.acSubTitle}>Patient Id :</Text>
+                    </View>
+                    <View style={[styles.rowItem]}>
+                      <Text style={styles.subTitle}>
+                        {familyMember?.PatientID}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.rowItems}>
+                    <View style={[styles.rowItem]}>
+                      <Text style={styles.acSubTitle}>Gender :</Text>
+                    </View>
+                    <View style={[styles.rowItem]}>
+                      <Text style={styles.subTitle}>{familyMember?.Sex}</Text>
+                    </View>
+                  </View>
+                </View>
                 <View style={styles.rowItems}>
                   <View style={[styles.rowItem]}>
-                    <Text style={styles.acSubTitle}>Relation :</Text>
+                    <Text style={styles.acSubTitle}>DOB :</Text>
                   </View>
                   <View style={[styles.rowItem]}>
                     <Text style={styles.subTitle}>
-                      {familyMember?.relation || 'Not-Mentioned'}
+                      {moment(familyMember?.DateOfBirth).format('DD MMM YYYY')}
                     </Text>
                   </View>
-                </View>
-                <View style={styles.rowItems}>
-                  <View style={[styles.rowItem]}>
-                    <Text style={styles.acSubTitle}>Mobile :</Text>
-                  </View>
-                  <View style={[styles.rowItem]}>
-                    <Text style={styles.subTitle}>
-                      +91 {familyMember?.PhoneNumber}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <View
-                style={[styles.rowItems, {justifyContent: 'space-between'}]}>
-                <View style={styles.rowItems}>
-                  <View style={[styles.rowItem]}>
-                    <Text style={styles.acSubTitle}>Patient Id :</Text>
-                  </View>
-                  <View style={[styles.rowItem]}>
-                    <Text style={styles.subTitle}>
-                      {familyMember?.PatientID}
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.rowItems}>
-                  <View style={[styles.rowItem]}>
-                    <Text style={styles.acSubTitle}>Gender :</Text>
-                  </View>
-                  <View style={[styles.rowItem]}>
-                    <Text style={styles.subTitle}>{familyMember?.Sex}</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.rowItems}>
-                <View style={[styles.rowItem]}>
-                  <Text style={styles.acSubTitle}>DOB :</Text>
-                </View>
-                <View style={[styles.rowItem]}>
-                  <Text style={styles.subTitle}>
-                    {moment(familyMember?.DateOfBirth).format('DD MMM YYYY')}
-                  </Text>
                 </View>
               </View>
             </View>
           </View>
-        </View>
-      ))}
-    </ScrollView>
+        ))}
+      </ScrollView>
+      <TouchableOpacity
+        onPressIn={() => navigation.navigate(routes.AddFamily)}
+        style={styles.fab}
+        activeOpacity={0.7}>
+        <Icon name="add" size={28} color={pallette.white} />
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -150,5 +165,21 @@ const styles = StyleSheet.create({
     fontSize: adjust(10),
     color: pallette.black,
     textTransform: 'capitalize',
+  },
+  fab: {
+    position: 'absolute',
+    bottom: h * 0.03,
+    right: w * 0.05,
+    backgroundColor: pallette.dark_purple,
+    width: w * 0.15,
+    height: w * 0.15,
+    borderRadius: w * 0.075,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
   },
 });

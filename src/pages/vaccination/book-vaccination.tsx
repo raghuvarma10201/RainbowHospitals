@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   },
 
   actionItemIcon: {
-    backgroundColor: '#939598',
+    backgroundColor: pallette.dark_purple,
     borderRadius: 20,
     padding: 10,
     justifyContent: 'center',

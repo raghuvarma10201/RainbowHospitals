@@ -1,6 +1,13 @@
 import React, {useState, memo} from 'react';
-import {Image, StyleSheet, View} from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {Portal, TextInput} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import {h, w, pallette} from '../constants/constants';
 import {adjust} from '../utils/common-functions';
@@ -8,6 +15,9 @@ import {
   LocationOptionsProps,
   SearchLocationBlockProps,
 } from '../types/components';
+import {routes} from '../utils';
+import {MainStackParamList} from '../types/navigation';
+import {useApp} from '../context/app-context';
 
 // ---------- STATIC DATA (memoized outside component) ----------
 const location_options: LocationOptionsProps[] = [
@@ -16,9 +26,41 @@ const location_options: LocationOptionsProps[] = [
 ];
 
 // ---------- COMPONENT ----------
-const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
+const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({
+  style,
+  searchFn,
+  results,
+  navigation,
+}) => {
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
+  const [showResults, setShowResults] = useState(true);
+  const {branch} = useApp();
+
+  const groupedResults =
+    results?.reduce((acc: any, item: any) => {
+      if (!acc[item.type]) acc[item.type] = [];
+      acc[item.type].push(item);
+      return acc;
+    }, {}) || {};
+
+  const goToScreen = (item: any) => {
+    if (item.type.toUpperCase() == 'DOCTOR') {
+      navigation.navigate(routes.DoctorSlots as keyof MainStackParamList, {
+        doctorId: item.id,
+        appointmentType: 'Physical',
+        OrganisationID: branch?.organisation?.organisationid,
+      });
+    } else {
+      navigation.navigate('DoctorsList', {
+        specialityId: item.id,
+        specialityName: item.name,
+        appointmentType: 'Physical',
+      });
+    }
+    setSearch('');
+    setShowResults(false);
+  };
 
   return (
     <View style={style}>
@@ -34,7 +76,9 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
           style={styles.input}
           placeholder="Search"
           value={search}
-          onChangeText={setSearch}
+          onChangeText={val => {
+            searchFn(val), setSearch(val), setShowResults(val.length > 3);
+          }}
           placeholderTextColor={pallette.dark_grey}
           textColor={pallette.black}
           contentStyle={styles.input}
@@ -42,6 +86,27 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({style}) => {
           activeUnderlineColor="transparent"
         />
       </View>
+
+      {showResults && Object.keys(groupedResults).length > 0 && (
+        <View style={styles.dropdown}>
+          <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={true}>
+            {Object.keys(groupedResults).map(type => (
+              <View key={type} style={styles.group}>
+                <Text style={styles.groupTitle}>{type.toUpperCase()}</Text>
+                {groupedResults[type].map((item: any) => (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={styles.item}
+                    onPress={() => goToScreen(item)}>
+                    <Text style={styles.itemText}>{item.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
       {/* <View style={styles.container}>
         <View style={styles.iconContainer}>
           <Image
@@ -134,5 +199,40 @@ const styles = StyleSheet.create({
   dropDownIcon: {
     height: h * 0.02,
     width: w * 0.02,
+  },
+  dropdown: {
+    position: 'absolute',
+    width: w * 0.8,
+    top: h * 0.05,
+    left: w * 0.05,
+    right: 0,
+    maxHeight: h * 0.25, // fixed height (adjust as you like)
+    backgroundColor: pallette.white,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 10,
+    zIndex: 1000,
+    padding: 10,
+  },
+
+  group: {
+    marginBottom: 10,
+  },
+  groupTitle: {
+    fontWeight: 'bold',
+    fontSize: adjust(11),
+    color: pallette.black,
+    marginBottom: 4,
+  },
+  item: {
+    paddingVertical: h * 0.01,
+    borderBottomWidth: 0.5,
+    borderBottomColor: pallette.light_grey,
+  },
+  itemText: {
+    fontSize: adjust(10),
+    color: pallette.black,
   },
 });

@@ -18,7 +18,7 @@ export const getRegions = async () => {
     throw error;
   }
 };
-export const getBranches = async (regionId: number) => {
+export const getBranches = async (regionId?: number) => {
   try {
     const response = await api.get('/getBranches/' + regionId);
     return response.data.data;
@@ -186,6 +186,14 @@ export const fetchSettings = async () => {
   }
 };
 
+export const globalSearch = async (payload: any) => {
+  try {
+    const response = await api.post('/globalSearch', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 export const registerUser = async (payload: any) => {
   try {
     const response = await api.post('/registerNewPatient', payload);

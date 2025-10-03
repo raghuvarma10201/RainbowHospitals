@@ -20,6 +20,7 @@ import {
   Otp,
   Registration,
 } from '../pages';
+import AddFamilyMember from '../pages/patient-family/add-family-member';
 import PatientFamily from '../pages/patient-family/patient-family';
 import PatientRecords from '../pages/patient-records/patient-records';
 import {AuthStackParamList, MainStackParamList} from '../types/navigation';
@@ -50,6 +51,7 @@ export const routes: Record<CombinedRouteNames, CombinedRouteNames> = {
   JitsiCall: 'JitsiCall',
   PayUWebView: 'PayUWebView',
   Family: 'Family',
+  AddFamily: 'AddFamily',
   Records: 'Records',
 };
 
@@ -80,6 +82,7 @@ export const app_screens = [
   {name: routes.VaccinesPediatric, component: VaccinesPediatric},
   {name: routes.AppointmentConfirmed, component: AppointmentConfirmed},
   {name: routes.Family, component: PatientFamily},
+  {name: routes.AddFamily, component: AddFamilyMember},
   {name: routes.Records, component: PatientRecords},
 ];
 

@@ -54,12 +54,14 @@ const MyAppointments: React.FC = ({route}: any) => {
       const payload = {
         // patientId: await AsyncStorage.getItem('mrn'),
         patientId: id || 'MAHTMP-182297',
-        OrganisationUID: branch?.organisation?.organisationid.toString(),
+        // OrganisationUID: branch?.organisation?.organisationid.toString(),
       };
 
       setLoading(true);
       const response = await getAppointments(payload);
       if (response && response.status == 200) {
+        console.log(response.data);
+
         setLoading(false);
         setAppointments(response.data);
       } else {

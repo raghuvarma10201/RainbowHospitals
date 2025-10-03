@@ -368,7 +368,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         orgcode: payloadState?.final?.orgcode ?? '40FD',
         mrn: payloadState?.final?.mrn ?? 'BAHTMP-761149',
         paidby:
-          payloadState?.final?.payment_type == 'CASH'
+          payloadState?.final?.payment_type == 'PAYATHOSPITAL'
             ? 'PAYATHOSPITAL'
             : 'PAYU',
         ConsultationFee: payloadState?.final?.price?.toString() ?? '0',
@@ -380,8 +380,12 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         transaction_id: '',
       };
       setLoadingCall(true);
+      console.log(payload);
+
       try {
         const response = await advancePay(payload);
+        console.log(response, payload);
+
         if (response && response?.status == 200 && response?.success == true) {
           setLoadingCall(false);
           ToastService.success('Appointment Booked Successfully');

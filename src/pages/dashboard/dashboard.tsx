@@ -26,7 +26,7 @@ import {h, pallette, w} from '../../constants/constants';
 import {MainStackParamList} from '../../types/navigation';
 import CategorySelection from '../../components/category-selection';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {getAppointments} from '../../services/common';
+import {getAppointments, globalSearch} from '../../services/common';
 import {ToastService} from '../../utils';
 import {upcomingApointment} from '../../utils/types';
 import moment from 'moment';
@@ -57,6 +57,7 @@ const Dashboard: React.FC = () => {
   );
   const [activeindex, setActiveindex] = useState(0);
   const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [activeAppointmentIndex, setActiveAppointmentIndex] = useState(0);
 
   const fetchMyAppointments = useCallback(
@@ -97,6 +98,29 @@ const Dashboard: React.FC = () => {
     }, [fetchMyAppointments]),
   );
 
+  const search = async (query: string) => {
+    if (query.length > 3) {
+      try {
+        const {data = []} = await globalSearch({
+          searchQuery: query,
+        });
+        console.log(data);
+
+        setSearchResults(data);
+      } catch (error: any) {
+        console.error('Error fetching search results:', error);
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
+        setSearchResults([]);
+      } finally {
+      }
+    }
+  };
+
   const handleScrollEnd = useCallback((event: any) => {
     const newIndex = Math.round(event.nativeEvent.contentOffset.x / w);
     setActiveAppointmentIndex(newIndex);
@@ -120,8 +144,14 @@ const Dashboard: React.FC = () => {
           }}
           resizeMode="cover"
         />
-        <View style={styles.container}>
-          <SearchLocationBlock style={styles.searchLocationBlock} />
+        <View style={{position: 'relative'}}>
+          <SearchLocationBlock
+            searchFn={search}
+            style={styles.searchLocationBlock}
+            results={searchResults}
+            navigation={navigation}
+          />
+
           <CategorySelection />
           <QuickActions navigation={navigation} />
           <View style={styles.appointentsContainer}>
@@ -179,8 +209,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: w * 0.02,
   },
   searchLocationBlock: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
     marginVertical: h * 0.02,
     width: w * 0.9,
     alignSelf: 'center',

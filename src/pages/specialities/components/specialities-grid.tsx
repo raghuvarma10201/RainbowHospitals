@@ -12,7 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../../types/navigation';
 import PaginationDots from '../../../components/pagination-dots';
-import {adjust} from '../../../utils/common-functions';
+import {adjust, isValidUrl} from '../../../utils/common-functions';
 import {h, pallette, w} from '../../../constants/constants';
 import {useApp} from '../../../context/app-context';
 
@@ -56,6 +56,33 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
     setCurrentPage(pageIndex);
   };
 
+  const ImageWrapper = ({
+    iconImage,
+    style,
+  }: {
+    iconImage: string;
+    style: any;
+  }) => {
+    const [source, setSource] = useState(
+      iconImage
+        ? {uri: `${API_IMG_URL}${iconImage}`}
+        : {uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png'},
+    );
+
+    const handleError = () => {
+      // fallback to base url if API url fails
+      if (iconImage) {
+        setSource({uri: `${IMG_BASE_URL}${iconImage}`});
+      } else {
+        setSource({
+          uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+        });
+      }
+    };
+
+    return <Image source={source} style={style} onError={handleError} />;
+  };
+
   const renderPage = (page: any, pageIndex: any) => (
     <View key={pageIndex} style={styles.page}>
       {page.map((item: any) => (
@@ -78,16 +105,8 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
                 },
                 item.isSpecial && styles.specialItem,
               ]}>
-              <Image
-                source={
-                  item.icon_image
-                    ? {uri: `${API_IMG_URL}${item.icon_image}`}
-                    : {
-                        uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
-                      }
-                }
-                style={styles.icon}
-              />
+              <ImageWrapper iconImage={item.icon_image} style={styles.icon} />
+
               <Text numberOfLines={3} style={styles.itemText}>
                 {item.name}
               </Text>

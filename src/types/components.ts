@@ -83,7 +83,10 @@ interface PaginationDotsProps {
 }
 
 interface SearchLocationBlockProps {
-  style?: StyleProp<ViewStyle>;
+  style?: any;
+  searchFn: (query: string) => void;
+  results?: any[];
+  navigation?: any;
 }
 
 interface LocationOptionsProps {

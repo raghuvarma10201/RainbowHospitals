@@ -5,10 +5,8 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  Animated,
-  Easing,
 } from 'react-native';
-import React, {useState, useRef} from 'react';
+import React, {useState} from 'react';
 import {Text, Modal, Portal, TextInput} from 'react-native-paper';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
@@ -19,13 +17,13 @@ import {
   formatAppointmentDate,
   formatAppointmentTime,
   isBeforeTwoHours,
+  adjust,
 } from '../../utils/common-functions';
 import {bookAppointment, uploadPatientVitals} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ToastService} from '../../utils/service-handlers';
 import {pallette} from '../../constants/constants';
 import Loader from '../../components/loader';
-import {adjust} from '../../utils/common-functions';
 import {useJitsi} from '../../context/jitsi-context';
 import {AppointmentPayload} from '../../utils/types';
 import moment from 'moment';
@@ -151,71 +149,33 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     });
   };
 
-  // ---- Radial Menu State ----
-  const [menuOpen, setMenuOpen] = useState(false);
-  const anim = useRef(new Animated.Value(0)).current;
-
-  const toggleMenu = () => {
-    if (menuOpen) {
-      Animated.timing(anim, {
-        toValue: 0,
-        duration: 250,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start(() => setMenuOpen(false));
-    } else {
-      setMenuOpen(true);
-      Animated.timing(anim, {
-        toValue: 1,
-        duration: 250,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    }
-  };
-
-  // Pre-calculate positions for 3 buttons in a 90° arc
-  const radius = 100;
-  const options = [
-    {
-      label: 'Chat',
-      angle:
-        appointmentData?.AppointmentType.toLowerCase() == 'physical'
-          ? -90
-          : -75,
-      img: require('../../../assets/images/chat-icon.png'),
-      action: () => {
-        navigation.navigate('AppointmentChat', {
-          bookingId: appointmentData.appointmentnumber,
-          doctor: appointmentData.CareProviderName,
-        }),
-          toggleMenu();
-      },
-    },
-    {
-      label: 'Upload Vitals',
-      angle:
-        appointmentData?.AppointmentType.toLowerCase() == 'physical'
-          ? -180
-          : -130,
-      img: require('../../../assets/images/vitals.png'),
-      action: () => {
-        toggleMenu(), showVitalsModal();
-      },
-    },
-    {
-      label: 'Join Call',
-      angle: -190,
-      img: require('../../../assets/images/videocall-icon.png'),
-      action: () => {
-        toggleMenu(), startVideoCall();
-      },
-    },
-  ];
-
   return (
     <View style={styles.mainContainer}>
       <Header showLocation title={undefined} />
+
+      {/* Action Buttons Row */}
+      <View style={styles.actionsRow}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('AppointmentChat', {
+              bookingId: appointmentData.appointmentnumber,
+              doctor: appointmentData.CareProviderName,
+            })
+          }>
+          <Text style={styles.actionBtnText}>Chat</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={showVitalsModal}>
+          <Text style={styles.actionBtnText}>Upload Vitals</Text>
+        </TouchableOpacity>
+
+        {appointmentData?.AppointmentType.toLowerCase() !== 'physical' && (
+          <TouchableOpacity onPress={startVideoCall}>
+            <Text style={styles.actionBtnText}>Join Call</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
           {/* doctor details */}
@@ -391,58 +351,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       </ScrollView>
       <Footer />
 
-      {/* Floating Options Button */}
-      <View style={{position: 'absolute', bottom: h * 0.12, right: w * 0.05}}>
-        {menuOpen &&
-          (appointmentData?.AppointmentType.toLowerCase() != 'physical'
-            ? options
-            : options.slice(0, -1)
-          ).map((opt, index) => {
-            const x = Math.cos((opt.angle * Math.PI) / 180) * radius;
-            const y = Math.sin((opt.angle * Math.PI) / 180) * radius;
-
-            return (
-              <Animated.View
-                key={index}
-                style={{
-                  position: 'absolute',
-                  transform: [
-                    {
-                      translateX: anim.interpolate({
-                        inputRange: [0, 1.2],
-                        outputRange: [0, x],
-                      }),
-                    },
-                    {
-                      translateY: anim.interpolate({
-                        inputRange: [0, 1.2],
-                        outputRange: [0, y],
-                      }),
-                    },
-                  ],
-                  opacity: anim,
-                }}>
-                <TouchableOpacity style={styles.radialBtn} onPress={opt.action}>
-                  <Image source={opt?.img} style={styles.radialBtnImg} />
-                </TouchableOpacity>
-                <Text style={styles.radialBtnText}>{opt.label}</Text>
-              </Animated.View>
-            );
-          })}
-
-        <TouchableOpacity style={styles.optionsBtn} onPress={toggleMenu}>
-          <Image
-            source={
-              menuOpen
-                ? require('../../../assets/images/close.png')
-                : require('../../../assets/images/options.png')
-            }
-            style={styles.optBtnImg}
-          />
-          {/* <Text style={{color: 'white', fontSize: 40}}>⋮</Text> */}
-        </TouchableOpacity>
-      </View>
-
       {/* Cancel Modal */}
       <Portal>
         <Modal
@@ -519,7 +427,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   onChangeText={text =>
                     setVitals(prev => ({
                       ...prev,
-                      [key]: text, // ✅ always updates correct key
+                      [key]: text,
                     }))
                   }
                 />
@@ -560,11 +468,30 @@ const styles = StyleSheet.create({
   scrollContent: {padding: 0, paddingBottom: 0},
   container: {flex: 1, paddingBottom: 50, paddingTop: 0, position: 'relative'},
 
+  actionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    padding: w * 0.02,
+    gap: w * 0.03,
+    marginVertical: h * 0.02,
+  },
+  actionBtnText: {
+    fontSize: adjust(14),
+    fontFamily: 'ProximaNovaA-Semibold',
+    color: pallette.white,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: pallette.dark_purple,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+
   doctorDetailsContainer: {
     backgroundColor: pallette.dark_purple,
     paddingHorizontal: 15,
     alignSelf: 'center',
-    marginTop: h * 0.12,
+    marginTop: h * 0.08,
     borderTopLeftRadius: w * 0.1,
     borderTopRightRadius: w * 0.1,
     width: '90%',
@@ -648,161 +575,90 @@ const styles = StyleSheet.create({
     height: w * 0.1,
     width: w * 0.1,
     resizeMode: 'contain',
-    borderRadius: w,
-    borderWidth: 1,
-    borderColor: pallette.dark_purple,
     marginRight: 10,
   },
-  patientReports: {marginTop: 5, flexDirection: 'row', gap: 10},
+  patientReports: {flexDirection: 'row', gap: 15},
   reports: {
-    backgroundColor: '#E2EDEC',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 2,
-    fontSize: adjust(10),
-    color: pallette.black,
-    fontFamily: 'ProximaNovaA-Regular',
-    marginBottom: 10,
+    fontSize: adjust(12),
+    color: pallette.dark_purple,
+    textDecorationLine: 'underline',
+    fontFamily: 'ProximaNovaA-Semibold',
   },
-  timeIcon: {width: 30, height: 30, resizeMode: 'contain', marginRight: 5},
+
   timeDateItem: {
+    marginTop: 15,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    gap: 15,
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  timeFlexRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
   },
+  timeFlexRow: {flexDirection: 'row', alignItems: 'center', gap: 5},
+  timeIcon: {width: 15, height: 15, resizeMode: 'contain'},
+
   payBtnsContainer: {
+    marginTop: 15,
+    marginBottom: 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    marginTop: 10,
+    paddingHorizontal: 30,
   },
   payBtn: {
-    padding: w * 0.03,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '45%',
-    borderRadius: 100,
-    fontFamily: 'ProximaNovaA-Regular',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
   },
   payBtnTxt: {
-    fontSize: adjust(12),
     color: pallette.white,
+    fontSize: adjust(14),
     fontFamily: 'ProximaNovaA-Semibold',
   },
 
   modalWrapp: {
     backgroundColor: pallette.white,
-    paddingHorizontal: 15,
-    paddingVertical: 20,
+    padding: 20,
+    margin: 20,
     borderRadius: 10,
-    width: '90%',
-    alignSelf: 'center',
-    justifyContent: 'flex-start',
   },
   formTitle: {
     fontSize: adjust(16),
-    textAlign: 'center',
     fontFamily: 'ProximaNovaA-Bold',
-    fontWeight: 'bold',
-    color: pallette.black,
     marginBottom: 5,
+    color: pallette.dark_purple,
   },
   formSubTitle: {
     fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Regular',
-    color: pallette.black,
     marginBottom: 10,
-    textAlign: 'center',
+    color: '#555',
   },
-  formContainer: {
-    backgroundColor: pallette.white,
-    borderRadius: 10,
-    padding: 10,
-    marginTop: 10,
-  },
-  formRow: {marginBottom: 15},
+  formContainer: {marginTop: 10},
+  formRow: {marginBottom: 12},
   formLabel: {
     fontSize: adjust(12),
-    fontFamily: 'ProximaNovaA-Regular',
-    color: pallette.black,
-    marginBottom: 5,
-    textTransform: 'capitalize',
+    fontFamily: 'ProximaNovaA-Semibold',
+    marginBottom: 4,
+    color: '#333',
   },
   formInput: {
-    height: 36,
-    borderWidth: 0,
-    borderColor: 'transparent',
-    borderRadius: 6,
-    backgroundColor: pallette.pale_turquoise,
+    backgroundColor: '#F8F8F8',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    height: 40,
   },
   formRowBtn: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 10,
+    marginTop: 15,
   },
   formButton: {
+    flex: 1,
+    marginHorizontal: 5,
     backgroundColor: pallette.dark_purple,
-    borderRadius: 10,
-    padding: 10,
-    marginTop: 10,
-    width: '45%',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
   },
   formButtonText: {
     color: pallette.white,
-    textAlign: 'center',
-    fontSize: adjust(12),
-    fontFamily: 'ProximaNovaA-Bold',
-    fontWeight: 'bold',
-    padding: 5,
-    borderRadius: 10,
-  },
-
-  optionsBtn: {
-    backgroundColor: pallette.teal,
-    borderRadius: h * 0.06,
-    width: h * 0.08,
-    height: h * 0.08,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: pallette.medium_turquoise,
-  },
-  optBtnImg: {
-    height: '30%',
-    width: '30%',
-    resizeMode: 'contain',
-    tintColor: pallette.white,
-  },
-
-  radialBtn: {
-    backgroundColor: pallette.medium_turquoise,
-    borderRadius: w,
-    padding: w * 0.01,
-    height: h * 0.07,
-    width: h * 0.07,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  radialBtnImg: {
-    height: '70%',
-    width: '70%',
-    resizeMode: 'contain',
-    tintColor: pallette.white,
-  },
-  radialBtnText: {
-    color: pallette.black,
-    fontSize: adjust(10),
+    fontSize: adjust(14),
     fontFamily: 'ProximaNovaA-Semibold',
-    textAlign: 'center',
   },
 });

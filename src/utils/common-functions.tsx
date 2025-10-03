@@ -66,3 +66,12 @@ export const isBeforeTwoHours = (givenDttm: any, slotStartDttm: any) => {
 
   return diffHours >= 2;
 };
+
+export const isValidUrl = (url: string) => {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};

@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     elevation: 0,
     borderWidth: 0,
     minWidth: w * 0.95,
-    marginRight: w * 0.01,
+    marginLeft: w * 0.02,
   },
   row: {
     flexDirection: 'row',

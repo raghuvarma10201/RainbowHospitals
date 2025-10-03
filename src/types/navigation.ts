@@ -50,6 +50,7 @@ export type MainStackParamList = {
     payuUrl: string;
   };
   Family: undefined;
+  AddFamily: undefined;
   Records: undefined;
 };
 
