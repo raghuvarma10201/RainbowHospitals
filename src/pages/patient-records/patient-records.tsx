@@ -5,6 +5,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Platform,
+  Linking,
 } from 'react-native';
 import React, {FC, useCallback, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
@@ -22,8 +24,8 @@ import RNBlobUtil from 'react-native-blob-util';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FamilyMember} from '../../utils/types';
-import {Loader} from '../../components';
 import ThreeDotLoader from '../../components/three-dot-loader';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const PatientRecords: FC = ({route}: any) => {
   const {mrn} = route?.params;
@@ -33,7 +35,8 @@ const PatientRecords: FC = ({route}: any) => {
   );
   const [loading, setLoading] = useState(false);
   const [openIndex, setOpenIndex] = useState(0);
-  const [patientVisits, setPatientVisits] = useState([{label: ''}]);
+  const [patientVisits, setPatientVisits] = useState<any[]>([]);
+  const [filteredVisits, setFilteredVisits] = useState<any[]>([]);
   const [labreports, setLabreports] = useState({
     file: '',
     documentname: '',
@@ -44,6 +47,17 @@ const PatientRecords: FC = ({route}: any) => {
     documentname: '',
     filetype: '',
   });
+
+  // Default date range: last 15 days
+  const today = new Date();
+  const fifteenDaysAgo = new Date();
+  fifteenDaysAgo.setDate(today.getDate() - 15);
+
+  const [startDate, setStartDate] = useState<Date | null>(fifteenDaysAgo);
+  const [endDate, setEndDate] = useState<Date | null>(today);
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+
   useFocusEffect(
     useCallback(() => {
       getFamilyMembers();
@@ -72,14 +86,12 @@ const PatientRecords: FC = ({route}: any) => {
           error?.message ||
           'Something went wrong',
       );
-    } finally {
     }
   }, []);
 
   const fetchVisits = useCallback(async () => {
     try {
       const response = await getPatientVisits({
-        // mrn: patientId || 'MAHTMP-169649',
         mrn: 'BAH-00519630',
       });
       if (response?.status == 200 && response.success) {
@@ -88,12 +100,14 @@ const PatientRecords: FC = ({route}: any) => {
           label: `${e.VisitID} | ${moment(e.VisitStartDttm).format(
             'DD MMM YYYY',
           )}`,
-          value: e.VisitID, // value should stay simple & consistent
+          value: e.VisitID,
         }));
         setPatientVisits(visitOptions);
+        setFilteredVisits(visitOptions); // default
         fetchReports(visitOptions[0]);
       } else {
         setPatientVisits([]);
+        setFilteredVisits([]);
       }
     } catch (error: any) {
       console.error('Error fetching visits:', error);
@@ -104,6 +118,7 @@ const PatientRecords: FC = ({route}: any) => {
           'Something went wrong',
       );
       setPatientVisits([]);
+      setFilteredVisits([]);
     }
   }, []);
 
@@ -115,6 +130,7 @@ const PatientRecords: FC = ({route}: any) => {
         patientuid: item?.PatientUID,
         patientvisituid: item?.PatientVisitUID,
       });
+
       setLabreports(response.labResult);
       setRadiologyreports(response.radiologyResult);
     } catch (error: any) {
@@ -130,6 +146,7 @@ const PatientRecords: FC = ({route}: any) => {
     }
   }, []);
 
+  // Function to download PDF
   const downloadPDF = async (
     base64Data: string,
     fileName: string = 'LabResults.pdf',
@@ -144,12 +161,58 @@ const PatientRecords: FC = ({route}: any) => {
         description: 'Download complete',
         mime: 'application/pdf',
         path: path,
-        showNotification: true, // 🔔 shows notification
+        showNotification: true,
       });
     } catch (error) {
       console.error('File save error:', error);
     }
   };
+
+  // Function to view PDF
+  const openPDF = async (
+    base64Data: string,
+    fileName: string = 'LabResults.pdf',
+  ) => {
+    try {
+      const base64 = base64Data.replace(/^data:application\/pdf;base64,/, '');
+      const dirs = RNBlobUtil.fs.dirs;
+      const path = `${dirs.DownloadDir}/${fileName}`;
+      await RNBlobUtil.fs.writeFile(path, base64, 'base64');
+
+      const url = `file://${path}`;
+      const canOpen = await Linking.canOpenURL(url);
+      if (canOpen) {
+        Linking.openURL(url);
+      } else {
+        ToastService.error('Error', 'Cannot open the file');
+      }
+    } catch (error) {
+      console.error('File open error:', error);
+      ToastService.error('Error', 'Unable to open file');
+    }
+  };
+
+  const filterVisitsByDate = useCallback(() => {
+    if (!startDate && !endDate) {
+      setFilteredVisits(patientVisits);
+      return;
+    }
+    const filtered = patientVisits.filter((v: any) => {
+      const visitDate = moment(v.VisitStartDttm);
+      const afterStart = startDate
+        ? visitDate.isSameOrAfter(startDate, 'day')
+        : true;
+      const beforeEnd = endDate
+        ? visitDate.isSameOrBefore(endDate, 'day')
+        : true;
+      return afterStart && beforeEnd;
+    });
+    setFilteredVisits(filtered);
+  }, [startDate, endDate, patientVisits]);
+
+  React.useEffect(() => {
+    filterVisitsByDate();
+  }, [startDate, endDate, patientVisits]);
 
   const AccordionItem = ({title, children, expanded, onToggle}: any) => {
     return (
@@ -184,6 +247,7 @@ const PatientRecords: FC = ({route}: any) => {
       }}>
       <Header title="menu" showLocation />
       <View style={{padding: w * 0.02}}>
+        {/* Patient Dropdown */}
         <Dropdown
           style={styles.dropdownSelect}
           selectedTextStyle={styles.selectedTextContry}
@@ -202,8 +266,84 @@ const PatientRecords: FC = ({route}: any) => {
             setSelectedPatient(item.PatientID);
           }}
         />
-        {patientVisits.map((visit, index) => (
+
+        {/* Start Date Picker */}
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <TouchableOpacity
+            style={styles.datePickerBtn}
+            onPress={() => setShowStartPicker(true)}>
+            <Text style={styles.datePickerText}>
+              {startDate
+                ? moment(startDate).format('DD MMM YYYY')
+                : 'Select Start Date'}
+            </Text>
+          </TouchableOpacity>
+          {showStartPicker && (
+            <DateTimePicker
+              value={startDate || new Date()}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={(event, date) => {
+                setShowStartPicker(false);
+                if (date) {
+                  let newStart = date;
+                  let newEnd = endDate;
+
+                  if (
+                    newEnd &&
+                    moment(newEnd).diff(moment(newStart), 'days') > 15
+                  ) {
+                    newEnd = moment(newStart).add(15, 'days').toDate();
+                  }
+
+                  setStartDate(newStart);
+                  setEndDate(newEnd);
+                }
+              }}
+            />
+          )}
+
+          {/* End Date Picker */}
+          <TouchableOpacity
+            style={styles.datePickerBtn}
+            onPress={() => setShowEndPicker(true)}>
+            <Text style={styles.datePickerText}>
+              {endDate
+                ? moment(endDate).format('DD MMM YYYY')
+                : 'Select End Date'}
+            </Text>
+          </TouchableOpacity>
+          {showEndPicker && (
+            <DateTimePicker
+              value={endDate || new Date()}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              maximumDate={today}
+              onChange={(event, date) => {
+                setShowEndPicker(false);
+                if (date) {
+                  let newEnd = date;
+                  let newStart = startDate;
+
+                  if (
+                    newStart &&
+                    moment(newEnd).diff(moment(newStart), 'days') > 15
+                  ) {
+                    newStart = moment(newEnd).subtract(15, 'days').toDate();
+                  }
+
+                  setEndDate(newEnd);
+                  setStartDate(newStart);
+                }
+              }}
+            />
+          )}
+        </View>
+
+        {/* Accordion Visits */}
+        {filteredVisits.map((visit, index) => (
           <AccordionItem
+            key={index}
             title={visit?.label}
             expanded={index == openIndex}
             onToggle={() => {
@@ -215,8 +355,22 @@ const PatientRecords: FC = ({route}: any) => {
               </View>
             ) : (
               <View>
+                {/* Lab Report */}
                 <View style={styles.accItem}>
                   <TouchableOpacity
+                    style={styles.accItemBtn}
+                    onPress={() =>
+                      openPDF(
+                        labreports?.file,
+                        `${labreports.documentname}.pdf`,
+                      )
+                    }>
+                    <Text style={styles.accItemDescription}>
+                      {'View Lab Report'}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.accItemBtn}
                     onPress={() =>
                       downloadPDF(
                         labreports?.file,
@@ -228,8 +382,23 @@ const PatientRecords: FC = ({route}: any) => {
                     </Text>
                   </TouchableOpacity>
                 </View>
+
+                {/* Radiology Report */}
                 <View style={styles.accItem}>
                   <TouchableOpacity
+                    style={styles.accItemBtn}
+                    onPress={() =>
+                      openPDF(
+                        radiologyreports?.file,
+                        `${radiologyreports.documentname}.pdf`,
+                      )
+                    }>
+                    <Text style={styles.accItemDescription}>
+                      {'View Radiology Report'}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.accItemBtn}
                     onPress={() =>
                       downloadPDF(
                         radiologyreports?.file,
@@ -265,23 +434,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   accItem: {
+    marginVertical: h * 0.01,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: w * 0.04,
+  },
+  accItemBtn: {
+    width: w * 0.3,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    marginVertical: h * 0.01,
     padding: w * 0.02,
     borderRadius: w * 0.02,
-  },
-  primaryOrgBtnBlock: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginTop: 10,
-    gap: w * 0.02,
-  },
-  history: {
-    color: pallette.dark_purple,
-    fontSize: adjust(12),
-    fontFamily: 'Poppins-SemiBold',
   },
   dropdownSelect: {
     height: h * 0.04,
@@ -311,6 +476,22 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     color: pallette.black,
   },
+  datePickerBtn: {
+    borderWidth: 0.7,
+    borderColor: pallette.dark_grey,
+    padding: w * 0.025,
+    borderRadius: w * 0.02,
+    marginBottom: h * 0.015,
+    backgroundColor: '#f9f9f9',
+    width: w * 0.3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  datePickerText: {
+    fontSize: adjust(12),
+    fontFamily: 'Poppins-Regular',
+    color: '#000',
+  },
   accCard: {
     backgroundColor: '#fff',
     borderRadius: 4,
@@ -327,17 +508,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingVertical: 5,
   },
-
   accTitleStyle: {
     fontSize: adjust(14),
     fontFamily: 'Poppins-SemiBold',
     color: '#F08E46',
-    marginTop: 0,
-    marginBottom: 0,
-    paddingHorizontal: 0,
   },
   accBody: {
-    paddingTop: 0,
     paddingBottom: 10,
     paddingHorizontal: 10,
   },
