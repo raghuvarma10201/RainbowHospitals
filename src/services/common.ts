@@ -220,3 +220,12 @@ export const getAllLabReports = async (payload: any) => {
     throw error;
   }
 };
+
+export const getVisitPrescriptions = async (payload: any) => {
+  try {
+    const response = await api.post('/getPrescription', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

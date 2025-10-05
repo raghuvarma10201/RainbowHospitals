@@ -70,15 +70,19 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     OrganisationID,
     appointmentnumber,
     patientId,
+    paid,
   } = route.params;
+  console.log(route.params);
+
   const headerRef = useRef<any>();
   const scrollRef = useRef<ScrollView>(null);
 
   const {branch, profile, updateAppointment} = useApp();
   const {settings} = useSettings();
   const {startTimer, secondsLeft, clearTimers} = useTimer();
-  const [typeOfAppointment, setTypeOfAppointment] =
-    useState<AppointmentType>('');
+  const [typeOfAppointment, setTypeOfAppointment] = useState<AppointmentType>(
+    appointmentnumber ? appointmentType : '',
+  );
   const [selectedSlot, setSelectedSlot] = useState('');
   const [selectedD, setSelectedD] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -89,14 +93,16 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     patientId || '',
   );
   const [selectedLocation, setSelectedLocation] = useState<string | undefined>(
-    '',
+    appointmentnumber ? OrganisationID : '',
   );
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [consultationFee, setConsultationFee] = useState<number>(0);
   const [registrationFee, setRegistrationFee] = useState<number>(0);
-  const [typeOfPayment, setTypeOfPayment] = useState<string>('');
-  const [selectedPayment, setSelectedPayment] = useState<string>('');
+  const [typeOfPayment, setTypeOfPayment] = useState<string>(paid ? '1' : '');
+  const [selectedPayment, setSelectedPayment] = useState<string>(
+    paid ? 'Pay Now' : '',
+  );
 
   const [payloadState, setPayloadState] = useState<payload>({
     final: {
@@ -426,7 +432,15 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
 
   const updateSlot = (slot: any, paymenttype: string, time: any) => {
     setSelectedSlot(slot);
-    getConsultationFee(selectedPatient, selectedDate, slot, paymenttype, time);
+    if (!appointmentnumber) {
+      getConsultationFee(
+        selectedPatient,
+        selectedDate,
+        slot,
+        paymenttype,
+        time,
+      );
+    }
   };
 
   // ---------- RENDER ----------
@@ -484,9 +498,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
 
                 <Dropdown
                   style={styles.dropdownSelect}
-                  iconColor={
-                    appointmentnumber ? pallette.pale_turquoise : pallette.black
-                  }
+                  iconColor={pallette.black}
                   selectedTextStyle={styles.selectedTextContry}
                   placeholderStyle={styles.placeholderCountry}
                   maxHeight={200}
@@ -606,74 +618,6 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           )}
         </View>
 
-        {/* PROCEED BUTTON */}
-        {appointmentnumber ? (
-          <TouchableOpacity
-            disabled={!selectedSlot}
-            onPress={() => proceedPayment()}
-            style={[
-              styles.formButton,
-              {backgroundColor: selectedSlot ? pallette.dark_purple : 'grey'},
-            ]}>
-            <Text style={styles.formButtonText}>Confirm Reschedule</Text>
-          </TouchableOpacity>
-        ) : (
-          selectedPatient && (
-            // <View style={styles.payBtnsContainer}>
-            //   <TouchableOpacity
-            //     disabled={!doctorDetail?.name}
-            //     onPress={() =>
-            //       Alert.alert(
-            //         'Confirmation',
-            //         'Please confirm if you want to proceed to payment.',
-            //         [
-            //           {
-            //             text: 'Cancel',
-            //             onPress: () => {
-            //               return;
-            //             },
-            //           },
-            //           {
-            //             text: 'Confirm',
-            //             onPress: () => setTypeOfPayment('payNow'),
-            //           },
-            //         ],
-            //       )
-            //     }
-            //     style={[
-            //       styles.payBtn,
-            //       {
-            //         backgroundColor:
-            //           typeOfPayment == 'payNow'
-            //             ? pallette.dark_purple
-            //             : pallette.dark_grey,
-            //       },
-            //     ]}>
-            //     <Text style={styles.payBtnTxt}>Pay Now</Text>
-            //   </TouchableOpacity>
-            //   <TouchableOpacity
-            //     disabled={
-            //       !doctorDetail?.name ||
-            //       typeOfAppointment.toLowerCase() == 'video'
-            //     }
-            //     onPress={() => setTypeOfPayment('payLater')}
-            //     style={[
-            //       styles.payBtn,
-            //       {
-            //         backgroundColor:
-            //           typeOfAppointment.toLowerCase() == 'video'
-            //             ? pallette.dark_grey
-            //             : typeOfPayment == 'payLater'
-            //             ? pallette.dark_purple
-            //             : pallette.dark_grey,
-            //       },
-            //     ]}>
-            //     <Text style={styles.payBtnTxt}>Pay At Hospital</Text>
-            //   </TouchableOpacity>
-            // </View>
-            <></>
-          )
-        )}
         {/* SESSIONS AND SLOTS COMPONENT */}
         {typeOfPayment &&
           (sessions.length ? (
@@ -752,7 +696,27 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
             </View>
           </View>
         )}
-        {selectedSlot && (
+
+        {/* PROCEED BUTTON */}
+        {appointmentnumber && (
+          <TouchableOpacity
+            disabled={!selectedSlot}
+            onPress={() =>
+              proceedPayment(
+                selectedPayment,
+                selectedSlot,
+                selectedTime,
+                patientId,
+              )
+            }
+            style={[
+              styles.formButton,
+              {backgroundColor: selectedSlot ? pallette.dark_purple : 'grey'},
+            ]}>
+            <Text style={styles.formButtonText}>Confirm Reschedule</Text>
+          </TouchableOpacity>
+        )}
+        {selectedSlot && !appointmentnumber && (
           <TouchableOpacity
             disabled={!selectedSlot}
             onPress={() => updatePayment(selectedPayment)}

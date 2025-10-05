@@ -377,6 +377,7 @@ const AppointmentChat: React.FC<any> = ({route}) => {
             value={inputText}
             onChangeText={setInputText}
             placeholder="Type your message..."
+            placeholderTextColor={pallette.dark_grey}
             style={styles.input}
           />
           <View style={styles.iconContainer}>
@@ -529,6 +530,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginRight: 10,
     fontSize: adjust(14),
+    color: pallette.black,
     width: '65%',
   },
   iconContainer: {

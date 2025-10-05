@@ -32,6 +32,8 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel, vitalsUpload} = route.params;
+  console.log(appointmentData);
+
   const dateTime = moment().format();
 
   const [visible, setVisible] = React.useState(cancel || false);
@@ -252,10 +254,10 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                     }}>
                     {appointmentData?.PatientName ?? ''}
                   </Text>
-                  <View style={styles.patientReports}>
+                  {/* <View style={styles.patientReports}>
                     <Text style={styles.reports}>MRI Report</Text>
                     <Text style={styles.reports}>Blood Reports</Text>
-                  </View>
+                  </View> */}
                 </View>
               </View>
             </View>
@@ -331,6 +333,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   appointmentnumber: appointmentData?.appointmentnumber,
                   OrganisationID: appointmentData?.OrganisationUID,
                   patientId: appointmentData?.PatientID,
+                  paid: appointmentData?.Comments.includes('TXN_'),
                 })
               }
               style={[

@@ -17,6 +17,7 @@ import {
   fetchFamilyMembers,
   getAllLabReports,
   getPatientVisits,
+  getVisitPrescriptions,
 } from '../../services/common';
 import moment from 'moment';
 import {Dropdown} from 'react-native-element-dropdown';
@@ -47,6 +48,15 @@ const PatientRecords: FC = ({route}: any) => {
     documentname: '',
     filetype: '',
   });
+  const [prescription, setPrescription] = useState({
+    file: '',
+    documentname: '',
+    filetype: '',
+  });
+
+  const [selectedReportType, setSelectedReportType] = useState<
+    'lab' | 'radiology' | 'prescription' | null
+  >('lab');
 
   // Default date range: last 15 days
   const today = new Date();
@@ -103,8 +113,9 @@ const PatientRecords: FC = ({route}: any) => {
           value: e.VisitID,
         }));
         setPatientVisits(visitOptions);
-        setFilteredVisits(visitOptions); // default
+        setFilteredVisits(visitOptions);
         fetchReports(visitOptions[0]);
+        // fetchPrescription(visitOptions[0]);
       } else {
         setPatientVisits([]);
         setFilteredVisits([]);
@@ -133,6 +144,7 @@ const PatientRecords: FC = ({route}: any) => {
 
       setLabreports(response.labResult);
       setRadiologyreports(response.radiologyResult);
+      setPrescription(response.prescriptionResult || {});
     } catch (error: any) {
       console.error('Error fetching reports:', error);
       ToastService.error(
@@ -145,6 +157,31 @@ const PatientRecords: FC = ({route}: any) => {
       setLoading(false);
     }
   }, []);
+
+  // const fetchPrescription = useCallback(async (item: any) => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await getVisitPrescriptions({
+  //       orguid: item?.OrgUID,
+  //       patientuid: item?.PatientUID,
+  //       patientvisituid: item?.PatientVisitUID,
+  //     });
+
+  //     setLabreports(response.labResult);
+  //     setRadiologyreports(response.radiologyResult);
+  //     setPrescription(response.prescriptionResult || {});
+  //   } catch (error: any) {
+  //     console.error('Error fetching reports:', error);
+  //     ToastService.error(
+  //       'Error',
+  //       error?.response?.data?.message ||
+  //         error?.message ||
+  //         'Something went wrong',
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   // Function to download PDF
   const downloadPDF = async (
@@ -168,7 +205,7 @@ const PatientRecords: FC = ({route}: any) => {
     }
   };
 
-  // Function to view PDF
+  // Function to view PDF (fixed version)
   const openPDF = async (
     base64Data: string,
     fileName: string = 'LabResults.pdf',
@@ -179,12 +216,15 @@ const PatientRecords: FC = ({route}: any) => {
       const path = `${dirs.DownloadDir}/${fileName}`;
       await RNBlobUtil.fs.writeFile(path, base64, 'base64');
 
-      const url = `file://${path}`;
-      const canOpen = await Linking.canOpenURL(url);
-      if (canOpen) {
-        Linking.openURL(url);
+      if (Platform.OS === 'android') {
+        RNBlobUtil.android.actionViewIntent(path, 'application/pdf');
       } else {
-        ToastService.error('Error', 'Cannot open the file');
+        const canOpen = await Linking.canOpenURL(`file://${path}`);
+        if (canOpen) {
+          await Linking.openURL(`file://${path}`);
+        } else {
+          ToastService.error('Error', 'No PDF viewer available');
+        }
       }
     } catch (error) {
       console.error('File open error:', error);
@@ -267,7 +307,7 @@ const PatientRecords: FC = ({route}: any) => {
           }}
         />
 
-        {/* Start Date Picker */}
+        {/* Date Pickers */}
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <TouchableOpacity
             style={styles.datePickerBtn}
@@ -303,7 +343,6 @@ const PatientRecords: FC = ({route}: any) => {
             />
           )}
 
-          {/* End Date Picker */}
           <TouchableOpacity
             style={styles.datePickerBtn}
             onPress={() => setShowEndPicker(true)}>
@@ -347,7 +386,9 @@ const PatientRecords: FC = ({route}: any) => {
             title={visit?.label}
             expanded={index == openIndex}
             onToggle={() => {
-              setOpenIndex(index), fetchReports(visit);
+              setOpenIndex(index);
+              setSelectedReportType(null);
+              fetchReports(visit);
             }}>
             {loading ? (
               <View style={{marginVertical: h * 0.02}}>
@@ -355,61 +396,83 @@ const PatientRecords: FC = ({route}: any) => {
               </View>
             ) : (
               <View>
-                {/* Lab Report */}
-                <View style={styles.accItem}>
-                  <TouchableOpacity
-                    style={styles.accItemBtn}
-                    onPress={() =>
-                      openPDF(
-                        labreports?.file,
-                        `${labreports.documentname}.pdf`,
-                      )
-                    }>
-                    <Text style={styles.accItemDescription}>
-                      {'View Lab Report'}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.accItemBtn}
-                    onPress={() =>
-                      downloadPDF(
-                        labreports?.file,
-                        `${labreports.documentname}.pdf`,
-                      )
-                    }>
-                    <Text style={styles.accItemDescription}>
-                      {'Download Lab Report'}
-                    </Text>
-                  </TouchableOpacity>
+                {/* Report Type Selection */}
+                <View style={styles.reportSelectorContainer}>
+                  {['lab', 'radiology', 'prescription'].map(type => (
+                    <TouchableOpacity
+                      key={type}
+                      style={[
+                        styles.reportSelectorBtn,
+                        selectedReportType === type &&
+                          styles.reportSelectorBtnActive,
+                      ]}
+                      onPress={() => setSelectedReportType(type as any)}>
+                      <Text
+                        style={[
+                          styles.reportSelectorText,
+                          selectedReportType === type &&
+                            styles.reportSelectorTextActive,
+                        ]}>
+                        {type === 'lab'
+                          ? 'Lab Report'
+                          : type === 'radiology'
+                          ? 'Radiology Report'
+                          : 'Prescription'}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
                 </View>
 
-                {/* Radiology Report */}
-                <View style={styles.accItem}>
-                  <TouchableOpacity
-                    style={styles.accItemBtn}
-                    onPress={() =>
-                      openPDF(
-                        radiologyreports?.file,
-                        `${radiologyreports.documentname}.pdf`,
-                      )
-                    }>
-                    <Text style={styles.accItemDescription}>
-                      {'View Radiology Report'}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.accItemBtn}
-                    onPress={() =>
-                      downloadPDF(
-                        radiologyreports?.file,
-                        `${radiologyreports.documentname}.pdf`,
-                      )
-                    }>
-                    <Text style={styles.accItemDescription}>
-                      {'Download Radiology Report'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                {/* View/Download buttons */}
+                {selectedReportType && (
+                  <View style={styles.accItem}>
+                    <TouchableOpacity
+                      style={styles.accItemBtn}
+                      onPress={() => {
+                        if (selectedReportType === 'lab') {
+                          openPDF(
+                            labreports?.file,
+                            `${labreports.documentname}.pdf`,
+                          );
+                        } else if (selectedReportType === 'radiology') {
+                          openPDF(
+                            radiologyreports?.file,
+                            `${radiologyreports.documentname}.pdf`,
+                          );
+                        } else {
+                          openPDF(
+                            radiologyreports?.file,
+                            `${radiologyreports.documentname}.pdf`,
+                          );
+                        }
+                      }}>
+                      <Text style={styles.accItemDescription}>View</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.accItemBtn}
+                      onPress={() => {
+                        if (selectedReportType === 'lab') {
+                          downloadPDF(
+                            labreports?.file,
+                            `${labreports.documentname}.pdf`,
+                          );
+                        } else if (selectedReportType === 'radiology') {
+                          downloadPDF(
+                            radiologyreports?.file,
+                            `${radiologyreports.documentname}.pdf`,
+                          );
+                        } else {
+                          downloadPDF(
+                            radiologyreports?.file,
+                            `Prescription.pdf`,
+                          );
+                        }
+                      }}>
+                      <Text style={styles.accItemDescription}>Download</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             )}
           </AccordionItem>
@@ -516,5 +579,30 @@ const styles = StyleSheet.create({
   accBody: {
     paddingBottom: 10,
     paddingHorizontal: 10,
+  },
+  reportSelectorContainer: {
+    flexDirection: 'row',
+    // justifyContent: 'space-evenly',
+    marginVertical: h * 0.01,
+  },
+  reportSelectorBtn: {
+    borderBottomWidth: 1,
+    borderColor: pallette.dark_grey,
+    paddingVertical: h * 0.008,
+    paddingHorizontal: w * 0.065,
+    backgroundColor: '#f9f9f9',
+  },
+  reportSelectorBtnActive: {
+    backgroundColor: pallette.pale_turquoise,
+    borderColor: pallette.dark_purple,
+  },
+  reportSelectorText: {
+    fontSize: adjust(12),
+    fontFamily: 'Poppins-Regular',
+    color: pallette.dark_purple,
+  },
+  reportSelectorTextActive: {
+    fontFamily: 'Poppins-SemiBold',
+    color: pallette.black,
   },
 });

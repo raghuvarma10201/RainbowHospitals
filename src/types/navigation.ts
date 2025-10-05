@@ -21,6 +21,7 @@ export type MainStackParamList = {
     OrganisationID: string;
     appointmentnumber?: string;
     patientId?: string;
+    paid?: boolean;
   };
   DoctorsList: {
     specialityId: number;
