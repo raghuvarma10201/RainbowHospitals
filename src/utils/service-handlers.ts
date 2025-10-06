@@ -159,5 +159,7 @@ export const setupNotificationListeners = () => {
   });
 
   // Background messages
-  setBackgroundMessageHandler(messaging, async remoteMessage => {});
+  setBackgroundMessageHandler(messaging, async remoteMessage => {
+    console.log(remoteMessage);
+  });
 };

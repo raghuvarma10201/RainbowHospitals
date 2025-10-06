@@ -212,6 +212,15 @@ export const getPatientVisits = async (payload: any) => {
   }
 };
 
+export const getPatientMedicalRecords = async (payload: any) => {
+  try {
+    const response = await api.post('/getMedicalRecords', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getAllLabReports = async (payload: any) => {
   try {
     const response = await api.post('/getAllLabReports', payload);

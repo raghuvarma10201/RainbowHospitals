@@ -16,6 +16,7 @@ import Header from '../../components/header';
 import {
   fetchFamilyMembers,
   getAllLabReports,
+  getPatientMedicalRecords,
   getPatientVisits,
   getVisitPrescriptions,
 } from '../../services/common';
@@ -101,9 +102,13 @@ const PatientRecords: FC = ({route}: any) => {
 
   const fetchVisits = useCallback(async () => {
     try {
-      const response = await getPatientVisits({
+      const response = await getPatientMedicalRecords({
         mrn: 'BAH-00519630',
+        startDate: moment(startDate).format('YYYY-MM-DD'),
+        endDate: moment(endDate).format('YYYY-MM-DD'),
       });
+      console.log(response.data[0].prescriptions.length);
+
       if (response?.status == 200 && response.success) {
         const visitOptions = response.data.map((e: any) => ({
           ...e,
@@ -131,7 +136,7 @@ const PatientRecords: FC = ({route}: any) => {
       setPatientVisits([]);
       setFilteredVisits([]);
     }
-  }, []);
+  }, [startDate, endDate]);
 
   const fetchReports = useCallback(async (item: any) => {
     try {
