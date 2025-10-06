@@ -498,10 +498,13 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
 
                 <Dropdown
                   style={styles.dropdownSelect}
-                  iconColor={pallette.black}
+                  iconColor={
+                    appointmentnumber ? pallette.pale_turquoise : pallette.black
+                  }
                   selectedTextStyle={styles.selectedTextContry}
                   placeholderStyle={styles.placeholderCountry}
                   maxHeight={200}
+                  disable={appointmentnumber}
                   value={selectedLocation}
                   data={locations}
                   valueField={'value'}

@@ -333,7 +333,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   appointmentnumber: appointmentData?.appointmentnumber,
                   OrganisationID: appointmentData?.OrganisationUID,
                   patientId: appointmentData?.PatientID,
-                  paid: appointmentData?.Comments.includes('TXN_'),
+                  paid: appointmentData?.payment_type?.toUpperCase() == 'PAYU',
                 })
               }
               style={[

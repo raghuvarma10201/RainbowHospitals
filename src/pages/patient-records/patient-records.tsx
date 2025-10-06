@@ -396,83 +396,178 @@ const PatientRecords: FC = ({route}: any) => {
               </View>
             ) : (
               <View>
-                {/* Report Type Selection */}
-                <View style={styles.reportSelectorContainer}>
-                  {['lab', 'radiology', 'prescription'].map(type => (
-                    <TouchableOpacity
-                      key={type}
-                      style={[
-                        styles.reportSelectorBtn,
-                        selectedReportType === type &&
-                          styles.reportSelectorBtnActive,
-                      ]}
-                      onPress={() => setSelectedReportType(type as any)}>
-                      <Text
-                        style={[
-                          styles.reportSelectorText,
-                          selectedReportType === type &&
-                            styles.reportSelectorTextActive,
-                        ]}>
-                        {type === 'lab'
-                          ? 'Lab Report'
-                          : type === 'radiology'
-                          ? 'Radiology Report'
-                          : 'Prescription'}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-
-                {/* View/Download buttons */}
-                {selectedReportType && (
-                  <View style={styles.accItem}>
-                    <TouchableOpacity
-                      style={styles.accItemBtn}
-                      onPress={() => {
-                        if (selectedReportType === 'lab') {
-                          openPDF(
-                            labreports?.file,
-                            `${labreports.documentname}.pdf`,
-                          );
-                        } else if (selectedReportType === 'radiology') {
-                          openPDF(
-                            radiologyreports?.file,
-                            `${radiologyreports.documentname}.pdf`,
-                          );
-                        } else {
-                          openPDF(
-                            radiologyreports?.file,
-                            `${radiologyreports.documentname}.pdf`,
-                          );
-                        }
-                      }}>
-                      <Text style={styles.accItemDescription}>View</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={styles.accItemBtn}
-                      onPress={() => {
-                        if (selectedReportType === 'lab') {
-                          downloadPDF(
-                            labreports?.file,
-                            `${labreports.documentname}.pdf`,
-                          );
-                        } else if (selectedReportType === 'radiology') {
-                          downloadPDF(
-                            radiologyreports?.file,
-                            `${radiologyreports.documentname}.pdf`,
-                          );
-                        } else {
-                          downloadPDF(
-                            radiologyreports?.file,
-                            `Prescription.pdf`,
-                          );
-                        }
-                      }}>
-                      <Text style={styles.accItemDescription}>Download</Text>
-                    </TouchableOpacity>
+                <View
+                  style={{
+                    padding: w * 0.02,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: pallette.black,
+                      textTransform: 'capitalize',
+                    }}>
+                    {visit?.labReport?.documentname}.
+                    {visit?.labReport?.filetype}
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      gap: w * 0.03,
+                    }}>
+                    <MaterialCommunityIcons
+                      name="eye"
+                      color={pallette.black}
+                      size={w * 0.05}
+                      onPress={() =>
+                        openPDF(
+                          visit?.labReport?.file,
+                          `${visit?.labReport?.documentname}.pdf`,
+                        )
+                      }
+                    />
+                    <MaterialCommunityIcons
+                      name="download"
+                      color={pallette.black}
+                      size={w * 0.05}
+                      onPress={() =>
+                        downloadPDF(
+                          visit?.labReport?.file,
+                          `${visit?.labReport?.documentname}.pdf`,
+                        )
+                      }
+                    />
                   </View>
-                )}
+                </View>
+                <View
+                  style={{
+                    padding: w * 0.02,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: pallette.black,
+                      textTransform: 'capitalize',
+                    }}>
+                    {visit?.radiologyReport?.documentname}.
+                    {visit?.radiologyReport?.filetype}
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      gap: w * 0.03,
+                    }}>
+                    <MaterialCommunityIcons
+                      name="eye"
+                      color={pallette.black}
+                      size={w * 0.05}
+                      onPress={() =>
+                        openPDF(
+                          visit?.radiologyReport?.file,
+                          `${visit?.radiologyReport?.documentname}.pdf`,
+                        )
+                      }
+                    />
+                    <MaterialCommunityIcons
+                      name="download"
+                      color={pallette.black}
+                      size={w * 0.05}
+                      onPress={() =>
+                        downloadPDF(
+                          visit?.radiologyReport?.file,
+                          `${visit?.radiologyReport?.documentname}.pdf`,
+                        )
+                      }
+                    />
+                  </View>
+                </View>
+                {visit?.prescriptions?.map((invoice, index) => (
+                  <View
+                    style={{
+                      padding: w * 0.02,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: pallette.black,
+                        textTransform: 'capitalize',
+                      }}>
+                      {invoice?.documentname}.{invoice?.filetype}
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        gap: w * 0.03,
+                      }}>
+                      <MaterialCommunityIcons
+                        name="eye"
+                        color={pallette.black}
+                        size={w * 0.05}
+                        onPress={() =>
+                          openPDF(invoice?.file, `${invoice.documentname}.pdf`)
+                        }
+                      />
+                      <MaterialCommunityIcons
+                        name="download"
+                        color={pallette.black}
+                        size={w * 0.05}
+                        onPress={() =>
+                          downloadPDF(
+                            invoice?.file,
+                            `${invoice.documentname}.pdf`,
+                          )
+                        }
+                      />
+                    </View>
+                  </View>
+                ))}
+                {visit?.invoices?.map((invoice, index) => (
+                  <View
+                    style={{
+                      padding: w * 0.02,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: pallette.black,
+                        textTransform: 'capitalize',
+                      }}>
+                      {invoice?.documentname}.{invoice?.filetype}
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        gap: w * 0.03,
+                      }}>
+                      <MaterialCommunityIcons
+                        name="eye"
+                        color={pallette.black}
+                        size={w * 0.05}
+                        onPress={() =>
+                          openPDF(invoice?.file, `${invoice.documentname}.pdf`)
+                        }
+                      />
+                      <MaterialCommunityIcons
+                        name="download"
+                        color={pallette.black}
+                        size={w * 0.05}
+                        onPress={() =>
+                          downloadPDF(
+                            invoice?.file,
+                            `${invoice.documentname}.pdf`,
+                          )
+                        }
+                      />
+                    </View>
+                  </View>
+                ))}
               </View>
             )}
           </AccordionItem>

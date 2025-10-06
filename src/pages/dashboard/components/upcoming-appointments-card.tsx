@@ -138,19 +138,18 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
             <TouchableOpacity
               disabled={!isBeforeTwoHours(dateTime, appointment?.SlotStartDttm)}
               onPress={() => {
-                console.log(appointment);
-                // navigateTo(
-                //   navigation,
-                //   routes.DoctorSlots as keyof MainStackParamList,
-                //   {
-                //     doctorId: appointment?.id,
-                //     appointmentType: appointment?.AppointmentType,
-                //     appointmentnumber: appointment?.appointmentnumber,
-                //     OrganisationID: appointment?.OrganisationUID,
-                //     patientId: appointment?.PatientID,
-                //     paid: appointment?.Comments.includes('TXN_'),
-                //   },
-                // );
+                navigateTo(
+                  navigation,
+                  routes.DoctorSlots as keyof MainStackParamList,
+                  {
+                    doctorId: appointment?.id,
+                    appointmentType: appointment?.AppointmentType,
+                    appointmentnumber: appointment?.appointmentnumber,
+                    OrganisationID: appointment?.OrganisationUID,
+                    patientId: appointment?.PatientID,
+                    paid: appointment?.payment_type?.toUpperCase() == 'PAYU',
+                  },
+                );
               }}>
               <Text style={styles.rescheduleBt}>Reschedule</Text>
             </TouchableOpacity>
