@@ -113,6 +113,15 @@ export const uploadPatientVitals = async (payload: any) => {
   }
 };
 
+export const sendPatientPushNotification = async (payload: any) => {
+  try {
+    const response = await api.post('/videoCallNotify', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const advancePay = async (payload: any) => {
   try {
     const response = await api.post('/patientAdvancePay', payload);

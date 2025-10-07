@@ -1,4 +1,4 @@
-import {Platform, Alert} from 'react-native';
+import {Platform, Alert, PermissionsAndroid, Linking} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {PERMISSIONS, request} from 'react-native-permissions';
 
@@ -114,12 +114,38 @@ export const ToastService = {
 
 // ✅ Request notification permissions & get FCM token
 export const requestUserPermission = async () => {
+  if (Platform.OS === 'android' && Platform.Version >= 33) {
+    const hasPermission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
+
+    if (!hasPermission) {
+      const status = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      );
+
+      if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        Alert.alert(
+          'Permission Required',
+          'Notification permission is required.',
+          [
+            {
+              text: 'Open Settings',
+              onPress: () => Linking.openSettings(),
+            },
+          ],
+        );
+      }
+    }
+  }
+
   const messaging = getMessaging();
 
   const authStatus = await requestPermission(messaging);
   const enabled =
     authStatus === AuthorizationStatus.AUTHORIZED ||
     authStatus === AuthorizationStatus.PROVISIONAL;
+  console.log(enabled);
 
   if (enabled) {
     const token = await getToken(messaging);

@@ -184,7 +184,7 @@ const Specialities: React.FC = ({route}: any) => {
             />
           </View>
           {/* <SearchLocationBlock style={styles.searchLocationBlock} /> */}
-          <CategorySelection />
+          <CategorySelection changeCategory={loadSpecialities} />
 
           <View style={styles.quickActions}>
             <SpecialityGrid items={specialities} type={appointmentType} />

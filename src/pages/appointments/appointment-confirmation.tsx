@@ -22,6 +22,7 @@ import {routes} from '../../utils/enums';
 import {useApp} from '../../context/app-context';
 import {getAppointments} from '../../services/common';
 import {ToastService} from '../../utils';
+import moment from 'moment';
 
 const AppointmentConfirmed: React.FC = ({route}: any) => {
   const [activeindex, setActiveindex] = useState(0);
@@ -60,6 +61,12 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
       const response = await getAppointments(payload);
       if (response && response.status == 200) {
         setAppointments(response.data);
+        console.log(
+          response.data.filter(
+            (item: any) => item?.BookingUID == appointment?.bookingId,
+          )[0],
+        );
+
         setFilteredappointment(
           response.data.filter(
             (item: any) => item?.BookingUID == appointment?.bookingId,
@@ -194,11 +201,23 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
                   },
                 ]}>
                 <Text style={styles.acSubTitle}>
-                  {appointment?.date},{appointment?.time}
+                  {moment(filteredappointment?.SlotStartDttm).format(
+                    'YYYY-MM-DD',
+                  )}
+                  ,{appointment?.time}
                 </Text>
               </View>
             </View>
           </View>
+
+          <Text style={styles.acSubTitle}>
+            Appointments can be rescheduled or cancelled only up to{' '}
+            <Text style={{fontWeight: 'bold', color: pallette.red}}>
+              2 hours{' '}
+            </Text>
+            before the scheduled appointment time. Changes or cancellations made
+            within 2 hours of the appointment will not be accepted.
+          </Text>
 
           <TouchableOpacity
             onPress={() =>

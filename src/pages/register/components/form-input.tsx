@@ -1,4 +1,5 @@
 import {Text, TextInput, View} from 'react-native';
+import {pallette} from '../../../constants/constants';
 
 const FormInput = ({label, styles, ...props}: any) => (
   <View style={styles.formRow}>
@@ -6,7 +7,7 @@ const FormInput = ({label, styles, ...props}: any) => (
     <TextInput
       {...props}
       style={styles.formInput}
-      placeholderTextColor="#000"
+      placeholderTextColor={pallette.dark_grey}
     />
     {props.error && <Text style={styles.errorMessage}>{props.error}</Text>}
   </View>

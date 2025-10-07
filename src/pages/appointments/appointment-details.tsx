@@ -19,7 +19,11 @@ import {
   isBeforeTwoHours,
   adjust,
 } from '../../utils/common-functions';
-import {bookAppointment, uploadPatientVitals} from '../../services/common';
+import {
+  bookAppointment,
+  sendPatientPushNotification,
+  uploadPatientVitals,
+} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ToastService} from '../../utils/service-handlers';
 import {pallette} from '../../constants/constants';
@@ -28,6 +32,7 @@ import {useJitsi} from '../../context/jitsi-context';
 import {AppointmentPayload} from '../../utils/types';
 import moment from 'moment';
 
+type VitalKey = 'height' | 'weight' | 'temperature';
 const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
@@ -61,9 +66,12 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     temperature: appointmentData?.vitals?.temperature || '',
   });
   const vitalFields = [
-    {key: 'height', label: 'Height (in cm)'},
-    {key: 'weight', label: 'Weight (in Kgs)'},
-    {key: 'temperature', label: 'Temperature (in °F)'},
+    {key: 'height', label: 'Height (in cm) (Normal Range - Based on age)'},
+    {key: 'weight', label: 'Weight (in Kgs) (Normal Range - Based on BMI)'},
+    {
+      key: 'temperature',
+      label: 'Temperature (in °F) (Normal Range - 97.5 to 99.5)',
+    },
   ];
 
   const cancelAppointment = async () => {
@@ -133,6 +141,27 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     }
   };
 
+  const sendNotification = async () => {
+    try {
+      const response = await sendPatientPushNotification({
+        BookingUID: appointmentData?.BookingUID,
+        notifyTo: 'doctor',
+      });
+      console.log(response);
+
+      startVideoCall();
+    } catch (error: any) {
+      console.error('Error fetching visits:', error);
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
+      startVideoCall();
+    }
+  };
+
   const startVideoCall = () => {
     showJitsi({
       roomName: appointmentData?.roomId || 'SampleJitsiCall',
@@ -158,24 +187,61 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       {/* Action Buttons Row */}
       <View style={styles.actionsRow}>
         <TouchableOpacity
+          disabled={isBeforeTwoHours(
+            dateTime,
+            appointmentData?.SlotStartDttm,
+            1,
+          )}
           onPress={() =>
             navigation.navigate('AppointmentChat', {
               bookingId: appointmentData.appointmentnumber,
               doctor: appointmentData.CareProviderName,
             })
           }>
-          <Text style={styles.actionBtnText}>Chat</Text>
+          <Text
+            style={[
+              styles.actionBtnText,
+              {
+                backgroundColor: isBeforeTwoHours(
+                  dateTime,
+                  appointmentData?.SlotStartDttm,
+                  1,
+                )
+                  ? pallette.dark_grey
+                  : pallette.dark_purple,
+              },
+            ]}>
+            Chat
+          </Text>
         </TouchableOpacity>
+
+        {appointmentData?.AppointmentType.toLowerCase() !== 'physical' && (
+          <TouchableOpacity
+            disabled={
+              !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 1)
+            }
+            onPress={sendNotification}>
+            <Text
+              style={[
+                styles.actionBtnText,
+                {
+                  backgroundColor: !isBeforeTwoHours(
+                    dateTime,
+                    appointmentData?.SlotStartDttm,
+                    1,
+                  )
+                    ? pallette.dark_grey
+                    : pallette.dark_purple,
+                },
+              ]}>
+              Join Call
+            </Text>
+          </TouchableOpacity>
+        )}
 
         <TouchableOpacity onPress={showVitalsModal}>
           <Text style={styles.actionBtnText}>Upload Vitals</Text>
         </TouchableOpacity>
-
-        {appointmentData?.AppointmentType.toLowerCase() !== 'physical' && (
-          <TouchableOpacity onPress={startVideoCall}>
-            <Text style={styles.actionBtnText}>Join Call</Text>
-          </TouchableOpacity>
-        )}
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -302,11 +368,20 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
             </View>
           </View>
 
+          <Text style={styles.acSubTitle}>
+            Appointments can be rescheduled or cancelled only up to{' '}
+            <Text style={{fontWeight: 'bold', color: pallette.red}}>
+              2 hours{' '}
+            </Text>
+            before the scheduled appointment time. Changes or cancellations made
+            within 2 hours of the appointment will not be accepted.
+          </Text>
+
           {/* cancel + reschedule */}
           <View style={styles.payBtnsContainer}>
             <TouchableOpacity
               disabled={
-                !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm)
+                !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 2)
               }
               onPress={() => showModal()}
               style={[
@@ -315,6 +390,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   backgroundColor: isBeforeTwoHours(
                     dateTime,
                     appointmentData?.SlotStartDttm,
+                    2,
                   )
                     ? pallette.dark_purple
                     : pallette.dark_grey,
@@ -324,7 +400,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
             </TouchableOpacity>
             <TouchableOpacity
               disabled={
-                !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm)
+                !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 2)
               }
               onPress={() =>
                 navigation.navigate('DoctorSlots', {
@@ -342,6 +418,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   backgroundColor: isBeforeTwoHours(
                     dateTime,
                     appointmentData?.SlotStartDttm,
+                    2,
                   )
                     ? pallette.dark_purple
                     : pallette.dark_grey,
@@ -378,6 +455,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                 <TextInput
                   mode="flat"
                   underlineColor="transparent"
+                  placeholderTextColor={pallette.dark_grey}
                   style={styles.formInput}
                   onChangeText={text => {
                     setBank_details(prev => ({
@@ -424,7 +502,12 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                 <TextInput
                   mode="flat"
                   underlineColor="transparent"
-                  value={vitals[key] ? String(vitals[key]) : ''}
+                  placeholderTextColor={pallette.dark_grey}
+                  value={
+                    vitals[key as VitalKey]
+                      ? String(vitals[key as VitalKey])
+                      : ''
+                  }
                   style={styles.formInput}
                   keyboardType={'decimal-pad'}
                   onChangeText={text =>
@@ -596,6 +679,14 @@ const styles = StyleSheet.create({
   timeFlexRow: {flexDirection: 'row', alignItems: 'center', gap: 5},
   timeIcon: {width: 15, height: 15, resizeMode: 'contain'},
 
+  acSubTitle: {
+    fontSize: adjust(12),
+    color: pallette.black,
+    width: '80%',
+    alignSelf: 'center',
+    textAlign: 'center',
+    marginTop: h * 0.02,
+  },
   payBtnsContainer: {
     marginTop: 15,
     marginBottom: 50,

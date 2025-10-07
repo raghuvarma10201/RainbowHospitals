@@ -15,6 +15,7 @@ import PaginationDots from '../../../components/pagination-dots';
 import {adjust, isValidUrl} from '../../../utils/common-functions';
 import {h, pallette, w} from '../../../constants/constants';
 import {useApp} from '../../../context/app-context';
+import FastImage from 'react-native-fast-image';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -105,7 +106,8 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
                 },
                 item.isSpecial && styles.specialItem,
               ]}>
-              <ImageWrapper iconImage={item.icon_image} style={styles.icon} />
+              {/* <ImageWrapper iconImage={item.icon_image} style={styles.icon} /> */}
+              <FastImage source={{uri: item.icon_image}} style={styles.icon} />
 
               <Text numberOfLines={3} style={styles.itemText}>
                 {item.name}

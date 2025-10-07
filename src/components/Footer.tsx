@@ -37,7 +37,7 @@ const Footer: FC<FooterProps> = ({activeIcon}) => {
     {
       icon: 'call',
       source: require('../../assets/images/footer-call-icon.png'),
-      onPress: () => Linking.openURL(`tel:${9090909090}`),
+      onPress: () => Linking.openURL(`tel:${18002122}`),
     },
     {
       icon: 'reports',

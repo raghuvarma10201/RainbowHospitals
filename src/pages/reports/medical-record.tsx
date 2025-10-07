@@ -14,7 +14,6 @@ import Footer from '../../components/footer';
 
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../navigation/types';
 import {pallette} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 
@@ -33,12 +32,6 @@ const MedicalRecord: React.FC = () => {
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState('1');
 
-  const navigation =
-    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
-  const navigateTo = (path: keyof MainStackParamList, params: any) => {
-    navigation.navigate(path, params);
-  };
-
   return (
     <View style={styles.mainContainer}>
       <Header showLocation title={undefined} />
@@ -53,7 +46,7 @@ const MedicalRecord: React.FC = () => {
                   placeholder=" Speciality  "
                   value={search}
                   onChangeText={setSearch}
-                  placeholderTextColor="#fff"
+                  placeholderTextColor={pallette.light_grey}
                   underlineColor="transparent"
                   activeUnderlineColor="transparent"
                   theme={{

@@ -1,5 +1,3 @@
-// File: JitsiModal.tsx
-
 import React, {
   FC,
   useCallback,
@@ -13,15 +11,17 @@ import {
   TouchableOpacity,
   Image,
   Animated,
-  PanResponder,
   Dimensions,
   View,
   BackHandler,
   Platform,
   StatusBar,
+  Text,
+  TextInput,
 } from 'react-native';
 import {JitsiMeeting} from '@jitsi/react-native-sdk';
-import {pallette} from '../../constants/constants';
+import {adjust} from '../../utils/common-functions';
+import {h, pallette, w} from '../../constants/constants';
 
 interface JitsiModalProps {
   visible: boolean;
@@ -29,73 +29,47 @@ interface JitsiModalProps {
   onClose: () => void;
 }
 
-// === Constants (kept module-scoped to avoid re-allocations per render) ===
-const CORNER_MARGIN = 10;
-const SNAP_WIDTH = 160;
-const SNAP_HEIGHT = 100;
-
+// === Constants ===
 const initialScreen = Dimensions.get('window');
+const CORNER_MARGIN = 10;
 
-// Component
 const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
   const jitsiMeeting = useRef<any>(null);
   const [minimized, setMinimized] = useState(false);
   const [conferenceActive, setConferenceActive] = useState(false);
+  const [rxValue, setRxValue] = React.useState('');
   const [pipMode, setPipMode] = useState(false);
 
-  // Track dimensions in case of rotation; updates only when dimension changes
   const [screen, setScreen] = useState(initialScreen);
+
   useEffect(() => {
     const listener = ({window}: {window: any}) => setScreen(window);
     const sub = Dimensions.addEventListener('change', listener);
     return () => {
-      // RN >=0.65 returns subscription with remove, >=0.71 uses remove method on returned object
+      // handle different RN versions
       // @ts-ignore
       if (typeof sub?.remove === 'function') sub.remove();
-      // @ts-ignore (older RN versions)
+      // @ts-ignore
       else Dimensions.removeEventListener?.('change', listener);
     };
   }, []);
 
-  // Position (for minimized draggable view)
-  const position = useRef(
-    new Animated.ValueXY({
-      x: CORNER_MARGIN,
-      y: screen.height - SNAP_HEIGHT - CORNER_MARGIN,
-    }),
-  ).current;
+  // Animated height for smooth transition
+  const animatedHeight = useRef(new Animated.Value(screen.height)).current;
 
-  // Keep position within screen on rotate
   useEffect(() => {
-    Animated.spring(position, {
-      toValue: {
-        x: Math.min(
-          Math.max(
-            (position.x as any).__getValue?.() ?? CORNER_MARGIN,
-            CORNER_MARGIN,
-          ),
-          Math.max(screen.width - SNAP_WIDTH - CORNER_MARGIN, CORNER_MARGIN),
-        ),
-        y: Math.min(
-          Math.max(
-            (position.y as any).__getValue?.() ?? CORNER_MARGIN,
-            CORNER_MARGIN,
-          ),
-          Math.max(screen.height - SNAP_HEIGHT - CORNER_MARGIN, CORNER_MARGIN),
-        ),
-      },
+    Animated.spring(animatedHeight, {
+      toValue: minimized ? screen.height : screen.height,
       useNativeDriver: false,
     }).start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [screen.width, screen.height]);
+  }, [minimized, screen.height]);
 
-  // Reset pip/conference flags when modal hides
+  // Reset state when modal closes
   useEffect(() => {
     if (!visible) {
       setConferenceActive(false);
       setPipMode(false);
       setMinimized(false);
-      // Ensure we free Jitsi resources
       jitsiMeeting.current?.close?.();
     }
   }, [visible]);
@@ -105,19 +79,18 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
     onClose?.();
   }, [onClose]);
 
-  // Jitsi event listeners (memoized to avoid re-renders)
   const eventListeners = useMemo(
     () => ({
       onReadyToClose,
       onConferenceJoined: () => setConferenceActive(true),
       onConferenceTerminated: () => setConferenceActive(false),
-      onEnterPip: () => setPipMode(true), // fixed: was `nEnterPip`
+      onEnterPip: () => setPipMode(true),
       onExitPip: () => setPipMode(false),
     }),
     [onReadyToClose],
   );
 
-  // Back button -> minimize (Android only)
+  // Android Back button → minimize instead of close
   useEffect(() => {
     const onBackPress = () => {
       if (visible && !minimized) {
@@ -137,75 +110,11 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
     };
   }, [visible, minimized]);
 
-  // Snap minimized video to nearest corner
-  const snapToNearestCorner = useCallback(() => {
-    const currentX = (position.x as any).__getValue?.() ?? CORNER_MARGIN;
-    const currentY =
-      (position.y as any).__getValue?.() ??
-      screen.height - SNAP_HEIGHT - CORNER_MARGIN;
-
-    const corners = [
-      {x: CORNER_MARGIN, y: CORNER_MARGIN},
-      {x: screen.width - SNAP_WIDTH - CORNER_MARGIN, y: CORNER_MARGIN},
-      {x: CORNER_MARGIN, y: screen.height - SNAP_HEIGHT - CORNER_MARGIN},
-      {
-        x: screen.width - SNAP_WIDTH - CORNER_MARGIN,
-        y: screen.height - SNAP_HEIGHT - CORNER_MARGIN,
-      },
-    ];
-
-    let closest = corners[0];
-    let minDistance = Infinity;
-
-    for (const c of corners) {
-      const dx = c.x - currentX;
-      const dy = c.y - currentY;
-      const dist = Math.hypot(dx, dy);
-      if (dist < minDistance) {
-        minDistance = dist;
-        closest = c;
-      }
-    }
-
-    Animated.spring(position, {
-      toValue: closest,
-      useNativeDriver: false,
-    }).start();
-  }, [position, screen.height, screen.width]);
-
-  // Pan responder (constructed once)
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        // setOffset uses current values to avoid jump
-        position.setOffset({
-          x: (position as any).x._value,
-          y: (position as any).y._value,
-        });
-        position.setValue({x: 0, y: 0});
-      },
-      onPanResponderMove: Animated.event(
-        [null, {dx: position.x, dy: position.y}],
-        {
-          useNativeDriver: false,
-        },
-      ),
-      onPanResponderRelease: () => {
-        position.flattenOffset();
-        snapToNearestCorner();
-      },
-    }),
-  ).current;
-
-  // Avoid rendering when not needed
   if (!visible || !options?.roomName) return null;
 
-  // Derived sizes for icons based on current width
   const iconSize = Math.max(24, Math.round(screen.width * 0.07));
-  const miniIconSize = Math.max(16, Math.round(screen.width * 0.05));
+  const miniIconSize = Math.max(16, Math.round(screen.width * 0.06));
 
-  // Stable handlers
   const handleMinimize = useCallback(() => setMinimized(true), []);
   const handleExpand = useCallback(() => setMinimized(false), []);
 
@@ -214,8 +123,7 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
       style={[
         styles.jitsiWrapper,
         minimized ? styles.jitsiMinimized : styles.jitsiFull,
-        minimized && {transform: position.getTranslateTransform()},
-        Platform.OS === 'android' && {paddingTop: StatusBar.currentHeight || 0},
+        {height: animatedHeight},
       ]}
       pointerEvents="box-none">
       {conferenceActive && !pipMode && !minimized && (
@@ -244,54 +152,76 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
           />
         </TouchableOpacity>
       )}
-
-      {minimized && (
-        <View style={styles.dragHandle} {...panResponder.panHandlers} />
-      )}
-
       <View style={{flex: 1}}>
-        <JitsiMeeting
-          ref={jitsiMeeting}
-          token={options.token}
-          room={options.roomName}
-          serverURL={options.serverURL || 'https://meet.jit.si'}
-          style={{flex: 1}}
-          config={{
-            hideConferenceTimer: true,
-            toolbarButtons: [
-              'microphone',
-              'camera',
-              'toggle-share-screen',
-              'switch-camera',
-              'overflowmenu',
-              'hangup',
-              'desktop',
-            ],
-          }}
-          eventListeners={eventListeners}
-          flags={{
-            'audioMute.enabled': true,
-            'fullscreen.enabled': false,
-            'android.screensharing.enabled': true,
-            'ios.screensharing.enabled': true,
-            'pip.enabled': true,
-            'welcomepage.enabled': false,
-            'recording.enabled': true,
-            'live-streaming.enabled': true,
-            'videoMute.enabled': true,
-          }}
-          userInfo={{
-            displayName: options.patient.name || 'Patient',
-            email: '',
-            avatarURL: '',
-          }}
-        />
+        <View style={{flex: minimized ? 1 : 1}}>
+          <JitsiMeeting
+            ref={jitsiMeeting}
+            token={options.token}
+            room={options.roomName}
+            serverURL={options.serverURL || 'https://meet.jit.si'}
+            style={{flex: 1}}
+            config={{
+              hideConferenceTimer: true,
+              toolbarButtons: [
+                'microphone',
+                'camera',
+                'toggle-share-screen',
+                'switch-camera',
+                'overflowmenu',
+                'hangup',
+                'desktop',
+              ],
+            }}
+            eventListeners={eventListeners}
+            flags={{
+              'audioMute.enabled': true,
+              'fullscreen.enabled': false,
+              'android.screensharing.enabled': true,
+              'ios.screensharing.enabled': true,
+              'pip.enabled': false,
+              'welcomepage.enabled': false,
+              'recording.enabled': true,
+              'live-streaming.enabled': true,
+              'videoMute.enabled': true,
+            }}
+            userInfo={{
+              displayName: options.doctor?.name || 'Doctor',
+              email: '',
+              avatarURL: '',
+            }}
+          />
+        </View>
+
+        {/* {minimized && (
+          <View style={styles.belowView}>
+            <View style={styles.mainContainer}>
+              <View style={{paddingHorizontal: 12}}>
+                <Text style={styles.title}>Prescription</Text>
+                <View style={styles.textAreaContainer}>
+                  <RxIcon width={24} height={24} />
+                  <TextInput
+                    value={rxValue}
+                    onChangeText={setRxValue}
+                    placeholder="Write your notes here..."
+                    multiline
+                    numberOfLines={3}
+                    style={styles.textArea}
+                  />
+                </View>
+
+                <TouchableOpacity style={styles.uploadBtn}>
+                  <UploadIcon width={18} height={18} color={pallette.black} />
+                  <Text style={styles.uploadBtnTxt}>Upload Prescription</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )} */}
       </View>
     </Animated.View>
   );
 };
 
-// Styles (static for perf)
 const styles = StyleSheet.create({
   jitsiWrapper: {
     position: 'absolute',
@@ -299,18 +229,22 @@ const styles = StyleSheet.create({
     elevation: 999,
     backgroundColor: 'black',
     overflow: 'hidden',
+    width: '100%',
   },
   jitsiFull: {
     top: 0,
     left: 0,
-    width: '100%',
     height: '100%',
     borderRadius: 0,
   },
   jitsiMinimized: {
-    width: SNAP_WIDTH,
-    height: SNAP_HEIGHT,
-    borderRadius: 12,
+    position: 'absolute',
+    top: StatusBar.currentHeight,
+    left: 0,
+    width: '100%',
+    height: initialScreen.height / 3, // 1/3 of screen height
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     overflow: 'hidden',
     backgroundColor: 'black',
   },
@@ -324,21 +258,81 @@ const styles = StyleSheet.create({
   },
   expandOverlay: {
     position: 'absolute',
-    top: 5,
-    right: 5,
+    top: h * 0.1,
+    right: w * 0.03,
     zIndex: 1001,
     backgroundColor: 'rgba(0,0,0,0.6)',
     borderRadius: 12,
     padding: 4,
   },
-  dragHandle: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
+  belowView: {
+    flex: 1,
+    backgroundColor: pallette.dark_grey,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#333',
+    paddingVertical: 10,
+  },
+
+  customButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: pallette.dark_purple,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  mainContainer: {
+    backgroundColor: pallette.white,
     width: '100%',
-    height: '100%',
-    zIndex: 1000,
-    backgroundColor: 'transparent',
+    height: h * 0.5,
+  },
+  textArea: {
+    padding: 5,
+    marginBottom: 10,
+    textAlignVertical: 'top',
+    backgroundColor: '#fff',
+    fontSize: adjust(14),
+    lineHeight: 19,
+    marginTop: 10,
+    fontFamily: 'Poppins-Regular',
+    color: pallette.black,
+  },
+  textAreaContainer: {
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+
+  title: {
+    marginTop: 5,
+    fontSize: adjust(17),
+    fontFamily: 'Poppins-Bold',
+    color: '#472D7A',
+    marginBottom: 10,
+    textTransform: 'uppercase',
+  },
+  uploadBtn: {
+    paddingVertical: h * 0.02,
+    width: '95%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderWidth: 0.7,
+    borderColor: pallette.black,
+    borderRadius: w * 0.2,
+    marginVertical: h * 0.02,
+    flexDirection: 'row',
+    gap: w * 0.02,
+  },
+  uploadBtnTxt: {
+    fontSize: adjust(13),
+    color: pallette.black,
+    fontFamily: 'Poppins-Regular',
   },
 });
 

@@ -124,6 +124,7 @@ export const AuthCommonComponent: FC<commonauth> = ({
                 maxLength={10}
                 style={styles.input}
                 placeholder="Enter Mobile Number"
+                placeholderTextColor={pallette.dark_grey}
                 onChangeText={handleNumberChange}
                 onBlur={handleNumberBlur}
                 value={formik.values.mobileNumber}

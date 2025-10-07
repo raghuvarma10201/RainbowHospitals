@@ -313,6 +313,8 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               : settings?.physicalBookingInterval ?? 0) / 60,
           ...commonPayload,
         };
+        console.log(blockPayload);
+
         try {
           const response = await bookAppointment(blockPayload);
           if (response && response.status == 200 && response.success == true) {
@@ -645,23 +647,6 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
             />
           ))}
 
-        {/* Sticky Timer */}
-        {isFocused && secondsLeft > 0 && timerStarted && (
-          <View style={styles.timerContainer}>
-            <Text
-              style={{
-                fontSize: adjust(12),
-                fontWeight: 'bold',
-                color: pallette.black,
-                textAlign: 'center',
-              }}>
-              You have {String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:
-              {String(secondsLeft % 60).padStart(2, '0')} seconds to confirm
-              this booking.
-            </Text>
-          </View>
-        )}
-
         {/* PAYMENT SUMMARY */}
         {selectedSlot && !appointmentnumber && (
           <View style={{marginVertical: h * 0.02}}>
@@ -697,6 +682,26 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                 ₹ {consultationFee}
               </Text>
             </View>
+          </View>
+        )}
+
+        {/* Sticky Timer */}
+        {isFocused && secondsLeft > 0 && timerStarted && (
+          <View style={styles.timerContainer}>
+            <Text
+              style={{
+                fontSize: adjust(12),
+                fontWeight: 'bold',
+                color: pallette.black,
+                textAlign: 'center',
+              }}>
+              You have{' '}
+              <Text style={{fontWeight: 'condensedBold', color: pallette.red}}>
+                {String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:
+                {String(secondsLeft % 60).padStart(2, '0')}
+              </Text>{' '}
+              seconds to confirm this booking.
+            </Text>
           </View>
         )}
 

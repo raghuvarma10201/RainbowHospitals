@@ -81,7 +81,15 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                 marginBottom: 5,
               }}>
               {' '}
-              Patient Name : {appointment?.PatientName}
+              Patient Name :{' '}
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  color: pallette.black,
+                  fontSize: adjust(14),
+                }}>
+                {appointment?.PatientName}
+              </Text>
             </Text>
           </View>
           <View
@@ -130,13 +138,16 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                 backgroundColor: isBeforeTwoHours(
                   dateTime,
                   appointment?.SlotStartDttm,
+                  2,
                 )
                   ? pallette.dark_purple
                   : pallette.dark_grey,
               },
             ]}>
             <TouchableOpacity
-              disabled={!isBeforeTwoHours(dateTime, appointment?.SlotStartDttm)}
+              disabled={
+                !isBeforeTwoHours(dateTime, appointment?.SlotStartDttm, 2)
+              }
               onPress={() => {
                 navigateTo(
                   navigation,
@@ -155,7 +166,9 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity
-              // disabled={!isBeforeTwoHours(dateTime, appointment?.SlotStartDttm)}
+              disabled={
+                !isBeforeTwoHours(dateTime, appointment?.SlotStartDttm, 2)
+              }
               onPress={() =>
                 navigateTo(
                   navigation,

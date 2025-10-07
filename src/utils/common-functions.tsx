@@ -54,7 +54,11 @@ export const formatAppointmentDateTime = (dateString: string) => {
   return formatted.replace(',', ' at');
 };
 
-export const isBeforeTwoHours = (givenDttm: any, slotStartDttm: any) => {
+export const isBeforeTwoHours = (
+  givenDttm: any,
+  slotStartDttm: any,
+  hoursBefore: number = 2,
+) => {
   const givenTime: any = new Date(givenDttm);
   const slotTime: any = new Date(slotStartDttm);
 
@@ -64,7 +68,7 @@ export const isBeforeTwoHours = (givenDttm: any, slotStartDttm: any) => {
   // convert ms → hours
   const diffHours = diffMs / (1000 * 60 * 60);
 
-  return diffHours >= 2;
+  return diffHours >= hoursBefore;
 };
 
 export const isValidUrl = (url: string) => {
