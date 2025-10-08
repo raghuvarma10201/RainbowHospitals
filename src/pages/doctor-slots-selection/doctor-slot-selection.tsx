@@ -14,6 +14,7 @@ import {
   CommonActions,
   useNavigation,
   useIsFocused,
+  useFocusEffect,
 } from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -190,15 +191,25 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     }
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      const storedNumber = await AsyncStorage.getItem('mobileNumber');
-      if (storedNumber) {
-        setPhoneNumber(storedNumber);
-        await getFamilyMembers(storedNumber);
-      }
-    })();
-  }, [getFamilyMembers]);
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      const fetchData = async () => {
+        const storedNumber = await AsyncStorage.getItem('mobileNumber');
+        if (storedNumber && isActive) {
+          setPhoneNumber(storedNumber);
+          await getFamilyMembers(storedNumber);
+        }
+      };
+
+      fetchData();
+
+      return () => {
+        isActive = false; // cleanup to prevent state updates if screen is unfocused
+      };
+    }, [getFamilyMembers]),
+  );
 
   const getConsultationFee = useCallback(
     async (
@@ -543,7 +554,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                 source={require('../../../assets/images/booked-for-icon.png')}
                 style={styles.flexImg}
               />
-              <View>
+              <View style={{flex: 1}}>
                 <Text
                   style={[
                     styles.flexHead,
@@ -551,29 +562,47 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                   ]}>
                   {appointmentnumber ? 'Re-Scheduling' : 'Booking'} for
                 </Text>
-                <Dropdown
-                  style={styles.dropdownSelect}
-                  iconColor={
-                    appointmentnumber ? pallette.pale_turquoise : pallette.black
-                  }
-                  selectedTextStyle={styles.selectedTextContry}
-                  placeholderStyle={styles.placeholderCountry}
-                  maxHeight={200}
-                  disable={appointmentnumber}
-                  value={selectedPatient}
-                  data={familyMembers}
-                  valueField="PatientID"
-                  labelField="PatientName"
-                  placeholder="Select Patient"
-                  containerStyle={styles.dropdownList}
-                  itemTextStyle={styles.selectedTextContry}
-                  activeColor={pallette.pale_turquoise}
-                  onChange={(item: FamilyMember) => {
-                    setSelectedPatient(item.PatientID);
-                    scrollRef.current?.scrollToEnd();
-                    // getConsultationFee(item.PatientID);
-                  }}
-                />
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: 5,
+                  }}>
+                  <Dropdown
+                    style={[styles.dropdownSelect, {flex: 1}]}
+                    iconColor={
+                      appointmentnumber
+                        ? pallette.pale_turquoise
+                        : pallette.black
+                    }
+                    selectedTextStyle={styles.selectedTextContry}
+                    placeholderStyle={styles.placeholderCountry}
+                    maxHeight={200}
+                    disable={appointmentnumber}
+                    value={selectedPatient}
+                    data={familyMembers}
+                    valueField="PatientID"
+                    labelField="PatientName"
+                    placeholder="Select Patient"
+                    containerStyle={styles.dropdownList}
+                    itemTextStyle={styles.selectedTextContry}
+                    activeColor={pallette.pale_turquoise}
+                    onChange={(item: FamilyMember) => {
+                      setSelectedPatient(item.PatientID);
+                      scrollRef.current?.scrollToEnd();
+                    }}
+                  />
+
+                  {/* Add Patient Button */}
+                  <TouchableOpacity
+                    style={styles.addPatientBtn}
+                    onPress={() =>
+                      navigation.navigate(routes.AddFamily as never)
+                    }>
+                    <Text style={styles.addPatientTxt}>+ Add</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           )}
@@ -924,5 +953,19 @@ const styles = StyleSheet.create({
     color: pallette.white,
     fontSize: adjust(12),
     fontFamily: 'ProximaNovaA-Bold',
+  },
+  addPatientBtn: {
+    backgroundColor: pallette.dark_purple,
+    paddingHorizontal: w * 0.03,
+    paddingVertical: h * 0.01,
+    borderRadius: w * 0.05,
+    marginLeft: w * 0.02,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addPatientTxt: {
+    color: pallette.white,
+    fontSize: adjust(11),
+    fontFamily: 'ProximaNovaA-Semibold',
   },
 });

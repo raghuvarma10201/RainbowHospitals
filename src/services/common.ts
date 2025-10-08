@@ -149,9 +149,20 @@ export const fetchFamilyMembers = async (payload: any) => {
   }
 };
 
+export const getAllAppointments = async (payload: any) => {
+  try {
+    // const response = await api.post('/getAppointmentForPatient', payload);
+    const response = await api.post('/getAppointmentForUser', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getAppointments = async (payload: any) => {
   try {
     const response = await api.post('/getAppointmentForPatient', payload);
+    // const response = await api.post('/getAppointmentForUser', payload);
     return response.data;
   } catch (error) {
     throw error;
@@ -242,6 +253,15 @@ export const getAllLabReports = async (payload: any) => {
 export const getVisitPrescriptions = async (payload: any) => {
   try {
     const response = await api.post('/getPrescription', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateRelationship = async (payload: any) => {
+  try {
+    const response = await api.post('/updatePatientProfile', payload);
     return response.data;
   } catch (error) {
     throw error;

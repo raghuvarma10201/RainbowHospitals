@@ -264,10 +264,7 @@ const AddFamilyMember: React.FC = () => {
         />
         <View style={styles.container}>
           <Text variant="headlineMedium" style={styles.title}>
-            Registration
-          </Text>
-          <Text style={styles.labelText}>
-            You need to register your account only once.
+            Add Family Member
           </Text>
 
           {/* Render All Fields Dynamically */}

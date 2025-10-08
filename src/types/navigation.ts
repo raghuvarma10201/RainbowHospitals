@@ -51,7 +51,7 @@ export type MainStackParamList = {
     payuUrl: string;
   };
   Family: undefined;
-  AddFamily: undefined;
+  AddFamily: {data: any};
   Records: undefined;
 };
 

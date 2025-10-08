@@ -145,8 +145,6 @@ export const requestUserPermission = async () => {
   const enabled =
     authStatus === AuthorizationStatus.AUTHORIZED ||
     authStatus === AuthorizationStatus.PROVISIONAL;
-  console.log(enabled);
-
   if (enabled) {
     const token = await getToken(messaging);
   }
@@ -185,7 +183,5 @@ export const setupNotificationListeners = () => {
   });
 
   // Background messages
-  setBackgroundMessageHandler(messaging, async remoteMessage => {
-    console.log(remoteMessage);
-  });
+  setBackgroundMessageHandler(messaging, async remoteMessage => {});
 };

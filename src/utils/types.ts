@@ -98,6 +98,7 @@ export type Branch = {
   brachPostalCode: string | null;
   latitude: string | null;
   longitude: string | null;
+  branch_id?: any;
 };
 
 // Slot
@@ -257,6 +258,7 @@ export type upcomingApointment = {
   appointmentnumber: string;
   image: ImageProps;
   id: number;
+  payment_type?: any;
 };
 
 export type ActionItem = {

@@ -37,8 +37,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel, vitalsUpload} = route.params;
-  console.log(appointmentData);
-
   const dateTime = moment().format();
 
   const [visible, setVisible] = React.useState(cancel || false);
@@ -147,8 +145,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
         BookingUID: appointmentData?.BookingUID,
         notifyTo: 'doctor',
       });
-      console.log(response);
-
       startVideoCall();
     } catch (error: any) {
       console.error('Error fetching visits:', error);
@@ -177,6 +173,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
         name: appointmentData?.SessionName,
         time: formatAppointmentTime(appointmentData?.SlotStartDttm),
       },
+      bookingId: appointmentData?.BookingUID,
     });
   };
 
@@ -186,46 +183,50 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
 
       {/* Action Buttons Row */}
       <View style={styles.actionsRow}>
-        <TouchableOpacity
-          disabled={isBeforeTwoHours(
-            dateTime,
-            appointmentData?.SlotStartDttm,
-            1,
-          )}
-          onPress={() =>
-            navigation.navigate('AppointmentChat', {
-              bookingId: appointmentData.appointmentnumber,
-              doctor: appointmentData.CareProviderName,
-            })
-          }>
-          <Text
-            style={[
-              styles.actionBtnText,
-              {
-                backgroundColor: isBeforeTwoHours(
-                  dateTime,
-                  appointmentData?.SlotStartDttm,
-                  1,
-                )
-                  ? pallette.dark_grey
-                  : pallette.dark_purple,
-              },
-            ]}>
-            Chat
-          </Text>
-        </TouchableOpacity>
+        {appointmentData?.payment_type?.toLowerCase() == 'payu' && (
+          <TouchableOpacity
+            disabled={isBeforeTwoHours(
+              dateTime,
+              appointmentData?.SlotStartDttm,
+              1,
+            )}
+            onPress={() =>
+              navigation.navigate('AppointmentChat', {
+                bookingId: appointmentData.appointmentnumber,
+                doctor: appointmentData.CareProviderName,
+              })
+            }>
+            <Text
+              style={[
+                styles.actionBtnText,
+                {
+                  backgroundColor: isBeforeTwoHours(
+                    dateTime,
+                    appointmentData?.SlotStartDttm,
+                    1,
+                  )
+                    ? pallette.dark_grey
+                    : pallette.dark_purple,
+                },
+              ]}>
+              Chat
+            </Text>
+          </TouchableOpacity>
+        )}
 
         {appointmentData?.AppointmentType.toLowerCase() !== 'physical' && (
           <TouchableOpacity
-            disabled={
-              !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 1)
-            }
+            disabled={isBeforeTwoHours(
+              dateTime,
+              appointmentData?.SlotStartDttm,
+              1,
+            )}
             onPress={sendNotification}>
             <Text
               style={[
                 styles.actionBtnText,
                 {
-                  backgroundColor: !isBeforeTwoHours(
+                  backgroundColor: isBeforeTwoHours(
                     dateTime,
                     appointmentData?.SlotStartDttm,
                     1,

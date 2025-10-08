@@ -107,8 +107,6 @@ const PatientRecords: FC = ({route}: any) => {
         startDate: moment(startDate).format('YYYY-MM-DD'),
         endDate: moment(endDate).format('YYYY-MM-DD'),
       });
-      console.log(response.data[0].prescriptions.length);
-
       if (response?.status == 200 && response.success) {
         const visitOptions = response.data.map((e: any) => ({
           ...e,

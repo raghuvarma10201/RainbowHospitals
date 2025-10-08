@@ -61,12 +61,6 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
       const response = await getAppointments(payload);
       if (response && response.status == 200) {
         setAppointments(response.data);
-        console.log(
-          response.data.filter(
-            (item: any) => item?.BookingUID == appointment?.bookingId,
-          )[0],
-        );
-
         setFilteredappointment(
           response.data.filter(
             (item: any) => item?.BookingUID == appointment?.bookingId,

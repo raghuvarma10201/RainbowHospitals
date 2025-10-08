@@ -26,7 +26,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
   return (
     <Card.Content style={[styles.upcomingAppBlockcard, {elevation: 0}]}>
       <TouchableOpacity
-        disabled
+        // disabled
         onPress={() =>
           navigation.navigate('MyAppointmentDetails', {
             appointmentData: appointment,

@@ -1,0 +1,138 @@
+import {StyleSheet} from 'react-native';
+import {h, pallette, w} from '../../constants/constants';
+import {adjust} from '../../utils';
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: pallette.white,
+  },
+  messagesContainer: {
+    flex: 1,
+    padding: 10,
+  },
+  messageBubble: {
+    marginVertical: 6,
+    padding: 10,
+    borderRadius: 12,
+    maxWidth: '80%',
+  },
+  userBubble: {
+    backgroundColor: '#f3dcfa',
+    alignSelf: 'flex-end',
+  },
+  aiBubble: {
+    backgroundColor: '#EEE',
+    alignSelf: 'flex-start',
+  },
+  messageText: {
+    fontSize: adjust(14),
+    textAlign: 'right',
+    marginVertical: 5,
+    color: pallette.black,
+  },
+  media: {
+    height: h * 0.2,
+    width: w * 0.6,
+    resizeMode: 'cover',
+  },
+  playPauseIcon: {
+    position: 'absolute',
+    right: '40%',
+    top: '35%',
+    padding: w * 0.025,
+    borderWidth: 0.7,
+    borderRadius: w,
+    borderColor: pallette.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  document: {
+    padding: w * 0.02,
+    backgroundColor: '#00000010',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  documentName: {color: pallette.black, fontSize: 16},
+  inputContainer: {
+    flexDirection: 'row',
+    padding: 10,
+    borderTopColor: '#ccc',
+    borderTopWidth: 1,
+    alignItems: 'center',
+    backgroundColor: '#f8f8f8',
+  },
+  inputWithIcon: {
+    flexDirection: 'row',
+    width: w * 0.75,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 20,
+    marginEnd: w * 0.02,
+  },
+  input: {
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    marginRight: 10,
+    fontSize: adjust(14),
+    color: pallette.black,
+    width: '65%',
+  },
+  iconContainer: {
+    width: '30%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  sendButton: {
+    backgroundColor: pallette.dark_purple,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  sendText: {color: pallette.white, fontSize: 16},
+  floatingLabel: {
+    position: 'absolute',
+    paddingHorizontal: w * 0.03,
+    paddingVertical: h * 0.013,
+    backgroundColor: '#631879',
+    borderRadius: w,
+    top: -h * 0.06,
+    right: w * 0.2,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    gap: w * 0.03,
+  },
+  previewContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    backgroundColor: '#f2f2f2',
+    borderRadius: 8,
+    marginHorizontal: 10,
+    marginBottom: 5,
+    position: 'relative',
+  },
+  previewImage: {
+    width: 120,
+    height: 90,
+    borderRadius: 5,
+  },
+  previewFile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  previewFileName: {
+    fontSize: adjust(12),
+    maxWidth: 150,
+    color: pallette.black,
+  },
+  removePreview: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+  },
+});

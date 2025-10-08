@@ -26,7 +26,11 @@ import {h, pallette, w} from '../../constants/constants';
 import {MainStackParamList} from '../../types/navigation';
 import CategorySelection from '../../components/category-selection';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {getAppointments, globalSearch} from '../../services/common';
+import {
+  getAllAppointments,
+  getAppointments,
+  globalSearch,
+} from '../../services/common';
 import {ToastService} from '../../utils';
 import {upcomingApointment} from '../../utils/types';
 import moment from 'moment';
@@ -64,8 +68,11 @@ const Dashboard: React.FC = () => {
     async (date: string) => {
       try {
         const mrn = await AsyncStorage.getItem('mrn');
-        const {data = []} = await getAppointments({
-          mrn,
+        const mobileNumber = await AsyncStorage.getItem('mobileNumber');
+
+        const {data = []} = await getAllAppointments({
+          // mrn,
+          MobileNo: mobileNumber,
           date,
           OrganisationUID: branch?.organisation?.organisationid.toString(),
         });
@@ -104,8 +111,6 @@ const Dashboard: React.FC = () => {
         const {data = []} = await globalSearch({
           searchQuery: query,
         });
-        console.log(data);
-
         setSearchResults(data);
       } catch (error: any) {
         console.error('Error fetching search results:', error);
