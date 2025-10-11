@@ -1,6 +1,13 @@
 // ---------- MODULE IMPORTS ----------
 import React, {FC} from 'react';
-import {View, StyleSheet, Image, TouchableOpacity, Linking} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Linking,
+  Text,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 // ---------- TYPE IMPORTS ----------
@@ -9,7 +16,7 @@ import {MainStackParamList} from '../types/navigation';
 
 // ---------- VALUE IMPORTS ----------
 import {h, pallette, w} from '../constants/constants';
-import {navigateTo, routes} from '../utils';
+import {adjust, navigateTo, routes} from '../utils';
 import {useApp} from '../context/app-context';
 
 // ---------- COMPONENT ----------
@@ -20,12 +27,14 @@ const Footer: FC<FooterProps> = ({activeIcon}) => {
   const buttons: FooterButtonProps[] = [
     {
       icon: 'home',
+      name: 'Home',
       onPress: () =>
         navigateTo(navigation, routes.Dashboard as keyof MainStackParamList),
       source: require('../../assets/images/footer-home-icon.png'),
     },
     {
       icon: 'calendar',
+      name: 'Book',
       onPress: () =>
         navigateTo(
           navigation,
@@ -36,11 +45,13 @@ const Footer: FC<FooterProps> = ({activeIcon}) => {
     },
     {
       icon: 'call',
+      name: 'Call',
       source: require('../../assets/images/footer-call-icon.png'),
       onPress: () => Linking.openURL(`tel:${18002122}`),
     },
     {
       icon: 'reports',
+      name: 'Records',
       source: require('../../assets/images/footer-reports-icon.png'),
       onPress: () =>
         navigateTo(navigation, 'Records', {mrn: profile?.PatientUID}),
@@ -50,7 +61,7 @@ const Footer: FC<FooterProps> = ({activeIcon}) => {
   return (
     <View style={styles.footer}>
       <View style={styles.footerButtonContainer}>
-        {buttons.map(({icon, onPress, source}) => (
+        {buttons.map(({icon, name, onPress, source}) => (
           <TouchableOpacity
             key={icon}
             style={styles.footerButton}
@@ -64,6 +75,14 @@ const Footer: FC<FooterProps> = ({activeIcon}) => {
                   activeIcon === icon ? pallette.dark_purple : pallette.white,
               }}
             />
+            <Text
+              style={{
+                fontSize: adjust(12),
+                color: pallette.white,
+                textTransform: 'capitalize',
+              }}>
+              {name}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -86,7 +105,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    width: '78%',
+    width: '100%',
     paddingHorizontal: 10,
   },
   footerButton: {

@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     width: '95%',
     alignSelf: 'center',
     borderWidth: 0.7,
-    borderColor: '#00000020',
+    borderColor: '#00000080',
     marginVertical: h * 0.01,
     borderRadius: w * 0.03,
   },
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderColor: '#00000020',
+    borderColor: '#00000080',
   },
   acSubTitle: {
     fontSize: adjust(14),

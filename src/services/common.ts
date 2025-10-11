@@ -185,6 +185,14 @@ export const fetchAppointmentChat = async (BookingId: any) => {
     throw error;
   }
 };
+export const updateAppointmentChatStatus = async (payload: any) => {
+  try {
+    const response = await api.post('/updateChatStauts', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 export const sendAppointmentChat = async (payload: any) => {
   try {
     const response = await api.post('/addAppointmentMessage', payload, {

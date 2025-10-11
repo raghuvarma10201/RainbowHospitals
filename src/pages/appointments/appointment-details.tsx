@@ -37,6 +37,8 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel, vitalsUpload} = route.params;
+  console.log(appointmentData);
+
   const dateTime = moment().format();
 
   const [visible, setVisible] = React.useState(cancel || false);
@@ -211,6 +213,28 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
               ]}>
               Chat
             </Text>
+            {appointmentData?.unreadCount == 0 && (
+              <View
+                style={{
+                  height: w * 0.05,
+                  width: w * 0.05,
+                  borderRadius: w,
+                  backgroundColor: pallette.dark_purple,
+                  position: 'absolute',
+                  right: -(w * 0.01),
+                  top: -(w * 0.01),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: adjust(10),
+                    color: pallette.white,
+                  }}>
+                  {appointmentData?.unreadCount}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
         )}
 
@@ -219,7 +243,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
             disabled={isBeforeTwoHours(
               dateTime,
               appointmentData?.SlotStartDttm,
-              1,
+              0.25,
             )}
             onPress={sendNotification}>
             <Text
@@ -229,7 +253,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                   backgroundColor: isBeforeTwoHours(
                     dateTime,
                     appointmentData?.SlotStartDttm,
-                    1,
+                    0.25,
                   )
                     ? pallette.dark_grey
                     : pallette.dark_purple,

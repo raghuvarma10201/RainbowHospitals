@@ -57,6 +57,7 @@ interface FooterButtonProps {
   icon: FooterIcon;
   onPress?: () => void;
   source: any;
+  name: string;
 }
 
 interface NotFoundProps {

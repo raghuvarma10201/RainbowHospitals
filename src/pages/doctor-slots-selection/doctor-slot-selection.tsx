@@ -73,8 +73,6 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     patientId,
     paid,
   } = route.params;
-  console.log(route.params);
-
   const headerRef = useRef<any>();
   const scrollRef = useRef<ScrollView>(null);
 

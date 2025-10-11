@@ -23,7 +23,11 @@ import Video from 'react-native-video';
 import {pick, types} from '@react-native-documents/picker';
 import {RecordBackType, PlayBackType} from 'react-native-audio-recorder-player';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import {fetchAppointmentChat, sendAppointmentChat} from '../../services/common';
+import {
+  fetchAppointmentChat,
+  sendAppointmentChat,
+  updateAppointmentChatStatus,
+} from '../../services/common';
 import {ToastService} from '../../utils/service-handlers';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../types/navigation';
@@ -84,6 +88,7 @@ const AppointmentChat: React.FC<any> = ({route}) => {
       const data = await fetchAppointmentChat(bookingId);
       const chat = data?.data?.reverse() || [];
       setMessages(chat);
+      updateChatStatus(bookingId);
     } catch (error: any) {
       ToastService.error(
         'Error',
@@ -92,6 +97,22 @@ const AppointmentChat: React.FC<any> = ({route}) => {
           'Something went wrong',
       );
       setMessages([]);
+    }
+  };
+
+  const updateChatStatus = async (bookingId: any) => {
+    try {
+      const data = await updateAppointmentChatStatus({
+        BookingID: bookingId,
+        from: 'doctor',
+      });
+    } catch (error: any) {
+      ToastService.error(
+        bookingId,
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
     }
   };
 

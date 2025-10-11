@@ -28,6 +28,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FamilyMember} from '../../utils/types';
 import ThreeDotLoader from '../../components/three-dot-loader';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {PdfPreview} from '../../components/pdf-preview';
 
 const PatientRecords: FC = ({route}: any) => {
   const {mrn} = route?.params;
@@ -68,6 +69,7 @@ const PatientRecords: FC = ({route}: any) => {
   const [endDate, setEndDate] = useState<Date | null>(today);
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
+  const [preview, setPreview] = React.useState();
 
   useFocusEffect(
     useCallback(() => {
@@ -107,6 +109,7 @@ const PatientRecords: FC = ({route}: any) => {
         startDate: moment(startDate).format('YYYY-MM-DD'),
         endDate: moment(endDate).format('YYYY-MM-DD'),
       });
+
       if (response?.status == 200 && response.success) {
         const visitOptions = response.data.map((e: any) => ({
           ...e,
@@ -187,24 +190,47 @@ const PatientRecords: FC = ({route}: any) => {
   // }, []);
 
   // Function to download PDF
-  const downloadPDF = async (
-    base64Data: string,
-    fileName: string = 'LabResults.pdf',
-  ) => {
+  // const downloadPDF = async (
+  //   base64Data: string,
+  //   fileName: string = 'LabResults.pdf',
+  // ) => {
+  //   try {
+  //     const base64 = base64Data.replace(/^data:application\/pdf;base64,/, '');
+  //     const dirs = RNBlobUtil.fs.dirs;
+  //     const path = `${dirs.DownloadDir}/${fileName}`;
+  //     await RNBlobUtil.fs.writeFile(path, base64, 'base64');
+  //     RNBlobUtil.android.addCompleteDownload({
+  //       title: fileName,
+  //       description: 'Download complete',
+  //       mime: 'application/pdf',
+  //       path: path,
+  //       showNotification: true,
+  //     });
+  //   } catch (error) {
+  //     console.error('File save error:', error);
+  //   }
+  // };
+
+  const downloadPDF = async (assetFileName: string) => {
     try {
-      const base64 = base64Data.replace(/^data:application\/pdf;base64,/, '');
+      const assetPath = `bundle-assets://docs/${assetFileName}`;
       const dirs = RNBlobUtil.fs.dirs;
-      const path = `${dirs.DownloadDir}/${fileName}`;
-      await RNBlobUtil.fs.writeFile(path, base64, 'base64');
-      RNBlobUtil.android.addCompleteDownload({
-        title: fileName,
-        description: 'Download complete',
+      const destPath = `${dirs.DownloadDir}/${assetFileName}`;
+
+      const data = await RNBlobUtil.fs.readFile(assetPath, 'base64');
+      await RNBlobUtil.fs.writeFile(destPath, data, 'base64');
+
+      await RNBlobUtil.android.addCompleteDownload({
+        title: assetFileName,
+        description: 'PDF saved from app assets',
         mime: 'application/pdf',
-        path: path,
+        path: destPath,
         showNotification: true,
       });
+
+      console.log('✅ PDF saved to:', destPath);
     } catch (error) {
-      console.error('File save error:', error);
+      console.error('❌ Error copying asset PDF:', error);
     }
   };
 
@@ -383,7 +409,7 @@ const PatientRecords: FC = ({route}: any) => {
         </View>
 
         {/* Accordion Visits */}
-        {filteredVisits.map((visit, index) => (
+        {/*{filteredVisits.map((visit, index) => (
           <AccordionItem
             key={index}
             title={visit?.label}
@@ -574,7 +600,252 @@ const PatientRecords: FC = ({route}: any) => {
               </View>
             )}
           </AccordionItem>
-        ))}
+        ))}*/}
+
+        <View
+          style={{
+            padding: w * 0.02,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: pallette.black,
+              textTransform: 'capitalize',
+            }}>
+            Lab Report
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: w * 0.03,
+            }}>
+            <MaterialCommunityIcons
+              name="eye"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() => setPreview('docs/LabReport1.pdf')}
+            />
+            <MaterialCommunityIcons
+              name="download"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() =>
+                // downloadPDF(
+                //   visit?.labReport?.file,
+                //   `${visit?.labReport?.documentname}.pdf`,
+                // )
+                downloadPDF('LabReport1.pdf')
+              }
+            />
+          </View>
+        </View>
+        <View
+          style={{
+            padding: w * 0.02,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: pallette.black,
+              textTransform: 'capitalize',
+            }}>
+            Radiology Report - 1
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: w * 0.03,
+            }}>
+            <MaterialCommunityIcons
+              name="eye"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() => setPreview('docs/Radiology1.pdf')}
+            />
+            <MaterialCommunityIcons
+              name="download"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() =>
+                // downloadPDF(
+                //   visit?.labReport?.file,
+                //   `${visit?.labReport?.documentname}.pdf`,
+                // )
+                downloadPDF('Radiology1.pdf')
+              }
+            />
+          </View>
+        </View>
+        <View
+          style={{
+            padding: w * 0.02,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: pallette.black,
+              textTransform: 'capitalize',
+            }}>
+            Radiology Report - 2
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: w * 0.03,
+            }}>
+            <MaterialCommunityIcons
+              name="eye"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() => setPreview('docs/Radiology2.pdf')}
+            />
+            <MaterialCommunityIcons
+              name="download"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() =>
+                // downloadPDF(
+                //   visit?.labReport?.file,
+                //   `${visit?.labReport?.documentname}.pdf`,
+                // )
+                downloadPDF('Radiology2.pdf')
+              }
+            />
+          </View>
+        </View>
+        <View
+          style={{
+            padding: w * 0.02,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: pallette.black,
+              textTransform: 'capitalize',
+            }}>
+            Consultation Bill
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: w * 0.03,
+            }}>
+            <MaterialCommunityIcons
+              name="eye"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() => setPreview('docs/Consultation Bill1.pdf')}
+            />
+            <MaterialCommunityIcons
+              name="download"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() =>
+                // downloadPDF(
+                //   visit?.labReport?.file,
+                //   `${visit?.labReport?.documentname}.pdf`,
+                // )
+                downloadPDF('Consultation Bill1.pdf')
+              }
+            />
+          </View>
+        </View>
+        <View
+          style={{
+            padding: w * 0.02,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: pallette.black,
+              textTransform: 'capitalize',
+            }}>
+            Pharmacy Bill
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: w * 0.03,
+            }}>
+            <MaterialCommunityIcons
+              name="eye"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() => setPreview('docs/pharmacysalebill2.pdf')}
+            />
+            <MaterialCommunityIcons
+              name="download"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() =>
+                // downloadPDF(
+                //   visit?.labReport?.file,
+                //   `${visit?.labReport?.documentname}.pdf`,
+                // )
+                downloadPDF('pharmacysalebill2.pdf')
+              }
+            />
+          </View>
+        </View>
+        <View
+          style={{
+            padding: w * 0.02,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: pallette.black,
+              textTransform: 'capitalize',
+            }}>
+            Discharge Summary
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: w * 0.03,
+            }}>
+            <MaterialCommunityIcons
+              name="eye"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() => setPreview('docs/DischargeSummary.pdf')}
+            />
+            <MaterialCommunityIcons
+              name="download"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() =>
+                // downloadPDF(
+                //   visit?.labReport?.file,
+                //   `${visit?.labReport?.documentname}.pdf`,
+                // )
+                downloadPDF('DischargeSummary.pdf')
+              }
+            />
+          </View>
+        </View>
+        {preview && (
+          <PdfPreview
+            source={
+              Platform.OS === 'android'
+                ? {uri: `bundle-assets://${preview}`}
+                : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
+            }
+            back={() => setPreview(undefined)}
+          />
+        )}
       </View>
     </ScrollView>
   );
