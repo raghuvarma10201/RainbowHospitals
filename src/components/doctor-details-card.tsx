@@ -58,8 +58,10 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
         {/* Doctor Information */}
         <View style={styles.detailsWrapper}>
           <Text style={styles.doctorName}>{doctorDetail?.name}</Text>
-          <Text style={styles.designation}>{doctorDetail?.designation}</Text>
-          <Text numberOfLines={4} style={styles.specialities}>
+          <Text numberOfLines={1} style={styles.designation}>
+            {doctorDetail?.designation}
+          </Text>
+          <Text numberOfLines={2} style={styles.specialities}>
             {doctorSpecialitites}
           </Text>
           <Text style={styles.experience}>

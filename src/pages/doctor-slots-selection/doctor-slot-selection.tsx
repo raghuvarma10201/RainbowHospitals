@@ -621,9 +621,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                 </Text>
                 <Dropdown
                   style={styles.dropdownSelect}
-                  iconColor={
-                    appointmentnumber ? pallette.pale_turquoise : pallette.black
-                  }
+                  iconColor={pallette.black}
                   selectedTextStyle={styles.selectedTextContry}
                   placeholderStyle={styles.placeholderCountry}
                   maxHeight={200}

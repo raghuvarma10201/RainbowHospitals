@@ -205,12 +205,14 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
           </View>
 
           <Text style={styles.acSubTitle}>
-            Appointments can be rescheduled or cancelled only up to{' '}
+            Appointments can be rescheduled or cancelled up to{' '}
             <Text style={{fontWeight: 'bold', color: pallette.red}}>
-              2 hours{' '}
+              2 hours before the scheduled time.{' '}
             </Text>
-            before the scheduled appointment time. Changes or cancellations made
-            within 2 hours of the appointment will not be accepted.
+            Any changes or cancellations made{' '}
+            <Text style={{fontWeight: 'bold', color: pallette.red}}>
+              within 2 hours of the appointment will not be accepted.{' '}
+            </Text>
           </Text>
 
           <TouchableOpacity

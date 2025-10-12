@@ -144,6 +144,24 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                   : pallette.dark_grey,
               },
             ]}>
+            {!isBeforeTwoHours(dateTime, appointment?.SlotStartDttm, 0.25) && (
+              <>
+                <TouchableOpacity
+                  disabled={isBeforeTwoHours(
+                    dateTime,
+                    appointment?.SlotStartDttm,
+                    2,
+                  )}
+                  onPress={() =>
+                    navigation.navigate('MyAppointmentDetails', {
+                      appointmentData: appointment,
+                    })
+                  }>
+                  <Text style={styles.rescheduleBt}>Join Call</Text>
+                </TouchableOpacity>
+                <View style={styles.divider} />
+              </>
+            )}
             <TouchableOpacity
               disabled={
                 !isBeforeTwoHours(dateTime, appointment?.SlotStartDttm, 2)

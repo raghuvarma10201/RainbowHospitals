@@ -33,6 +33,12 @@ import {AppointmentPayload} from '../../utils/types';
 import moment from 'moment';
 
 type VitalKey = 'height' | 'weight' | 'temperature';
+type BankKey =
+  | 'bank_name'
+  | 'account_number'
+  | 'ifsc_code'
+  | 'account_holder_name'
+  | 'branch_name';
 const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
@@ -54,11 +60,11 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const hideVitalsModal = () => setvitalsModalVisible(false);
 
   const [bank_details, setBank_details] = useState({
-    bank_name: 'T',
-    account_number: 't',
-    ifsc_code: 't',
-    account_holder_name: 't',
-    branch_name: 't',
+    bank_name: '',
+    account_number: '',
+    ifsc_code: '',
+    account_holder_name: '',
+    branch_name: '',
   });
   const [vitals, setVitals] = useState({
     height: appointmentData?.vitals?.height || '',
@@ -74,7 +80,29 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     },
   ];
 
+  const bankFields = [
+    {key: 'bank_name', label: 'BANK NAME'},
+    {
+      key: 'account_number',
+      label: 'ACCOUNT NUMBER',
+    },
+    {
+      key: 'ifsc_code',
+      label: 'IFSC CODE',
+    },
+    {
+      key: 'account_holder_name',
+      label: 'ACCOUNT HOLDER NAME',
+    },
+    {
+      key: 'branch_name',
+      label: 'BRANCH NAME',
+    },
+  ];
+
   const cancelAppointment = async () => {
+    console.log(bank_details);
+
     const obj: AppointmentPayload = {
       status: 'CANCEL',
       appointmentnumber: appointmentData?.BookingUID,
@@ -86,6 +114,8 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     };
     try {
       const response = await bookAppointment(obj);
+      console.log(response);
+
       if (response?.status == 200 && response?.success) {
         setLoading(false);
         ToastService.success('Success', 'Appointment Cancelled Successfully');
@@ -394,12 +424,14 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           </View>
 
           <Text style={styles.acSubTitle}>
-            Appointments can be rescheduled or cancelled only up to{' '}
+            Appointments can be rescheduled or cancelled up to{' '}
             <Text style={{fontWeight: 'bold', color: pallette.red}}>
-              2 hours{' '}
+              2 hours before the scheduled time.{' '}
             </Text>
-            before the scheduled appointment time. Changes or cancellations made
-            within 2 hours of the appointment will not be accepted.
+            Any changes or cancellations made{' '}
+            <Text style={{fontWeight: 'bold', color: pallette.red}}>
+              within 2 hours of the appointment will not be accepted.{' '}
+            </Text>
           </Text>
 
           {/* cancel + reschedule */}
@@ -468,26 +500,25 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           </Text>
 
           <View style={styles.formContainer}>
-            {[
-              'bank_name',
-              'account_number',
-              'ifsc_code',
-              'account_holder_name',
-              'branch_name',
-            ].map((field, idx) => (
+            {bankFields.map(({key, label}, idx) => (
               <View style={styles.formRow} key={idx}>
-                <Text style={styles.formLabel}>{field.replace(/_/g, ' ')}</Text>
+                <Text style={styles.formLabel}>{label}</Text>
                 <TextInput
                   mode="flat"
                   underlineColor="transparent"
                   placeholderTextColor={pallette.dark_grey}
+                  value={
+                    bank_details[key as BankKey]
+                      ? String(bank_details[key as BankKey])
+                      : ''
+                  }
                   style={styles.formInput}
-                  onChangeText={text => {
+                  onChangeText={text =>
                     setBank_details(prev => ({
                       ...prev,
-                      [field]: text,
-                    }));
-                  }}
+                      [key]: text,
+                    }))
+                  }
                 />
               </View>
             ))}

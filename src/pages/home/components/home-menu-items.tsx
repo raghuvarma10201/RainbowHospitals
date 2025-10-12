@@ -77,19 +77,19 @@ const MenuItems: React.FC<MenuItemsProps> = ({navigation, logout, uid}) => {
       onPress: () => navigateTo(navigation, 'Family'),
     },
     {
-      title: 'My Pregnancy Journey',
+      title: 'My Pregnancy Journey (Coming Soon)',
       icon: require('../../../../assets/images/home-pregnancy.png'),
     },
     {
-      title: 'My Baby Journey',
+      title: 'My Baby Journey (Coming Soon)',
       icon: require('../../../../assets/images/home-baby.png'),
     },
     {
-      title: 'Calculator',
+      title: 'Calculator (Coming Soon)',
       icon: require('../../../../assets/images/home-calculator.png'),
     },
     {
-      title: 'Mom & Baby Products',
+      title: 'Mom & Baby Products (Coming Soon)',
       icon: require('../../../../assets/images/home-products.png'),
     },
     {
