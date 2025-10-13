@@ -383,10 +383,28 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                     }}>
                     {appointmentData?.PatientName ?? ''}
                   </Text>
-                  {/* <View style={styles.patientReports}>
-                    <Text style={styles.reports}>MRI Report</Text>
-                    <Text style={styles.reports}>Blood Reports</Text>
-                  </View> */}
+                  <View style={styles.patientReports}>
+                    <Text style={styles.reports}>Appointment Type:</Text>
+                    <Text
+                      style={[
+                        styles.reports,
+                        {fontFamily: 'ProximaNovaA-Bold'},
+                      ]}>
+                      {appointmentData?.AppointmentType}
+                    </Text>
+                  </View>
+                  <View style={styles.patientReports}>
+                    <Text style={styles.reports}>Payment Type:</Text>
+                    <Text
+                      style={[
+                        styles.reports,
+                        {fontFamily: 'ProximaNovaA-Bold'},
+                      ]}>
+                      {appointmentData?.payment_type?.toLowerCase() == 'payu'
+                        ? 'Paid Online'
+                        : 'Pay At Hospital'}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
@@ -727,11 +745,10 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginRight: 10,
   },
-  patientReports: {flexDirection: 'row', gap: 15},
+  patientReports: {flexDirection: 'row', gap: 15, marginVertical: h * 0.01},
   reports: {
     fontSize: adjust(12),
     color: pallette.dark_purple,
-    textDecorationLine: 'underline',
     fontFamily: 'ProximaNovaA-Semibold',
   },
 
