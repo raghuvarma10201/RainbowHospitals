@@ -4,7 +4,7 @@ import {PERMISSIONS, request} from 'react-native-permissions';
 
 import Toast from 'react-native-toast-message';
 
-import notifee from '@notifee/react-native';
+import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import {
   getMessaging,
   requestPermission,
@@ -15,6 +15,8 @@ import {
   setBackgroundMessageHandler,
   AuthorizationStatus,
 } from '@react-native-firebase/messaging';
+import {navigate} from '../navigation/navigation';
+import {filterAppointment} from './common-functions';
 
 export const requestLocationPermission = async () => {
   const permission = Platform.select({
@@ -150,38 +152,69 @@ export const requestUserPermission = async () => {
   }
 };
 
-// ✅ Setup foreground, background & initial notification listeners
 export const setupNotificationListeners = () => {
   const messaging = getMessaging();
-
-  // App opened from background by tapping a notification
-  onNotificationOpenedApp(messaging, remoteMessage => {});
-
-  // App opened from quit state
+  onNotificationOpenedApp(messaging, async remoteMessage => {
+    const parsedData = JSON.parse(remoteMessage?.data?.appointment);
+    const data = await filterAppointment(
+      parsedData?.mrn,
+      parsedData?.his_booking_id,
+    );
+    navigate('MyAppointmentDetails', {
+      appointmentData: {...data, join: true},
+    });
+  });
   getInitialNotification(messaging).then(remoteMessage => {
     if (remoteMessage) {
     }
   });
-
-  // Foreground messages
   onMessage(messaging, async remoteMessage => {
-    Alert.alert(
-      remoteMessage.notification?.title || '',
-      remoteMessage.notification?.body || '',
-    );
-
-    const type = 'appointment';
+    let type = remoteMessage?.notification?.android?.channelId;
     let channelId = 'general';
     if (type === 'appointment') channelId = 'appointment';
     else if (type === 'critical') channelId = 'critical';
+    console.log(channelId);
 
     await notifee.displayNotification({
       title: remoteMessage.notification?.title,
       body: remoteMessage.notification?.body,
-      android: {channelId},
+      android: {
+        channelId,
+        sound: 'alert3',
+        importance: AndroidImportance.HIGH,
+        pressAction: {
+          id: 'default',
+        },
+      },
     });
+
+    notifee.onForegroundEvent(({type, detail}) => {
+      if (type === EventType.PRESS) {
+        handleNotificationPress(detail.notification);
+      }
+    });
+
+    const handleNotificationPress = async (notification: any) => {
+      const parsedData = JSON.parse(remoteMessage?.data?.appointment);
+      const data = await filterAppointment(
+        parsedData?.mrn,
+        parsedData?.his_booking_id,
+      );
+      navigate('MyAppointmentDetails', {
+        appointmentData: {...data, join: true},
+      });
+    };
   });
 
-  // Background messages
-  setBackgroundMessageHandler(messaging, async remoteMessage => {});
+  setBackgroundMessageHandler(messaging, async remoteMessage => {
+    let type = remoteMessage?.notification?.android?.channelId;
+    let channelId = 'general';
+    if (type === 'appointment') channelId = 'appointment';
+    else if (type === 'critical') channelId = 'critical';
+    await notifee.displayNotification({
+      title: remoteMessage.notification?.title,
+      body: remoteMessage.notification?.body,
+      android: {channelId, sound: 'alert3', importance: AndroidImportance.HIGH},
+    });
+  });
 };

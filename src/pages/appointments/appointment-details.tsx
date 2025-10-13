@@ -6,7 +6,7 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, Modal, Portal, TextInput} from 'react-native-paper';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
@@ -100,6 +100,13 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     },
   ];
 
+  useEffect(() => {
+    if (appointmentData?.join) {
+      setLoading(true);
+      startVideoCall();
+    }
+  }, []);
+
   const cancelAppointment = async () => {
     console.log(bank_details);
 
@@ -191,6 +198,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   };
 
   const startVideoCall = () => {
+    setLoading(false);
     showJitsi({
       roomName: appointmentData?.roomId || 'SampleJitsiCall',
       token: '',
@@ -270,11 +278,11 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
 
         {appointmentData?.AppointmentType.toLowerCase() !== 'physical' && (
           <TouchableOpacity
-            disabled={isBeforeTwoHours(
-              dateTime,
-              appointmentData?.SlotStartDttm,
-              0.25,
-            )}
+            // disabled={isBeforeTwoHours(
+            //   dateTime,
+            //   appointmentData?.SlotStartDttm,
+            //   0.25,
+            // )}
             onPress={sendNotification}>
             <Text
               style={[

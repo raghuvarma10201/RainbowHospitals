@@ -1,6 +1,8 @@
 import {PixelRatio, Platform} from 'react-native';
 import {AuthStackParamList, MainStackParamList} from '../types/navigation';
 import {div, w} from '../constants/constants';
+import {getAppointments} from '../services/common';
+import {AppointmentPayload, upcomingApointment} from './types';
 
 export const navigateTo = (
   navigation: any,
@@ -77,5 +79,27 @@ export const isValidUrl = (url: string) => {
     return true;
   } catch (e) {
     return false;
+  }
+};
+
+export const filterAppointment = async (id: string, appId: string) => {
+  try {
+    const payload = {
+      patientId: id,
+    };
+    const response = await getAppointments(payload);
+    console.log(response);
+
+    if (response && response.status == 200) {
+      const filteredAppointment = response.data.filter(
+        (apts: upcomingApointment) => apts.BookingUID == appId,
+      )[0];
+      return filteredAppointment;
+    } else {
+      return {};
+    }
+  } catch (error: any) {
+    return {};
+  } finally {
   }
 };

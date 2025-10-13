@@ -98,28 +98,33 @@ const PatientFamily: FC = ({navigation}: any) => {
                 <Text style={[styles.locationOptionText]}>
                   {familyMember.PatientName}
                 </Text>
-                <TouchableOpacity
-                  onPress={() =>
-                    editable == index + 1
-                      ? handleAddFamilyMemberEdit(familyMember)
-                      : (setEditable(index + 1),
-                        setRelation(familyMember?.relation || ''))
-                  }
-                  style={{
-                    borderWidth: 0.7,
-                    paddingHorizontal: w * 0.02,
-                    borderRadius: w * 0.02,
-                    borderColor: pallette.teal,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={[styles.locationOptionText, {color: pallette.teal}]}>
-                    {editable == index + 1
-                      ? 'Update Relation'
-                      : 'Edit Relation'}
-                  </Text>
-                </TouchableOpacity>
+                {familyMember?.relation?.toLowerCase() != 'self' && (
+                  <TouchableOpacity
+                    onPress={() =>
+                      editable == index + 1
+                        ? handleAddFamilyMemberEdit(familyMember)
+                        : (setEditable(index + 1),
+                          setRelation(familyMember?.relation || ''))
+                    }
+                    style={{
+                      borderWidth: 0.7,
+                      paddingHorizontal: w * 0.02,
+                      borderRadius: w * 0.02,
+                      borderColor: pallette.teal,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Text
+                      style={[
+                        styles.locationOptionText,
+                        {color: pallette.teal},
+                      ]}>
+                      {editable == index + 1
+                        ? 'Update Relation'
+                        : 'Edit Relation'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </View>
               <View
                 style={[

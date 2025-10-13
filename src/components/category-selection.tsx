@@ -25,6 +25,7 @@ const CategorySelection = ({
           onPress={() => {
             screen == 'docList' ? changeCategory(cat) : updateCategory(cat);
           }}
+          key={index}
           style={[
             styles.category,
             {

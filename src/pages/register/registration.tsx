@@ -12,13 +12,15 @@ import * as Yup from 'yup';
 import {registerUser} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ToastService} from '../../utils/service-handlers';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import {CombinedNavigationProp} from '../../types/navigation';
 import {useAuth} from '../../context/auth-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {h, pallette} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 import {FormInput, FormDropdown} from '.';
+import WarningModal from '../../components/custom-warning';
+import {routes} from '../../utils';
 
 // ---------- Static Data ----------
 const genderOptions = [
@@ -74,6 +76,7 @@ const Registration: React.FC = () => {
   const [mobileNumber, setMobileNumber] = useState('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -124,7 +127,13 @@ const Registration: React.FC = () => {
           await AsyncStorage.multiSet(entries);
 
           ToastService.success('Success', 'Registration sent successfully');
-          setLoggedIn(true);
+          // setLoggedIn(true);
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: routes.Login}],
+            }),
+          );
         }
       } catch (error: any) {
         ToastService.error(
@@ -344,12 +353,18 @@ const Registration: React.FC = () => {
           {/* Submit */}
           <TouchableOpacity
             style={styles.primaryBt}
-            onPress={formik.handleSubmit as any}
+            onPress={() => setVisible(true)}
             disabled={loading}>
             <Text style={styles.primaryBtText}>
               {loading ? 'Submitting...' : 'Submit'}
             </Text>
           </TouchableOpacity>
+          <WarningModal
+            visible={visible}
+            onClose={() => {
+              setVisible(false), formik.handleSubmit();
+            }}
+          />
         </View>
       </ScrollView>
     </>

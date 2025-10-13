@@ -16,6 +16,14 @@ import {routes} from '../utils/enums';
 // Navigation ref
 export const navigationRef = createNavigationContainerRef();
 
+export const navigate = (name: string, params?: any) => {
+  if (navigationRef.isReady()) {
+    navigationRef.navigate(name as never, params as never);
+  } else {
+    console.warn('Navigation not ready yet');
+  }
+};
+
 export const resetToLogin = () => {
   if (navigationRef.isReady()) {
     navigationRef.reset({

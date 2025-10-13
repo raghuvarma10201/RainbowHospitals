@@ -111,6 +111,7 @@ const Category: React.FC = () => {
                   updateCategory(category),
                     navigation.navigate(routes.Dashboard as never);
                 }}
+                key={index}
                 style={styles.categoryButton}>
                 <View style={styles.imageCategoryView}>
                   <Image

@@ -109,6 +109,7 @@ const PatientRecords: FC = ({route}: any) => {
         startDate: moment(startDate).format('YYYY-MM-DD'),
         endDate: moment(endDate).format('YYYY-MM-DD'),
       });
+      console.log(response);
 
       if (response?.status == 200 && response.success) {
         const visitOptions = response.data.map((e: any) => ({
@@ -409,7 +410,7 @@ const PatientRecords: FC = ({route}: any) => {
         </View>
 
         {/* Accordion Visits */}
-        {/*{filteredVisits.map((visit, index) => (
+        {filteredVisits.map((visit, index) => (
           <AccordionItem
             key={index}
             title={visit?.label}
@@ -450,10 +451,11 @@ const PatientRecords: FC = ({route}: any) => {
                       color={pallette.black}
                       size={w * 0.05}
                       onPress={() =>
-                        openPDF(
-                          visit?.labReport?.file,
-                          `${visit?.labReport?.documentname}.pdf`,
-                        )
+                        // openPDF(
+                        //   visit?.labReport?.file,
+                        //   `${visit?.labReport?.documentname}.pdf`,
+                        // )
+                        setPreview(visit?.labReport?.file)
                       }
                     />
                     <MaterialCommunityIcons
@@ -515,6 +517,7 @@ const PatientRecords: FC = ({route}: any) => {
                 </View>
                 {visit?.prescriptions?.map((invoice, index) => (
                   <View
+                    key={index}
                     style={{
                       padding: w * 0.02,
                       flexDirection: 'row',
@@ -557,6 +560,7 @@ const PatientRecords: FC = ({route}: any) => {
                 ))}
                 {visit?.invoices?.map((invoice, index) => (
                   <View
+                    key={index}
                     style={{
                       padding: w * 0.02,
                       flexDirection: 'row',
@@ -600,7 +604,7 @@ const PatientRecords: FC = ({route}: any) => {
               </View>
             )}
           </AccordionItem>
-        ))}*/}
+        ))}
 
         <View
           style={{
