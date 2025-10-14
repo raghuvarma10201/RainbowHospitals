@@ -1,6 +1,5 @@
 export {default as Loader} from './loader';
 export {default as Banners} from './banners';
-export {default as CustomStatusBar} from './custom-status-bar';
 export {default as DoctorDetailsCard} from './doctor-details-card';
 export {default as NotFound} from './empty-text';
 export {default as Footer} from './footer';
@@ -8,4 +7,3 @@ export {default as Header} from './header';
 export {default as PaginationDots} from './pagination-dots';
 export {default as SearchLocationBlock} from './search-location-block';
 export {default as ShortInfoText} from './short-info-text';
-export {default as Timer} from './timer';

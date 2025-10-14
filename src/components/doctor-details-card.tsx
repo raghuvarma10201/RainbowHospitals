@@ -12,9 +12,6 @@ import {
 // ---------- TYPE IMPORTS ----------
 import {DoctorDetailsCardProps} from '../types/components';
 
-// ---------- COMPONENT IMPORTS ----------
-import ShortInfoText from './short-info-text';
-
 // ---------- UTILITY IMPORTS ----------
 import {IMG_BASE_URL} from '../utils/enums';
 import {adjust} from '../utils/common-functions';
@@ -158,10 +155,6 @@ const DoctorDetailsCard: FC<DoctorDetailsCardProps> = ({
                   </Text>
                 </TouchableOpacity>
               </View>
-              {/* About Section */}
-              {/* <View style={styles.divider} />
-                <Text style={styles.aboutTitle}>About</Text>
-                <ShortInfoText text={doctorDetail?.short_info || ''} /> */}
             </>
           )}
         </View>

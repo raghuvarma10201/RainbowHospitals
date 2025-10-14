@@ -46,7 +46,6 @@ import DoctorDetailsCard from '../../components/doctor-details-card';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useSettings} from '../../context/settings-context';
 import {useTimer} from '../../context/timer-context';
-import CountdownCircle from '../../components/animated-timer';
 
 const payment_types = [
   {value: '1', label: 'Pay Now'},

@@ -1,17 +1,9 @@
 // ---------- MODULE IMPORTS ----------
 import React, {FC, useEffect, useRef, useState} from 'react';
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  View,
-  Animated,
-  Dimensions,
-} from 'react-native';
+import {FlatList, Image, StyleSheet, View, Animated} from 'react-native';
 
 // ---------- TYPE IMPORTS ----------
 import {BannerProps} from '../types/components';
-import {w} from '../constants/constants';
 
 // ---------- INTERVAL ----------
 const AUTO_SCROLL_INTERVAL = 3000;

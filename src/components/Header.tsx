@@ -6,7 +6,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -568,20 +568,6 @@ const Header = forwardRef<any, HeaderProps>(
                 <View style={styles.modalContent}>
                   <Text style={styles.modalTitle}>Select Patient</Text>
                   <ScrollView style={{maxHeight: 400}}>{familyList}</ScrollView>
-
-                  {/* <View style={styles.buttonRow}>
-                    <TouchableOpacity
-                      style={[styles.updateButton, {marginRight: 8}]}
-                      disabled={!selectedBranch}
-                      onPress={handleBranchUpdate}>
-                      <Text style={styles.updateButtonText}>Update</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.cancelButton}
-                      onPress={handleClosePatientModal}>
-                      <Text style={styles.cancelButtonText}>Cancel</Text>
-                    </TouchableOpacity>
-                  </View> */}
                 </View>
               </TouchableWithoutFeedback>
             </View>

@@ -9,12 +9,13 @@ import React, {FC, useCallback, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {fetchFamilyMembers, updateRelationship} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {adjust, routes, ToastService} from '../../utils';
 import {h, pallette, w} from '../../constants/constants';
 import Header from '../../components/header';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Dropdown} from 'react-native-element-dropdown';
+import {ToastService} from '../../utils/service-handlers';
+import {adjust} from '../../utils/common-functions';
 
 const relations = [
   {value: 'Self', label: 'Self'},
@@ -214,7 +215,7 @@ const PatientFamily: FC = ({navigation}: any) => {
         ))}
       </ScrollView>
       <TouchableOpacity
-        onPressIn={() => navigation.navigate(routes.AddFamily)}
+        onPressIn={() => navigation.navigate('AddFamily')}
         style={styles.fab}
         activeOpacity={0.7}>
         <Icon name="add" size={28} color={pallette.white} />

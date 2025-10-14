@@ -11,7 +11,9 @@ export {
 } from './doctor-slots-selection';
 export {BookScan} from './scanning';
 export {MedicalRecord} from './reports';
+export {PatientRecords} from './patient-records';
 export {VaccinesPediatric, BookVaccination, VaccinesAdult} from './vaccination';
+export {PatientFamily, AddFamilyMember} from './patient-family';
 export {
   AppointmentChat,
   AppointmentConfirmed,

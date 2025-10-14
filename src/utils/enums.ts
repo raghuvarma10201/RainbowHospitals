@@ -19,10 +19,10 @@ import {
   Login,
   Otp,
   Registration,
+  AddFamilyMember,
+  PatientFamily,
+  PatientRecords,
 } from '../pages';
-import AddFamilyMember from '../pages/patient-family/add-family-member';
-import PatientFamily from '../pages/patient-family/patient-family';
-import PatientRecords from '../pages/patient-records/patient-records';
 import {AuthStackParamList, MainStackParamList} from '../types/navigation';
 
 type CombinedRouteNames = keyof (AuthStackParamList & MainStackParamList);

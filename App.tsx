@@ -32,7 +32,6 @@ import {
 } from './src/utils/service-handlers';
 import {fetchSettings} from './src/services/common';
 import {pallette} from './src/constants/constants';
-import {CustomStatusBar} from './src/components';
 import {AuthStack, MainStack, navigationRef} from './src/navigation/navigation';
 
 // Initialize RTL

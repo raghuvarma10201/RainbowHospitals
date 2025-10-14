@@ -1,7 +1,41 @@
 import React from 'react';
-import {Modal, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
 
-const WarningModal = ({visible, onClose}) => {
+interface WarningModalProps {
+  visible: boolean;
+  onClose: () => void;
+  title?: string;
+  message?: string;
+  highlightText?: string;
+  buttonText?: string;
+  highlightColor?: string;
+  containerStyle?: StyleProp<ViewStyle>;
+  messageStyle?: StyleProp<TextStyle>;
+}
+
+const WarningModal: React.FC<WarningModalProps> = ({
+  visible,
+  onClose,
+  title = 'Warning Message',
+  message = '',
+  highlightText,
+  buttonText = 'Okay',
+  highlightColor = '#d12f6a',
+  containerStyle,
+  messageStyle,
+}) => {
+  // Split message to insert highlight text dynamically
+  const parts = message.split('{{highlight}}');
+
   return (
     <Modal
       transparent
@@ -9,19 +43,26 @@ const WarningModal = ({visible, onClose}) => {
       animationType="fade"
       onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.title}>Warning Message</Text>
+        <View style={[styles.modalContainer, containerStyle]}>
+          <Text style={styles.title}>{title}</Text>
 
-          <Text style={styles.message}>
-            Use the existing MPID (if available).{'\n'}
-            For every new MPID creation, you will be charged an extra{' '}
-            <Text style={styles.highlight}>₹150 - ₹300</Text>.{'\n'}
-            Also, new MPIDs will not have the previous records from the
-            old/existing MPIDs of the particular patient.
+          <Text style={[styles.message, messageStyle]}>
+            {parts.map((part, index) => (
+              <React.Fragment key={index}>
+                {part}
+                {index < parts.length - 1 && highlightText && (
+                  <Text style={[styles.highlight, {color: highlightColor}]}>
+                    {highlightText}
+                  </Text>
+                )}
+              </React.Fragment>
+            ))}
           </Text>
 
           <TouchableOpacity style={styles.button} onPress={onClose}>
-            <Text style={styles.buttonText}>Okay</Text>
+            <Text style={[styles.buttonText, {color: highlightColor}]}>
+              {buttonText}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -59,7 +100,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   highlight: {
-    color: '#d12f6a',
     fontWeight: '600',
   },
   button: {
@@ -67,7 +107,6 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   buttonText: {
-    color: '#d12f6a',
     fontWeight: '600',
     fontSize: 16,
   },

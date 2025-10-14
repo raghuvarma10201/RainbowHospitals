@@ -22,11 +22,6 @@ interface BannerProps {
   itemWidth?: number;
 }
 
-interface CustomStatusBarProps {
-  backgroundColor: string;
-  barStyle?: StatusBarStyle;
-}
-
 interface DoctorDetail {
   name?: string;
   designation?: string;
@@ -105,7 +100,6 @@ interface ShortInfoTextProps {
 export type {
   NavProp,
   BannerProps,
-  CustomStatusBarProps,
   DoctorDetailsCardProps,
   FooterIcon,
   FooterProps,

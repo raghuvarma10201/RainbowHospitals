@@ -7,8 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Portal, TextInput} from 'react-native-paper';
-import {Dropdown} from 'react-native-element-dropdown';
+import {TextInput} from 'react-native-paper';
 import {h, w, pallette} from '../constants/constants';
 import {adjust} from '../utils/common-functions';
 import {
@@ -106,35 +105,6 @@ const SearchLocationBlock: React.FC<SearchLocationBlockProps> = ({
           </ScrollView>
         </View>
       )}
-
-      {/* <View style={styles.container}>
-        <View style={styles.iconContainer}>
-          <Image
-            source={require('../../assets/images/map-icon.png')}
-            style={styles.icon}
-          />
-        </View>
-        <Dropdown
-          style={styles.dropdownSelect}
-          selectedTextStyle={styles.selectedTextCountry}
-          placeholderStyle={styles.placeholderCountry}
-          containerStyle={styles.dropdownList}
-          itemTextStyle={{
-            fontSize: adjust(11),
-            color: pallette.black,
-            fontFamily: 'ProximaNovaA-Regular',
-          }}
-          iconStyle={styles.dropDownIcon}
-          maxHeight={200}
-          value={country}
-          data={location_options}
-          valueField="value"
-          labelField="label"
-          placeholder="Select Location"
-          activeColor={pallette.white}
-          onChange={e => setCountry(e.value)}
-        />
-      </View> */}
     </View>
   );
 };
