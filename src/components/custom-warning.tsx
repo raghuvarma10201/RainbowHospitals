@@ -9,6 +9,7 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
+import {pallette} from '../constants/constants';
 
 interface WarningModalProps {
   visible: boolean;
@@ -89,13 +90,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
+    color: pallette.black,
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 12,
   },
   message: {
     fontSize: 15,
-    color: '#444',
+    color: pallette.black,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -109,6 +111,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: '600',
     fontSize: 16,
+    color: pallette.black,
   },
 });
 

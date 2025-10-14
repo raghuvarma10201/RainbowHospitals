@@ -43,8 +43,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel, vitalsUpload} = route.params;
-  console.log(appointmentData);
-
   const dateTime = moment().format();
 
   const [visible, setVisible] = React.useState(cancel || false);
@@ -108,8 +106,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   }, []);
 
   const cancelAppointment = async () => {
-    console.log(bank_details);
-
     const obj: AppointmentPayload = {
       status: 'CANCEL',
       appointmentnumber: appointmentData?.BookingUID,
@@ -121,8 +117,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     };
     try {
       const response = await bookAppointment(obj);
-      console.log(response);
-
       if (response?.status == 200 && response?.success) {
         setLoading(false);
         ToastService.success('Success', 'Appointment Cancelled Successfully');
@@ -225,11 +219,10 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       <View style={styles.actionsRow}>
         {appointmentData?.payment_type?.toLowerCase() == 'payu' && (
           <TouchableOpacity
-            disabled={isBeforeTwoHours(
-              dateTime,
-              appointmentData?.SlotStartDttm,
-              1,
-            )}
+            disabled={
+              appointmentData?.unreadCount == 0 &&
+              isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 1)
+            }
             onPress={() =>
               navigation.navigate('AppointmentChat', {
                 bookingId: appointmentData.appointmentnumber,
@@ -240,18 +233,20 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
               style={[
                 styles.actionBtnText,
                 {
-                  backgroundColor: isBeforeTwoHours(
-                    dateTime,
-                    appointmentData?.SlotStartDttm,
-                    1,
-                  )
-                    ? pallette.dark_grey
-                    : pallette.dark_purple,
+                  backgroundColor:
+                    appointmentData?.unreadCount == 0 &&
+                    isBeforeTwoHours(
+                      dateTime,
+                      appointmentData?.SlotStartDttm,
+                      1,
+                    )
+                      ? pallette.dark_grey
+                      : pallette.dark_purple,
                 },
               ]}>
               Chat
             </Text>
-            {appointmentData?.unreadCount == 0 && (
+            {appointmentData?.unreadCount > 0 && (
               <View
                 style={{
                   height: w * 0.05,
@@ -278,11 +273,11 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
 
         {appointmentData?.AppointmentType.toLowerCase() !== 'physical' && (
           <TouchableOpacity
-            // disabled={isBeforeTwoHours(
-            //   dateTime,
-            //   appointmentData?.SlotStartDttm,
-            //   0.25,
-            // )}
+            disabled={isBeforeTwoHours(
+              dateTime,
+              appointmentData?.SlotStartDttm,
+              0.25,
+            )}
             onPress={sendNotification}>
             <Text
               style={[

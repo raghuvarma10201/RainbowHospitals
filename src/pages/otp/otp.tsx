@@ -123,8 +123,6 @@ const Otp: React.FC = () => {
         }
         const authResponse = await authenticateUser({MobileNo: phoneNumber});
         if (authResponse?.success && authResponse?.status == 200) {
-          console.log(response?.data);
-
           ToastService.success('Success', 'User Authenticated Successfully');
           const token = response.data.token;
           if (!token) ToastService.error('Error', 'Token Missing!');

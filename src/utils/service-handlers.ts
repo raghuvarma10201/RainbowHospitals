@@ -173,8 +173,6 @@ export const setupNotificationListeners = () => {
     let channelId = 'general';
     if (type === 'appointment') channelId = 'appointment';
     else if (type === 'critical') channelId = 'critical';
-    console.log(channelId);
-
     await notifee.displayNotification({
       title: remoteMessage.notification?.title,
       body: remoteMessage.notification?.body,

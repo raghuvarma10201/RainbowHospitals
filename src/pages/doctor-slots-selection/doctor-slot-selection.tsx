@@ -321,8 +321,6 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               : settings?.physicalBookingInterval ?? 0) / 60,
           ...commonPayload,
         };
-        console.log(blockPayload);
-
         try {
           const response = await bookAppointment(blockPayload);
           if (response && response.status == 200 && response.success == true) {
@@ -396,12 +394,8 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         transaction_id: '',
       };
       setLoadingCall(true);
-      console.log(payload);
-
       try {
         const response = await advancePay(payload);
-        console.log(response, payload);
-
         if (response && response?.status == 200 && response?.success == true) {
           setLoadingCall(false);
           ToastService.success('Appointment Booked Successfully');

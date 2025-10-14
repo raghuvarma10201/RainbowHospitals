@@ -3,27 +3,29 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
-  ScrollView,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
-import {API_IMG_URL, IMG_BASE_URL} from '../../../utils/enums';
+import {API_IMG_URL} from '../../../utils/enums';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../../types/navigation';
 import PaginationDots from '../../../components/pagination-dots';
-import {adjust, isValidUrl} from '../../../utils/common-functions';
+import {adjust} from '../../../utils/common-functions';
 import {h, pallette, w} from '../../../constants/constants';
 import {useApp} from '../../../context/app-context';
 import FastImage from 'react-native-fast-image';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // ✅ For pin icon
 
 const ITEMS_PER_PAGE = 9;
 
 export interface ItemsProps {
   items: any[];
   type: string;
+  onPinPress?: (item: any) => void; // ✅ new optional callback
 }
-const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
+
+const SpecialityGrid: React.FC<ItemsProps> = ({items, type, onPinPress}) => {
   type AppNavigationProp = NativeStackNavigationProp<
     MainStackParamList,
     'DoctorsList'
@@ -39,10 +41,7 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
     pages.push(items.slice(i, i + ITEMS_PER_PAGE));
   }
 
-  const navigateToDoctors = async (
-    specialityId: number,
-    specialityName: string,
-  ) => {
+  const navigateToDoctors = (specialityId: number, specialityName: string) => {
     navigation.navigate('DoctorsList', {
       specialityId: specialityId,
       specialityName: specialityName,
@@ -57,81 +56,71 @@ const SpecialityGrid: React.FC<ItemsProps> = ({items, type}) => {
     setCurrentPage(pageIndex);
   };
 
-  const ImageWrapper = ({
-    iconImage,
-    style,
-  }: {
-    iconImage: string;
-    style: any;
-  }) => {
-    const [source, setSource] = useState(
-      iconImage
-        ? {uri: `${API_IMG_URL}${iconImage}`}
-        : {uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png'},
-    );
-
-    const handleError = () => {
-      // fallback to base url if API url fails
-      if (iconImage) {
-        setSource({uri: `${IMG_BASE_URL}${iconImage}`});
-      } else {
-        setSource({
-          uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
-        });
-      }
-    };
-
-    return <Image source={source} style={style} onError={handleError} />;
-  };
-
-  const renderPage = (page: any, pageIndex: any) => (
+  const renderPage = (page: any, pageIndex: number) => (
     <View key={pageIndex} style={styles.page}>
       {page.map((item: any) => (
-        <TouchableOpacity
-          key={item.icon_image}
-          onPress={() => navigateToDoctors(item.id, item?.name)}>
-          <View style={styles.itemContainer}>
+        <View key={item.id} style={styles.itemContainer}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => navigateToDoctors(item.id, item.name)}>
             <View
               style={[
                 styles.iconBox,
                 {
                   borderColor:
-                    category?.name == 'Child Care'
+                    category?.name === 'Child Care'
                       ? pallette.medium_turquoise
                       : pallette.amethyst,
                   backgroundColor:
-                    category?.name == 'Child Care'
+                    category?.name === 'Child Care'
                       ? pallette.pale_turquoise
                       : pallette.light_amethyst,
                 },
-                item.isSpecial && styles.specialItem,
+                item.isFavourite && styles.pinnedHighlight,
               ]}>
-              {/* <ImageWrapper iconImage={item.icon_image} style={styles.icon} /> */}
-              <FastImage source={{uri: item.icon_image}} style={styles.icon} />
+              {/* ✅ Pin Icon */}
+              <TouchableOpacity
+                style={styles.pinButton}
+                onPress={() => onPinPress && onPinPress(item)}>
+                <Icon
+                  name={item.isFavourite ? 'pin' : 'pin-outline'}
+                  size={20}
+                  color={item.isFavourite ? pallette.red : pallette.black}
+                  style={styles.pinIcon} // ✅ added style here
+                />
+              </TouchableOpacity>
+
+              {/* Image */}
+              <FastImage
+                source={{uri: item.icon_image}}
+                style={styles.icon}
+                resizeMode="contain"
+              />
 
               <Text numberOfLines={3} style={styles.itemText}>
                 {item.name}
               </Text>
             </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
       ))}
     </View>
   );
 
   return (
     <View>
-      <ScrollView
-        ref={scrollRef}
-        horizontal
-        pagingEnabled
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        showsHorizontalScrollIndicator={false}>
-        {pages.map((page, index) => renderPage(page, index))}
-      </ScrollView>
-      {/* Pagination dots */}
-      <PaginationDots data={pages} activeIndex={currentPage} />
+      <View>
+        <ScrollView
+          ref={scrollRef}
+          horizontal
+          pagingEnabled
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          showsHorizontalScrollIndicator={false}>
+          {pages.map((page, index) => renderPage(page, index))}
+        </ScrollView>
+        <PaginationDots data={pages} activeIndex={currentPage} />
+      </View>
     </View>
   );
 };
@@ -147,27 +136,18 @@ const styles = StyleSheet.create({
   itemContainer: {
     alignItems: 'center',
     marginVertical: 10,
-    justifyContent: 'space-between',
   },
-
   iconBox: {
     width: w * 0.29,
     height: w * 0.39,
-    backgroundColor: '#E1F1F2',
     borderWidth: 1.2,
-    borderColor: pallette.light_rainbow,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    borderBottomEndRadius: w * 0,
-    borderTopStartRadius: w * 0.05,
-    borderBottomStartRadius: w * 0.05,
-    borderTopEndRadius: w * 0.05,
+    borderRadius: w * 0.05,
     paddingHorizontal: w * 0.01,
     paddingVertical: h * 0.015,
     marginLeft: w * 0.015,
-  },
-  specialItem: {
-    backgroundColor: '#00bcd4',
+    position: 'relative', // ✅ required for absolute pin
   },
   icon: {
     width: w * 0.2,
@@ -180,13 +160,20 @@ const styles = StyleSheet.create({
     fontSize: adjust(10),
     color: pallette.black,
     width: '100%',
-    paddingBottom: h * 0.005,
   },
-  paginationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 5,
-    marginBottom: 20,
+  pinButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    zIndex: 10,
+    padding: 4,
+  },
+  pinIcon: {
+    transform: [{rotate: '45deg'}], // ✅ rotation here
+  },
+  pinnedHighlight: {
+    borderColor: pallette.red,
+    backgroundColor: '#FFF6DA',
   },
 });
 

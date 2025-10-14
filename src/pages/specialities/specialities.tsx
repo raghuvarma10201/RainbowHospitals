@@ -16,7 +16,11 @@ import {Header, Footer, Loader, NotFound} from '../../components';
 
 // ---------- OTHER IMPORTS ----------
 import {ToastService} from '../../utils/service-handlers';
-import {getDoctors, getSpecialities} from '../../services/common';
+import {
+  getDoctors,
+  getSpecialities,
+  pinPatientSpecialty,
+} from '../../services/common';
 import {MainStackParamList} from '../../types/navigation';
 import {h, pallette, w} from '../../constants/constants';
 import {useApp} from '../../context/app-context';
@@ -24,6 +28,8 @@ import SearchLocationBlock from '../../components/search-location-block';
 import CategorySelection from '../../components/category-selection';
 import {TextInput} from 'react-native-paper';
 import {adjust} from '../../utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Item} from 'react-native-paper/lib/typescript/components/Drawer/Drawer';
 
 // ---------- COMPONENT ----------
 const Specialities: React.FC = ({route}: any) => {
@@ -48,8 +54,11 @@ const Specialities: React.FC = ({route}: any) => {
 
   // ---------- CALLBACK FUNCTIONS ----------
   const loadSpecialities = async (filter?: string) => {
+    const mrn = await AsyncStorage.getItem('mrn');
+    console.log(mrn);
+
     await fetchData(
-      () => getSpecialities(category.coe_id.toString()),
+      () => getSpecialities(category.coe_id.toString(), mrn || ''),
       data => {
         if (filter) {
           setSpecialities(
@@ -136,6 +145,30 @@ const Specialities: React.FC = ({route}: any) => {
     loadSpecialities(search);
   }, [search]);
 
+  const pinSpeciality = async (specialty: any) => {
+    try {
+      const response = await pinPatientSpecialty({
+        mrn: await AsyncStorage.getItem('mrn'),
+        speciality_id: specialty?.id,
+        isPinned: !specialty?.isFavourite,
+      });
+      if (response.status === 200 && response.success) {
+        ToastService.success('Success', 'Specialty Pinned Successfully.');
+      } else {
+        ToastService.error('Failure', 'Pinning Failed.');
+      }
+    } catch (error: any) {
+      ToastService.error(
+        'Error',
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+      );
+    } finally {
+      loadSpecialities();
+    }
+  };
+
   // ---------- LOADER ----------
   if (loading) return <Loader />;
 
@@ -187,7 +220,15 @@ const Specialities: React.FC = ({route}: any) => {
           <CategorySelection changeCategory={loadSpecialities} />
 
           <View style={styles.quickActions}>
-            <SpecialityGrid items={specialities} type={appointmentType} />
+            <SpecialityGrid
+              items={specialities}
+              type={appointmentType}
+              onPinPress={item => {
+                console.log('Pin pressed:', item);
+                pinSpeciality(item);
+                // You can toggle isFavourite here or call API
+              }}
+            />
           </View>
         </View>
       </ScrollView>

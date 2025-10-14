@@ -53,6 +53,7 @@ export type MainStackParamList = {
   Family: undefined;
   AddFamily: {data: any};
   Records: undefined;
+  Notifications: undefined;
 };
 
 export type CombinedNavigationProp = CompositeNavigationProp<

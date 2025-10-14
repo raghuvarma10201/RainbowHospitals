@@ -88,8 +88,6 @@ export const filterAppointment = async (id: string, appId: string) => {
       patientId: id,
     };
     const response = await getAppointments(payload);
-    console.log(response);
-
     if (response && response.status == 200) {
       const filteredAppointment = response.data.filter(
         (apts: upcomingApointment) => apts.BookingUID == appId,

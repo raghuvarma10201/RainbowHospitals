@@ -17,6 +17,7 @@ import {
   ScrollView,
   Animated,
   TouchableWithoutFeedback,
+  Linking,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -39,6 +40,7 @@ import {adjust, navigateTo} from '../utils/common-functions';
 import {HeaderProps, NavProp} from '../types/components';
 import {routes} from '../utils';
 import {MainStackParamList} from '../types/navigation';
+import WarningModal from './custom-warning';
 
 const STORAGE_KEYS = {
   BRANCH: 'branch',
@@ -61,6 +63,7 @@ const Header = forwardRef<any, HeaderProps>(
     const navigation = useNavigation<NavProp>();
 
     const [locationModalVisible, setLocationModalVisible] = useState(false);
+    const [visible, setVisible] = useState(false);
     const [patientModalVisible, setPatientModalVisible] = useState(false);
     const [selectedRegion, setSelectedRegion] = useState<any>(null);
     const [selectedPatient, setSelectedPatient] = useState<any>(null);
@@ -484,7 +487,7 @@ const Header = forwardRef<any, HeaderProps>(
         </View>
 
         <View style={styles.headerRight}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => Linking.openURL(`tel:${18002122}`)}>
             <Image
               source={images.services}
               style={styles.serviceIcon}
@@ -492,7 +495,13 @@ const Header = forwardRef<any, HeaderProps>(
             />
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigateTo(
+                navigation,
+                routes.Notifications as keyof MainStackParamList,
+              )
+            }>
             <Image
               source={images.notification}
               style={styles.notificationIcon}
@@ -500,7 +509,7 @@ const Header = forwardRef<any, HeaderProps>(
             />
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setVisible(true)}>
             <Image
               source={images.wallet}
               style={styles.walletIcon}
@@ -522,6 +531,16 @@ const Header = forwardRef<any, HeaderProps>(
           )}
         </View>
 
+        <WarningModal
+          visible={visible}
+          onClose={() => {
+            setVisible(false);
+          }}
+          title="Coming Soon"
+          message={'This feature will be enabled in the future versions.'}
+          highlightText=""
+          buttonText="Okay"
+        />
         {/* Location Modal */}
         <Modal
           animationType="slide"

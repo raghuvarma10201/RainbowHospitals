@@ -76,8 +76,6 @@ const Dashboard: React.FC = () => {
           date,
           OrganisationUID: branch?.organisation?.organisationid.toString(),
         });
-        console.log(data);
-
         setAppointments(
           data
             .filter((item: upcomingApointment) =>

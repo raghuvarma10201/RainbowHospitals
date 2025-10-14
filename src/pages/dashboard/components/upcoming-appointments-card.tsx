@@ -144,24 +144,36 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                   : pallette.dark_grey,
               },
             ]}>
-            {!isBeforeTwoHours(dateTime, appointment?.SlotStartDttm, 0.25) && (
-              <>
-                <TouchableOpacity
-                  disabled={isBeforeTwoHours(
-                    dateTime,
-                    appointment?.SlotStartDttm,
-                    2,
-                  )}
-                  onPress={() =>
-                    navigation.navigate('MyAppointmentDetails', {
-                      appointmentData: appointment,
-                    })
-                  }>
-                  <Text style={styles.rescheduleBt}>Join Call</Text>
-                </TouchableOpacity>
-                <View style={styles.divider} />
-              </>
-            )}
+            <>
+              <TouchableOpacity
+                disabled={isBeforeTwoHours(
+                  dateTime,
+                  appointment?.SlotStartDttm,
+                  0.25,
+                )}
+                onPress={() =>
+                  navigation.navigate('MyAppointmentDetails', {
+                    appointmentData: appointment,
+                  })
+                }>
+                <Text
+                  style={[
+                    styles.rescheduleBt,
+                    {
+                      color: isBeforeTwoHours(
+                        dateTime,
+                        appointment?.SlotStartDttm,
+                        0.25,
+                      )
+                        ? pallette.dark_grey
+                        : pallette.white,
+                    },
+                  ]}>
+                  Join Call
+                </Text>
+              </TouchableOpacity>
+              <View style={styles.divider} />
+            </>
             <TouchableOpacity
               disabled={
                 !isBeforeTwoHours(dateTime, appointment?.SlotStartDttm, 2)
@@ -180,7 +192,21 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                   },
                 );
               }}>
-              <Text style={styles.rescheduleBt}>Reschedule</Text>
+              <Text
+                style={[
+                  styles.rescheduleBt,
+                  {
+                    color: !isBeforeTwoHours(
+                      dateTime,
+                      appointment?.SlotStartDttm,
+                      2,
+                    )
+                      ? pallette.dark_grey
+                      : pallette.white,
+                  },
+                ]}>
+                Reschedule
+              </Text>
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity
@@ -197,7 +223,22 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                   },
                 )
               }>
-              <Text style={styles.cancelBtn}> Cancel</Text>
+              <Text
+                style={[
+                  styles.cancelBtn,
+                  {
+                    color: !isBeforeTwoHours(
+                      dateTime,
+                      appointment?.SlotStartDttm,
+                      2,
+                    )
+                      ? pallette.dark_grey
+                      : pallette.white,
+                  },
+                ]}>
+                {' '}
+                Cancel
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

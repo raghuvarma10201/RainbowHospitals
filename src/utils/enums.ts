@@ -23,6 +23,7 @@ import {
   PatientFamily,
   PatientRecords,
 } from '../pages';
+import Notifications from '../pages/notifications/notifications';
 import {AuthStackParamList, MainStackParamList} from '../types/navigation';
 
 type CombinedRouteNames = keyof (AuthStackParamList & MainStackParamList);
@@ -53,6 +54,7 @@ export const routes: Record<CombinedRouteNames, CombinedRouteNames> = {
   Family: 'Family',
   AddFamily: 'AddFamily',
   Records: 'Records',
+  Notifications: 'Notifications',
 };
 
 export const auth_screens = [
@@ -84,6 +86,7 @@ export const app_screens = [
   {name: routes.Family, component: PatientFamily},
   {name: routes.AddFamily, component: AddFamilyMember},
   {name: routes.Records, component: PatientRecords},
+  {name: routes.Notifications, component: Notifications},
 ];
 
 export const API_BASE_URL = 'https://rainbow.exwyn.com/api';

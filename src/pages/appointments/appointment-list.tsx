@@ -60,8 +60,6 @@ const MyAppointments: React.FC = ({route}: any) => {
       setLoading(true);
       const response = await getAppointments(payload);
       if (response && response.status == 200) {
-        console.log(response.data);
-
         setLoading(false);
         setAppointments(response.data);
       } else {

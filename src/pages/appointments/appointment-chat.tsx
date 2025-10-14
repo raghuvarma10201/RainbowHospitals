@@ -101,11 +101,14 @@ const AppointmentChat: React.FC<any> = ({route}) => {
   };
 
   const updateChatStatus = async (bookingId: any) => {
+    console.log('called');
+
     try {
       const data = await updateAppointmentChatStatus({
         BookingID: bookingId,
-        from: 'doctor',
+        from: 'Doctor',
       });
+      console.log(data);
     } catch (error: any) {
       ToastService.error(
         bookingId,

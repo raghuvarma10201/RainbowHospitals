@@ -26,14 +26,23 @@ export const getBranches = async (regionId?: number) => {
     throw error;
   }
 };
-export const getSpecialities = async (coe: string) => {
+export const getSpecialities = async (coe: string, mrn: string) => {
   try {
-    const response = await api.get(`/getSpecialities/${coe}`);
+    const response = await api.get(`/getSpecialities/${coe}?mrn=${mrn}`);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
+export const pinPatientSpecialty = async (payload: any) => {
+  try {
+    const response = await api.post('/addPatientSpeciality', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getDoctors = async (
   name: string,
   speciality_id: any,
@@ -270,6 +279,15 @@ export const getVisitPrescriptions = async (payload: any) => {
 export const updateRelationship = async (payload: any) => {
   try {
     const response = await api.post('/updatePatientProfile', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getNotifications = async (payload: any) => {
+  try {
+    const response = await api.post('/getNotifications', payload);
     return response.data;
   } catch (error) {
     throw error;
