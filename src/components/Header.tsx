@@ -77,12 +77,14 @@ const Header = forwardRef<any, HeaderProps>(
     const [branchHeights, setBranchHeights] = useState<
       Record<string, Animated.Value>
     >({});
+    const [mainPatient, setMainPatient] = useState();
 
     const {
       branch,
       region,
       patient,
       profile,
+      category,
       updateAllBranch,
       updateBranch,
       updateRegion,
@@ -100,9 +102,35 @@ const Header = forwardRef<any, HeaderProps>(
     useEffect(() => {
       const getProfile = async () => {
         try {
-          const mrn = await AsyncStorage.getItem('mrn');
+          const mrn = await AsyncStorage.getItem('mobileNumber');
           if (!mrn) return;
-          const data = await getPatientProfile({mrn});
+          const data = await getPatientProfile({MobileNo: mrn});
+          console.log(data.data.length);
+
+          console.log(
+            data.data.filter(
+              (items: any) =>
+                items?.relation?.toLowerCase() == 'son' ||
+                items?.relation?.toLowerCase() == 'daughter',
+            ).length,
+          );
+
+          setMainPatient(
+            category?.name == 'Child Care'
+              ? data.data.filter(
+                  (items: any) =>
+                    items?.relation?.toLowerCase() == 'son' ||
+                    items?.relation?.toLowerCase() == 'daughter',
+                )[0]
+              : category?.name == 'Women Care'
+              ? data.data.filter(
+                  (items: any) => items?.relation?.toLowerCase() == 'spouse',
+                )[0]
+              : data.data.filter(
+                  (items: any) => items?.relation?.toLowerCase() == 'spouse',
+                )[0],
+          );
+
           if (data?.data?.[0]?.PatientID) {
             updateProfile(data.data[0]);
           }
@@ -116,7 +144,7 @@ const Header = forwardRef<any, HeaderProps>(
         }
       };
       getProfile();
-    }, [updateProfile]);
+    }, [updateProfile, category]);
 
     /** Initial load with persisted region/branch */
     useEffect(() => {
@@ -461,7 +489,7 @@ const Header = forwardRef<any, HeaderProps>(
               <View style={{marginLeft: w * 0.02}}>
                 <Text style={styles.locationText}>
                   {/* {branch?.name || 'Fetching location...'} */}
-                  {profile?.PatientName ?? 'Fetching User...'}
+                  {mainPatient?.PatientName ?? 'Fetching User...'}
                 </Text>
                 <View style={styles.locationInfo}>
                   <Image source={images.map} style={styles.mapIcon} />

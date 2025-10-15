@@ -86,7 +86,7 @@ const AppointmentChat: React.FC<any> = ({route}) => {
   const fetchChat = async () => {
     try {
       const data = await fetchAppointmentChat(bookingId);
-      const chat = data?.data?.reverse() || [];
+      const chat = data?.data || [];
       setMessages(chat);
       updateChatStatus(bookingId);
     } catch (error: any) {

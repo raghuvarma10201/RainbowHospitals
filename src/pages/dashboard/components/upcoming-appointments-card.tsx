@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {Card} from 'react-native-paper';
 import {upcomingApointment} from '../../../utils/types';
 import {
@@ -25,7 +32,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
   const dateTime = moment().format();
   return (
     <Card.Content style={[styles.upcomingAppBlockcard, {elevation: 0}]}>
-      <TouchableOpacity
+      <TouchableWithoutFeedback
         // disabled
         onPress={() =>
           navigation.navigate('MyAppointmentDetails', {
@@ -33,83 +40,94 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
           })
         }
         style={styles.row}>
-        <Image
-          source={
-            appointment?.image
-              ? {uri: `${appointment?.image}`}
-              : {
-                  uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
-                }
-          }
-          style={styles.docImage}
-        />
+        <View style={styles.row}>
+          <Image
+            source={
+              appointment?.image
+                ? {uri: `${appointment?.image}`}
+                : {
+                    uri: 'https://cdn-icons-png.flaticon.com/512/387/387561.png',
+                  }
+            }
+            style={styles.docImage}
+          />
 
-        <View style={styles.upcomingAppBlockcontent}>
-          <Text style={styles.upcomingAppTitle}>Upcoming Appointment</Text>
-          <Text
-            style={{
-              fontFamily: 'ProximaNovaA-Regular',
-              fontSize: adjust(12),
-              color: pallette.dark_purple,
-            }}>
-            {appointment?.CareProviderTitle} {appointment?.CareProviderName}
-          </Text>
-          <Text
-            style={{
-              fontFamily: 'ProximaNovaA-Regular',
-              fontSize: adjust(8),
-              color: pallette.dark_purple,
-            }}>
-            {appointment?.SpecialtyName}
-          </Text>
-          <Text style={styles.upcomingTime}>
-            {formatAppointmentDate(appointment?.SlotStartDttm)}{' '}
-            {formatAppointmentTime(appointment?.SlotStartDttm)}
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              marginLeft: 2,
-            }}>
+          <View style={styles.upcomingAppBlockcontent}>
+            <Text style={styles.upcomingAppTitle}>Upcoming Appointment</Text>
             <Text
               style={{
                 fontFamily: 'ProximaNovaA-Regular',
-                fontSize: adjust(10),
+                fontSize: adjust(12),
                 color: pallette.dark_purple,
-                marginBottom: 5,
               }}>
-              {' '}
-              Patient Name :{' '}
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  color: pallette.black,
-                  fontSize: adjust(14),
-                }}>
-                {appointment?.PatientName}
-              </Text>
+              {appointment?.CareProviderTitle} {appointment?.CareProviderName}
             </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              marginLeft: 2,
-            }}>
+            <Text
+              style={{
+                fontFamily: 'ProximaNovaA-Regular',
+                fontSize: adjust(8),
+                color: pallette.dark_purple,
+              }}>
+              {appointment?.SpecialtyName}
+            </Text>
+            <Text style={styles.upcomingTime}>
+              {formatAppointmentDate(appointment?.SlotStartDttm)}{' '}
+              {formatAppointmentTime(appointment?.SlotStartDttm)}
+            </Text>
             <View
               style={{
                 flexDirection: 'row',
+                justifyContent: 'flex-start',
                 alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: 15,
+                marginLeft: 2,
               }}>
-              <Image
-                source={require('../../../../assets/images/user-icon.png')}
-                style={{width: 11, height: 11, marginRight: 1}}
-              />
+              <Text
+                style={{
+                  fontFamily: 'ProximaNovaA-Regular',
+                  fontSize: adjust(10),
+                  color: pallette.dark_purple,
+                  marginBottom: 5,
+                }}>
+                {' '}
+                Patient Name :{' '}
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    color: pallette.black,
+                    fontSize: adjust(14),
+                  }}>
+                  {appointment?.PatientName}
+                </Text>
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                marginLeft: 2,
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: 15,
+                }}>
+                <Image
+                  source={require('../../../../assets/images/user-icon.png')}
+                  style={{width: 11, height: 11, marginRight: 1}}
+                />
+                <Text
+                  style={{
+                    fontFamily: 'ProximaNovaA-Regular',
+                    fontSize: adjust(10),
+                    color: pallette.dark_purple,
+                  }}>
+                  {' '}
+                  {appointment?.AppointmentType}
+                </Text>
+              </View>
               <Text
                 style={{
                   fontFamily: 'ProximaNovaA-Regular',
@@ -117,132 +135,117 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                   color: pallette.dark_purple,
                 }}>
                 {' '}
-                {appointment?.AppointmentType}
+                #{appointment?.appointmentnumber}
               </Text>
             </View>
-            <Text
-              style={{
-                fontFamily: 'ProximaNovaA-Regular',
-                fontSize: adjust(10),
-                color: pallette.dark_purple,
-              }}>
-              {' '}
-              #{appointment?.appointmentnumber}
-            </Text>
-          </View>
 
-          <View
-            style={[
-              styles.bottomUABlock,
-              {
-                backgroundColor: isBeforeTwoHours(
-                  dateTime,
-                  appointment?.SlotStartDttm,
-                  2,
-                )
-                  ? pallette.dark_purple
-                  : pallette.dark_grey,
-              },
-            ]}>
-            <>
+            <View
+              style={[
+                styles.bottomUABlock,
+                {
+                  backgroundColor: pallette.dark_purple,
+                },
+              ]}>
+              <>
+                <TouchableOpacity
+                  disabled={isBeforeTwoHours(
+                    dateTime,
+                    appointment?.SlotStartDttm,
+                    0.25,
+                  )}
+                  onPress={() =>
+                    navigation.navigate('MyAppointmentDetails', {
+                      appointmentData: appointment,
+                    })
+                  }>
+                  <Text
+                    style={[
+                      styles.rescheduleBt,
+                      {
+                        color: isBeforeTwoHours(
+                          dateTime,
+                          appointment?.SlotStartDttm,
+                          0.25,
+                        )
+                          ? pallette.dark_grey
+                          : pallette.white,
+                      },
+                    ]}>
+                    Join Call
+                  </Text>
+                </TouchableOpacity>
+                <View style={styles.divider} />
+              </>
               <TouchableOpacity
-                disabled={isBeforeTwoHours(
-                  dateTime,
-                  appointment?.SlotStartDttm,
-                  0.25,
-                )}
-                onPress={() =>
-                  navigation.navigate('MyAppointmentDetails', {
-                    appointmentData: appointment,
-                  })
-                }>
+                disabled={
+                  !isBeforeTwoHours(dateTime, appointment?.SlotStartDttm, 2)
+                }
+                onPress={() => {
+                  navigateTo(
+                    navigation,
+                    routes.DoctorSlots as keyof MainStackParamList,
+                    {
+                      doctorId: appointment?.id,
+                      appointmentType: appointment?.AppointmentType,
+                      appointmentnumber: appointment?.appointmentnumber,
+                      OrganisationID: appointment?.OrganisationUID,
+                      patientId: appointment?.PatientID,
+                      paid: appointment?.payment_type?.toUpperCase() == 'PAYU',
+                    },
+                  );
+                }}>
                 <Text
                   style={[
                     styles.rescheduleBt,
                     {
-                      color: isBeforeTwoHours(
+                      color: !isBeforeTwoHours(
                         dateTime,
                         appointment?.SlotStartDttm,
-                        0.25,
+                        2,
                       )
                         ? pallette.dark_grey
                         : pallette.white,
                     },
                   ]}>
-                  Join Call
+                  Reschedule
                 </Text>
               </TouchableOpacity>
               <View style={styles.divider} />
-            </>
-            <TouchableOpacity
-              disabled={
-                !isBeforeTwoHours(dateTime, appointment?.SlotStartDttm, 2)
-              }
-              onPress={() => {
-                navigateTo(
-                  navigation,
-                  routes.DoctorSlots as keyof MainStackParamList,
-                  {
-                    doctorId: appointment?.id,
-                    appointmentType: appointment?.AppointmentType,
-                    appointmentnumber: appointment?.appointmentnumber,
-                    OrganisationID: appointment?.OrganisationUID,
-                    patientId: appointment?.PatientID,
-                    paid: appointment?.payment_type?.toUpperCase() == 'PAYU',
-                  },
-                );
-              }}>
-              <Text
-                style={[
-                  styles.rescheduleBt,
-                  {
-                    color: !isBeforeTwoHours(
-                      dateTime,
-                      appointment?.SlotStartDttm,
-                      2,
-                    )
-                      ? pallette.dark_grey
-                      : pallette.white,
-                  },
-                ]}>
-                Reschedule
-              </Text>
-            </TouchableOpacity>
-            <View style={styles.divider} />
-            <TouchableOpacity
-              disabled={
-                !isBeforeTwoHours(dateTime, appointment?.SlotStartDttm, 2)
-              }
-              onPress={() =>
-                navigateTo(
-                  navigation,
-                  routes.MyAppointmentDetails as keyof MainStackParamList,
-                  {
-                    appointmentData: appointment,
-                    cancel: true,
-                  },
-                )
-              }>
-              <Text
-                style={[
-                  styles.cancelBtn,
-                  {
-                    color: !isBeforeTwoHours(
-                      dateTime,
-                      appointment?.SlotStartDttm,
-                      2,
-                    )
-                      ? pallette.dark_grey
-                      : pallette.white,
-                  },
-                ]}>
-                {' '}
-                Cancel
-              </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                disabled={
+                  !isBeforeTwoHours(dateTime, appointment?.SlotStartDttm, 2)
+                }
+                onPress={() =>
+                  navigateTo(
+                    navigation,
+                    routes.MyAppointmentDetails as keyof MainStackParamList,
+                    {
+                      appointmentData: appointment,
+                      cancel: true,
+                    },
+                  )
+                }>
+                <Text
+                  style={[
+                    styles.cancelBtn,
+                    {
+                      color: !isBeforeTwoHours(
+                        dateTime,
+                        appointment?.SlotStartDttm,
+                        2,
+                      )
+                        ? pallette.dark_grey
+                        : pallette.white,
+                    },
+                  ]}>
+                  {' '}
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
     </Card.Content>
   );
 };

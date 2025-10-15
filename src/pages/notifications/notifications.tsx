@@ -65,7 +65,7 @@ const Notifications: React.FC = () => {
         <Header title="Notifications" showBack={true} />
         <ScrollView style={styles.mainContainer}>
           <View>
-            <View style={styles.searchMain}>
+            {/* <View style={styles.searchMain}>
               <View style={styles.searchIconty}>
                 <Icon source="magnify" size={20} color="#000" />
               </View>
@@ -87,7 +87,7 @@ const Notifications: React.FC = () => {
                   },
                 }}
               />
-            </View>
+            </View> */}
 
             <View style={styles.listPatients}>
               {notifications?.length > 0 ? (
