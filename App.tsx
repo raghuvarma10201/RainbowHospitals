@@ -60,13 +60,6 @@ const App: React.FC = () => {
     createNotificationChannels();
   }, []);
 
-  const getSettings = async () => {
-    const settings = await fetchSettings();
-    if (!settings || settings.status !== 200) {
-      console.error('❌ Failed to fetch settings.');
-    }
-  };
-
   const createNotificationChannels = async () => {
     await notifee.createChannel({
       id: 'general',
@@ -101,7 +94,6 @@ const App: React.FC = () => {
         dayjs().isBefore(dayjs(expiry));
       setLoggedIn(isValid);
     } catch (e) {
-      console.error('Error checking auth status', e);
       setLoggedIn(false);
     } finally {
       setBooting(false);
