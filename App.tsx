@@ -114,7 +114,11 @@ const App: React.FC = () => {
     return (
       <SafeAreaProvider>
         <SafeAreaView style={styles.splashSt}>
-          <ActivityIndicator size="large" color={AppTheme.colors.primary} />
+          <ActivityIndicator
+            testID="ActivityIndicator"
+            size="large"
+            color={AppTheme.colors.primary}
+          />
         </SafeAreaView>
       </SafeAreaProvider>
     );

@@ -16,3 +16,12 @@ export const authenticateUser = async (payload: any) => {
     return error;
   }
 };
+
+export const postMpin = async (payload: any) => {
+  try {
+    const response = await api.post('/setMpin', payload);
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};

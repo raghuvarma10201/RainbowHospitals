@@ -22,4 +22,5 @@ export {
 } from './appointments';
 export {Login} from './login';
 export {Otp} from './otp';
+export {SetMpin} from './m-pin';
 export {Registration} from './register';

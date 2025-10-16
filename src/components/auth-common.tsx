@@ -19,6 +19,7 @@ import {
 } from 'react-native-confirmation-code-field';
 
 const CELL_COUNT = 6;
+const PIN_COUNT = 4;
 const local_data = [
   {value: '1', lable: '+91'},
   {value: '2', lable: '+92'},
@@ -47,10 +48,25 @@ export const AuthCommonComponent: FC<commonauth> = ({
 }) => {
   const [country, setCountry] = useState('1');
   const [value, setValue] = useState('');
+  const [mpin, setMpin] = useState('');
+  const [confirmMpin, setConfirmMpin] = useState('');
   const codeFieldRef = useBlurOnFulfill({value, cellCount: CELL_COUNT});
+  const mpinFieldRef = useBlurOnFulfill({value: mpin, cellCount: PIN_COUNT});
+  const confirmFieldRef = useBlurOnFulfill({
+    value: confirmMpin,
+    cellCount: PIN_COUNT,
+  });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
+  });
+  const [mpinProps, getMpinCellOnLayoutHandler] = useClearByFocusCell({
+    value: mpin,
+    setValue: setMpin,
+  });
+  const [confirmProps, getConfirmCellOnLayoutHandler] = useClearByFocusCell({
+    value: confirmMpin,
+    setValue: setConfirmMpin,
   });
 
   const handleCountryChange = useCallback((e: any) => {
@@ -98,10 +114,12 @@ export const AuthCommonComponent: FC<commonauth> = ({
         Hospital Group
       </Text>
       <View style={styles.headingContainer}>
-        <Text style={styles.heading}>Login/Register</Text>
+        <Text style={styles.heading}>Authentication</Text>
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.inpHeading}>Enter {toEnter}</Text>
+        <Text style={styles.inpHeading}>
+          {input == 'mpin' ? 'Set' : 'Enter'} {toEnter}
+        </Text>
         <Text style={styles.inpSubHeading}>{subTxt}</Text>
         {input == 'mobile' ? (
           <>
@@ -135,7 +153,7 @@ export const AuthCommonComponent: FC<commonauth> = ({
               <Text style={styles.error}>{formik.errors.mobileNumber}</Text>
             )}
           </>
-        ) : (
+        ) : input == 'otp' ? (
           <>
             <CodeField
               ref={codeFieldRef as React.RefObject<TextInput>}
@@ -164,13 +182,83 @@ export const AuthCommonComponent: FC<commonauth> = ({
               <Text style={styles.error}>{formik.errors.otp}</Text>
             )}
           </>
+        ) : (
+          <>
+            {/* Enter M-Pin */}
+            <Text style={[styles.inpSubHeading, {fontSize: adjust(11)}]}>
+              Enter M-Pin
+            </Text>
+
+            <CodeField
+              ref={mpinFieldRef as React.RefObject<TextInput>}
+              {...mpinProps}
+              value={mpin}
+              onChangeText={text => {
+                const cleanText = text.replace(/[^0-9]/g, '');
+                setMpin(cleanText);
+                handleNumberChange('mpin', text.replace(/[^0-9]/g, ''));
+              }}
+              cellCount={PIN_COUNT}
+              rootStyle={styles.codeFieldRoot}
+              keyboardType="number-pad"
+              textContentType="oneTimeCode"
+              renderCell={({index, symbol, isFocused}) => (
+                <View
+                  key={index}
+                  style={[styles.cell, isFocused && styles.focusCell]}
+                  onLayout={getMpinCellOnLayoutHandler(index)}>
+                  <Text style={styles.cellText}>
+                    {symbol || (isFocused ? <Cursor /> : null)}
+                  </Text>
+                </View>
+              )}
+            />
+            {formik.touched.mpin && formik.errors.mpin && (
+              <Text style={styles.error}>{formik.errors.mpin}</Text>
+            )}
+
+            {/* Confirm M-Pin */}
+            <Text style={[styles.inpSubHeading, {fontSize: adjust(11)}]}>
+              Confirm M-Pin
+            </Text>
+
+            <CodeField
+              ref={confirmFieldRef as React.RefObject<TextInput>}
+              {...confirmProps}
+              value={confirmMpin}
+              onChangeText={text => {
+                const cleanText = text.replace(/[^0-9]/g, '');
+                setConfirmMpin(cleanText);
+                handleNumberChange('confirmMpin', text.replace(/[^0-9]/g, ''));
+              }}
+              cellCount={PIN_COUNT}
+              rootStyle={styles.codeFieldRoot}
+              keyboardType="number-pad"
+              textContentType="oneTimeCode"
+              renderCell={({index, symbol, isFocused}) => (
+                <View
+                  key={index}
+                  style={[styles.cell, isFocused && styles.focusCell]}
+                  onLayout={getConfirmCellOnLayoutHandler(index)}>
+                  <Text style={styles.cellText}>
+                    {symbol || (isFocused ? <Cursor /> : null)}
+                  </Text>
+                </View>
+              )}
+            />
+            {formik.touched.confirmMpin && formik.errors.confirmMpin && (
+              <Text style={styles.error}>{formik.errors.confirmMpin}</Text>
+            )}
+          </>
         )}
-        <Text
-          style={[
-            styles.inpSubHeading,
-            {fontSize: adjust(11)},
-          ]}>{`You will recieve an OTP on this mobile number / or on your registered email id as well`}</Text>
-        {input != 'mobile' && (
+        {input == 'mobile' && (
+          <Text
+            style={[
+              styles.inpSubHeading,
+              {fontSize: adjust(11)},
+            ]}>{`You will recieve an OTP on this mobile number / or on your registered email id as well`}</Text>
+        )}
+        {input == 'otp' && (
           <TouchableOpacity
             disabled={resendDisabled}
             onPress={() => handleNumberBlur()}>
@@ -248,6 +336,7 @@ const styles = StyleSheet.create({
     fontSize: adjust(11),
     color: pallette.medium_turquoise,
     fontFamily: 'ProximaNovaA-Semibold',
+    marginTop: h * 0.01,
   },
   inputGroup: {
     flexDirection: 'row',
@@ -320,7 +409,8 @@ const styles = StyleSheet.create({
     marginTop: h * 0.005,
     marginBottom: h * 0.005,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
+    gap: w * 0.02,
   },
   cell: {
     width: h * 0.04,

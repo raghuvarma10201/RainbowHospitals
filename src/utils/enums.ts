@@ -18,6 +18,7 @@ import {
   AppointmentChat,
   Login,
   Otp,
+  SetMpin,
   Registration,
   AddFamilyMember,
   PatientFamily,
@@ -32,6 +33,7 @@ export const routes: Record<CombinedRouteNames, CombinedRouteNames> = {
   Category: 'Category',
   Login: 'Login',
   Otp: 'Otp',
+  SetMpin: 'SetMpin',
   Registration: 'Registration',
   Dashboard: 'Dashboard',
 
@@ -62,6 +64,7 @@ export const auth_screens = [
   // {name: routes.Dashboard, component: Dashboard},
   {name: routes.Login, component: Login},
   {name: routes.Otp, component: Otp},
+  {name: routes.SetMpin, component: SetMpin},
   {name: routes.Registration, component: Registration},
 ];
 

@@ -8,6 +8,7 @@ export type AuthStackParamList = {
   Login: undefined;
   Otp: undefined;
   Registration: undefined;
+  SetMpin: undefined;
 };
 
 export type MainStackParamList = {

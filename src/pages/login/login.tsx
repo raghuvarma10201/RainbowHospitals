@@ -12,15 +12,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-// ---------- OTHER IMPORTS ----------
 import {login} from '../../services/auth';
 import {ToastService} from '../../utils/service-handlers';
 import {AuthStackParamList} from '../../types/navigation';
-import {h, pallette, w} from '../../constants/constants';
-import {AuthCommonComponent} from '../../components/auth-common';
+import {h, pallette} from '../../constants/constants';
 import {Loader} from '../../components';
+import {AuthCommonComponent} from '../../components/auth-common';
 
-// ---------- FORMIC SCHEMA ----------
+// ---------- VALIDATION SCHEMA ----------
 const LoginSchema = Yup.object({
   mobileNumber: Yup.string()
     .required('Please enter valid mobile number')
@@ -29,31 +28,26 @@ const LoginSchema = Yup.object({
 
 // ---------- COMPONENT ----------
 const Login: React.FC = () => {
-  // ---------- STATE AND CONTEXT DECLARATION ----------
   type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
   const navigation = useNavigation<NavigationProp>();
   const [loading, setLoading] = useState(false);
+
   const formik = useFormik({
     initialValues: {mobileNumber: ''},
     validationSchema: LoginSchema,
-    onSubmit: async (values, {setSubmitting, setErrors}) => {
+    onSubmit: async ({mobileNumber}, {setSubmitting, setErrors}) => {
       setLoading(true);
       try {
-        const response = await login({number: values.mobileNumber});
-        if (response.status === 200 && response.success) {
-          await AsyncStorage.setItem('mobileNumber', values.mobileNumber);
+        const response = await login({number: mobileNumber});
+        if (response?.success && response?.status === 200) {
+          await AsyncStorage.setItem('mobileNumber', mobileNumber);
           ToastService.success('Success', 'OTP sent successfully');
           navigation.navigate('Otp');
         } else {
           ToastService.error('Failure', 'Failed To Send OTP.');
         }
-      } catch (error: any) {
-        ToastService.error(
-          'Error',
-          error?.response?.data?.message ||
-            error?.message ||
-            'Something went wrong',
-        );
+      } catch (err: any) {
+        ToastService.error('Error', err?.message || 'Something went wrong');
         setErrors({mobileNumber: 'Invalid credentials'});
       } finally {
         setSubmitting(false);
@@ -62,29 +56,17 @@ const Login: React.FC = () => {
     },
   });
 
-  // ---------- EVENT HANDLERS ----------
   const handleNumberChange = useCallback(
-    (text: string) => formik.handleChange('mobileNumber')(text),
+    (text: string) => formik.setFieldValue('mobileNumber', text),
     [formik],
   );
 
-  const handleNumberBlur = useCallback(
-    () => formik.handleBlur('mobileNumber'),
-    [formik],
-  );
-
-  // ---------- LIFECYCLE ----------
   useEffect(() => {
-    if (formik.values.mobileNumber.length === 10) {
-      Keyboard.dismiss();
-    }
+    if (formik.values.mobileNumber.length === 10) Keyboard.dismiss();
   }, [formik.values.mobileNumber]);
 
-  if (loading) {
-    return <Loader />;
-  }
+  if (loading) return <Loader />;
 
-  // ---------- RENDER ----------
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
@@ -98,14 +80,12 @@ const Login: React.FC = () => {
         }}
         keyboardShouldPersistTaps="handled">
         <AuthCommonComponent
-          toEnter={'Your Mobile No'}
-          subTxt={
-            'Log in or sign up to book appointments,\nview records and more.'
-          }
-          input={'mobile'}
-          btnTxt={'Request OTP'}
+          toEnter="Your Mobile No"
+          subTxt="Log in or sign up to book appointments, view records and more."
+          input="mobile"
+          btnTxt="Request OTP"
           handleNumberChange={handleNumberChange}
-          handleNumberBlur={handleNumberBlur}
+          handleNumberBlur={formik.handleBlur('mobileNumber')}
           formik={formik}
         />
       </ScrollView>
