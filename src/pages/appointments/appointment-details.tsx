@@ -458,9 +458,9 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           {/* cancel + reschedule */}
           <View style={styles.payBtnsContainer}>
             <TouchableOpacity
-              disabled={
-                !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 2)
-              }
+              // disabled={
+              //   !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 2)
+              // }
               onPress={() => showModal()}
               style={[
                 styles.payBtn,

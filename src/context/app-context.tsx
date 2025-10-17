@@ -33,6 +33,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [appointment, setAppointment] = useState<AppointmentPayload | null>(
     null,
   );
+  const [mpinEntered, setMpinEntered] = useState(false);
   const [settings, setSetting] = useState<Setting | null>(null);
   const ctx: AppContextProps = {
     user,
@@ -52,6 +53,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
     todayCount,
     upcomingCount,
     appointment,
+    mpinEntered,
     settings,
     updateUser: setUser,
     updateBranch: setBranch,
@@ -70,6 +72,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
     updateTodayCount: setTodayCount,
     updateUpcomingCount: setUpcomingCount,
     updateAppointment: setAppointment,
+    updateMpinEntered: setMpinEntered,
     updateSettings: setSetting,
   };
 

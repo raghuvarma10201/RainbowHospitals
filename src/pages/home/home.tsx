@@ -1,7 +1,7 @@
 // ---------- MODULE IMPORTS ----------
 import React, {useCallback, memo} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ---------- COMPONENT IMPORTS ----------
@@ -13,7 +13,7 @@ import {CombinedNavigationProp} from '../../types/navigation';
 import {useAuth} from '../../context/auth-context';
 import {useApp} from '../../context/app-context';
 import {h, pallette} from '../../constants/constants';
-import {ToastService} from '../../utils';
+import {routes, ToastService} from '../../utils';
 
 // ---------- COMPONENT ----------
 const Home: React.FC = () => {
@@ -30,8 +30,14 @@ const Home: React.FC = () => {
         'refreshToken',
         'tokenExpiry',
       ]);
-      setLoggedIn(false);
-      navigation.navigate('Login');
+      // setLoggedIn(false);
+      // navigation.navigate('Login');
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: routes.SetMpin}],
+        }),
+      );
     } catch (error: any) {
       ToastService.error(
         'Error',

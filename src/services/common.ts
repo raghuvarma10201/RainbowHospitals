@@ -133,7 +133,9 @@ export const sendPatientPushNotification = async (payload: any) => {
 
 export const advancePay = async (payload: any) => {
   try {
-    const response = await api.post('/patientAdvancePay', payload);
+    const response = await api.post('/patientAdvancePay', payload, {
+      timeout: 180000,
+    });
     return response.data;
   } catch (error) {
     throw error;

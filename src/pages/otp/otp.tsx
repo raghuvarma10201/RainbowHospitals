@@ -123,6 +123,11 @@ const Otp: React.FC = () => {
     onSubmit: async () => {
       if (!phoneNumber) return;
       setLoading(true);
+      console.log({
+        number: phoneNumber,
+        otp: value,
+      });
+
       try {
         const fcmToken = (await AsyncStorage.getItem('FcmTtoken')) || '';
         const verifyRes = await VerifyOTP({
@@ -163,9 +168,13 @@ const Otp: React.FC = () => {
         });
         if (profileData?.success && profileData.data?.[0]) {
           updateProfile(profileData.data[0]);
-          const storedMpin = await AsyncStorage.getItem('mPin');
+          // const storedMpin = await AsyncStorage.getItem('mPin');
+          // console.log(storedMpin);
+          // if (storedMpin) {
           setLoggedIn(true);
-          navigation.navigate(storedMpin ? 'Dashboard' : 'SetMpin');
+          // } else {
+          //   navigation.navigate(storedMpin ? 'Dashboard' : 'SetMpin');
+          // }
         }
 
         await loadDetails();

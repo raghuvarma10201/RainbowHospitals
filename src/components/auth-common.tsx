@@ -46,6 +46,8 @@ export const AuthCommonComponent: FC<commonauth> = ({
   formik,
   resendDisabled,
 }) => {
+  console.log(input);
+
   const [country, setCountry] = useState('1');
   const [value, setValue] = useState('');
   const [mpin, setMpin] = useState('');
@@ -218,36 +220,43 @@ export const AuthCommonComponent: FC<commonauth> = ({
             )}
 
             {/* Confirm M-Pin */}
-            <Text style={[styles.inpSubHeading, {fontSize: adjust(11)}]}>
-              Confirm M-Pin
-            </Text>
+            {input == 'mpinE' && (
+              <>
+                <Text style={[styles.inpSubHeading, {fontSize: adjust(11)}]}>
+                  Confirm M-Pin
+                </Text>
 
-            <CodeField
-              ref={confirmFieldRef as React.RefObject<TextInput>}
-              {...confirmProps}
-              value={confirmMpin}
-              onChangeText={text => {
-                const cleanText = text.replace(/[^0-9]/g, '');
-                setConfirmMpin(cleanText);
-                handleNumberChange('confirmMpin', text.replace(/[^0-9]/g, ''));
-              }}
-              cellCount={PIN_COUNT}
-              rootStyle={styles.codeFieldRoot}
-              keyboardType="number-pad"
-              textContentType="oneTimeCode"
-              renderCell={({index, symbol, isFocused}) => (
-                <View
-                  key={index}
-                  style={[styles.cell, isFocused && styles.focusCell]}
-                  onLayout={getConfirmCellOnLayoutHandler(index)}>
-                  <Text style={styles.cellText}>
-                    {symbol || (isFocused ? <Cursor /> : null)}
-                  </Text>
-                </View>
-              )}
-            />
-            {formik.touched.confirmMpin && formik.errors.confirmMpin && (
-              <Text style={styles.error}>{formik.errors.confirmMpin}</Text>
+                <CodeField
+                  ref={confirmFieldRef as React.RefObject<TextInput>}
+                  {...confirmProps}
+                  value={confirmMpin}
+                  onChangeText={text => {
+                    const cleanText = text.replace(/[^0-9]/g, '');
+                    setConfirmMpin(cleanText);
+                    handleNumberChange(
+                      'confirmMpin',
+                      text.replace(/[^0-9]/g, ''),
+                    );
+                  }}
+                  cellCount={PIN_COUNT}
+                  rootStyle={styles.codeFieldRoot}
+                  keyboardType="number-pad"
+                  textContentType="oneTimeCode"
+                  renderCell={({index, symbol, isFocused}) => (
+                    <View
+                      key={index}
+                      style={[styles.cell, isFocused && styles.focusCell]}
+                      onLayout={getConfirmCellOnLayoutHandler(index)}>
+                      <Text style={styles.cellText}>
+                        {symbol || (isFocused ? <Cursor /> : null)}
+                      </Text>
+                    </View>
+                  )}
+                />
+                {formik.touched.confirmMpin && formik.errors.confirmMpin && (
+                  <Text style={styles.error}>{formik.errors.confirmMpin}</Text>
+                )}
+              </>
             )}
           </>
         )}

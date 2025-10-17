@@ -310,7 +310,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           mrn: mrn ?? '',
           OrganisationUID: branch?.organisation?.organisationid.toString(),
           transaction_id: paymenttype == 'Pay Now' ? txnid ?? '' : '',
-          price: cons_fee ?? 0,
+          price: paymenttype == 'Pay Now' ? cons_fee ?? 0 : 0,
           payment_type: paymenttype == 'Pay Now' ? 'PayU' : 'PAYATHOSPITAL',
           orgcode: branch?.organisation?.code || '',
           Visittype: 'First Visit',
@@ -321,6 +321,8 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               : settings?.physicalBookingInterval ?? 0) / 60,
           ...commonPayload,
         };
+        console.log(blockPayload);
+
         try {
           const response = await bookAppointment(blockPayload);
           if (response && response.status == 200 && response.success == true) {
@@ -335,7 +337,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
             setPayloadState({
               final: {
                 ...blockPayload,
-                registrationFee: reg_fee,
+                registrationFee: paymenttype == 'Pay Now' ? reg_fee : 0,
                 doctor_name: doctorDetail?.name,
               },
               bookingID: response?.data?.his_booking_id,
@@ -393,6 +395,8 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         AppointmentNumber: payloadState?.bookingID ?? 'BAHOP-2972192',
         transaction_id: '',
       };
+      console.log(payload);
+
       setLoadingCall(true);
       try {
         const response = await advancePay(payload);

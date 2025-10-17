@@ -1,5 +1,5 @@
 // ---------- MODULE IMPORTS ----------
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -12,39 +12,86 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ToastService} from '../../utils/service-handlers';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import {CombinedNavigationProp} from '../../types/navigation';
 import {useAuth} from '../../context/auth-context';
-import {postMpin} from '../../services/auth';
+import {postMpin, verifyMpin} from '../../services/auth';
 import {AuthCommonComponent} from '../../components/auth-common';
 import {h, pallette} from '../../constants/constants';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
+import {useApp} from '../../context/app-context';
+import {routes} from '../../utils';
 
 // ---------- COMPONENT ----------
 const SetMpin: React.FC = () => {
   const [mpin, setMpin] = useState('');
   const [confirmMpin, setConfirmMpin] = useState('');
-  const navigation = useNavigation<CombinedNavigationProp>();
-  const {setLoggedIn} = useAuth();
-  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState('');
+  const [isExistingMpin, setIsExistingMpin] = useState<boolean | null>(null); // null = loading
+  const navigation = useNavigation<CombinedNavigationProp>();
+  const {updateMpinEntered} = useApp(); // Add `setMpinEntered` in context
+
+  // Check AsyncStorage for existing M-PIN on mount
+  useEffect(() => {
+    const checkMpin = async () => {
+      const storedMpin = await AsyncStorage.getItem('mPin');
+      if (storedMpin) setIsExistingMpin(true);
+      else setIsExistingMpin(false);
+    };
+    checkMpin();
+  }, []);
 
   const handleSubmit = async () => {
-    console.log('called');
-
+    const phoneNumber = await AsyncStorage.getItem('mobileNumber');
+    setLoading(true);
     try {
-      setLoading(true);
-      const phoneNumber = await AsyncStorage.getItem('mobileNumber');
-      const response = await postMpin({MobileNo: phoneNumber, mpin});
-      if (response?.success && response?.status === 200) {
-        ToastService.success('Success', 'mPIN set successfully');
-        await AsyncStorage.setItem('mPin', mpin);
-        setLoggedIn(true);
-        navigation.navigate('Dashboard');
+      if (isExistingMpin) {
+        // Enter M-PIN flow
+        const response = await verifyMpin({MobileNo: phoneNumber, mpin});
+        if (response?.success && response?.status === 200) {
+          await AsyncStorage.setItem('mPin', mpin);
+          updateMpinEntered(true); // Save in context
+          const token = response.data.token;
+          if (!token) ToastService.error('Error', 'Token Missing!');
+          await AsyncStorage.multiSet([
+            ['accessToken', token],
+            ['refreshToken', token],
+            ['tokenExpiry', response.data.expiryTime],
+          ]);
+          ToastService.success('Success', 'M-PIN verified successfully');
+          // navigation.navigate('Category');
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: routes.Category}],
+            }),
+          );
+        } else {
+          ToastService.error(
+            'Error',
+            response?.message || 'Failed to verify M-PIN',
+          );
+        }
       } else {
-        ToastService.error('Error', response?.message || 'Failed to set mPIN');
+        // Set M-PIN flow
+        const response = await postMpin({MobileNo: phoneNumber, mpin});
+        if (response?.success && response?.status === 200) {
+          await AsyncStorage.setItem('mPin', mpin);
+          updateMpinEntered(true); // Save in context
+          ToastService.success('Success', 'M-PIN set successfully');
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: routes.Category}],
+            }),
+          );
+        } else {
+          ToastService.error(
+            'Error',
+            response?.message || 'Failed to set M-PIN',
+          );
+        }
       }
     } catch (error: any) {
       ToastService.error(
@@ -60,32 +107,38 @@ const SetMpin: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {mpin: '', confirmMpin: ''},
-    validationSchema: Yup.object({
-      mpin: Yup.string()
-        .matches(/^\d{4}$/, 'Enter a valid 4-digit M-Pin')
-        .required('M-Pin is required'),
-      confirmMpin: Yup.string()
-        .matches(/^\d{4}$/, 'Enter a valid 4-digit M-Pin')
-        .oneOf([Yup.ref('mpin')], 'M-PINs must match')
-        .required('Confirm M-Pin is required'),
-    }),
-    onSubmit: async () => {
-      handleSubmit();
-    },
+    validationSchema: Yup.object(
+      isExistingMpin
+        ? {
+            mpin: Yup.string()
+              .matches(/^\d{4}$/, 'Enter a valid 4-digit M-PIN')
+              .required('M-PIN is required'),
+          }
+        : {
+            mpin: Yup.string()
+              .matches(/^\d{4}$/, 'Enter a valid 4-digit M-PIN')
+              .required('M-PIN is required'),
+            confirmMpin: Yup.string()
+              .matches(/^\d{4}$/, 'Enter a valid 4-digit M-PIN')
+              .oneOf([Yup.ref('mpin')], 'M-PINs must match')
+              .required('Confirm M-PIN is required'),
+          },
+    ),
+    onSubmit: handleSubmit,
   });
 
   const handleMpinChange = useCallback(
     (field: 'mpin' | 'confirmMpin', text: string) => {
       const cleanText = text.replace(/[^0-9]/g, '');
-      if (field === 'mpin') {
-        setMpin(cleanText);
-      } else {
-        setConfirmMpin(cleanText);
-      }
+      if (field === 'mpin') setMpin(cleanText);
+      else setConfirmMpin(cleanText);
       formik.setFieldValue(field, cleanText);
     },
     [formik],
   );
+
+  // Show loader until AsyncStorage check is done
+  if (isExistingMpin === null) return <Text>Loading...</Text>;
 
   return (
     <KeyboardAvoidingView
@@ -98,9 +151,9 @@ const SetMpin: React.FC = () => {
           backgroundColor: pallette.white,
         }}>
         <AuthCommonComponent
-          toEnter={'M-Pin'}
-          subTxt={`Set M-Pin`}
-          input={'mpin'}
+          toEnter={isExistingMpin ? 'M-PIN' : 'Set M-PIN'}
+          subTxt={``}
+          input={isExistingMpin ? ' mpinE' : 'mpin'}
           btnTxt={'Confirm'}
           handleNumberChange={handleMpinChange}
           formik={formik}

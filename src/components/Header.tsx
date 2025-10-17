@@ -105,31 +105,32 @@ const Header = forwardRef<any, HeaderProps>(
           const mrn = await AsyncStorage.getItem('mobileNumber');
           if (!mrn) return;
           const data = await getPatientProfile({MobileNo: mrn});
-          console.log(data.data.length);
+          const getPatientByRelations = (relations: string[]) =>
+            data.data.find((item: any) =>
+              relations.includes(item.relation?.toLowerCase()),
+            ) || null;
 
-          console.log(
-            data.data.filter(
-              (items: any) =>
-                items?.relation?.toLowerCase() == 'son' ||
-                items?.relation?.toLowerCase() == 'daughter',
-            ).length,
-          );
+          let mainPatient;
+          if (category?.name === 'Child Care') {
+            mainPatient =
+              getPatientByRelations(['son', 'daughter']) ||
+              getPatientByRelations(['self']) ||
+              data.data[0];
+            console.log(mainPatient);
+          } else if (category?.name === 'Women Care') {
+            mainPatient =
+              getPatientByRelations(['spouse']) ||
+              getPatientByRelations(['self']) ||
+              data.data[0];
+          } else {
+            mainPatient =
+              getPatientByRelations(['spouse']) ||
+              getPatientByRelations(['self']) ||
+              data.data[0];
+          }
+          console.log(mainPatient);
 
-          setMainPatient(
-            category?.name == 'Child Care'
-              ? data.data.filter(
-                  (items: any) =>
-                    items?.relation?.toLowerCase() == 'son' ||
-                    items?.relation?.toLowerCase() == 'daughter',
-                )[0]
-              : category?.name == 'Women Care'
-              ? data.data.filter(
-                  (items: any) => items?.relation?.toLowerCase() == 'spouse',
-                )[0]
-              : data.data.filter(
-                  (items: any) => items?.relation?.toLowerCase() == 'spouse',
-                )[0],
-          );
+          setMainPatient(mainPatient);
 
           if (data?.data?.[0]?.PatientID) {
             updateProfile(data.data[0]);

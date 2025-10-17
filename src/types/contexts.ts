@@ -12,7 +12,7 @@ interface AppContextProps {
   region: Region | null;
   patient: Region | null;
   mrn: string;
-  category: Category;
+  category: Category | null;
   categories: Category[] | null;
   profile: PatientProfile | null;
   doctorDetails: DoctorDetailsResponse | null;
@@ -23,6 +23,7 @@ interface AppContextProps {
   todayCount: number;
   upcomingCount: number;
   appointment: AppointmentPayload | null;
+  mpinEntered: boolean;
   settings: Setting | null;
 
   updateAppointment: (data: AppointmentPayload | null) => void;
@@ -42,6 +43,7 @@ interface AppContextProps {
   updateSessionCount: (s: string) => void;
   updateTodayCount: (c: number) => void;
   updateUpcomingCount: (c: number) => void;
+  updateMpinEntered: (c: boolean) => void;
   updateSettings: (c: Setting) => void;
 }
 

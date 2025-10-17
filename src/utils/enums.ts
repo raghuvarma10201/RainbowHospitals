@@ -25,6 +25,7 @@ import {
   PatientRecords,
 } from '../pages';
 import Notifications from '../pages/notifications/notifications';
+import {DocumentPreview} from '../pages/patient-records/document-preview';
 import {AuthStackParamList, MainStackParamList} from '../types/navigation';
 
 type CombinedRouteNames = keyof (AuthStackParamList & MainStackParamList);
@@ -57,6 +58,7 @@ export const routes: Record<CombinedRouteNames, CombinedRouteNames> = {
   AddFamily: 'AddFamily',
   Records: 'Records',
   Notifications: 'Notifications',
+  DocPreview: 'DocPreview',
 };
 
 export const auth_screens = [
@@ -64,11 +66,11 @@ export const auth_screens = [
   // {name: routes.Dashboard, component: Dashboard},
   {name: routes.Login, component: Login},
   {name: routes.Otp, component: Otp},
-  {name: routes.SetMpin, component: SetMpin},
   {name: routes.Registration, component: Registration},
 ];
 
 export const app_screens = [
+  {name: routes.SetMpin, component: SetMpin},
   {name: routes.Category, component: Category},
   {name: routes.Dashboard, component: Dashboard},
   {name: routes.Specialities, component: Specialities},
@@ -90,6 +92,7 @@ export const app_screens = [
   {name: routes.AddFamily, component: AddFamilyMember},
   {name: routes.Records, component: PatientRecords},
   {name: routes.Notifications, component: Notifications},
+  {name: routes.DocPreview, component: DocumentPreview},
 ];
 
 export const API_BASE_URL = 'https://rainbow.exwyn.com/api';

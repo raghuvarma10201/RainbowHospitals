@@ -25,3 +25,12 @@ export const postMpin = async (payload: any) => {
     throw error.response?.data || error;
   }
 };
+
+export const verifyMpin = async (payload: any) => {
+  try {
+    const response = await api.post('/verifyMpin', payload);
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};

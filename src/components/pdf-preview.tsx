@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Dimensions, Platform} from 'react-native';
 import {Appbar} from 'react-native-paper';
 import Pdf from 'react-native-pdf';
-import {pallette} from '../constants/constants';
+import {h, pallette, w} from '../constants/constants';
 
 interface PdfPreviewProps {
   source: string | {uri?: string; base64?: string};
@@ -39,21 +39,31 @@ export const PdfPreview = ({source, back}: PdfPreviewProps) => {
   return (
     <View
       style={{
-        flex: 1,
-        position: 'absolute',
-        height: window.height * 0.8,
-        width: window.width,
-        backgroundColor: 'white',
+        height: window.height * 0.15,
+        width: window.width * 0.9,
+        alignSelf: 'center',
+        marginVertical: h * 0.01,
+        borderRadius: w * 0.02,
+        // padding: 5,
+        backgroundColor: '#e5e5e5',
+        borderWidth: 0.5,
+        borderColor: pallette.light_grey,
       }}>
       <Pdf
         source={pdfSource}
         onError={error => console.log('PDF error:', error)}
-        style={{flex: 1, width: '100%'}}
+        style={{flex: 1, width: '100%', borderRadius: w * 0.02}}
+        fitPolicy={0}
       />
-      <Appbar.BackAction
-        onPress={back}
-        color={pallette.black}
-        style={{position: 'absolute', top: 10, left: 10, zIndex: 1}}
+      <View
+        style={{
+          position: 'absolute',
+          height: '100%',
+          width: '100%',
+          backgroundColor: pallette.black,
+          opacity: 0.2,
+          borderRadius: w * 0.02,
+        }}
       />
     </View>
   );
