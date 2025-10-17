@@ -34,6 +34,7 @@ interface commonauth {
   handleNumberBlur?: any;
   formik: any;
   resendDisabled?: boolean;
+  isSet?: boolean;
 }
 
 export const AuthCommonComponent: FC<commonauth> = ({
@@ -45,6 +46,7 @@ export const AuthCommonComponent: FC<commonauth> = ({
   handleNumberBlur,
   formik,
   resendDisabled,
+  isSet,
 }) => {
   console.log(input);
 
@@ -120,7 +122,7 @@ export const AuthCommonComponent: FC<commonauth> = ({
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.inpHeading}>
-          {input == 'mpin' ? 'Set' : 'Enter'} {toEnter}
+          {input == 'mpin' ? (isSet ? 'Enter' : 'Set') : 'Enter'} {toEnter}
         </Text>
         <Text style={styles.inpSubHeading}>{subTxt}</Text>
         {input == 'mobile' ? (
@@ -220,7 +222,7 @@ export const AuthCommonComponent: FC<commonauth> = ({
             )}
 
             {/* Confirm M-Pin */}
-            {input == 'mpinE' && (
+            {!isSet && (
               <>
                 <Text style={[styles.inpSubHeading, {fontSize: adjust(11)}]}>
                   Confirm M-Pin

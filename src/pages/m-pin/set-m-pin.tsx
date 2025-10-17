@@ -151,12 +151,13 @@ const SetMpin: React.FC = () => {
           backgroundColor: pallette.white,
         }}>
         <AuthCommonComponent
-          toEnter={isExistingMpin ? 'M-PIN' : 'Set M-PIN'}
+          toEnter={isExistingMpin ? 'M-PIN' : 'M-PIN'}
           subTxt={``}
-          input={isExistingMpin ? ' mpinE' : 'mpin'}
+          input={'mpin'}
           btnTxt={'Confirm'}
           handleNumberChange={handleMpinChange}
           formik={formik}
+          isSet={isExistingMpin}
         />
       </ScrollView>
     </KeyboardAvoidingView>

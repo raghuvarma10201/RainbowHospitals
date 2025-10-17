@@ -73,6 +73,23 @@ export const isBeforeTwoHours = (
   return diffHours >= hoursBefore;
 };
 
+export const isAfterTwoHours = (
+  givenDttm: any,
+  slotStartDttm: any,
+  hoursAfter: number = 2,
+) => {
+  const givenTime: any = new Date(givenDttm);
+  const slotTime: any = new Date(slotStartDttm);
+
+  // difference in milliseconds
+  const diffMs = slotTime - givenTime;
+
+  // convert ms → hours
+  const diffHours = diffMs / (1000 * 60 * 60);
+
+  return diffHours <= hoursAfter;
+};
+
 export const isValidUrl = (url: string) => {
   try {
     new URL(url);

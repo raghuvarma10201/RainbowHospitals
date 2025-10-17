@@ -18,6 +18,7 @@ import {
   formatAppointmentTime,
   isBeforeTwoHours,
   adjust,
+  isAfterTwoHours,
 } from '../../utils/common-functions';
 import {
   bookAppointment,
@@ -273,23 +274,32 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
 
         {appointmentData?.AppointmentType.toLowerCase() !== 'physical' && (
           <TouchableOpacity
-            disabled={isBeforeTwoHours(
-              dateTime,
-              appointmentData?.SlotStartDttm,
-              0.25,
-            )}
+            disabled={
+              isBeforeTwoHours(
+                dateTime,
+                appointmentData?.SlotStartDttm,
+                0.25,
+              ) ||
+              isAfterTwoHours(dateTime, appointmentData?.SlotStartDttm, 0.25)
+            }
             onPress={sendNotification}>
             <Text
               style={[
                 styles.actionBtnText,
                 {
-                  backgroundColor: isBeforeTwoHours(
-                    dateTime,
-                    appointmentData?.SlotStartDttm,
-                    0.25,
-                  )
-                    ? pallette.dark_grey
-                    : pallette.dark_purple,
+                  backgroundColor:
+                    isBeforeTwoHours(
+                      dateTime,
+                      appointmentData?.SlotStartDttm,
+                      0.25,
+                    ) ||
+                    isAfterTwoHours(
+                      dateTime,
+                      appointmentData?.SlotStartDttm,
+                      0.25,
+                    )
+                      ? pallette.dark_grey
+                      : pallette.dark_purple,
                 },
               ]}>
               Join Call

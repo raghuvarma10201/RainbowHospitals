@@ -12,6 +12,7 @@ import {upcomingApointment} from '../../../utils/types';
 import {
   formatAppointmentDate,
   formatAppointmentTime,
+  isAfterTwoHours,
   isBeforeTwoHours,
 } from '../../../utils/common-functions';
 import {pallette, w} from '../../../constants/constants';
@@ -148,11 +149,14 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
               ]}>
               <>
                 <TouchableOpacity
-                  disabled={isBeforeTwoHours(
-                    dateTime,
-                    appointment?.SlotStartDttm,
-                    0.25,
-                  )}
+                  disabled={
+                    isBeforeTwoHours(
+                      dateTime,
+                      appointment?.SlotStartDttm,
+                      0.25,
+                    ) ||
+                    isAfterTwoHours(dateTime, appointment?.SlotStartDttm, 0.25)
+                  }
                   onPress={() =>
                     navigation.navigate('MyAppointmentDetails', {
                       appointmentData: appointment,
@@ -162,13 +166,19 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                     style={[
                       styles.rescheduleBt,
                       {
-                        color: isBeforeTwoHours(
-                          dateTime,
-                          appointment?.SlotStartDttm,
-                          0.25,
-                        )
-                          ? pallette.dark_grey
-                          : pallette.white,
+                        color:
+                          isBeforeTwoHours(
+                            dateTime,
+                            appointment?.SlotStartDttm,
+                            0.25,
+                          ) ||
+                          isAfterTwoHours(
+                            dateTime,
+                            appointment?.SlotStartDttm,
+                            0.25,
+                          )
+                            ? pallette.dark_grey
+                            : pallette.white,
                       },
                     ]}>
                     Join Call
