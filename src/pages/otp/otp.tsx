@@ -40,6 +40,7 @@ const Otp: React.FC = () => {
   const {setLoggedIn} = useAuth();
 
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const [fcm, setFcm] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState('');
   const [timer, setTimer] = useState(30);
@@ -47,6 +48,7 @@ const Otp: React.FC = () => {
 
   useEffect(() => {
     AsyncStorage.getItem('mobileNumber').then(setPhoneNumber);
+    AsyncStorage.getItem('FcmTtoken').then(setFcm);
   }, []);
 
   useEffect(() => {
@@ -129,7 +131,11 @@ const Otp: React.FC = () => {
       });
 
       try {
-        const fcmToken = (await AsyncStorage.getItem('FcmTtoken')) || '';
+        const fcmToken = (await AsyncStorage.getItem('FcmTtoken')) || fcm;
+        if (!fcmToken) {
+          ToastService.error('Error', 'Failed to fetch FCM Token!');
+          return;
+        }
         const verifyRes = await VerifyOTP({
           number: phoneNumber,
           otp: value,

@@ -179,6 +179,30 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
               <View
                 style={[
                   styles.rowItem,
+                  {borderTopWidth: 0.7, borderLeftWidth: 0.7},
+                ]}>
+                <Text style={styles.acSubTitle}>Payment Type</Text>
+              </View>
+              <View
+                style={[
+                  styles.rowItem,
+                  {
+                    borderTopWidth: 0.7,
+                    borderLeftWidth: 0.7,
+                    borderRightWidth: 0.7,
+                  },
+                ]}>
+                <Text style={styles.acSubTitle}>
+                  {appointment?.payment_type == 'PAYATHOSPITAL'
+                    ? 'Pay at hospital'
+                    : 'Paid'}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.rowItems}>
+              <View
+                style={[
+                  styles.rowItem,
                   {
                     borderTopWidth: 0.7,
                     borderLeftWidth: 0.7,

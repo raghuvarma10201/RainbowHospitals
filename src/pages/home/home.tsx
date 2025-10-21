@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     backgroundColor: pallette.white,
   },
   scrollContent: {
-    paddingBottom: h * 0.07,
+    paddingBottom: h * 0.1,
   },
   container: {
     flex: 1,

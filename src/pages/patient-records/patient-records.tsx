@@ -353,7 +353,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
         />
 
         {/* Date Pickers */}
-        {/* <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <TouchableOpacity
             style={styles.datePickerBtn}
             onPress={() => setShowStartPicker(true)}>
@@ -421,7 +421,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }}
             />
           )}
-        </View> */}
+        </View>
 
         {/* Accordion Visits */}
         {/* {filteredVisits.length ? (
@@ -664,7 +664,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 color: pallette.black,
                 textTransform: 'capitalize',
               }}>
-              Record Date : {moment().format('DD MMM')}
+              Record Date : {moment(startDate).format('DD MMM')}
               {"'"}
               {moment().format('YY')}
             </Text>
@@ -773,7 +773,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 color: pallette.black,
                 textTransform: 'capitalize',
               }}>
-              Record Date : {moment().format('DD MMM')}
+              Record Date : {moment(startDate).add(1, 'day').format('DD MMM')}
               {"'"}
               {moment().format('YY')}
             </Text>
@@ -802,6 +802,15 @@ const PatientRecords: FC = ({navigation, route}: any) => {
             />
           </View> */}
           </View>
+          <Text
+            style={{
+              fontSize: adjust(12),
+              color: pallette.black,
+              textTransform: 'capitalize',
+              paddingHorizontal: w * 0.02,
+            }}>
+            Test Name: X-Ray Chest
+          </Text>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate(routes.DocPreview, {
@@ -882,7 +891,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 color: pallette.black,
                 textTransform: 'capitalize',
               }}>
-              Record Date : {moment().format('DD MMM')}
+              Record Date : {moment(startDate).add(2, 'days').format('DD MMM')}
               {"'"}
               {moment().format('YY')}
             </Text>
@@ -911,6 +920,15 @@ const PatientRecords: FC = ({navigation, route}: any) => {
             />
           </View> */}
           </View>
+          <Text
+            style={{
+              fontSize: adjust(12),
+              color: pallette.black,
+              textTransform: 'capitalize',
+              paddingHorizontal: w * 0.02,
+            }}>
+            Test Name: Liver Profile
+          </Text>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate(routes.DocPreview, {
@@ -991,7 +1009,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 color: pallette.black,
                 textTransform: 'capitalize',
               }}>
-              Record Date : {moment().format('DD MMM')}
+              Record Date : {moment(startDate).add(4, 'days').format('DD MMM')}
               {"'"}
               {moment().format('YY')}
             </Text>
@@ -1020,6 +1038,15 @@ const PatientRecords: FC = ({navigation, route}: any) => {
             />
           </View> */}
           </View>
+          <Text
+            style={{
+              fontSize: adjust(12),
+              color: pallette.black,
+              textTransform: 'capitalize',
+              paddingHorizontal: w * 0.02,
+            }}>
+            Outpatient
+          </Text>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate(routes.DocPreview, {
@@ -1100,7 +1127,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 color: pallette.black,
                 textTransform: 'capitalize',
               }}>
-              Record Date : {moment().format('DD MMM')}
+              Record Date : {moment(startDate).add(5, 'days').format('DD MMM')}
               {"'"}
               {moment().format('YY')}
             </Text>
@@ -1209,7 +1236,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 color: pallette.black,
                 textTransform: 'capitalize',
               }}>
-              Record Date : {moment().format('DD MMM')}
+              Record Date : {moment(startDate).add(8, 'days').format('DD MMM')}
               {"'"}
               {moment().format('YY')}
             </Text>
