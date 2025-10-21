@@ -9,7 +9,7 @@ import {
 import React, {useState} from 'react';
 import {Text} from 'react-native-paper';
 
-import Header from '../../components/header';
+import {Header} from '../../components';
 import Footer from '../../components/footer';
 
 import {useNavigation} from '@react-navigation/native';

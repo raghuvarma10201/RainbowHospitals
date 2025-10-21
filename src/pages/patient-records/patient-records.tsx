@@ -12,7 +12,7 @@ import React, {FC, useCallback, useEffect, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {adjust, routes, ToastService} from '../../utils';
 import {h, pallette, w} from '../../constants/constants';
-import Header from '../../components/header';
+import {Header} from '../../components';
 import {
   fetchFamilyMembers,
   getAllLabReports,

@@ -2,7 +2,7 @@ import React from 'react';
 import {View, ScrollView, Text} from 'react-native';
 import Pdf from 'react-native-pdf';
 import {h, pallette, w} from '../../constants/constants';
-import Header from '../../components/header';
+import {Header} from '../../components';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import RNBlobUtil from 'react-native-blob-util';
 

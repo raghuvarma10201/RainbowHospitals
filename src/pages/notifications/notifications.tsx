@@ -23,7 +23,7 @@ import {useApp} from '../../context/app-context';
 import {ToastService} from '../../utils';
 import {NotFound} from '../../components';
 import {h, pallette, w} from '../../constants/constants';
-import Header from '../../components/header';
+import {Header} from '../../components';
 import {getNotifications} from '../../services/common';
 
 const Notifications: React.FC = () => {

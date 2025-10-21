@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Text, Modal, Portal, TextInput} from 'react-native-paper';
-import Header from '../../components/header';
+import {Header} from '../../components';
 import Footer from '../../components/footer';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';

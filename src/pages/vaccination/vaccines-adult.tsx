@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React from 'react';
 
-import Header from '../../components/header';
+import {Header} from '../../components';
 import Footer from '../../components/footer';
 import {h, pallette, w} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';

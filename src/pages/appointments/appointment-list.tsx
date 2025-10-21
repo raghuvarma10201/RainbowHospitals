@@ -9,7 +9,7 @@ import {
 
 import React, {useCallback, useRef, useState} from 'react';
 import {Text} from 'react-native-paper';
-import Header from '../../components/header';
+import {Header} from '../../components';
 import Footer from '../../components/footer';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';

@@ -10,7 +10,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {fetchFamilyMembers, updateRelationship} from '../../services/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {h, pallette, w} from '../../constants/constants';
-import Header from '../../components/header';
+import {Header} from '../../components';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Dropdown} from 'react-native-element-dropdown';

@@ -9,7 +9,7 @@ import {
 import React from 'react';
 import {Text} from 'react-native-paper';
 
-import Header from '../../components/header';
+import {Header} from '../../components';
 import Footer from '../../components/footer';
 import {pallette} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
