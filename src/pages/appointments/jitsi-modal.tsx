@@ -712,7 +712,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   belowView: {
-    flex: 1,
+    flex: 3,
     backgroundColor: pallette.dark_grey,
     justifyContent: 'center',
     alignItems: 'center',

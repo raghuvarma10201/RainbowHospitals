@@ -40,7 +40,7 @@ export const PdfPreview = ({source, back}: PdfPreviewProps) => {
     <View
       style={{
         height: window.height * 0.15,
-        width: window.width * 0.9,
+        width: window.width * 0.8,
         alignSelf: 'center',
         marginVertical: h * 0.01,
         borderRadius: w * 0.02,

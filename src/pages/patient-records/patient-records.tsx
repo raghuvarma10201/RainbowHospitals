@@ -634,41 +634,57 @@ const PatientRecords: FC = ({navigation, route}: any) => {
           />
         )} */}
 
-        <View
-          style={{
-            borderWidth: 0.7,
-            borderColor: pallette.light_grey,
-            borderRadius: w * 0.02,
-            marginBottom: h * 0.01,
+        <AccordionItem
+          key={0}
+          title={`${moment(startDate).format('DD MMM')}'${moment().format(
+            'YY',
+          )}`}
+          expanded={0 == openIndex}
+          onToggle={() => {
+            setOpenIndex(0);
+            setSelectedReportType(null);
+            // fetchReports(visit);
           }}>
-          <View
-            style={{
-              padding: w * 0.02,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text
+          {loading ? (
+            <View style={{marginVertical: h * 0.02}}>
+              <ThreeDotLoader />
+            </View>
+          ) : (
+            <View
               style={{
-                fontSize: 16,
-                color: pallette.white,
-                textTransform: 'capitalize',
-                backgroundColor: pallette.amethyst,
-                padding: 4,
-                borderRadius: 5,
+                borderWidth: 0.7,
+                borderColor: pallette.light_grey,
+                borderRadius: w * 0.02,
+                marginBottom: h * 0.01,
               }}>
-              Lab Report
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.black,
-                textTransform: 'capitalize',
-              }}>
-              Record Date : {moment(startDate).format('DD MMM')}
-              {"'"}
-              {moment().format('YY')}
-            </Text>
-            {/* <View
+              <View
+                style={{
+                  padding: w * 0.02,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.white,
+                    textTransform: 'capitalize',
+                    backgroundColor: pallette.amethyst,
+                    padding: 4,
+                    borderRadius: 5,
+                  }}>
+                  Lab Report
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.black,
+                    textTransform: 'capitalize',
+                  }}>
+                  Record Date : {moment(startDate).format('DD MMM')}
+                  {"'"}
+                  {moment().format('YY')}
+                </Text>
+                {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -692,92 +708,111 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-          </View>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/LabReport1.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'LabReport1.pdf',
-              })
-            }>
-            <PdfPreview
-              source={
-                Platform.OS === 'android'
-                  ? {uri: `bundle-assets://docs/LabReport1.pdf`}
-                  : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
-              }
-              back={() => setPreview(undefined)}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              padding: w * 0.03,
-              width: w * 0.9,
-              alignSelf: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderWidth: 0.7,
-              borderColor: pallette.dark_purple,
-              borderRadius: w * 0.03,
-              marginVertical: h * 0.01,
-            }}
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/LabReport1.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'LabReport1.pdf',
-              })
-            }>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.dark_purple,
-                textTransform: 'capitalize',
-              }}>
-              View Complete Report
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            borderWidth: 0.7,
-            borderColor: pallette.light_grey,
-            borderRadius: w * 0.02,
-            marginBottom: h * 0.01,
+              </View>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/LabReport1.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'LabReport1.pdf',
+                  })
+                }>
+                <PdfPreview
+                  source={
+                    Platform.OS === 'android'
+                      ? {uri: `bundle-assets://docs/LabReport1.pdf`}
+                      : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
+                  }
+                  back={() => setPreview(undefined)}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  padding: w * 0.03,
+                  width: w * 0.8,
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderWidth: 0.7,
+                  borderColor: pallette.dark_purple,
+                  borderRadius: w * 0.03,
+                  marginVertical: h * 0.01,
+                }}
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/LabReport1.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'LabReport1.pdf',
+                  })
+                }>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.dark_purple,
+                    textTransform: 'capitalize',
+                  }}>
+                  View Complete Report
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </AccordionItem>
+        <AccordionItem
+          key={1}
+          title={`${moment(startDate)
+            .add(1, 'day')
+            .format('DD MMM')}'${moment().format('YY')}`}
+          expanded={1 == openIndex}
+          onToggle={() => {
+            setOpenIndex(1);
+            setSelectedReportType(null);
+            // fetchReports(visit);
           }}>
-          <View
-            style={{
-              padding: w * 0.02,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text
+          {loading ? (
+            <View style={{marginVertical: h * 0.02}}>
+              <ThreeDotLoader />
+            </View>
+          ) : (
+            <View
               style={{
-                fontSize: 16,
-                color: pallette.white,
-                textTransform: 'capitalize',
-                backgroundColor: pallette.amethyst,
-                padding: 4,
-                borderRadius: 5,
+                borderWidth: 0.7,
+                borderColor: pallette.light_grey,
+                borderRadius: w * 0.02,
+                marginBottom: h * 0.01,
               }}>
-              Radiology Report - 1
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.black,
-                textTransform: 'capitalize',
-              }}>
-              Record Date : {moment(startDate).add(1, 'day').format('DD MMM')}
-              {"'"}
-              {moment().format('YY')}
-            </Text>
-            {/* <View
+              <View
+                style={{
+                  padding: w * 0.02,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.white,
+                    textTransform: 'capitalize',
+                    backgroundColor: pallette.amethyst,
+                    padding: 4,
+                    borderRadius: 5,
+                  }}>
+                  Radiology Report - 1
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.black,
+                    textTransform: 'capitalize',
+                  }}>
+                  Record Date :{' '}
+                  {moment(startDate).add(1, 'day').format('DD MMM')}
+                  {"'"}
+                  {moment().format('YY')}
+                </Text>
+                {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -801,101 +836,120 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-          </View>
-          <Text
-            style={{
-              fontSize: adjust(12),
-              color: pallette.black,
-              textTransform: 'capitalize',
-              paddingHorizontal: w * 0.02,
-            }}>
-            Test Name: X-Ray Chest
-          </Text>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/Radiology1.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'Radiology1.pdf',
-              })
-            }>
-            <PdfPreview
-              source={
-                Platform.OS === 'android'
-                  ? {uri: `bundle-assets://docs/Radiology1.pdf`}
-                  : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
-              }
-              back={() => setPreview(undefined)}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              padding: w * 0.03,
-              width: w * 0.9,
-              alignSelf: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderWidth: 0.7,
-              borderColor: pallette.dark_purple,
-              borderRadius: w * 0.03,
-              marginVertical: h * 0.01,
-            }}
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/Radiology1.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'Radiology1.pdf',
-              })
-            }>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.dark_purple,
-                textTransform: 'capitalize',
-              }}>
-              View Complete Report
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            borderWidth: 0.7,
-            borderColor: pallette.light_grey,
-            borderRadius: w * 0.02,
-            marginBottom: h * 0.01,
+              </View>
+              <Text
+                style={{
+                  fontSize: adjust(12),
+                  color: pallette.black,
+                  textTransform: 'capitalize',
+                  paddingHorizontal: w * 0.02,
+                }}>
+                Test Name: X-Ray Chest
+              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/Radiology1.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'Radiology1.pdf',
+                  })
+                }>
+                <PdfPreview
+                  source={
+                    Platform.OS === 'android'
+                      ? {uri: `bundle-assets://docs/Radiology1.pdf`}
+                      : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
+                  }
+                  back={() => setPreview(undefined)}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  padding: w * 0.03,
+                  width: w * 0.8,
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderWidth: 0.7,
+                  borderColor: pallette.dark_purple,
+                  borderRadius: w * 0.03,
+                  marginVertical: h * 0.01,
+                }}
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/Radiology1.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'Radiology1.pdf',
+                  })
+                }>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.dark_purple,
+                    textTransform: 'capitalize',
+                  }}>
+                  View Complete Report
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </AccordionItem>
+        <AccordionItem
+          key={2}
+          title={`${moment(startDate)
+            .add(2, 'day')
+            .format('DD MMM')}'${moment().format('YY')}`}
+          expanded={2 == openIndex}
+          onToggle={() => {
+            setOpenIndex(2);
+            setSelectedReportType(null);
+            // fetchReports(visit);
           }}>
-          <View
-            style={{
-              padding: w * 0.02,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text
+          {loading ? (
+            <View style={{marginVertical: h * 0.02}}>
+              <ThreeDotLoader />
+            </View>
+          ) : (
+            <View
               style={{
-                fontSize: 16,
-                color: pallette.white,
-                textTransform: 'capitalize',
-                backgroundColor: pallette.amethyst,
-                padding: 4,
-                borderRadius: 5,
+                borderWidth: 0.7,
+                borderColor: pallette.light_grey,
+                borderRadius: w * 0.02,
+                marginBottom: h * 0.01,
               }}>
-              Radiology Report - 2
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.black,
-                textTransform: 'capitalize',
-              }}>
-              Record Date : {moment(startDate).add(2, 'days').format('DD MMM')}
-              {"'"}
-              {moment().format('YY')}
-            </Text>
-            {/* <View
+              <View
+                style={{
+                  padding: w * 0.02,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.white,
+                    textTransform: 'capitalize',
+                    backgroundColor: pallette.amethyst,
+                    padding: 4,
+                    borderRadius: 5,
+                  }}>
+                  Radiology Report - 2
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.black,
+                    textTransform: 'capitalize',
+                  }}>
+                  Record Date :{' '}
+                  {moment(startDate).add(2, 'days').format('DD MMM')}
+                  {"'"}
+                  {moment().format('YY')}
+                </Text>
+                {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -919,101 +973,120 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-          </View>
-          <Text
-            style={{
-              fontSize: adjust(12),
-              color: pallette.black,
-              textTransform: 'capitalize',
-              paddingHorizontal: w * 0.02,
-            }}>
-            Test Name: Liver Profile
-          </Text>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/Radiology2.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'Radiology2.pdf',
-              })
-            }>
-            <PdfPreview
-              source={
-                Platform.OS === 'android'
-                  ? {uri: `bundle-assets://docs/Radiology2.pdf`}
-                  : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
-              }
-              back={() => setPreview(undefined)}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              padding: w * 0.03,
-              width: w * 0.9,
-              alignSelf: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderWidth: 0.7,
-              borderColor: pallette.dark_purple,
-              borderRadius: w * 0.03,
-              marginVertical: h * 0.01,
-            }}
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/Radiology2.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'Radiology2.pdf',
-              })
-            }>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.dark_purple,
-                textTransform: 'capitalize',
-              }}>
-              View Complete Report
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            borderWidth: 0.7,
-            borderColor: pallette.light_grey,
-            borderRadius: w * 0.02,
-            marginBottom: h * 0.01,
+              </View>
+              <Text
+                style={{
+                  fontSize: adjust(12),
+                  color: pallette.black,
+                  textTransform: 'capitalize',
+                  paddingHorizontal: w * 0.02,
+                }}>
+                Test Name: Liver Profile
+              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/Radiology2.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'Radiology2.pdf',
+                  })
+                }>
+                <PdfPreview
+                  source={
+                    Platform.OS === 'android'
+                      ? {uri: `bundle-assets://docs/Radiology2.pdf`}
+                      : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
+                  }
+                  back={() => setPreview(undefined)}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  padding: w * 0.03,
+                  width: w * 0.8,
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderWidth: 0.7,
+                  borderColor: pallette.dark_purple,
+                  borderRadius: w * 0.03,
+                  marginVertical: h * 0.01,
+                }}
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/Radiology2.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'Radiology2.pdf',
+                  })
+                }>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.dark_purple,
+                    textTransform: 'capitalize',
+                  }}>
+                  View Complete Report
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </AccordionItem>
+        <AccordionItem
+          key={3}
+          title={`${moment(startDate)
+            .add(3, 'day')
+            .format('DD MMM')}'${moment().format('YY')}`}
+          expanded={3 == openIndex}
+          onToggle={() => {
+            setOpenIndex(3);
+            setSelectedReportType(null);
+            // fetchReports(visit);
           }}>
-          <View
-            style={{
-              padding: w * 0.02,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text
+          {loading ? (
+            <View style={{marginVertical: h * 0.02}}>
+              <ThreeDotLoader />
+            </View>
+          ) : (
+            <View
               style={{
-                fontSize: 16,
-                color: pallette.white,
-                textTransform: 'capitalize',
-                backgroundColor: pallette.amethyst,
-                padding: 4,
-                borderRadius: 5,
+                borderWidth: 0.7,
+                borderColor: pallette.light_grey,
+                borderRadius: w * 0.02,
+                marginBottom: h * 0.01,
               }}>
-              Consultation Bill
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.black,
-                textTransform: 'capitalize',
-              }}>
-              Record Date : {moment(startDate).add(4, 'days').format('DD MMM')}
-              {"'"}
-              {moment().format('YY')}
-            </Text>
-            {/* <View
+              <View
+                style={{
+                  padding: w * 0.02,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.white,
+                    textTransform: 'capitalize',
+                    backgroundColor: pallette.amethyst,
+                    padding: 4,
+                    borderRadius: 5,
+                  }}>
+                  Consultation Bill
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.black,
+                    textTransform: 'capitalize',
+                  }}>
+                  Record Date :{' '}
+                  {moment(startDate).add(4, 'days').format('DD MMM')}
+                  {"'"}
+                  {moment().format('YY')}
+                </Text>
+                {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -1037,101 +1110,120 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-          </View>
-          <Text
-            style={{
-              fontSize: adjust(12),
-              color: pallette.black,
-              textTransform: 'capitalize',
-              paddingHorizontal: w * 0.02,
-            }}>
-            Outpatient
-          </Text>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/Consultation Bill1.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'Consultation Bill1.pdf',
-              })
-            }>
-            <PdfPreview
-              source={
-                Platform.OS === 'android'
-                  ? {uri: `bundle-assets://docs/Consultation Bill1.pdf`}
-                  : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
-              }
-              back={() => setPreview(undefined)}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              padding: w * 0.03,
-              width: w * 0.9,
-              alignSelf: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderWidth: 0.7,
-              borderColor: pallette.dark_purple,
-              borderRadius: w * 0.03,
-              marginVertical: h * 0.01,
-            }}
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/Consultation Bill1.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'Consultation Bill1.pdf',
-              })
-            }>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.dark_purple,
-                textTransform: 'capitalize',
-              }}>
-              View Complete Report
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            borderWidth: 0.7,
-            borderColor: pallette.light_grey,
-            borderRadius: w * 0.02,
-            marginBottom: h * 0.01,
+              </View>
+              <Text
+                style={{
+                  fontSize: adjust(12),
+                  color: pallette.black,
+                  textTransform: 'capitalize',
+                  paddingHorizontal: w * 0.02,
+                }}>
+                Outpatient
+              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/Consultation Bill1.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'Consultation Bill1.pdf',
+                  })
+                }>
+                <PdfPreview
+                  source={
+                    Platform.OS === 'android'
+                      ? {uri: `bundle-assets://docs/Consultation Bill1.pdf`}
+                      : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
+                  }
+                  back={() => setPreview(undefined)}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  padding: w * 0.03,
+                  width: w * 0.8,
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderWidth: 0.7,
+                  borderColor: pallette.dark_purple,
+                  borderRadius: w * 0.03,
+                  marginVertical: h * 0.01,
+                }}
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/Consultation Bill1.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'Consultation Bill1.pdf',
+                  })
+                }>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.dark_purple,
+                    textTransform: 'capitalize',
+                  }}>
+                  View Complete Report
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </AccordionItem>
+        <AccordionItem
+          key={4}
+          title={`${moment(startDate)
+            .add(4, 'day')
+            .format('DD MMM')}'${moment().format('YY')}`}
+          expanded={4 == openIndex}
+          onToggle={() => {
+            setOpenIndex(4);
+            setSelectedReportType(null);
+            // fetchReports(visit);
           }}>
-          <View
-            style={{
-              padding: w * 0.02,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text
+          {loading ? (
+            <View style={{marginVertical: h * 0.02}}>
+              <ThreeDotLoader />
+            </View>
+          ) : (
+            <View
               style={{
-                fontSize: 16,
-                color: pallette.white,
-                textTransform: 'capitalize',
-                backgroundColor: pallette.amethyst,
-                padding: 4,
-                borderRadius: 5,
+                borderWidth: 0.7,
+                borderColor: pallette.light_grey,
+                borderRadius: w * 0.02,
+                marginBottom: h * 0.01,
               }}>
-              Pharmacy Bill
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.black,
-                textTransform: 'capitalize',
-              }}>
-              Record Date : {moment(startDate).add(5, 'days').format('DD MMM')}
-              {"'"}
-              {moment().format('YY')}
-            </Text>
-            {/* <View
+              <View
+                style={{
+                  padding: w * 0.02,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.white,
+                    textTransform: 'capitalize',
+                    backgroundColor: pallette.amethyst,
+                    padding: 4,
+                    borderRadius: 5,
+                  }}>
+                  Pharmacy Bill
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.black,
+                    textTransform: 'capitalize',
+                  }}>
+                  Record Date :{' '}
+                  {moment(startDate).add(5, 'days').format('DD MMM')}
+                  {"'"}
+                  {moment().format('YY')}
+                </Text>
+                {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -1155,92 +1247,111 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-          </View>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/pharmacysalebill2.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'pharmacysalebill2.pdf',
-              })
-            }>
-            <PdfPreview
-              source={
-                Platform.OS === 'android'
-                  ? {uri: `bundle-assets://docs/pharmacysalebill2.pdf`}
-                  : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
-              }
-              back={() => setPreview(undefined)}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              padding: w * 0.03,
-              width: w * 0.9,
-              alignSelf: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderWidth: 0.7,
-              borderColor: pallette.dark_purple,
-              borderRadius: w * 0.03,
-              marginVertical: h * 0.01,
-            }}
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/pharmacysalebill2.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'pharmacysalebill2.pdf',
-              })
-            }>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.dark_purple,
-                textTransform: 'capitalize',
-              }}>
-              View Complete Report
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            borderWidth: 0.7,
-            borderColor: pallette.light_grey,
-            borderRadius: w * 0.02,
-            marginBottom: h * 0.01,
+              </View>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/pharmacysalebill2.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'pharmacysalebill2.pdf',
+                  })
+                }>
+                <PdfPreview
+                  source={
+                    Platform.OS === 'android'
+                      ? {uri: `bundle-assets://docs/pharmacysalebill2.pdf`}
+                      : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
+                  }
+                  back={() => setPreview(undefined)}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  padding: w * 0.03,
+                  width: w * 0.8,
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderWidth: 0.7,
+                  borderColor: pallette.dark_purple,
+                  borderRadius: w * 0.03,
+                  marginVertical: h * 0.01,
+                }}
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/pharmacysalebill2.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'pharmacysalebill2.pdf',
+                  })
+                }>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.dark_purple,
+                    textTransform: 'capitalize',
+                  }}>
+                  View Complete Report
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </AccordionItem>
+        <AccordionItem
+          key={5}
+          title={`${moment(startDate)
+            .add(5, 'day')
+            .format('DD MMM')}'${moment().format('YY')}`}
+          expanded={5 == openIndex}
+          onToggle={() => {
+            setOpenIndex(5);
+            setSelectedReportType(null);
+            // fetchReports(visit);
           }}>
-          <View
-            style={{
-              padding: w * 0.02,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text
+          {loading ? (
+            <View style={{marginVertical: h * 0.02}}>
+              <ThreeDotLoader />
+            </View>
+          ) : (
+            <View
               style={{
-                fontSize: 16,
-                color: pallette.white,
-                textTransform: 'capitalize',
-                backgroundColor: pallette.amethyst,
-                padding: 4,
-                borderRadius: 5,
+                borderWidth: 0.7,
+                borderColor: pallette.light_grey,
+                borderRadius: w * 0.02,
+                marginBottom: h * 0.01,
               }}>
-              Discharge Summary
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.black,
-                textTransform: 'capitalize',
-              }}>
-              Record Date : {moment(startDate).add(8, 'days').format('DD MMM')}
-              {"'"}
-              {moment().format('YY')}
-            </Text>
-            {/* <View
+              <View
+                style={{
+                  padding: w * 0.02,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.white,
+                    textTransform: 'capitalize',
+                    backgroundColor: pallette.amethyst,
+                    padding: 4,
+                    borderRadius: 5,
+                  }}>
+                  Discharge Summary
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.black,
+                    textTransform: 'capitalize',
+                  }}>
+                  Record Date :{' '}
+                  {moment(startDate).add(8, 'days').format('DD MMM')}
+                  {"'"}
+                  {moment().format('YY')}
+                </Text>
+                {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -1264,57 +1375,59 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-          </View>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/DischargeSummary.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'DischargeSummary.pdf',
-              })
-            }>
-            <PdfPreview
-              source={
-                Platform.OS === 'android'
-                  ? {uri: `bundle-assets://docs/DischargeSummary.pdf`}
-                  : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
-              }
-              back={() => setPreview(undefined)}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              padding: w * 0.03,
-              width: w * 0.9,
-              alignSelf: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderWidth: 0.7,
-              borderColor: pallette.dark_purple,
-              borderRadius: w * 0.03,
-              marginVertical: h * 0.01,
-            }}
-            onPress={() =>
-              navigation.navigate(routes.DocPreview, {
-                source:
-                  Platform.OS === 'android'
-                    ? {uri: `bundle-assets://docs/DischargeSummary.pdf`}
-                    : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
-                doc: 'DischargeSummary.pdf',
-              })
-            }>
-            <Text
-              style={{
-                fontSize: 16,
-                color: pallette.dark_purple,
-                textTransform: 'capitalize',
-              }}>
-              View Complete Report
-            </Text>
-          </TouchableOpacity>
-        </View>
+              </View>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/DischargeSummary.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'DischargeSummary.pdf',
+                  })
+                }>
+                <PdfPreview
+                  source={
+                    Platform.OS === 'android'
+                      ? {uri: `bundle-assets://docs/DischargeSummary.pdf`}
+                      : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf')
+                  }
+                  back={() => setPreview(undefined)}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  padding: w * 0.03,
+                  width: w * 0.8,
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderWidth: 0.7,
+                  borderColor: pallette.dark_purple,
+                  borderRadius: w * 0.03,
+                  marginVertical: h * 0.01,
+                }}
+                onPress={() =>
+                  navigation.navigate(routes.DocPreview, {
+                    source:
+                      Platform.OS === 'android'
+                        ? {uri: `bundle-assets://docs/DischargeSummary.pdf`}
+                        : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                    doc: 'DischargeSummary.pdf',
+                  })
+                }>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: pallette.dark_purple,
+                    textTransform: 'capitalize',
+                  }}>
+                  View Complete Report
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </AccordionItem>
 
         {/* <View
           style={{

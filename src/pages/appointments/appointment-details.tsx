@@ -274,14 +274,14 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
 
         {appointmentData?.AppointmentType.toLowerCase() !== 'physical' && (
           <TouchableOpacity
-            disabled={
-              isBeforeTwoHours(
-                dateTime,
-                appointmentData?.SlotStartDttm,
-                0.25,
-              ) ||
-              isAfterTwoHours(dateTime, appointmentData?.SlotStartDttm, 0.25)
-            }
+            // disabled={
+            //   isBeforeTwoHours(
+            //     dateTime,
+            //     appointmentData?.SlotStartDttm,
+            //     0.25,
+            //   ) ||
+            //   isAfterTwoHours(dateTime, appointmentData?.SlotStartDttm, 0.25)
+            // }
             onPress={sendNotification}>
             <Text
               style={[
@@ -307,9 +307,9 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           </TouchableOpacity>
         )}
 
-        <TouchableOpacity onPress={showVitalsModal}>
+        {/* <TouchableOpacity onPress={showVitalsModal}>
           <Text style={styles.actionBtnText}>Upload Vitals</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
