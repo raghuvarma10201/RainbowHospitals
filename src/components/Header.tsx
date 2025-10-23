@@ -133,7 +133,7 @@ const Header = forwardRef<any, HeaderProps>(
           setMainPatient(mainPatient);
 
           if (data?.data?.[0]?.PatientID) {
-            updateProfile(data.data[0]);
+            updateProfile(mainPatient ? mainPatient : data.data[0]);
           }
         } catch (err: any) {
           ToastService.error(

@@ -353,24 +353,12 @@ const Registration: React.FC = () => {
           {/* Submit */}
           <TouchableOpacity
             style={styles.primaryBt}
-            onPress={() => setVisible(true)}
+            onPress={() => formik.handleSubmit()}
             disabled={loading}>
             <Text style={styles.primaryBtText}>
               {loading ? 'Submitting...' : 'Submit'}
             </Text>
           </TouchableOpacity>
-          <WarningModal
-            visible={visible}
-            onClose={() => {
-              setVisible(false), formik.handleSubmit();
-            }}
-            title="Important Notice"
-            message={
-              'Use the existing MPID (if available).\nFor every new MPID creation, you will be charged an extra {{highlight}}.\nAlso, new MPIDs will not have previous records.'
-            }
-            highlightText="₹150 - ₹300"
-            buttonText="Got it"
-          />
         </View>
       </ScrollView>
     </>

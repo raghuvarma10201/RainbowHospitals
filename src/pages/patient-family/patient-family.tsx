@@ -16,6 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Dropdown} from 'react-native-element-dropdown';
 import {ToastService} from '../../utils/service-handlers';
 import {adjust} from '../../utils/common-functions';
+import WarningModal from '../../components/custom-warning';
 
 const relations = [
   {value: 'Self', label: 'Self'},
@@ -29,6 +30,7 @@ const relations = [
 const PatientFamily: FC = ({navigation}: any) => {
   const [familyMembers, setFamilyMembers] = useState<any[]>([]);
   const [editable, setEditable] = useState<number>();
+  const [visible, setVisible] = useState(false);
   const [relation, setRelation] = useState<string>('');
   useFocusEffect(
     useCallback(() => {
@@ -215,11 +217,23 @@ const PatientFamily: FC = ({navigation}: any) => {
         ))}
       </ScrollView>
       <TouchableOpacity
-        onPressIn={() => navigation.navigate('AddFamily')}
+        onPressIn={() => setVisible(true)}
         style={styles.fab}
         activeOpacity={0.7}>
         <Icon name="add" size={28} color={pallette.white} />
       </TouchableOpacity>
+      <WarningModal
+        visible={visible}
+        onClose={() => {
+          setVisible(false), navigation.navigate('AddFamily');
+        }}
+        title="Important Notice"
+        message={
+          'Use the existing MPID (if available).\nFor every new MPID creation, you will be charged an extra {{highlight}}.\nAlso, new MPIDs will not have previous records.'
+        }
+        highlightText="₹150 - ₹300"
+        buttonText="Got it"
+      />
     </View>
   );
 };

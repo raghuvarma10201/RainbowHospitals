@@ -88,7 +88,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   const [timerStarted, setTimerStarted] = useState(false);
   const [loadingCall, setLoadingCall] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<string | undefined>(
-    patientId || '',
+    patientId || profile ? profile?.PatientID : '',
   );
   const [selectedLocation, setSelectedLocation] = useState<string | undefined>(
     appointmentnumber ? OrganisationID : '',
@@ -543,7 +543,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
             </Text>
           )}
           {/* PATIENT DROPDOWN */}
-          {selectedLocation && (
+          {typeOfAppointment && selectedLocation && (
             <View style={styles.flex}>
               <Image
                 source={require('../../../assets/images/booked-for-icon.png')}
@@ -602,7 +602,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
             </View>
           )}
           {/* PAYMENT TYPE DROPDOWN */}
-          {selectedPatient && (
+          {typeOfAppointment && selectedPatient && selectedLocation && (
             <View style={styles.flex}>
               <Image
                 source={require('../../../assets/images/booked-for-icon.png')}

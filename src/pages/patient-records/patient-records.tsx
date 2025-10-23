@@ -330,7 +330,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
         paddingBottom: h * 0.03,
         backgroundColor: pallette.white,
       }}>
-      <Header title="menu" showLocation />
+      <Header showLocation />
       <View style={{padding: w * 0.02}}>
         {/* Patient Dropdown */}
         <Dropdown

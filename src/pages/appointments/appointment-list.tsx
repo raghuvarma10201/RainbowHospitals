@@ -54,6 +54,7 @@ const MyAppointments: React.FC = ({route}: any) => {
       const payload = {
         // patientId: await AsyncStorage.getItem('mrn'),
         patientId: id || 'MAHTMP-182297',
+        startdate: '2000-01-01',
         // OrganisationUID: branch?.organisation?.organisationid.toString(),
       };
 

@@ -38,6 +38,9 @@ const Login: React.FC = () => {
     onSubmit: async ({mobileNumber}, {setSubmitting, setErrors}) => {
       setLoading(true);
       try {
+        const fcmToken = await AsyncStorage.getItem('FcmTtoken');
+        console.log(fcmToken);
+
         const response = await login({number: mobileNumber});
         if (response?.success && response?.status === 200) {
           await AsyncStorage.setItem('mobileNumber', mobileNumber);

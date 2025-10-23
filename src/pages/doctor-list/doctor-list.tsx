@@ -62,13 +62,13 @@ const DoctorsList: React.FC = ({route}: any) => {
         const response = await getDoctors(
           '',
           specialityId,
-          branch?.id,
-          // '',
+          // branch?.id,
+          '',
           '',
           // appointmentType,
           '',
           1,
-          10,
+          100,
         );
         if (response?.status === 200) {
           if (filter) {
