@@ -220,14 +220,15 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       <View style={styles.actionsRow}>
         {appointmentData?.payment_type?.toLowerCase() == 'payu' && (
           <TouchableOpacity
-            disabled={
-              appointmentData?.unreadCount == 0 &&
-              isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 1)
-            }
+            // disabled={
+            //   appointmentData?.unreadCount == 0 &&
+            //   isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 1)
+            // }
             onPress={() =>
               navigation.navigate('AppointmentChat', {
                 bookingId: appointmentData.appointmentnumber,
                 doctor: appointmentData.CareProviderName,
+                appointmentData: appointmentData,
               })
             }>
             <Text

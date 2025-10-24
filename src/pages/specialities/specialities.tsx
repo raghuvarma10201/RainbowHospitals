@@ -19,6 +19,7 @@ import {ToastService} from '../../utils/service-handlers';
 import {
   getDoctors,
   getSpecialities,
+  globalSearch,
   pinPatientSpecialty,
 } from '../../services/common';
 import {MainStackParamList} from '../../types/navigation';
@@ -38,6 +39,7 @@ const Specialities: React.FC = ({route}: any) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const [search, setSearch] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const {appointmentType} = route.params;
   const {branch, category} = useApp();
   const [specialities, setSpecialities] = useState<any[]>([]);
@@ -169,6 +171,28 @@ const Specialities: React.FC = ({route}: any) => {
     }
   };
 
+  const onSearch = async (query: string) => {
+    setSearch(query);
+    if (query.length > 3) {
+      try {
+        const {data = []} = await globalSearch({
+          searchQuery: query,
+        });
+        setSearchResults(data);
+      } catch (error: any) {
+        console.error('Error fetching search results:', error);
+        ToastService.error(
+          'Error',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
+        );
+        setSearchResults([]);
+      } finally {
+      }
+    }
+  };
+
   // ---------- LOADER ----------
   if (loading) return <Loader />;
 
@@ -191,7 +215,7 @@ const Specialities: React.FC = ({route}: any) => {
           resizeMode="cover"
         />
         <View style={styles.container}>
-          <View style={styles.searchContainer}>
+          {/* <View style={styles.searchContainer}>
             <View style={styles.iconContainer}>
               <Image
                 source={require('../../../assets/images/search-icon.png')}
@@ -215,20 +239,36 @@ const Specialities: React.FC = ({route}: any) => {
                 },
               }}
             />
-          </View>
+          </View> */}
+          <SearchLocationBlock
+            searchFn={onSearch}
+            style={styles.searchLocationBlock}
+            results={searchResults}
+            navigation={navigation}
+          />
           {/* <SearchLocationBlock style={styles.searchLocationBlock} /> */}
           <CategorySelection changeCategory={loadSpecialities} />
 
           <View style={styles.quickActions}>
-            <SpecialityGrid
-              items={specialities}
-              type={appointmentType}
-              onPinPress={item => {
-                console.log('Pin pressed:', item);
-                pinSpeciality(item);
-                // You can toggle isFavourite here or call API
-              }}
-            />
+            {specialities.length ? (
+              <SpecialityGrid
+                items={specialities}
+                type={appointmentType}
+                onPinPress={item => {
+                  console.log('Pin pressed:', item);
+                  pinSpeciality(item);
+                  // You can toggle isFavourite here or call API
+                }}
+              />
+            ) : (
+              <View style={{width: w, justifyContent: 'center'}}>
+                <NotFound
+                  text="No results found"
+                  hideBtn={true}
+                  margin={h * 0.3}
+                />
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>

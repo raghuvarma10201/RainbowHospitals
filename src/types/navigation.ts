@@ -3,6 +3,7 @@ import {
   NativeStackNavigationOptions,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
+import {Appointment} from '../utils/types';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -42,7 +43,7 @@ export type MainStackParamList = {
     cancel?: boolean;
     vitalsUpload?: boolean;
   };
-  AppointmentChat: {bookingId: any; doctor: any};
+  AppointmentChat: {bookingId: any; doctor: any; appointmentData?: Appointment};
   JitsiCall: {roomName: string};
   PayUWebView: {
     finalPayload: any;

@@ -239,7 +239,7 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
             </Text>
           </Text>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() =>
               navigation.dispatch(
                 CommonActions.reset({
@@ -263,7 +263,7 @@ const AppointmentConfirmed: React.FC = ({route}: any) => {
             }
             style={styles.payBtn}>
             <Text style={styles.payBtnTxt}>Continue to Upload Vitals</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() =>
               navigation.dispatch(

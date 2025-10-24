@@ -90,6 +90,15 @@ export const isAfterTwoHours = (
   return diffHours <= hoursAfter;
 };
 
+export const isPreviousDay = (date: any) => {
+  const slotDate = new Date(date);
+  const today = new Date();
+
+  // Normalize times so that the comparison only checks the date part
+  const isPast = slotDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0);
+  return isPast;
+};
+
 export const isValidUrl = (url: string) => {
   try {
     new URL(url);

@@ -25,6 +25,7 @@ import {NotFound} from '../../components';
 import {h, pallette, w} from '../../constants/constants';
 import {Header} from '../../components';
 import {getNotifications} from '../../services/common';
+import moment from 'moment';
 
 const Notifications: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -43,7 +44,13 @@ const Notifications: React.FC = () => {
       });
 
       if (response?.status == 200 && response.success) {
-        setNotifications(response?.data);
+        console.log(response.data);
+
+        setNotifications(
+          response?.data.sort((a: any, b: any) =>
+            moment(b.createdAt).diff(moment(a.createdAt)),
+          ),
+        );
       } else {
         setNotifications([]);
       }
@@ -101,8 +108,18 @@ const Notifications: React.FC = () => {
                       marginTop: h * 0.02,
                       borderRadius: w * 0.02,
                     }}>
-                    <Text style={styles.statusTitle}>{item?.title}</Text>
-                    <Text style={styles.name}>{item?.message}</Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}>
+                      <Text style={styles.name}>{item?.title}</Text>
+                      <Text style={styles.statusTitle}>
+                        {moment(item?.createdAt).format('DD-MM-YYYY hh:mm a')}
+                      </Text>
+                    </View>
+                    <Text style={styles.statusTitle}>{item?.message}</Text>
                   </View>
                 ))
               ) : (

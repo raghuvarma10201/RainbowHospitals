@@ -269,11 +269,13 @@ export const AuthCommonComponent: FC<commonauth> = ({
               {fontSize: adjust(11)},
             ]}>{`You will recieve an OTP on this mobile number / or on your registered email id as well`}</Text>
         )}
-        {input == 'otp' && (
+        {(input == 'otp' || input == 'mpin') && (
           <TouchableOpacity
             disabled={resendDisabled}
             onPress={() => handleNumberBlur()}>
-            <Text style={styles.resend}>{`Resend OTP`}</Text>
+            <Text style={styles.resend}>
+              {input == 'otp' ? `Resend OTP` : `Reset M-Pin`}
+            </Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity

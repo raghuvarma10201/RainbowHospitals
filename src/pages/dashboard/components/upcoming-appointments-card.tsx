@@ -14,6 +14,7 @@ import {
   formatAppointmentTime,
   isAfterTwoHours,
   isBeforeTwoHours,
+  isPreviousDay,
 } from '../../../utils/common-functions';
 import {pallette, w} from '../../../constants/constants';
 import {adjust, navigateTo} from '../../../utils/common-functions';
@@ -54,7 +55,11 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
           />
 
           <View style={styles.upcomingAppBlockcontent}>
-            <Text style={styles.upcomingAppTitle}>Upcoming Appointment</Text>
+            <Text style={styles.upcomingAppTitle}>
+              {isPreviousDay(appointment?.SlotStartDttm)
+                ? 'Previous Appointment'
+                : 'Upcoming Appointment'}
+            </Text>
             <Text
               style={{
                 fontFamily: 'ProximaNovaA-Regular',

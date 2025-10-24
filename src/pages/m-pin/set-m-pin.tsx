@@ -40,7 +40,7 @@ const SetMpin: React.FC = () => {
       else setIsExistingMpin(false);
     };
     checkMpin();
-  }, []);
+  }, [isExistingMpin]);
 
   const handleSubmit = async () => {
     const phoneNumber = await AsyncStorage.getItem('mobileNumber');
@@ -72,6 +72,7 @@ const SetMpin: React.FC = () => {
             'Error',
             response?.message || 'Failed to verify M-PIN',
           );
+          // formik.setFieldError('mpin', 'Invalid M-PIN');
         }
       } else {
         // Set M-PIN flow
@@ -137,6 +138,11 @@ const SetMpin: React.FC = () => {
     [formik],
   );
 
+  const handleReset = async () => {
+    await AsyncStorage.removeItem('mPin');
+    setIsExistingMpin(null);
+  };
+
   // Show loader until AsyncStorage check is done
   if (isExistingMpin === null) return <Text>Loading...</Text>;
 
@@ -151,11 +157,12 @@ const SetMpin: React.FC = () => {
           backgroundColor: pallette.white,
         }}>
         <AuthCommonComponent
-          toEnter={isExistingMpin ? 'M-PIN' : 'M-PIN'}
+          toEnter={'M-PIN'}
           subTxt={``}
           input={'mpin'}
           btnTxt={'Confirm'}
           handleNumberChange={handleMpinChange}
+          handleNumberBlur={handleReset}
           formik={formik}
           isSet={isExistingMpin}
         />

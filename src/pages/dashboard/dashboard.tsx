@@ -71,20 +71,45 @@ const Dashboard: React.FC = () => {
         const mobileNumber = await AsyncStorage.getItem('mobileNumber');
 
         const {data = []} = await getAllAppointments({
-          // mrn,
           MobileNo: mobileNumber,
-          date,
-          OrganisationUID: branch?.organisation?.organisationid.toString(),
+          startdate: '2000-01-01',
+          OrganisationUID: branch?.organisation?.organisationid,
         });
-        setAppointments(
-          data
-            .filter((item: upcomingApointment) =>
-              moment(item.SlotStartDttm).isSameOrAfter(date, 'day'),
-            )
-            .sort((a: upcomingApointment, b: upcomingApointment) =>
-              moment(a.SlotStartDttm).diff(moment(b.SlotStartDttm)),
-            ),
-        );
+
+        // setAppointments(
+        //   data
+        //     .filter((item: upcomingApointment) =>
+        //       moment(item.SlotStartDttm).isSameOrAfter(
+        //         moment().subtract(1, 'day').format('YYYY-MM-DD'),
+        //         'day',
+        //       ),
+        //     )
+        //     .sort((a: upcomingApointment, b: upcomingApointment) =>
+        //       moment(b.SlotStartDttm).diff(moment(a.SlotStartDttm)),
+        //     ),
+        // );
+
+        setAppointments(() => {
+          const today = moment().startOf('day');
+          const pastAppointments = data.filter((item: upcomingApointment) =>
+            moment(item.SlotStartDttm).isBefore(today, 'day'),
+          );
+          const upcomingAppointments = data.filter((item: upcomingApointment) =>
+            moment(item.SlotStartDttm).isSameOrAfter(today, 'day'),
+          );
+          const sortedPast = pastAppointments.sort(
+            (a: upcomingApointment, b: upcomingApointment) =>
+              moment(b.SlotStartDttm).valueOf() -
+              moment(a.SlotStartDttm).valueOf(),
+          );
+          const sortedUpcoming = upcomingAppointments.sort(
+            (a: upcomingApointment, b: upcomingApointment) =>
+              moment(b.SlotStartDttm).valueOf() -
+              moment(a.SlotStartDttm).valueOf(),
+          );
+          const latestPast = sortedPast.length > 0 ? [sortedPast[0]] : [];
+          return [...sortedUpcoming, ...latestPast];
+        });
       } catch (error: any) {
         console.error('Error fetching appointments:', error);
         ToastService.error(

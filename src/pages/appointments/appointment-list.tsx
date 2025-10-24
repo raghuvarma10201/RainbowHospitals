@@ -17,14 +17,18 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useApp} from '../../context/app-context';
 import {fetchFamilyMembers, getAppointments} from '../../services/common';
 import {ToastService} from '../../utils/service-handlers';
-import {formatAppointmentDateTime} from '../../utils/common-functions';
+import {
+  formatAppointmentDateTime,
+  isPreviousDay,
+} from '../../utils/common-functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MainStackParamList} from '../../types/navigation';
 import {pallette} from '../../constants/constants';
 import {adjust} from '../../utils/common-functions';
 import NotFound from '../../components/empty-text';
-import {FamilyMember} from '../../utils/types';
+import {Appointment, FamilyMember} from '../../utils/types';
 import {Dropdown} from 'react-native-element-dropdown';
+import moment from 'moment';
 
 const MyAppointments: React.FC = ({route}: any) => {
   const w = Dimensions.get('window').width;
@@ -52,17 +56,19 @@ const MyAppointments: React.FC = ({route}: any) => {
   const loadAppointments = async (id: string | undefined) => {
     try {
       const payload = {
-        // patientId: await AsyncStorage.getItem('mrn'),
         patientId: id || 'MAHTMP-182297',
         startdate: '2000-01-01',
-        // OrganisationUID: branch?.organisation?.organisationid.toString(),
       };
 
       setLoading(true);
       const response = await getAppointments(payload);
       if (response && response.status == 200) {
         setLoading(false);
-        setAppointments(response.data);
+        setAppointments(
+          response.data.sort((a: Appointment, b: Appointment) =>
+            moment(b.SlotStartDttm).diff(moment(a.SlotStartDttm)),
+          ),
+        );
       } else {
         setLoading(false);
         ToastService.error('Error', response.message);
@@ -196,8 +202,11 @@ const MyAppointments: React.FC = ({route}: any) => {
                         styles.consultationText,
                         {fontFamily: 'ProximaNovaA-Semibold'},
                       ]}>
-                      {appointment?.AppointmentType ?? 'Consultation Type'}
+                      {isPreviousDay(appointment?.SlotStartDttm)
+                        ? `Completed ${appointment?.AppointmentType} Consultation`
+                        : `Upcoming ${appointment?.AppointmentType} Consultation`}
                     </Text>
+
                     <View style={styles.row}>
                       <Text
                         style={[
