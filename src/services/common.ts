@@ -61,8 +61,6 @@ export const getDoctors = async (
     page: page,
     pageSize: pageSize,
   };
-  console.log(params);
-
   try {
     const response = await api.get('/getDoctors', {params});
     return response.data;

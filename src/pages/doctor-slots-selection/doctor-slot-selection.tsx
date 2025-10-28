@@ -101,6 +101,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   const [selectedPayment, setSelectedPayment] = useState<string>(
     paid ? 'Pay Now' : '',
   );
+  const [showPopUp, setShowPopUp] = useState(false);
 
   const [payloadState, setPayloadState] = useState<payload>({
     final: {
@@ -149,44 +150,55 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
       didMount.current = true;
       return;
     }
-    if (isFocused && secondsLeft === 0) {
-      resetState();
-      ToastService.error('Session expired. Please book again.');
+    if (showPopUp) {
+      return;
     }
-    if (!isFocused && secondsLeft === 0) {
-      resetState();
-    }
-  }, [secondsLeft, isFocused, resetState]);
 
-  // Reset on unmount (silent reset)
-  useEffect(() => {
-    return () => {
+    // if (isFocused && secondsLeft === 0) {
+    //   resetState();
+    //   ToastService.error('Session expired. Please book again.');
+    // }
+    if (secondsLeft === 0) {
+      ToastService.error('Session expired. Please book again.');
       resetState();
-    };
-  }, [resetState]);
+    }
+  }, [secondsLeft]);
+
+  // // Reset on unmount (silent reset)
+  // useEffect(() => {
+  //   return () => {
+  //     resetState();
+  //   };
+  // }, [resetState]);
 
   // ---------- CALLBACK FUNCTIONS ----------
-  const getFamilyMembers = useCallback(async (mobile: string) => {
-    try {
-      const response = await fetchFamilyMembers({MobileNo: mobile});
+  const getFamilyMembers = useCallback(
+    async (mobile: string, patient?: string) => {
+      try {
+        const response = await fetchFamilyMembers({MobileNo: mobile});
 
-      if (response?.status === 200) {
-        setFamilyMembers(response.data);
-      } else {
+        if (response?.status === 200) {
+          setFamilyMembers(response.data);
+          if (patient) {
+            setSelectedPatient(patient);
+          }
+        } else {
+          ToastService.error(
+            'Error',
+            response?.message || 'Unable to fetch patients',
+          );
+        }
+      } catch (error: any) {
         ToastService.error(
           'Error',
-          response?.message || 'Unable to fetch patients',
+          error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong',
         );
       }
-    } catch (error: any) {
-      ToastService.error(
-        'Error',
-        error?.response?.data?.message ||
-          error?.message ||
-          'Something went wrong',
-      );
-    }
-  }, []);
+    },
+    [],
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -321,8 +333,6 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               : settings?.physicalBookingInterval ?? 0) / 60,
           ...commonPayload,
         };
-        console.log(blockPayload);
-
         try {
           const response = await bookAppointment(blockPayload);
           if (response && response.status == 200 && response.success == true) {
@@ -395,8 +405,6 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         AppointmentNumber: payloadState?.bookingID ?? 'BAHOP-2972192',
         transaction_id: '',
       };
-      console.log(payload);
-
       setLoadingCall(true);
       try {
         const response = await advancePay(payload);
@@ -593,7 +601,12 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                   <TouchableOpacity
                     style={styles.addPatientBtn}
                     onPress={() =>
-                      navigation.navigate(routes.AddFamily as never)
+                      navigation.navigate(routes.AddFamily as never, {
+                        onGoBack: data => {
+                          getFamilyMembers(phoneNumber, data);
+                          setShowPopUp(true);
+                        },
+                      })
                     }>
                     <Text style={styles.addPatientTxt}>+ Add</Text>
                   </TouchableOpacity>

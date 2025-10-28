@@ -33,7 +33,16 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
 }) => {
   const dateTime = moment().format();
   return (
-    <Card.Content style={[styles.upcomingAppBlockcard, {elevation: 0}]}>
+    <Card.Content
+      style={[
+        styles.upcomingAppBlockcard,
+        {
+          elevation: 0,
+          backgroundColor: isPreviousDay(appointment?.SlotStartDttm)
+            ? pallette.pale_turquoise
+            : '#EFEAF6',
+        },
+      ]}>
       <TouchableWithoutFeedback
         // disabled
         onPress={() =>
@@ -55,7 +64,15 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
           />
 
           <View style={styles.upcomingAppBlockcontent}>
-            <Text style={styles.upcomingAppTitle}>
+            <Text
+              style={[
+                styles.upcomingAppTitle,
+                {
+                  backgroundColor: isPreviousDay(appointment?.SlotStartDttm)
+                    ? pallette.teal
+                    : pallette.dark_purple,
+                },
+              ]}>
               {isPreviousDay(appointment?.SlotStartDttm)
                 ? 'Previous Appointment'
                 : 'Upcoming Appointment'}
@@ -149,7 +166,9 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
               style={[
                 styles.bottomUABlock,
                 {
-                  backgroundColor: pallette.dark_purple,
+                  backgroundColor: isPreviousDay(appointment?.SlotStartDttm)
+                    ? pallette.teal
+                    : pallette.dark_purple,
                 },
               ]}>
               <>
@@ -272,7 +291,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     padding: 10,
     borderRadius: 12,
-    backgroundColor: '#EFEAF6',
+    // backgroundColor: '#EFEAF6',
     elevation: 0,
     borderWidth: 0,
     minWidth: w * 0.95,
@@ -301,7 +320,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ProximaNovaA-Regular',
     fontSize: adjust(10),
     color: pallette.white,
-    backgroundColor: pallette.dark_purple,
+    // backgroundColor: pallette.dark_purple,
     padding: 10,
     borderBottomLeftRadius: 10,
     borderTopLeftRadius: 10,

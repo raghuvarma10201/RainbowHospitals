@@ -8,8 +8,6 @@ import RNBlobUtil from 'react-native-blob-util';
 
 export const DocumentPreview = ({route}: any) => {
   const {source, doc} = route?.params;
-  console.log(source);
-
   const downloadPDF = async () => {
     try {
       const assetPath = `bundle-assets://docs/${doc}`;
@@ -26,8 +24,6 @@ export const DocumentPreview = ({route}: any) => {
         path: destPath,
         showNotification: true,
       });
-
-      console.log('✅ PDF saved to:', destPath);
     } catch (error) {
       console.error('❌ Error copying asset PDF:', error);
     }

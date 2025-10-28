@@ -116,7 +116,6 @@ const Header = forwardRef<any, HeaderProps>(
               getPatientByRelations(['son', 'daughter']) ||
               getPatientByRelations(['self']) ||
               data.data[0];
-            console.log(mainPatient);
           } else if (category?.name === 'Women Care') {
             mainPatient =
               getPatientByRelations(['spouse']) ||
@@ -128,8 +127,6 @@ const Header = forwardRef<any, HeaderProps>(
               getPatientByRelations(['self']) ||
               data.data[0];
           }
-          console.log(mainPatient);
-
           setMainPatient(mainPatient);
 
           if (data?.data?.[0]?.PatientID) {
@@ -538,13 +535,13 @@ const Header = forwardRef<any, HeaderProps>(
             />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => setVisible(true)}>
+          {/* <TouchableOpacity onPress={() => setVisible(true)}>
             <Image
               source={images.wallet}
               style={styles.walletIcon}
               resizeMode="contain"
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {title !== 'menu' && (
             <TouchableOpacity

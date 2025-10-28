@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ImageBackground,
+  BackHandler,
 } from 'react-native';
 import {Text} from 'react-native-paper';
 import {useFormik} from 'formik';
@@ -76,8 +77,11 @@ const RegistrationSchema = Yup.object({
 });
 
 // ---------- Main Component ----------
-const AddFamilyMember: React.FC = () => {
+const AddFamilyMember: React.FC = ({route}: any) => {
   const navigation = useNavigation<CombinedNavigationProp>();
+  const {onGoBack} = route.params;
+  console.log(onGoBack);
+
   const {setLoggedIn} = useAuth();
 
   const [mobileNumber, setMobileNumber] = useState('');
@@ -89,6 +93,17 @@ const AddFamilyMember: React.FC = () => {
       const storedNumber = await AsyncStorage.getItem('mobileNumber');
       if (storedNumber) setMobileNumber(storedNumber);
     })();
+  }, []);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      onGoBack('');
+      return false;
+    };
+
+    const sub = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+    return () => sub.remove();
   }, []);
 
   const formik = useFormik({
@@ -128,12 +143,8 @@ const AddFamilyMember: React.FC = () => {
         });
 
         if (response.status === 200 && response.success) {
-          const entries: any = Object.entries({...values, mobileNumber}).map(
-            ([k, v]) => [k, String(v)],
-          );
-          await AsyncStorage.multiSet(entries);
-
-          ToastService.success('Success', 'Registration sent successfully');
+          ToastService.success('Success', 'Family member added successfully');
+          onGoBack(response?.data?.PatientMRN);
           navigation.goBack();
         }
       } catch (error: any) {

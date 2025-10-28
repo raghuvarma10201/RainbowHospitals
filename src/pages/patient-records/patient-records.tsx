@@ -110,21 +110,13 @@ const PatientRecords: FC = ({navigation, route}: any) => {
   }, []);
 
   const fetchVisits = useCallback(async () => {
-    console.log({
-      mrn: 'BAH-00519630',
-      startDate: moment(startDate).format('YYYY-MM-DD'),
-      endDate: moment(endDate).format('YYYY-MM-DD'),
-    });
-
-    setLoading(true);
+    // setLoading(true);
     try {
       const response = await getPatientMedicalRecords({
         mrn: 'BAH-00519630',
         startDate: moment(startDate).format('YYYY-MM-DD'),
         endDate: moment(endDate).format('YYYY-MM-DD'),
       });
-      console.log(response);
-
       if (response?.status == 200 && response.success) {
         const visitOptions = response.data.map((e: any) => ({
           ...e,
@@ -243,8 +235,6 @@ const PatientRecords: FC = ({navigation, route}: any) => {
         path: destPath,
         showNotification: true,
       });
-
-      console.log('✅ PDF saved to:', destPath);
     } catch (error) {
       console.error('❌ Error copying asset PDF:', error);
     }
@@ -679,6 +669,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     fontSize: 16,
                     color: pallette.black,
                     textTransform: 'capitalize',
+                    width: w * 0.5,
                   }}>
                   Record Date : {moment(startDate).format('DD MMM')}
                   {"'"}
@@ -806,6 +797,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     fontSize: 16,
                     color: pallette.black,
                     textTransform: 'capitalize',
+                  }}>
                   }}>
                   Record Date :{' '}
                   {moment(startDate).add(1, 'day').format('DD MMM')}
@@ -944,6 +936,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
+                  }}>
                   Record Date :{' '}
                   {moment(startDate).add(2, 'days').format('DD MMM')}
                   {"'"}
@@ -1080,6 +1073,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     fontSize: 16,
                     color: pallette.black,
                     textTransform: 'capitalize',
+                  }}>
                   }}>
                   Record Date :{' '}
                   {moment(startDate).add(4, 'days').format('DD MMM')}
@@ -1218,6 +1212,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
+                  }}>
                   Record Date :{' '}
                   {moment(startDate).add(5, 'days').format('DD MMM')}
                   {"'"}
@@ -1345,6 +1340,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     fontSize: 16,
                     color: pallette.black,
                     textTransform: 'capitalize',
+                  }}>
                   }}>
                   Record Date :{' '}
                   {moment(startDate).add(8, 'days').format('DD MMM')}

@@ -2,9 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
@@ -13,6 +11,7 @@ import {
   Linking,
   Dimensions,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {pallette} from '../../constants/constants';
@@ -27,14 +26,13 @@ import {
   fetchAppointmentChat,
   sendAppointmentChat,
   updateAppointmentChatStatus,
-  uploadPatientVitals,
 } from '../../services/common';
 import {ToastService} from '../../utils/service-handlers';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../types/navigation';
 import CommonHeader from '../../components/header';
 import {styles} from './common-styles';
-import {adjust} from '../../utils/common-functions';
+import UploadVitals from './compoenents/upload-vitals';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
@@ -58,12 +56,7 @@ const AppointmentChat: React.FC<any> = ({route}) => {
   const [recordingStarted, setRecordingStarted] = useState(false);
   const [playStarted, setPlayStarted] = useState(false);
   const [isSending, setIsSending] = useState(false); // loader state
-  const [previewVideoPlaying, setPreviewVideoPlaying] = useState(false); // preview video toggle
-  const [vitals, setVitals] = useState({
-    height: appointmentData?.vitals?.height || '',
-    weight: appointmentData?.vitals?.weight || '',
-    temperature: appointmentData?.vitals?.temperature || '',
-  });
+  const [previewVideoPlaying, setPreviewVideoPlaying] = useState(false);
 
   useEffect(() => {
     fetchChat();
@@ -108,14 +101,11 @@ const AppointmentChat: React.FC<any> = ({route}) => {
   };
 
   const updateChatStatus = async (bookingId: any) => {
-    console.log('called');
-
     try {
       const data = await updateAppointmentChatStatus({
         BookingID: bookingId,
         from: 'Doctor',
       });
-      console.log(data);
     } catch (error: any) {
       ToastService.error(
         bookingId,
@@ -127,6 +117,7 @@ const AppointmentChat: React.FC<any> = ({route}) => {
   };
 
   const sendMessage = async () => {
+    const id = await AsyncStorage.getItem('user_id');
     try {
       setIsSending(true);
       let formdata = new FormData();
@@ -134,6 +125,8 @@ const AppointmentChat: React.FC<any> = ({route}) => {
       formdata.append('receiver', 'Doctor');
       formdata.append('message', inputText);
       formdata.append('bookingUID', bookingId);
+      formdata.append('senderId', id);
+      formdata.append('receiverId', appointmentData?.CareProviderCode);
       if (mediaFile?.name) formdata.append('document', mediaFile);
 
       const response = await sendAppointmentChat(formdata);
@@ -156,36 +149,6 @@ const AppointmentChat: React.FC<any> = ({route}) => {
       );
     } finally {
       setIsSending(false);
-    }
-  };
-
-  const uploadVitals = async () => {
-    const obj = {
-      appointmentnumber: appointmentData?.BookingUID,
-      mrn: (await AsyncStorage.getItem('mrn')) || '',
-      OrganisationUID: appointmentData?.OrganisationUID,
-      height: vitals.height ? parseFloat(vitals.height) : undefined,
-      weight: vitals.weight ? parseFloat(vitals.weight) : undefined,
-      temperature: vitals.temperature
-        ? parseFloat(vitals.temperature)
-        : undefined,
-    };
-    try {
-      const response = await uploadPatientVitals(obj);
-      if (response?.status == 200 && response?.success) {
-        ToastService.success('Success', 'Vitals Uploaded Successfully');
-        navigation.goBack();
-      } else {
-        ToastService.error('Error', response.message);
-      }
-    } catch (error: any) {
-      ToastService.error(
-        'Error Uploading Vitals',
-        error?.response?.data?.message ||
-          error?.message ||
-          'Something went wrong',
-      );
-    } finally {
     }
   };
 
@@ -432,6 +395,9 @@ const AppointmentChat: React.FC<any> = ({route}) => {
           </TouchableOpacity>
         </View>
       ) : null}
+
+      {/* Floating Expandable Button for Vitals */}
+      <UploadVitals appointmentData={appointmentData} />
 
       <View style={styles.inputContainer}>
         <View style={styles.inputWithIcon}>

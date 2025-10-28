@@ -48,8 +48,6 @@ export const AuthCommonComponent: FC<commonauth> = ({
   resendDisabled,
   isSet,
 }) => {
-  console.log(input);
-
   const [country, setCountry] = useState('1');
   const [value, setValue] = useState('');
   const [mpin, setMpin] = useState('');

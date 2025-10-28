@@ -25,6 +25,7 @@ import {
   PermissionsAndroid,
   Linking,
   ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import {JitsiMeeting} from '@jitsi/react-native-sdk';
 import {h, pallette, w} from '../../constants/constants';
@@ -35,8 +36,9 @@ import {pick, types} from '@react-native-documents/picker';
 import {RecordBackType, PlayBackType} from 'react-native-audio-recorder-player';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import {styles as chatStyles} from './common-styles';
-import {API_IMG_URL, ToastService} from '../../utils';
+import {adjust, API_IMG_URL, ToastService} from '../../utils';
 import {fetchAppointmentChat, sendAppointmentChat} from '../../services/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface JitsiModalProps {
   visible: boolean;
@@ -68,6 +70,34 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
   const [playStarted, setPlayStarted] = useState(false);
   const [isSending, setIsSending] = useState(false); // loader state
   const [previewVideoPlaying, setPreviewVideoPlaying] = useState(false);
+
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const layoutAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+      Animated.timing(layoutAnim, {
+        toValue: 1,
+        duration: 350,
+        useNativeDriver: false,
+      }).start();
+    });
+
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+      Animated.timing(layoutAnim, {
+        toValue: 0,
+        duration: 350,
+        useNativeDriver: false,
+      }).start();
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   // Track screen dimensions
   const [screen, setScreen] = useState(initialScreen);
@@ -125,6 +155,7 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
   };
 
   const sendMessage = async () => {
+    const id = await AsyncStorage.getItem('user_id');
     try {
       setIsSending(true);
       let formdata = new FormData();
@@ -132,6 +163,8 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
       formdata.append('receiver', 'Doctor');
       formdata.append('message', inputText);
       formdata.append('bookingUID', options?.bookingId);
+      formdata.append('senderId', id);
+      formdata.append('receiverId', options?.careprovider);
       if (mediaFile?.name) formdata.append('document', mediaFile);
 
       const response = await sendAppointmentChat(formdata);
@@ -406,6 +439,17 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
   }, []);
   const handleChatClosed = useCallback(() => setChatOpened(false), []);
 
+  const videoTranslateY = layoutAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, h * 0.4], // Push video down when keyboard active
+  });
+
+  // Chat view moves up/down in opposite direction
+  const chatTranslateY = layoutAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -h * 0.4], // Pull chat up when keyboard active
+  });
+
   return (
     <Animated.View
       style={[
@@ -474,7 +518,7 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
         conferenceActive && (
           <TouchableOpacity
             onPress={handleChatClosed}
-            style={[styles.chatButton, {top: h * 0.335}]}>
+            style={[styles.chatButton, {top: h * 0.325}]}>
             <Image
               source={require('../../../assets/images/close-chat.png')}
               style={{
@@ -491,8 +535,8 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
       {minimized && (
         <View style={styles.dragHandle} {...panResponder.panHandlers} />
       )}
-
-      <View style={{flex: 1}}>
+      <Animated.View
+        style={{flex: 1, transform: [{translateY: videoTranslateY}]}}>
         <JitsiMeeting
           ref={jitsiMeeting}
           token={options.token}
@@ -529,13 +573,17 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
             avatarURL: '',
           }}
         />
-      </View>
+      </Animated.View>
 
       {chatOpened && (
-        <View style={styles.belowView}>
+        <Animated.View
+          style={[
+            styles.belowView,
+            {transform: [{translateY: chatTranslateY}]},
+          ]}>
           <KeyboardAvoidingView
             style={[chatStyles.container, {marginBottom: h * 0.04}]}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'position'}
             keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
             <ScrollView
               style={chatStyles.messagesContainer}
@@ -720,7 +768,14 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
                   onChangeText={setInputText}
                   placeholder="Type your message..."
                   placeholderTextColor={pallette.dark_grey}
-                  style={chatStyles.input}
+                  style={{
+                    paddingHorizontal: 15,
+                    paddingVertical: 8,
+                    marginRight: 10,
+                    fontSize: adjust(14),
+                    color: pallette.black,
+                    width: '65%',
+                  }}
                 />
                 <View style={chatStyles.iconContainer}>
                   <TouchableOpacity onPress={() => setTypeOfMedia('gallery')}>
@@ -783,7 +838,7 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
               )}
             </View>
           </KeyboardAvoidingView>
-        </View>
+        </Animated.View>
       )}
     </Animated.View>
   );

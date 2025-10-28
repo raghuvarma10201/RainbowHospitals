@@ -120,6 +120,8 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
           AppointmentType: typeOfAppointment,
           noofdays: '30',
         };
+        console.log(payload);
+
         const response = await getDoctorSessions(payload);
         if (response?.status === 200 && response.data?.length) {
           const uniqueSessions = response.data.filter(
@@ -164,6 +166,8 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
           OrganisationUID: branch?.organisation?.organisationid?.toString(),
           AppointmentType: typeOfAppointment,
         };
+        console.log(payload);
+
         const response = await getDoctorSlots(payload);
         if (response?.status === 200 && response.data) {
           setSlots(response.data);

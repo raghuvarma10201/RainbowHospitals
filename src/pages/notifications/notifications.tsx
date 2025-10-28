@@ -31,7 +31,6 @@ const Notifications: React.FC = () => {
   const [search, setSearch] = useState('');
   const [notifications, setNotifications] = useState([]);
   const {profile} = useApp();
-  console.log(profile);
 
   useEffect(() => {
     fetchNotifications();
@@ -44,8 +43,6 @@ const Notifications: React.FC = () => {
       });
 
       if (response?.status == 200 && response.success) {
-        console.log(response.data);
-
         setNotifications(
           response?.data.sort((a: any, b: any) =>
             moment(b.createdAt).diff(moment(a.createdAt)),

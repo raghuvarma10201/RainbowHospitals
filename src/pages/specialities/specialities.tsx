@@ -57,8 +57,6 @@ const Specialities: React.FC = ({route}: any) => {
   // ---------- CALLBACK FUNCTIONS ----------
   const loadSpecialities = async (filter?: string) => {
     const mrn = await AsyncStorage.getItem('mrn');
-    console.log(mrn);
-
     await fetchData(
       () => getSpecialities(category.coe_id.toString(), mrn || ''),
       data => {
@@ -255,7 +253,6 @@ const Specialities: React.FC = ({route}: any) => {
                 items={specialities}
                 type={appointmentType}
                 onPinPress={item => {
-                  console.log('Pin pressed:', item);
                   pinSpeciality(item);
                   // You can toggle isFavourite here or call API
                 }}

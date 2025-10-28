@@ -105,8 +105,6 @@ const PayUWebView: React.FC = ({route}: any) => {
       AppointmentNumber: bookingId ?? 'BAHOP-2972192',
       transaction_id: finalPayload?.transaction_id,
     };
-    console.log(payload);
-
     try {
       setLoading(true);
       const response = await advancePay(payload);

@@ -15,6 +15,7 @@ import {
 import {
   ToastService,
   getCurrentCoordinates,
+  requestUserPermission,
 } from '../../utils/service-handlers';
 import {
   findNearestBranch,
@@ -27,6 +28,8 @@ import {h, pallette} from '../../constants/constants';
 import {navigateTo} from '../../utils/common-functions';
 import {routes} from '../../utils';
 import {AuthCommonComponent} from '../../components/auth-common';
+import {getMessaging, getToken} from '@react-native-firebase/messaging';
+import {jwtDecode, JwtPayload} from 'jwt-decode';
 
 const Otp: React.FC = () => {
   const navigation = useNavigation<CombinedNavigationProp>();
@@ -133,57 +136,74 @@ const Otp: React.FC = () => {
       try {
         const fcmToken = (await AsyncStorage.getItem('FcmTtoken')) || fcm;
         if (!fcmToken) {
-          ToastService.error('Error', 'Failed to fetch FCM Token!');
-          return;
-        }
-        const verifyRes = await VerifyOTP({
-          number: phoneNumber,
-          otp: value,
-          fcmToken,
-        });
-        if (!verifyRes?.success) {
+          await requestUserPermission();
+          try {
+            const messaging = getMessaging();
+            const FcmTtoken = await getToken(messaging);
+            console.log(FcmTtoken);
+            await AsyncStorage.setItem('FcmTtoken', FcmTtoken);
+          } catch (error) {
+            ToastService.error('Error', 'Failed to fetch FCM Token!');
+          }
           ToastService.error(
             'Error',
-            verifyRes?.message || 'OTP Verification Failed',
+            'Failed to fetch FCM Token. Please try again.',
           );
+          setLoading(false);
           return;
+        } else {
+          const verifyRes = await VerifyOTP({
+            number: phoneNumber,
+            otp: value,
+            fcmToken,
+          });
+          if (!verifyRes?.success) {
+            ToastService.error(
+              'Error',
+              verifyRes?.message || 'OTP Verification Failed',
+            );
+            return;
+          }
+          ToastService.success('Success', 'OTP Verified Successfully');
+
+          const authRes = await authenticateUser({MobileNo: phoneNumber});
+          console.log(authRes);
+
+          if (!authRes?.success) {
+            navigateTo(navigation, routes.Registration);
+            ToastService.error('', authRes?.error || 'User Not Registered');
+            return;
+          }
+
+          const token = verifyRes.data.token;
+          if (!token) ToastService.error('Error', 'Token Missing!');
+          const decoded = jwtDecode<JwtPayload>(token);
+          console.log(decoded);
+
+          await AsyncStorage.multiSet([
+            ['accessToken', token],
+            ['refreshToken', token],
+            ['tokenExpiry', verifyRes.data.expiryTime],
+            ['user_id', decoded?.user?.id.toString()],
+          ]);
+
+          // const profileData = decoded.user ? decoded.user : null;
+
+          updateMrn(authRes.data.LoginName);
+          await AsyncStorage.setItem('mrn', authRes.data.LoginName);
+
+          const profileData = await getPatientProfile({
+            mrn: authRes.data.LoginName,
+          });
+          console.log(profileData);
+          if (profileData?.success && profileData.data?.[0]) {
+            updateProfile(profileData.data[0]);
+            console.log(profileData.data[0]);
+            setLoggedIn(true);
+          }
+
+          await loadDetails();
         }
-        ToastService.success('Success', 'OTP Verified Successfully');
-
-        const authRes = await authenticateUser({MobileNo: phoneNumber});
-        if (!authRes?.success) {
-          navigateTo(navigation, routes.Registration);
-          ToastService.error('', authRes?.error || 'User Not Registered');
-          return;
-        }
-
-        const token = verifyRes.data.token;
-        if (!token) ToastService.error('Error', 'Token Missing!');
-
-        await AsyncStorage.multiSet([
-          ['accessToken', token],
-          ['refreshToken', token],
-          ['tokenExpiry', verifyRes.data.expiryTime],
-        ]);
-
-        updateMrn(authRes.data.LoginName);
-        await AsyncStorage.setItem('mrn', authRes.data.LoginName);
-
-        const profileData = await getPatientProfile({
-          mrn: authRes.data.LoginName,
-        });
-        if (profileData?.success && profileData.data?.[0]) {
-          updateProfile(profileData.data[0]);
-          // const storedMpin = await AsyncStorage.getItem('mPin');
-          // console.log(storedMpin);
-          // if (storedMpin) {
-          setLoggedIn(true);
-          // } else {
-          //   navigation.navigate(storedMpin ? 'Dashboard' : 'SetMpin');
-          // }
-        }
-
-        await loadDetails();
       } catch (err: any) {
         ToastService.error('Error', err?.message || 'Something went wrong');
       } finally {

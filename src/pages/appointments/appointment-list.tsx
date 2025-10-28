@@ -176,7 +176,9 @@ const MyAppointments: React.FC = ({route}: any) => {
                         styles.docName,
                         {
                           fontSize: adjust(12),
-                          color: '#4CC2BF',
+                          color: !isPreviousDay(appointment?.SlotStartDttm)
+                            ? pallette.dark_purple
+                            : '#4CC2BF',
                           fontFamily: 'ProximaNovaA-Bold',
                           marginBottom: 2,
                         },
@@ -200,7 +202,14 @@ const MyAppointments: React.FC = ({route}: any) => {
                     <Text
                       style={[
                         styles.consultationText,
-                        {fontFamily: 'ProximaNovaA-Semibold'},
+                        {
+                          fontFamily: 'ProximaNovaA-Semibold',
+                          backgroundColor: !isPreviousDay(
+                            appointment?.SlotStartDttm,
+                          )
+                            ? pallette.light_amethyst
+                            : '#E2EDEC',
+                        },
                       ]}>
                       {isPreviousDay(appointment?.SlotStartDttm)
                         ? `Completed ${appointment?.AppointmentType} Consultation`
@@ -322,7 +331,6 @@ const styles = StyleSheet.create({
   },
 
   consultationText: {
-    backgroundColor: '#E2EDEC',
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 3,

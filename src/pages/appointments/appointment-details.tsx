@@ -44,6 +44,8 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel, vitalsUpload} = route.params;
+  console.log(appointmentData);
+
   const dateTime = moment().format();
 
   const [visible, setVisible] = React.useState(cancel || false);
@@ -209,6 +211,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
         time: formatAppointmentTime(appointmentData?.SlotStartDttm),
       },
       bookingId: appointmentData?.BookingUID,
+      careprovider: appointmentData?.CareProviderCode,
     });
   };
 

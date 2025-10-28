@@ -13,11 +13,15 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 import {login} from '../../services/auth';
-import {ToastService} from '../../utils/service-handlers';
+import {
+  requestUserPermission,
+  ToastService,
+} from '../../utils/service-handlers';
 import {AuthStackParamList} from '../../types/navigation';
 import {h, pallette} from '../../constants/constants';
 import {Loader} from '../../components';
 import {AuthCommonComponent} from '../../components/auth-common';
+import {getMessaging, getToken} from '@react-native-firebase/messaging';
 
 // ---------- VALIDATION SCHEMA ----------
 const LoginSchema = Yup.object({
@@ -32,15 +36,27 @@ const Login: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const requestUserPermissions = async () => {
+      await requestUserPermission();
+      try {
+        const messaging = getMessaging();
+        const FcmTtoken = await getToken(messaging);
+        console.log(FcmTtoken);
+        await AsyncStorage.setItem('FcmTtoken', FcmTtoken);
+      } catch (error) {
+        requestUserPermissions();
+      }
+    };
+    requestUserPermissions();
+  }, []);
+
   const formik = useFormik({
     initialValues: {mobileNumber: ''},
     validationSchema: LoginSchema,
     onSubmit: async ({mobileNumber}, {setSubmitting, setErrors}) => {
       setLoading(true);
       try {
-        const fcmToken = await AsyncStorage.getItem('FcmTtoken');
-        console.log(fcmToken);
-
         const response = await login({number: mobileNumber});
         if (response?.success && response?.status === 200) {
           await AsyncStorage.setItem('mobileNumber', mobileNumber);
