@@ -8,6 +8,7 @@ import {
 } from '../../../services/common';
 import {ToastService} from '../../../utils/service-handlers';
 import {pallette} from '../../../constants/constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Slot {
   SlotID: string;
@@ -63,8 +64,12 @@ export const RenderSlot: React.FC<RenderSlotProps> = ({
   );
 };
 
-export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
-  const {branch} = useApp();
+export const useDoctorSlots = (
+  doctorId: number,
+  typeOfAppointment: string,
+  setSelectedLocation: any,
+) => {
+  const {branch, allbranch, updateBranch} = useApp();
   const [doctorDetail, setDoctorDetail] = useState<any>({});
   const [doctorSpecialities, setDoctorSpecialities] = useState('');
   const [sessions, setSessions] = useState([]);
@@ -92,7 +97,7 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
             .filter(Boolean)
             .join(', '),
         );
-        await loadSessions(detail);
+        await loadSessions(detail, doctorLocations);
       } else {
         ToastService.error(
           'Error',
@@ -112,11 +117,37 @@ export const useDoctorSlots = (doctorId: number, typeOfAppointment: string) => {
   }, [doctorId, typeOfAppointment]);
 
   const loadSessions = useCallback(
-    async (docData: any) => {
+    async (docData: any, locationData: any) => {
+      const hasMatch = locationData.find(
+        (loc: any) =>
+          loc?.value == branch?.organisation?.organisationid?.toString(),
+      );
+      console.log(
+        'matching from location data',
+        hasMatch,
+        branch?.organisation,
+      );
+      var match: any = {};
+      if (!hasMatch) {
+        match = allbranch.find(obj1 =>
+          locationData.some(
+            (obj2: any) =>
+              obj1.organisation?.organisationid?.toString() === obj2.value,
+          ),
+        );
+        console.log('matching from branches data', match.organisation);
+        setSelectedLocation(match?.organisation?.organisationid?.toString());
+        updateBranch(match);
+        await AsyncStorage.setItem('branch', JSON.stringify(match));
+      } else {
+        setSelectedLocation(hasMatch?.value);
+      }
       try {
         const payload = {
           CareproviderCode: docData.new_doctor_UID,
-          OrganisationUID: branch?.organisation?.organisationid?.toString(),
+          OrganisationUID: hasMatch
+            ? hasMatch?.value
+            : match?.organisation?.organisationid?.toString(),
           AppointmentType: typeOfAppointment,
           noofdays: '30',
         };

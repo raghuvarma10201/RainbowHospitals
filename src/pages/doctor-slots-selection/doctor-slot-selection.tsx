@@ -125,7 +125,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     selectedDate,
     loadSlots,
     loading,
-  } = useDoctorSlots(doctorId, typeOfAppointment);
+  } = useDoctorSlots(doctorId, typeOfAppointment, setSelectedLocation);
 
   const resetState = useCallback(() => {
     setTypeOfAppointment('');

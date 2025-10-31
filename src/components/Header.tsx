@@ -248,6 +248,8 @@ const Header = forwardRef<any, HeaderProps>(
 
     /** Sync local selections with context */
     useEffect(() => {
+      console.log('updating header branch', branch?.organisation);
+
       setSelectedBranch(branch || null);
       setSelectedRegion(region || null);
     }, [branch, region]);
