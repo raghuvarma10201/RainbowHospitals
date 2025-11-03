@@ -24,6 +24,7 @@ import {
   PatientFamily,
   PatientRecords,
 } from '../pages';
+import PdfViewer from '../pages/appointments/pdf-url-viewer';
 import Notifications from '../pages/notifications/notifications';
 import {DocumentPreview} from '../pages/patient-records/document-preview';
 import {AuthStackParamList, MainStackParamList} from '../types/navigation';
@@ -59,6 +60,7 @@ export const routes: Record<CombinedRouteNames, CombinedRouteNames> = {
   Records: 'Records',
   Notifications: 'Notifications',
   DocPreview: 'DocPreview',
+  PDFPreview: 'PDFPreview',
 };
 
 export const auth_screens = [
@@ -93,6 +95,7 @@ export const app_screens = [
   {name: routes.Records, component: PatientRecords},
   {name: routes.Notifications, component: Notifications},
   {name: routes.DocPreview, component: DocumentPreview},
+  {name: routes.PDFPreview, component: PdfViewer},
 ];
 
 export const API_BASE_URL = 'https://rainbow.exwyn.com/api';

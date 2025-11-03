@@ -135,7 +135,12 @@ export const useDoctorSlots = (
               obj1.organisation?.organisationid?.toString() === obj2.value,
           ),
         );
-        console.log('matching from branches data', match.organisation);
+        console.log(
+          'matching from branches data',
+          match,
+          match.organisation,
+          match.name,
+        );
         setSelectedLocation(match?.organisation?.organisationid?.toString());
         updateBranch(match);
         await AsyncStorage.setItem('branch', JSON.stringify(match));

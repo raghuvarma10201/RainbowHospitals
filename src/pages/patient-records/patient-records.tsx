@@ -81,7 +81,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
   // ✅ Run again whenever startDate/endDate change
   useEffect(() => {
     if (startDate && endDate) {
-      fetchVisits();
+      // fetchVisits();
     }
   }, [startDate, endDate]);
 
@@ -94,18 +94,18 @@ const PatientRecords: FC = ({navigation, route}: any) => {
       if (response?.status === 200) {
         setFamilyMembers(response.data);
       } else {
-        ToastService.error(
-          'Error',
-          response?.message || 'Unable to fetch patients',
-        );
+        // ToastService.error(
+        //   'Error',
+        //   response?.message || 'Unable to fetch patients',
+        // );
       }
     } catch (error: any) {
-      ToastService.error(
-        'Error',
-        error?.response?.data?.message ||
-          error?.message ||
-          'Something went wrong',
-      );
+      // ToastService.error(
+      //   'Error',
+      //   error?.response?.data?.message ||
+      //     error?.message ||
+      //     'Something went wrong',
+      // );
     }
   }, []);
 
@@ -135,12 +135,12 @@ const PatientRecords: FC = ({navigation, route}: any) => {
       }
     } catch (error: any) {
       console.error('Error fetching visits:', error);
-      ToastService.error(
-        'Error',
-        error?.response?.data?.message ||
-          error?.message ||
-          'Something went wrong',
-      );
+      // ToastService.error(
+      //   'Error',
+      //   error?.response?.data?.message ||
+      //     error?.message ||
+      //     'Something went wrong',
+      // );
       setPatientVisits([]);
       setFilteredVisits([]);
       setLoading(false);
@@ -161,12 +161,12 @@ const PatientRecords: FC = ({navigation, route}: any) => {
       setPrescription(response.prescriptionResult || {});
     } catch (error: any) {
       console.error('Error fetching reports:', error);
-      ToastService.error(
-        'Error',
-        error?.response?.data?.message ||
-          error?.message ||
-          'Something went wrong',
-      );
+      // ToastService.error(
+      //   'Error',
+      //   error?.response?.data?.message ||
+      //     error?.message ||
+      //     'Something went wrong',
+      // );
     } finally {
       setLoading(false);
     }
@@ -642,7 +642,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
           ) : (
             <View
               style={{
-                borderWidth: 0.7,
+                // borderWidth: 0.7,
                 borderColor: pallette.light_grey,
                 borderRadius: w * 0.02,
                 marginBottom: h * 0.01,
@@ -655,7 +655,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }}>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.white,
                     textTransform: 'capitalize',
                     backgroundColor: pallette.amethyst,
@@ -666,10 +666,10 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 </Text>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.black,
                     textTransform: 'capitalize',
-                    width: w * 0.5,
+                    // width: w * 0.5,
                   }}>
                   Record Date : {moment(startDate).format('DD MMM')}
                   {"'"}
@@ -742,7 +742,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.dark_purple,
                     textTransform: 'capitalize',
                   }}>
@@ -770,7 +770,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
           ) : (
             <View
               style={{
-                borderWidth: 0.7,
+                // borderWidth: 0.7,
                 borderColor: pallette.light_grey,
                 borderRadius: w * 0.02,
                 marginBottom: h * 0.01,
@@ -783,7 +783,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }}>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.white,
                     textTransform: 'capitalize',
                     backgroundColor: pallette.amethyst,
@@ -794,11 +794,11 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 </Text>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
-                  }}>
+                  {/* }}> */}
                   Record Date :{' '}
                   {moment(startDate).add(1, 'day').format('DD MMM')}
                   {"'"}
@@ -880,7 +880,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.dark_purple,
                     textTransform: 'capitalize',
                   }}>
@@ -908,7 +908,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
           ) : (
             <View
               style={{
-                borderWidth: 0.7,
+                // borderWidth: 0.7,
                 borderColor: pallette.light_grey,
                 borderRadius: w * 0.02,
                 marginBottom: h * 0.01,
@@ -921,7 +921,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }}>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.white,
                     textTransform: 'capitalize',
                     backgroundColor: pallette.amethyst,
@@ -932,11 +932,11 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 </Text>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
-                  }}>
+                  {/* }}> */}
                   Record Date :{' '}
                   {moment(startDate).add(2, 'days').format('DD MMM')}
                   {"'"}
@@ -1018,7 +1018,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.dark_purple,
                     textTransform: 'capitalize',
                   }}>
@@ -1046,7 +1046,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
           ) : (
             <View
               style={{
-                borderWidth: 0.7,
+                // borderWidth: 0.7,
                 borderColor: pallette.light_grey,
                 borderRadius: w * 0.02,
                 marginBottom: h * 0.01,
@@ -1059,7 +1059,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }}>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.white,
                     textTransform: 'capitalize',
                     backgroundColor: pallette.amethyst,
@@ -1070,11 +1070,11 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 </Text>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
-                  }}>
+                  {/* }}> */}
                   Record Date :{' '}
                   {moment(startDate).add(4, 'days').format('DD MMM')}
                   {"'"}
@@ -1156,7 +1156,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.dark_purple,
                     textTransform: 'capitalize',
                   }}>
@@ -1184,7 +1184,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
           ) : (
             <View
               style={{
-                borderWidth: 0.7,
+                // borderWidth: 0.7,
                 borderColor: pallette.light_grey,
                 borderRadius: w * 0.02,
                 marginBottom: h * 0.01,
@@ -1197,7 +1197,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }}>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.white,
                     textTransform: 'capitalize',
                     backgroundColor: pallette.amethyst,
@@ -1208,11 +1208,11 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 </Text>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
-                  }}>
+                  {/* }}> */}
                   Record Date :{' '}
                   {moment(startDate).add(5, 'days').format('DD MMM')}
                   {"'"}
@@ -1285,7 +1285,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.dark_purple,
                     textTransform: 'capitalize',
                   }}>
@@ -1313,7 +1313,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
           ) : (
             <View
               style={{
-                borderWidth: 0.7,
+                // borderWidth: 0.7,
                 borderColor: pallette.light_grey,
                 borderRadius: w * 0.02,
                 marginBottom: h * 0.01,
@@ -1326,7 +1326,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }}>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.white,
                     textTransform: 'capitalize',
                     backgroundColor: pallette.amethyst,
@@ -1337,11 +1337,11 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 </Text>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
-                  }}>
+                  {/* }}> */}
                   Record Date :{' '}
                   {moment(startDate).add(8, 'days').format('DD MMM')}
                   {"'"}
@@ -1414,7 +1414,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                 }>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: adjust(12),
                     color: pallette.dark_purple,
                     textTransform: 'capitalize',
                   }}>
@@ -1725,9 +1725,9 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   accTitleStyle: {
-    fontSize: adjust(14),
-    fontFamily: 'Poppins-SemiBold',
-    color: '#F08E46',
+    fontSize: adjust(16),
+    fontFamily: 'Poppins-Bold',
+    color: pallette.dark_purple,
   },
   accBody: {
     paddingBottom: 10,

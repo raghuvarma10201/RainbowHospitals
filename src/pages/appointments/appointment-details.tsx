@@ -19,6 +19,7 @@ import {
   isBeforeTwoHours,
   adjust,
   isAfterTwoHours,
+  isPreviousDay,
 } from '../../utils/common-functions';
 import {
   bookAppointment,
@@ -32,6 +33,7 @@ import Loader from '../../components/loader';
 import {useJitsi} from '../../context/jitsi-context';
 import {AppointmentPayload} from '../../utils/types';
 import moment from 'moment';
+import {API_BASE_URL, API_IMG_URL, routes} from '../../utils';
 
 type VitalKey = 'height' | 'weight' | 'temperature';
 type BankKey =
@@ -181,7 +183,9 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
         BookingUID: appointmentData?.BookingUID,
         notifyTo: 'doctor',
       });
-      startVideoCall();
+      console.log(response);
+
+      // startVideoCall();
     } catch (error: any) {
       console.error('Error fetching visits:', error);
       ToastService.error(
@@ -190,7 +194,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           error?.message ||
           'Something went wrong',
       );
-      startVideoCall();
+      // startVideoCall();
     }
   };
 
@@ -223,10 +227,11 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       <View style={styles.actionsRow}>
         {appointmentData?.payment_type?.toLowerCase() == 'payu' && (
           <TouchableOpacity
-            // disabled={
-            //   appointmentData?.unreadCount == 0 &&
-            //   isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 1)
-            // }
+            disabled={
+              appointmentData?.unreadCount == 0 ||
+              isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 1) ||
+              isPreviousDay(appointmentData?.SlotStartDttm)
+            }
             onPress={() =>
               navigation.navigate('AppointmentChat', {
                 bookingId: appointmentData.appointmentnumber,
@@ -239,53 +244,56 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
                 styles.actionBtnText,
                 {
                   backgroundColor:
-                    appointmentData?.unreadCount == 0 &&
-                    isBeforeTwoHours(
-                      dateTime,
-                      appointmentData?.SlotStartDttm,
-                      1,
-                    )
+                    (appointmentData?.unreadCount == 0 &&
+                      isBeforeTwoHours(
+                        dateTime,
+                        appointmentData?.SlotStartDttm,
+                        1,
+                      )) ||
+                    isPreviousDay(appointmentData?.SlotStartDttm)
                       ? pallette.dark_grey
                       : pallette.dark_purple,
                 },
               ]}>
               Chat
             </Text>
-            {appointmentData?.unreadCount > 0 && (
-              <View
-                style={{
-                  height: w * 0.05,
-                  width: w * 0.05,
-                  borderRadius: w,
-                  backgroundColor: pallette.dark_purple,
-                  position: 'absolute',
-                  right: -(w * 0.01),
-                  top: -(w * 0.01),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text
+            {appointmentData?.unreadCount > 0 &&
+              !isPreviousDay(appointmentData?.SlotStartDttm) && (
+                <View
                   style={{
-                    fontSize: adjust(10),
-                    color: pallette.white,
+                    height: w * 0.05,
+                    width: w * 0.05,
+                    borderRadius: w,
+                    backgroundColor: pallette.dark_purple,
+                    position: 'absolute',
+                    right: -(w * 0.01),
+                    top: -(w * 0.01),
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}>
-                  {appointmentData?.unreadCount}
-                </Text>
-              </View>
-            )}
+                  <Text
+                    style={{
+                      fontSize: adjust(10),
+                      color: pallette.white,
+                    }}>
+                    {appointmentData?.unreadCount}
+                  </Text>
+                </View>
+              )}
           </TouchableOpacity>
         )}
 
         {appointmentData?.AppointmentType.toLowerCase() !== 'physical' && (
           <TouchableOpacity
-            // disabled={
-            //   isBeforeTwoHours(
-            //     dateTime,
-            //     appointmentData?.SlotStartDttm,
-            //     0.25,
-            //   ) ||
-            //   isAfterTwoHours(dateTime, appointmentData?.SlotStartDttm, 0.25)
-            // }
+            disabled={
+              !isBeforeTwoHours(
+                dateTime,
+                appointmentData?.SlotStartDttm,
+                0.25,
+              ) ||
+              isAfterTwoHours(dateTime, appointmentData?.SlotStartDttm, 0.25) ||
+              isPreviousDay(appointmentData?.SlotStartDttm)
+            }
             onPress={sendNotification}>
             <Text
               style={[
@@ -458,6 +466,58 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
             </View>
           </View>
 
+          {appointmentData?.prescription_file && (
+            <View
+              style={[styles.patientInfo, {marginTop: 15, borderRadius: 10}]}>
+              <Text style={styles.patientInfoHeaderText}>
+                Prescription File
+              </Text>
+              <View style={styles.timeDateItem}>
+                <View style={styles.timeFlexRow}>
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontSize: adjust(12),
+                      fontWeight: 'bold',
+                    }}>
+                    📄
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: adjust(12),
+                      color: '#6651AF',
+                      fontFamily: 'ProximaNovaA-Semibold',
+                      marginBottom: 2,
+                    }}>
+                    {`Doctor_Prescription.pdf`}
+                  </Text>
+                </View>
+                <View>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate(routes.PDFPreview, {
+                        source: {
+                          uri: `${API_IMG_URL}${appointmentData?.prescription_file}`,
+                        },
+                      })
+                    }
+                    style={styles.timeFlexRow}>
+                    <Text
+                      style={{
+                        fontSize: adjust(12),
+                        color: '#6651AF',
+                        fontFamily: 'ProximaNovaA-Semibold',
+                        textDecorationLine: 'underline',
+                        marginBottom: 2,
+                      }}>
+                      {`View`}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          )}
+
           <Text style={styles.acSubTitle}>
             Appointments can be rescheduled or cancelled up to{' '}
             <Text style={{fontWeight: 'bold', color: pallette.red}}>
@@ -472,9 +532,9 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           {/* cancel + reschedule */}
           <View style={styles.payBtnsContainer}>
             <TouchableOpacity
-              // disabled={
-              //   !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 2)
-              // }
+              disabled={
+                !isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 2)
+              }
               onPress={() => showModal()}
               style={[
                 styles.payBtn,

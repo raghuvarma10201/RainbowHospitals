@@ -173,6 +173,14 @@ const Header = forwardRef<any, HeaderProps>(
 
           const allBranches = await getBranches(nearestRegion.region_id);
           if (!allBranches.length) return;
+          // console.log(
+          //   allBranches.filter(
+          //     b =>
+          //       b.organisation.name ==
+          //       `UAT_Rainbow Children's Hospital - Banjara Hills`,
+          //   ),
+          // );
+
           updateAllBranch(allBranches);
 
           if (branch) return;
@@ -248,7 +256,7 @@ const Header = forwardRef<any, HeaderProps>(
 
     /** Sync local selections with context */
     useEffect(() => {
-      console.log('updating header branch', branch?.organisation);
+      // console.log('updating header branch', branch?.name, branch);
 
       setSelectedBranch(branch || null);
       setSelectedRegion(region || null);
@@ -391,7 +399,9 @@ const Header = forwardRef<any, HeaderProps>(
                         selectedBranch?.id === b.id &&
                           styles.selectedLocationOption,
                       ]}
-                      onPress={() => setSelectedBranch(b)}>
+                      onPress={() => {
+                        console.log(b), setSelectedBranch(b);
+                      }}>
                       <Text
                         style={[
                           styles.locationOptionText,

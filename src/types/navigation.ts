@@ -57,6 +57,7 @@ export type MainStackParamList = {
   Records: undefined;
   Notifications: undefined;
   DocPreview: undefined;
+  PDFPreview: undefined;
 };
 
 export type CombinedNavigationProp = CompositeNavigationProp<

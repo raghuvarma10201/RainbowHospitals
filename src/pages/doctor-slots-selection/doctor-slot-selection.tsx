@@ -46,6 +46,7 @@ import DoctorDetailsCard from '../../components/doctor-details-card';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useSettings} from '../../context/settings-context';
 import {useTimer} from '../../context/timer-context';
+import WarningModal from '../../components/custom-warning';
 
 const payment_types = [
   {value: '1', label: 'Pay Now'},
@@ -87,6 +88,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   const [loadingPayment, setLoadingPayment] = useState(false);
   const [timerStarted, setTimerStarted] = useState(false);
   const [loadingCall, setLoadingCall] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<string | undefined>(
     patientId || profile ? profile?.PatientID : '',
   );
@@ -600,14 +602,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                   {/* Add Patient Button */}
                   <TouchableOpacity
                     style={styles.addPatientBtn}
-                    onPress={() =>
-                      navigation.navigate(routes.AddFamily as never, {
-                        onGoBack: data => {
-                          getFamilyMembers(phoneNumber, data);
-                          setShowPopUp(true);
-                        },
-                      })
-                    }>
+                    onPress={() => setVisible(true)}>
                     <Text style={styles.addPatientTxt}>+ Add</Text>
                   </TouchableOpacity>
                 </View>
@@ -770,6 +765,25 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
             <Text style={styles.formButtonText}>Confirm Booking</Text>
           </TouchableOpacity>
         )}
+
+        <WarningModal
+          visible={visible}
+          onClose={() => {
+            setVisible(false),
+              navigation.navigate(routes.AddFamily as never, {
+                onGoBack: data => {
+                  getFamilyMembers(phoneNumber, data);
+                  setShowPopUp(true);
+                },
+              });
+          }}
+          title="Important Notice"
+          message={
+            'Use the existing MPID (if available).\nFor every new MPID creation, you will be charged an extra {{highlight}}.\nAlso, new MPIDs will not have previous records.'
+          }
+          highlightText="₹150 - ₹300"
+          buttonText="Got it"
+        />
       </ScrollView>
       <Footer />
       {(loading || loadingPayment || loadingCall) && <Loader />}

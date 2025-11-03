@@ -155,64 +155,92 @@ export const requestUserPermission = async () => {
 export const setupNotificationListeners = () => {
   const messaging = getMessaging();
   onNotificationOpenedApp(messaging, async remoteMessage => {
-    const parsedData = JSON.parse(remoteMessage?.data?.appointment);
-    const data = await filterAppointment(
-      parsedData?.mrn,
-      parsedData?.his_booking_id,
-    );
-    navigate('MyAppointmentDetails', {
-      appointmentData: {...data, join: true},
-    });
+    console.log('onNotificationOpenedApp', remoteMessage);
+    // if (remoteMessage?.notification?.android?.channelId == 'default') {
+    //   const parsedData = JSON.parse(remoteMessage?.data?.appointment);
+    //   console.log(parsedData);
+
+    //   const data = await filterAppointment(
+    //     parsedData?.mrn,
+    //     parsedData?.his_booking_id,
+    //   );
+    //   navigate('MyAppointmentDetails', {
+    //     appointmentData: {...data, join: false},
+    //   });
+    // } else {
+    //   const parsedData = JSON.parse(remoteMessage?.data?.appointment);
+    //   const data = await filterAppointment(
+    //     parsedData?.mrn,
+    //     parsedData?.his_booking_id,
+    //   );
+    //   navigate('MyAppointmentDetails', {
+    //     appointmentData: {...data, join: true},
+    //   });
+    // }
   });
   getInitialNotification(messaging).then(remoteMessage => {
-    if (remoteMessage) {
-    }
+    // if (remoteMessage) {
+    // }
+    console.log('getInitialNotification', remoteMessage);
   });
+
   onMessage(messaging, async remoteMessage => {
-    let type = remoteMessage?.notification?.android?.channelId;
-    let channelId = 'general';
-    if (type === 'appointment') channelId = 'appointment';
-    else if (type === 'critical') channelId = 'critical';
+    console.log('Foreground FCM message:', remoteMessage);
+
+    const type = remoteMessage?.notification?.android?.channelId || 'general';
+
     await notifee.displayNotification({
       title: remoteMessage.notification?.title,
       body: remoteMessage.notification?.body,
       android: {
-        channelId,
+        channelId: type,
         sound: 'alert3',
         importance: AndroidImportance.HIGH,
-        pressAction: {
-          id: 'default',
-        },
+        pressAction: {id: 'default'},
       },
+      data: remoteMessage.data, // Keep data for press handling
     });
+  });
 
-    notifee.onForegroundEvent(({type, detail}) => {
-      if (type === EventType.PRESS) {
-        handleNotificationPress(detail.notification);
-      }
-    });
+  // Put this OUTSIDE onMessage — usually in App.js or a top-level useEffect
+  notifee.onForegroundEvent(({type, detail}) => {
+    if (type === EventType.PRESS) {
+      console.log('Notification pressed:', detail.notification?.data);
 
-    const handleNotificationPress = async (notification: any) => {
-      const parsedData = JSON.parse(remoteMessage?.data?.appointment);
+      handleNotificationPress(detail.notification);
+    }
+  });
+
+  const handleNotificationPress = async (notification: any) => {
+    try {
+      const parsedData = JSON.parse(notification?.data?.appointment);
+      console.log(parsedData);
+
       const data = await filterAppointment(
         parsedData?.mrn,
         parsedData?.his_booking_id,
       );
+      console.log('Filtered appointment:', data);
+
       navigate('MyAppointmentDetails', {
         appointmentData: {...data, join: true},
       });
-    };
-  });
+      // navigate('MyAppointmentDetails', { appointmentData: {...data, join: true} });
+    } catch (e) {
+      console.error('Error handling press:', e);
+    }
+  };
 
   setBackgroundMessageHandler(messaging, async remoteMessage => {
-    let type = remoteMessage?.notification?.android?.channelId;
-    let channelId = 'general';
-    if (type === 'appointment') channelId = 'appointment';
-    else if (type === 'critical') channelId = 'critical';
-    await notifee.displayNotification({
-      title: remoteMessage.notification?.title,
-      body: remoteMessage.notification?.body,
-      android: {channelId, sound: 'alert3', importance: AndroidImportance.HIGH},
-    });
+    // let type = remoteMessage?.notification?.android?.channelId;
+    // let channelId = 'general';
+    // if (type === 'appointment') channelId = 'appointment';
+    // else if (type === 'critical') channelId = 'critical';
+    // await notifee.displayNotification({
+    //   title: remoteMessage.notification?.title,
+    //   body: remoteMessage.notification?.body,
+    //   android: {channelId, sound: 'alert3', importance: AndroidImportance.HIGH},
+    // });
+    console.log('setBackgroundMessageHandler', remoteMessage);
   });
 };

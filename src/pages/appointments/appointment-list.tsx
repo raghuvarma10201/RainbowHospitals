@@ -176,7 +176,7 @@ const MyAppointments: React.FC = ({route}: any) => {
                         styles.docName,
                         {
                           fontSize: adjust(12),
-                          color: !isPreviousDay(appointment?.SlotStartDttm)
+                          color: isPreviousDay(appointment?.SlotStartDttm)
                             ? pallette.dark_purple
                             : '#4CC2BF',
                           fontFamily: 'ProximaNovaA-Bold',
@@ -204,7 +204,7 @@ const MyAppointments: React.FC = ({route}: any) => {
                         styles.consultationText,
                         {
                           fontFamily: 'ProximaNovaA-Semibold',
-                          backgroundColor: !isPreviousDay(
+                          backgroundColor: isPreviousDay(
                             appointment?.SlotStartDttm,
                           )
                             ? pallette.light_amethyst

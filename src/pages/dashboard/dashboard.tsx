@@ -59,7 +59,7 @@ const Dashboard: React.FC = () => {
       ? images.women_banner
       : images.fertility_banner,
   );
-  const [activeindex, setActiveindex] = useState(0);
+  const [activeindex, setActiveindex] = useState(1);
   const [appointments, setAppointments] = useState<upcomingApointment[]>([]);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [activeAppointmentIndex, setActiveAppointmentIndex] = useState(0);
@@ -104,11 +104,11 @@ const Dashboard: React.FC = () => {
           );
           const sortedUpcoming = upcomingAppointments.sort(
             (a: upcomingApointment, b: upcomingApointment) =>
-              moment(b.SlotStartDttm).valueOf() -
-              moment(a.SlotStartDttm).valueOf(),
+              moment(a.SlotStartDttm).valueOf() -
+              moment(b.SlotStartDttm).valueOf(),
           );
           const latestPast = sortedPast.length > 0 ? [sortedPast[0]] : [];
-          return [...sortedUpcoming, ...latestPast];
+          return [...latestPast, ...sortedUpcoming];
         });
       } catch (error: any) {
         console.error('Error fetching appointments:', error);

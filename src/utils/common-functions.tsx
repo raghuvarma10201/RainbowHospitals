@@ -56,21 +56,55 @@ export const formatAppointmentDateTime = (dateString: string) => {
   return formatted.replace(',', ' at');
 };
 
+// export const isBeforeTwoHours = (
+//   givenDttm: any,
+//   slotStartDttm: any,
+//   hoursBefore: number = 2,
+// ) => {
+//   const givenTime: any = new Date(givenDttm);
+//   const slotTime: any = new Date(slotStartDttm);
+
+//   // difference in milliseconds
+//   const diffMs = slotTime - givenTime;
+
+//   // convert ms → hours
+//   const diffHours = diffMs / (1000 * 60 * 60);
+
+//   return diffHours >= hoursBefore;
+// };
+
 export const isBeforeTwoHours = (
-  givenDttm: any,
-  slotStartDttm: any,
+  givenDttm: string | Date,
+  slotStartDttm: string | Date,
   hoursBefore: number = 2,
-) => {
-  const givenTime: any = new Date(givenDttm);
-  const slotTime: any = new Date(slotStartDttm);
+): boolean => {
+  const givenTime = new Date(givenDttm);
+  const slotTime = new Date(slotStartDttm);
 
-  // difference in milliseconds
-  const diffMs = slotTime - givenTime;
+  // If invalid date inputs, return false
+  if (isNaN(givenTime.getTime()) || isNaN(slotTime.getTime())) {
+    return false;
+  }
 
-  // convert ms → hours
+  // Calculate difference in milliseconds
+  const diffMs = slotTime.getTime() - givenTime.getTime();
+
+  // Convert ms → hours
   const diffHours = diffMs / (1000 * 60 * 60);
 
-  return diffHours >= hoursBefore;
+  // If slot is before given time (past), return false
+  if (diffHours < 0) {
+    return false;
+  }
+
+  // Ensure that the slot date is same or later
+  const givenDate = givenTime.toDateString();
+  const slotDate = slotTime.toDateString();
+
+  // Only allow same or future dates, and must be at least 'hoursBefore' away
+  return (
+    slotTime >= givenTime && diffHours >= hoursBefore && slotDate >= givenDate
+  );
 };
 
 export const isAfterTwoHours = (
@@ -118,6 +152,8 @@ export const filterAppointment = async (id: string, appId: string) => {
       const filteredAppointment = response.data.filter(
         (apts: upcomingApointment) => apts.BookingUID == appId,
       )[0];
+      console.log(filteredAppointment);
+
       return filteredAppointment;
     } else {
       return {};
