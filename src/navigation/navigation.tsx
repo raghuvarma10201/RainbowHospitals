@@ -28,8 +28,6 @@ export const navigate = (name: string, params?: any) => {
 };
 
 export const navigateDispatch = (name: string, params?: never) => {
-  console.log(name, params);
-
   if (navigationRef.isReady()) {
     navigationRef.dispatch(
       CommonActions.reset({

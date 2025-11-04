@@ -18,8 +18,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 type VitalKey = 'height' | 'weight' | 'temperature';
 
 const UploadVitals = ({appointmentData}: {appointmentData: any}) => {
-  console.log(appointmentData);
-
   const [vitals, setVitals] = useState({
     height: appointmentData?.vitals?.height || '',
     weight: appointmentData?.vitals?.weight || '',

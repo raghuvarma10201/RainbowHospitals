@@ -128,11 +128,6 @@ const Otp: React.FC = () => {
     onSubmit: async () => {
       if (!phoneNumber) return;
       setLoading(true);
-      console.log({
-        number: phoneNumber,
-        otp: value,
-      });
-
       try {
         const fcmToken = (await AsyncStorage.getItem('FcmTtoken')) || fcm;
         if (!fcmToken) {
@@ -140,7 +135,6 @@ const Otp: React.FC = () => {
           try {
             const messaging = getMessaging();
             const FcmTtoken = await getToken(messaging);
-            console.log(FcmTtoken);
             await AsyncStorage.setItem('FcmTtoken', FcmTtoken);
           } catch (error) {
             ToastService.error('Error', 'Failed to fetch FCM Token!');
@@ -167,8 +161,6 @@ const Otp: React.FC = () => {
           ToastService.success('Success', 'OTP Verified Successfully');
 
           const authRes = await authenticateUser({MobileNo: phoneNumber});
-          console.log(authRes);
-
           if (!authRes?.success) {
             navigateTo(navigation, routes.Registration);
             ToastService.error('', authRes?.error || 'User Not Registered');
@@ -178,8 +170,6 @@ const Otp: React.FC = () => {
           const token = verifyRes.data.token;
           if (!token) ToastService.error('Error', 'Token Missing!');
           const decoded = jwtDecode<JwtPayload>(token);
-          console.log(decoded);
-
           await AsyncStorage.multiSet([
             ['accessToken', token],
             ['refreshToken', token],
@@ -195,10 +185,8 @@ const Otp: React.FC = () => {
           const profileData = await getPatientProfile({
             mrn: authRes.data.LoginName,
           });
-          console.log(profileData);
           if (profileData?.success && profileData.data?.[0]) {
             updateProfile(profileData.data[0]);
-            console.log(profileData.data[0]);
             setLoggedIn(true);
           }
 

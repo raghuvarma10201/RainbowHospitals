@@ -155,11 +155,9 @@ export const requestUserPermission = async () => {
 export const setupNotificationListeners = () => {
   const messaging = getMessaging();
   onNotificationOpenedApp(messaging, async remoteMessage => {
-    console.log('onNotificationOpenedApp', remoteMessage);
+    // handleNotificationPress(remoteMessage);
     // if (remoteMessage?.notification?.android?.channelId == 'default') {
     //   const parsedData = JSON.parse(remoteMessage?.data?.appointment);
-    //   console.log(parsedData);
-
     //   const data = await filterAppointment(
     //     parsedData?.mrn,
     //     parsedData?.his_booking_id,
@@ -181,12 +179,10 @@ export const setupNotificationListeners = () => {
   getInitialNotification(messaging).then(remoteMessage => {
     // if (remoteMessage) {
     // }
-    console.log('getInitialNotification', remoteMessage);
+    // handleNotificationPress(remoteMessage);
   });
 
   onMessage(messaging, async remoteMessage => {
-    console.log('Foreground FCM message:', remoteMessage);
-
     const type = remoteMessage?.notification?.android?.channelId || 'general';
 
     await notifee.displayNotification({
@@ -203,33 +199,27 @@ export const setupNotificationListeners = () => {
   });
 
   // Put this OUTSIDE onMessage — usually in App.js or a top-level useEffect
-  notifee.onForegroundEvent(({type, detail}) => {
-    if (type === EventType.PRESS) {
-      console.log('Notification pressed:', detail.notification?.data);
+  // notifee.onForegroundEvent(({type, detail}) => {
+  //   if (type === EventType.PRESS) {
+  //     handleNotificationPress(detail.notification);
+  //   }
+  // });
 
-      handleNotificationPress(detail.notification);
-    }
-  });
-
-  const handleNotificationPress = async (notification: any) => {
-    try {
-      const parsedData = JSON.parse(notification?.data?.appointment);
-      console.log(parsedData);
-
-      const data = await filterAppointment(
-        parsedData?.mrn,
-        parsedData?.his_booking_id,
-      );
-      console.log('Filtered appointment:', data);
-
-      navigate('MyAppointmentDetails', {
-        appointmentData: {...data, join: true},
-      });
-      // navigate('MyAppointmentDetails', { appointmentData: {...data, join: true} });
-    } catch (e) {
-      console.error('Error handling press:', e);
-    }
-  };
+  // const handleNotificationPress = async (notification: any) => {
+  //   try {
+  //     const parsedData = JSON.parse(notification?.data?.appointment);
+  //     const data = await filterAppointment(
+  //       parsedData?.mrn,
+  //       parsedData?.his_booking_id,
+  //     );
+  //     navigate('MyAppointmentDetails', {
+  //       appointmentData: {...data, join: true},
+  //     });
+  //     // navigate('MyAppointmentDetails', { appointmentData: {...data, join: true} });
+  //   } catch (e) {
+  //     console.error('Error handling press:', e);
+  //   }
+  // };
 
   setBackgroundMessageHandler(messaging, async remoteMessage => {
     // let type = remoteMessage?.notification?.android?.channelId;
@@ -241,6 +231,5 @@ export const setupNotificationListeners = () => {
     //   body: remoteMessage.notification?.body,
     //   android: {channelId, sound: 'alert3', importance: AndroidImportance.HIGH},
     // });
-    console.log('setBackgroundMessageHandler', remoteMessage);
   });
 };

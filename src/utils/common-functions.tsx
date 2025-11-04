@@ -152,8 +152,6 @@ export const filterAppointment = async (id: string, appId: string) => {
       const filteredAppointment = response.data.filter(
         (apts: upcomingApointment) => apts.BookingUID == appId,
       )[0];
-      console.log(filteredAppointment);
-
       return filteredAppointment;
     } else {
       return {};

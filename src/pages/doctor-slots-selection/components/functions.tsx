@@ -68,6 +68,8 @@ export const useDoctorSlots = (
   doctorId: number,
   typeOfAppointment: string,
   setSelectedLocation: any,
+  appointmentnumber?: any,
+  OrganisationID?: any,
 ) => {
   const {branch, allbranch, updateBranch} = useApp();
   const [doctorDetail, setDoctorDetail] = useState<any>({});
@@ -118,34 +120,34 @@ export const useDoctorSlots = (
 
   const loadSessions = useCallback(
     async (docData: any, locationData: any) => {
-      const hasMatch = locationData.find(
+      var hasMatch = locationData.find(
         (loc: any) =>
           loc?.value == branch?.organisation?.organisationid?.toString(),
       );
-      console.log(
-        'matching from location data',
-        hasMatch,
-        branch?.organisation,
-      );
       var match: any = {};
-      if (!hasMatch) {
-        match = allbranch.find(obj1 =>
-          locationData.some(
-            (obj2: any) =>
-              obj1.organisation?.organisationid?.toString() === obj2.value,
-          ),
-        );
-        console.log(
-          'matching from branches data',
-          match,
-          match.organisation,
-          match.name,
-        );
-        setSelectedLocation(match?.organisation?.organisationid?.toString());
-        updateBranch(match);
-        await AsyncStorage.setItem('branch', JSON.stringify(match));
+      if (!appointmentnumber) {
+        if (!hasMatch) {
+          match = allbranch.find(obj1 =>
+            locationData.some(
+              (obj2: any) =>
+                obj1.organisation?.organisationid?.toString() === obj2.value,
+            ),
+          );
+          setSelectedLocation(match?.organisation?.organisationid?.toString());
+          updateBranch(match);
+          await AsyncStorage.setItem('branch', JSON.stringify(match));
+        } else {
+          setSelectedLocation(hasMatch?.value);
+        }
       } else {
-        setSelectedLocation(hasMatch?.value);
+        hasMatch = locationData.find(
+          (loc: any) => loc?.value == OrganisationID,
+        );
+        match = allbranch.find(
+          obj1 =>
+            obj1?.organisation?.organisationid?.toString() == OrganisationID,
+        );
+        updateBranch(match);
       }
       try {
         const payload = {
@@ -156,8 +158,6 @@ export const useDoctorSlots = (
           AppointmentType: typeOfAppointment,
           noofdays: '30',
         };
-        console.log(payload);
-
         const response = await getDoctorSessions(payload);
         if (response?.status === 200 && response.data?.length) {
           const uniqueSessions = response.data.filter(
@@ -202,8 +202,6 @@ export const useDoctorSlots = (
           OrganisationUID: branch?.organisation?.organisationid?.toString(),
           AppointmentType: typeOfAppointment,
         };
-        console.log(payload);
-
         const response = await getDoctorSlots(payload);
         if (response?.status === 200 && response.data) {
           setSlots(response.data);

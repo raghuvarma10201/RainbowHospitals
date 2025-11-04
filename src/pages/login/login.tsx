@@ -42,7 +42,6 @@ const Login: React.FC = () => {
       try {
         const messaging = getMessaging();
         const FcmTtoken = await getToken(messaging);
-        console.log(FcmTtoken);
         await AsyncStorage.setItem('FcmTtoken', FcmTtoken);
       } catch (error) {
         requestUserPermissions();

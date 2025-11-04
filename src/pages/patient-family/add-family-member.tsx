@@ -80,8 +80,6 @@ const RegistrationSchema = Yup.object({
 const AddFamilyMember: React.FC = ({route}: any) => {
   const navigation = useNavigation<CombinedNavigationProp>();
   const {onGoBack} = route.params;
-  console.log(onGoBack);
-
   const {setLoggedIn} = useAuth();
 
   const [mobileNumber, setMobileNumber] = useState('');

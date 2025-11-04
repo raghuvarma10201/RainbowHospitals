@@ -73,6 +73,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     patientId,
     paid,
   } = route.params;
+
   const headerRef = useRef<any>();
   const scrollRef = useRef<ScrollView>(null);
 
@@ -127,7 +128,13 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     selectedDate,
     loadSlots,
     loading,
-  } = useDoctorSlots(doctorId, typeOfAppointment, setSelectedLocation);
+  } = useDoctorSlots(
+    doctorId,
+    typeOfAppointment,
+    setSelectedLocation,
+    appointmentnumber,
+    OrganisationID,
+  );
 
   const resetState = useCallback(() => {
     setTypeOfAppointment('');

@@ -49,8 +49,6 @@ const DoctorsList: React.FC = ({route}: any) => {
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {specialityId, specialityName, appointmentType} = route.params;
   const {branch, updateCategory, region} = useApp();
-  console.log('selected region', region);
-
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [changeLocation, setChangeLocation] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
@@ -184,20 +182,15 @@ const DoctorsList: React.FC = ({route}: any) => {
           </View>
           <View style={[styles.doctorsListContainer]}>
             {doctors.length > 0 ? (
-              doctors.map(
-                doctor => (
-                  console.log(doctor.doctor_branches),
-                  (
-                    <DoctorRow
-                      key={doctor.id}
-                      doctor={doctor}
-                      appointmentType={appointmentType}
-                      branchId={branch?.organisation?.organisationid}
-                      navigation={navigation}
-                    />
-                  )
-                ),
-              )
+              doctors.map(doctor => (
+                <DoctorRow
+                  key={doctor.id}
+                  doctor={doctor}
+                  appointmentType={appointmentType}
+                  branchId={branch?.organisation?.organisationid}
+                  navigation={navigation}
+                />
+              ))
             ) : (
               <NotFound
                 text={`No doctors found in ${

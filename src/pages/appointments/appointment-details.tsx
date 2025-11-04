@@ -46,8 +46,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const {appointmentData, cancel, vitalsUpload} = route.params;
-  console.log(appointmentData);
-
   const dateTime = moment().format();
 
   const [visible, setVisible] = React.useState(cancel || false);
@@ -183,8 +181,6 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
         BookingUID: appointmentData?.BookingUID,
         notifyTo: 'doctor',
       });
-      console.log(response);
-
       // startVideoCall();
     } catch (error: any) {
       console.error('Error fetching visits:', error);

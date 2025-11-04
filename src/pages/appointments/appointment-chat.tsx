@@ -118,8 +118,6 @@ const AppointmentChat: React.FC<any> = ({route}) => {
 
   const sendMessage = async () => {
     const id = await AsyncStorage.getItem('user_id');
-    console.log(id);
-
     try {
       setIsSending(true);
       let formdata = new FormData();

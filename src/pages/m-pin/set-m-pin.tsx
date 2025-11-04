@@ -49,8 +49,6 @@ const SetMpin: React.FC = () => {
       if (isExistingMpin) {
         // Enter M-PIN flow
         const response = await verifyMpin({MobileNo: phoneNumber, mpin});
-        console.log(response);
-
         if (response?.success && response?.status === 200) {
           await AsyncStorage.setItem('mPin', mpin);
           updateMpinEntered(true); // Save in context
