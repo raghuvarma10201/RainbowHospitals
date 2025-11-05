@@ -193,6 +193,8 @@ const Otp: React.FC = () => {
           await loadDetails();
         }
       } catch (err: any) {
+        console.log(err?.message);
+
         ToastService.error('Error', err?.message || 'Something went wrong');
       } finally {
         setLoading(false);

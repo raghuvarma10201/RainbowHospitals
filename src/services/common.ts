@@ -10,6 +10,15 @@ export const getPatientProfile = async (payload: any) => {
     throw error;
   }
 };
+export const getNotificationCount = async () => {
+  try {
+    const response = await api.get('/statistics');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getRegions = async () => {
   try {
     const response = await api.get('/getRegions');

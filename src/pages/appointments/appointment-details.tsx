@@ -279,7 +279,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
           </TouchableOpacity>
         )}
 
-        {appointmentData?.AppointmentType.toLowerCase() !== 'physical' && (
+        {appointmentData?.AppointmentType?.toLowerCase() !== 'physical' && (
           <TouchableOpacity
             disabled={
               !isBeforeTwoHours(

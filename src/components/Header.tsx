@@ -26,6 +26,7 @@ import {Branch} from '../services/Region/api';
 import {
   fetchFamilyMembers,
   getBranches,
+  getNotificationCount,
   getPatientProfile,
   getRegions,
 } from '../services/common';
@@ -78,6 +79,7 @@ const Header = forwardRef<any, HeaderProps>(
       Record<string, Animated.Value>
     >({});
     const [mainPatient, setMainPatient] = useState();
+    const [notificationCount, setNotificationCount] = useState(0);
 
     const {
       branch,
@@ -143,6 +145,25 @@ const Header = forwardRef<any, HeaderProps>(
       };
       getProfile();
     }, [updateProfile, category]);
+
+    useEffect(() => {
+      const getNotificationsCount = async () => {
+        try {
+          const data = await getNotificationCount();
+          console.log(data);
+
+          setNotificationCount(data?.data[0]?.value);
+        } catch (err: any) {
+          ToastService.error(
+            'Error',
+            err?.response?.data?.message ||
+              err?.message ||
+              'Something went wrong while fetching profile',
+          );
+        }
+      };
+      getNotificationsCount();
+    }, []);
 
     /** Initial load with persisted region/branch */
     useEffect(() => {
@@ -536,6 +557,11 @@ const Header = forwardRef<any, HeaderProps>(
               style={styles.notificationIcon}
               resizeMode="contain"
             />
+            <View style={styles.unreadBadge}>
+              <Text style={styles.unreadText}>
+                {notificationCount > 99 ? '99+' : notificationCount}
+              </Text>
+            </View>
           </TouchableOpacity>
 
           {/* <TouchableOpacity onPress={() => setVisible(true)}>
@@ -715,6 +741,25 @@ const styles = StyleSheet.create({
   notificationIcon: {width: w * 0.05, height: w * 0.05},
   walletIcon: {width: w * 0.065, height: w * 0.065},
   filterIcon: {width: w * 0.06, height: w * 0.06},
+
+  unreadBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -10,
+    borderRadius: 10,
+    minWidth: w * 0.04,
+    height: w * 0.04,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 3,
+    backgroundColor: pallette.dark_purple,
+  },
+
+  unreadText: {
+    color: 'white',
+    fontSize: adjust(8),
+    fontWeight: 'bold',
+  },
 });
 
 export default React.memo(Header);

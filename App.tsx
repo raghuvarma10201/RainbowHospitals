@@ -49,10 +49,12 @@ const App: React.FC = () => {
     const requestUserPermissions = async () => {
       await requestUserPermission();
       try {
-        const messaging = getMessaging();
+        const messaging = await getMessaging();
         const FcmTtoken = await getToken(messaging);
         await AsyncStorage.setItem('FcmTtoken', FcmTtoken);
       } catch (error) {
+        console.log(error);
+
         requestUserPermissions();
       }
     };

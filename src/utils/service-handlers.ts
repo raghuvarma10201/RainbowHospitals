@@ -155,7 +155,7 @@ export const requestUserPermission = async () => {
 export const setupNotificationListeners = () => {
   const messaging = getMessaging();
   onNotificationOpenedApp(messaging, async remoteMessage => {
-    // handleNotificationPress(remoteMessage);
+    await handleNotificationPress(remoteMessage);
     // if (remoteMessage?.notification?.android?.channelId == 'default') {
     //   const parsedData = JSON.parse(remoteMessage?.data?.appointment);
     //   const data = await filterAppointment(
@@ -176,10 +176,10 @@ export const setupNotificationListeners = () => {
     //   });
     // }
   });
-  getInitialNotification(messaging).then(remoteMessage => {
+  getInitialNotification(messaging).then(async remoteMessage => {
     // if (remoteMessage) {
     // }
-    // handleNotificationPress(remoteMessage);
+    await handleNotificationPress(remoteMessage);
   });
 
   onMessage(messaging, async remoteMessage => {
@@ -199,27 +199,31 @@ export const setupNotificationListeners = () => {
   });
 
   // Put this OUTSIDE onMessage — usually in App.js or a top-level useEffect
-  // notifee.onForegroundEvent(({type, detail}) => {
-  //   if (type === EventType.PRESS) {
-  //     handleNotificationPress(detail.notification);
-  //   }
-  // });
+  notifee.onForegroundEvent(({type, detail}) => {
+    if (type === EventType.PRESS) {
+      handleNotificationPress(detail.notification);
+    }
+  });
 
-  // const handleNotificationPress = async (notification: any) => {
-  //   try {
-  //     const parsedData = JSON.parse(notification?.data?.appointment);
-  //     const data = await filterAppointment(
-  //       parsedData?.mrn,
-  //       parsedData?.his_booking_id,
-  //     );
-  //     navigate('MyAppointmentDetails', {
-  //       appointmentData: {...data, join: true},
-  //     });
-  //     // navigate('MyAppointmentDetails', { appointmentData: {...data, join: true} });
-  //   } catch (e) {
-  //     console.error('Error handling press:', e);
-  //   }
-  // };
+  const handleNotificationPress = async (notification: any) => {
+    console.log(notification);
+
+    try {
+      const parsedData = JSON.parse(notification?.data?.appointment);
+      const data = await filterAppointment(
+        parsedData?.mrn,
+        parsedData?.his_booking_id,
+      );
+      console.log('filtered appointment', data);
+
+      navigate('MyAppointmentDetails', {
+        appointmentData: {...data, join: true},
+      });
+      // navigate('MyAppointmentDetails', { appointmentData: {...data, join: true} });
+    } catch (e) {
+      console.error('Error handling press:', e);
+    }
+  };
 
   setBackgroundMessageHandler(messaging, async remoteMessage => {
     // let type = remoteMessage?.notification?.android?.channelId;
