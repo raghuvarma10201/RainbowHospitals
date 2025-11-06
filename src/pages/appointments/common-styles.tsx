@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
   messagesContainer: {
     flex: 1,
     padding: 10,
+    marginBottom: 30,
   },
   messageBubble: {
     marginVertical: 6,

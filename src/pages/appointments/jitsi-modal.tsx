@@ -116,6 +116,12 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
   useEffect(() => {
     fetchChat();
     requestMediaPermissions();
+    const interval = setInterval(() => {
+      fetchChat();
+    }, 10000);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   const requestMediaPermissions = async () => {
@@ -142,6 +148,8 @@ const JitsiModal: FC<JitsiModalProps> = ({visible, options, onClose}: any) => {
     try {
       const data = await fetchAppointmentChat(options?.bookingId);
       const chat = data?.data || [];
+      console.log(chat);
+
       setMessages(chat);
     } catch (error: any) {
       ToastService.error(

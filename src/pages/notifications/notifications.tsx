@@ -41,6 +41,7 @@ const Notifications: React.FC = () => {
       const response = await getNotifications({
         MobileNumber: profile?.MobileNumber,
       });
+      console.log(response.data[0]);
 
       if (response?.status == 200 && response.success) {
         setNotifications(
@@ -333,6 +334,7 @@ const styles = StyleSheet.create({
     fontSize: Dimensions.get('window').width * 0.035,
     color: '#472D7A',
     fontFamily: 'Poppins-Medium',
+    width: w * 0.4,
   },
 
   infoRow: {

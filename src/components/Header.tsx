@@ -155,10 +155,10 @@ const Header = forwardRef<any, HeaderProps>(
           setNotificationCount(data?.data[0]?.value);
         } catch (err: any) {
           ToastService.error(
-            'Error',
+            'Error fetching notification count',
             err?.response?.data?.message ||
               err?.message ||
-              'Something went wrong while fetching profile',
+              'Something went wrong while fetching notification count',
           );
         }
       };
@@ -558,9 +558,7 @@ const Header = forwardRef<any, HeaderProps>(
               resizeMode="contain"
             />
             <View style={styles.unreadBadge}>
-              <Text style={styles.unreadText}>
-                {notificationCount > 99 ? '99+' : notificationCount}
-              </Text>
+              <Text style={styles.unreadText}>{notificationCount || 0}</Text>
             </View>
           </TouchableOpacity>
 
@@ -747,7 +745,7 @@ const styles = StyleSheet.create({
     top: -5,
     right: -10,
     borderRadius: 10,
-    minWidth: w * 0.04,
+    minWidth: w * 0.06,
     height: w * 0.04,
     justifyContent: 'center',
     alignItems: 'center',

@@ -68,7 +68,7 @@ const App: React.FC = () => {
 
   const createNotificationChannels = async () => {
     await notifee.createChannel({
-      id: 'general',
+      id: 'default',
       name: 'General Notifications',
       sound: 'alert1',
       importance: AndroidImportance.HIGH,

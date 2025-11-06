@@ -23,6 +23,7 @@ import {MainStackParamList} from '../../../types/navigation';
 import moment from 'moment';
 import {useJitsi} from '../../../context/jitsi-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // ✅ add this import
+import {sendPatientPushNotification} from '../../../services/common';
 
 interface Props {
   appointment: upcomingApointment;
@@ -35,6 +36,25 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
 }) => {
   const dateTime = moment().format();
   const {showJitsi} = useJitsi();
+
+  const sendNotification = async () => {
+    try {
+      const response = await sendPatientPushNotification({
+        BookingUID: appointment?.BookingUID,
+        notifyTo: 'doctor',
+      });
+      startVideoCall();
+    } catch (error: any) {
+      console.error('Error fetching visits:', error);
+      // ToastService.error(
+      //   'Error',
+      //   error?.response?.data?.message ||
+      //     error?.message ||
+      //     'Something went wrong',
+      // );
+      startVideoCall();
+    }
+  };
 
   const startVideoCall = () => {
     showJitsi({
@@ -181,7 +201,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
                         0.25,
                       )
                     }
-                    onPress={startVideoCall}>
+                    onPress={sendNotification}>
                     <Text
                       style={[
                         styles.rescheduleBt,

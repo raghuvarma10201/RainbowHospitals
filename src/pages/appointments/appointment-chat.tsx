@@ -61,6 +61,12 @@ const AppointmentChat: React.FC<any> = ({route}) => {
   useEffect(() => {
     fetchChat();
     requestMediaPermissions();
+    const interval = setInterval(() => {
+      fetchChat();
+    }, 10000);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   const requestMediaPermissions = async () => {

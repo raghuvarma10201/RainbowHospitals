@@ -207,21 +207,38 @@ export const setupNotificationListeners = () => {
 
   const handleNotificationPress = async (notification: any) => {
     console.log(notification);
+    if (notification && notification?.data?.notification_typ == 'video_call') {
+      try {
+        const parsedData = JSON.parse(notification?.data?.appointment);
+        const data = await filterAppointment(
+          parsedData?.mrn,
+          parsedData?.his_booking_id,
+        );
+        console.log('filtered appointment', data);
 
-    try {
-      const parsedData = JSON.parse(notification?.data?.appointment);
-      const data = await filterAppointment(
-        parsedData?.mrn,
-        parsedData?.his_booking_id,
-      );
-      console.log('filtered appointment', data);
+        navigate('MyAppointmentDetails', {
+          appointmentData: {...data, join: true},
+        });
+        // navigate('MyAppointmentDetails', { appointmentData: {...data, join: true} });
+      } catch (e) {
+        console.error('Error handling press:', e);
+      }
+    } else if (notification && notification?.data?.notification_typ == 'chat') {
+      try {
+        const parsedData = JSON.parse(notification?.data?.appointment);
+        const data = await filterAppointment(
+          parsedData?.mrn,
+          parsedData?.his_booking_id,
+        );
+        console.log('filtered appointment', data);
 
-      navigate('MyAppointmentDetails', {
-        appointmentData: {...data, join: true},
-      });
-      // navigate('MyAppointmentDetails', { appointmentData: {...data, join: true} });
-    } catch (e) {
-      console.error('Error handling press:', e);
+        navigate('MyAppointmentDetails', {
+          appointmentData: {...data, chat: true},
+        });
+        // navigate('MyAppointmentDetails', { appointmentData: {...data, join: true} });
+      } catch (e) {
+        console.error('Error handling press:', e);
+      }
     }
   };
 

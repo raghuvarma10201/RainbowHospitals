@@ -108,6 +108,17 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (appointmentData?.chat) {
+      setLoading(true);
+      navigation.navigate('AppointmentChat', {
+        bookingId: appointmentData.appointmentnumber,
+        doctor: appointmentData.CareProviderName,
+        appointmentData: appointmentData,
+      });
+    }
+  }, []);
+
   const cancelAppointment = async () => {
     const obj: AppointmentPayload = {
       status: 'CANCEL',
@@ -184,12 +195,12 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       // startVideoCall();
     } catch (error: any) {
       console.error('Error fetching visits:', error);
-      ToastService.error(
-        'Error',
-        error?.response?.data?.message ||
-          error?.message ||
-          'Something went wrong',
-      );
+      // ToastService.error(
+      //   'Error',
+      //   error?.response?.data?.message ||
+      //     error?.message ||
+      //     'Something went wrong',
+      // );
       // startVideoCall();
     }
   };
@@ -223,11 +234,11 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       <View style={styles.actionsRow}>
         {appointmentData?.payment_type?.toLowerCase() == 'payu' && (
           <TouchableOpacity
-            disabled={
-              appointmentData?.unreadCount == 0 ||
-              isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 1) ||
-              isPreviousDay(appointmentData?.SlotStartDttm)
-            }
+            // disabled={
+            //   appointmentData?.unreadCount == 0 ||
+            //   isBeforeTwoHours(dateTime, appointmentData?.SlotStartDttm, 1) ||
+            //   isPreviousDay(appointmentData?.SlotStartDttm)
+            // }
             onPress={() =>
               navigation.navigate('AppointmentChat', {
                 bookingId: appointmentData.appointmentnumber,
@@ -281,15 +292,15 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
 
         {appointmentData?.AppointmentType?.toLowerCase() !== 'physical' && (
           <TouchableOpacity
-            disabled={
-              !isBeforeTwoHours(
-                dateTime,
-                appointmentData?.SlotStartDttm,
-                0.25,
-              ) ||
-              isAfterTwoHours(dateTime, appointmentData?.SlotStartDttm, 0.25) ||
-              isPreviousDay(appointmentData?.SlotStartDttm)
-            }
+            // disabled={
+            //   !isBeforeTwoHours(
+            //     dateTime,
+            //     appointmentData?.SlotStartDttm,
+            //     0.25,
+            //   ) ||
+            //   isAfterTwoHours(dateTime, appointmentData?.SlotStartDttm, 0.25) ||
+            //   isPreviousDay(appointmentData?.SlotStartDttm)
+            // }
             onPress={sendNotification}>
             <Text
               style={[

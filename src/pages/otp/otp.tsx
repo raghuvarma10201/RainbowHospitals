@@ -151,6 +151,12 @@ const Otp: React.FC = () => {
             otp: value,
             fcmToken,
           });
+          console.log({
+            number: phoneNumber,
+            otp: value,
+            fcmToken,
+          });
+
           if (!verifyRes?.success) {
             ToastService.error(
               'Error',
