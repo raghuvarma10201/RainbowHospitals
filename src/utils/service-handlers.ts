@@ -207,7 +207,7 @@ export const setupNotificationListeners = () => {
 
   const handleNotificationPress = async (notification: any) => {
     console.log(notification);
-    if (notification && notification?.data?.notification_typ == 'video_call') {
+    if (notification && notification?.data?.notification_type == 'video_call') {
       try {
         const parsedData = JSON.parse(notification?.data?.appointment);
         const data = await filterAppointment(
@@ -223,7 +223,10 @@ export const setupNotificationListeners = () => {
       } catch (e) {
         console.error('Error handling press:', e);
       }
-    } else if (notification && notification?.data?.notification_typ == 'chat') {
+    } else if (
+      notification &&
+      notification?.data?.notification_type == 'chat'
+    ) {
       try {
         const parsedData = JSON.parse(notification?.data?.appointment);
         const data = await filterAppointment(

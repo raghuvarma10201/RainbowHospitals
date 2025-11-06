@@ -80,8 +80,12 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
     // 👇 navigate to your chat screen
     navigateTo(
       navigation,
-      routes.Chat as keyof MainStackParamList, // adjust route name if needed
-      {appointmentId: appointment?.BookingUID},
+      routes.AppointmentChat as keyof MainStackParamList, // adjust route name if needed
+      {
+        bookingId: appointment.appointmentnumber,
+        doctor: appointment.CareProviderName,
+        appointmentData: appointment,
+      },
     );
   };
 
@@ -308,9 +312,7 @@ const UpcomingAppointmentCard: React.FC<Props> = ({
           activeOpacity={0.8}>
           <Icon name="chat" size={24} color={pallette.teal} />
           <View style={styles.unreadBadge}>
-            <Text style={styles.unreadText}>
-              {appointment?.unreadCount > 99 ? '99+' : appointment?.unreadCount}
-            </Text>
+            <Text style={styles.unreadText}>{appointment?.unreadCount}</Text>
           </View>
         </TouchableOpacity>
       ) : null}

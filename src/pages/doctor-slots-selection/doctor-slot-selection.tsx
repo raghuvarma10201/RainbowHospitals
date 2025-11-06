@@ -248,7 +248,11 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
           VisitDate: new Date(date).toISOString().split('T')[0],
           DoctorId: doctorDetail.new_doctor_UID ?? '',
         };
+        console.log(payload);
+
         const response = await fetchConsultationFee(payload);
+        console.log(response);
+
         if (response?.status === 200) {
           const fee =
             response.data.ConsultationFee || response.data.RegistrationFee || 0;

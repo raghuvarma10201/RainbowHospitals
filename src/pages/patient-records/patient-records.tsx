@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
-import {adjust, routes, ToastService} from '../../utils';
+import {adjust, API_IMG_URL, routes, ToastService} from '../../utils';
 import {h, pallette, w} from '../../constants/constants';
 import {Header} from '../../components';
 import {
@@ -30,6 +30,8 @@ import ThreeDotLoader from '../../components/three-dot-loader';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {PdfPreview} from '../../components/pdf-preview';
 import {NotFound} from '../../components';
+import Pdf from 'react-native-pdf';
+import RNFetchBlob from 'react-native-blob-util';
 
 const PatientRecords: FC = ({navigation, route}: any) => {
   const {mrn} = route?.params;
@@ -71,6 +73,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
   const [preview, setPreview] = React.useState();
+  const [filePaths, setFilePaths] = useState([]);
 
   useFocusEffect(
     useCallback(() => {
@@ -93,6 +96,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
 
       if (response?.status === 200) {
         setFamilyMembers(response.data);
+        fetchVisits();
       } else {
         // ToastService.error(
         //   'Error',
@@ -113,25 +117,46 @@ const PatientRecords: FC = ({navigation, route}: any) => {
     // setLoading(true);
     try {
       const response = await getPatientMedicalRecords({
-        mrn: 'BAH-00519630',
+        mrn: mrn, //'BAH-00519630',
         startDate: moment(startDate).format('YYYY-MM-DD'),
         endDate: moment(endDate).format('YYYY-MM-DD'),
       });
       if (response?.status == 200 && response.success) {
-        const visitOptions = response.data.map((e: any) => ({
-          ...e,
-          label: `${e.VisitID} | ${moment(e.VisitStartDttm).format(
-            'DD MMM YYYY',
-          )}`,
-          value: e.VisitID,
-        }));
-        setPatientVisits(visitOptions);
-        setFilteredVisits(visitOptions);
-        fetchReports(visitOptions[0]);
+        console.log(response);
+        setPatientVisits(response?.data);
+        const newPaths: any = {};
+
+        for (const visit of response.data) {
+          // Skip if already downloaded a PDF for this date
+          if (newPaths[visit.date]) continue;
+
+          try {
+            const res = await RNFetchBlob.config({fileCache: true}).fetch(
+              'GET',
+              `${API_IMG_URL}${visit?.prescription_file}`,
+            );
+            newPaths[visit.date] = res.path();
+          } catch (err) {
+            console.error('Error loading PDF:', err);
+          }
+        }
+
+        setFilePaths(newPaths);
+
+        // const visitOptions = response.data.map((e: any) => ({
+        //   ...e,
+        //   label: `${e.VisitID} | ${moment(e.VisitStartDttm).format(
+        //     'DD MMM YYYY',
+        //   )}`,
+        //   value: e.VisitID,
+        // }));
+        // setPatientVisits(visitOptions);
+        // setFilteredVisits(visitOptions);
+        // fetchReports(visitOptions[0]);
         // fetchPrescription(visitOptions[0]);
       } else {
-        setPatientVisits([]);
-        setFilteredVisits([]);
+        // setPatientVisits([]);
+        // setFilteredVisits([]);
       }
     } catch (error: any) {
       console.error('Error fetching visits:', error);
@@ -218,6 +243,18 @@ const PatientRecords: FC = ({navigation, route}: any) => {
   //     console.error('File save error:', error);
   //   }
   // };
+
+  const loadPdf = async (uri: string) => {
+    try {
+      const res = await RNFetchBlob.config({
+        fileCache: true,
+      }).fetch('GET', uri);
+      return res.path();
+    } catch (error) {
+      console.error('Download error:', error);
+      return;
+    }
+  };
 
   const downloadPDF = async (assetFileName: string) => {
     try {
@@ -623,8 +660,154 @@ const PatientRecords: FC = ({navigation, route}: any) => {
             margin={h * 0.3}
           />
         )} */}
-
-        <AccordionItem
+        {patientVisits.map((visit: any, index: number) => (
+          <AccordionItem
+            key={0}
+            title={`${moment(visit?.date).format('DD MMM')}'${moment().format(
+              'YY',
+            )}`}
+            expanded={0 == openIndex}
+            onToggle={() => {
+              setOpenIndex(0);
+              // setSelectedReportType(null);
+              // fetchReports(visit);
+            }}>
+            {loading ? (
+              <View style={{marginVertical: h * 0.02}}>
+                <ThreeDotLoader />
+              </View>
+            ) : (
+              <View
+                style={{
+                  // borderWidth: 0.7,
+                  borderColor: pallette.light_grey,
+                  borderRadius: w * 0.02,
+                  marginBottom: h * 0.01,
+                }}>
+                <View
+                  style={{
+                    padding: w * 0.02,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: adjust(12),
+                      color: pallette.white,
+                      textTransform: 'capitalize',
+                      backgroundColor: pallette.amethyst,
+                      padding: 4,
+                      borderRadius: 5,
+                    }}>
+                    Prescription
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: adjust(12),
+                      color: pallette.black,
+                      textTransform: 'capitalize',
+                      // width: w * 0.5,
+                    }}>
+                    Record Date : {moment(visit.date).format('DD MMM')}
+                    {"'"}
+                    {moment().format('YY')}
+                  </Text>
+                  {/* <View
+            style={{
+              flexDirection: 'row',
+              gap: w * 0.03,
+            }}>
+            <MaterialCommunityIcons
+              name="eye"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() => setPreview('docs/LabReport1.pdf')}
+            />
+            <MaterialCommunityIcons
+              name="download"
+              color={pallette.black}
+              size={w * 0.05}
+              onPress={() =>
+                // downloadPDF(
+                //   visit?.labReport?.file,
+                //   `${visit?.labReport?.documentname}.pdf`,
+                // )
+                downloadPDF('LabReport1.pdf')
+              }
+            />
+          </View> */}
+                </View>
+                <TouchableOpacity
+                  style={{
+                    height: h * 0.2,
+                    width: w * 0.9,
+                    alignSelf: 'center',
+                    borderWidth: 0.7,
+                    borderColor: pallette.dark_grey,
+                    borderRadius: w * 0.02,
+                  }}
+                  onPress={() =>
+                    navigation.navigate(routes.PDFPreview, {
+                      source:
+                        //   Platform.OS === 'android'
+                        //     ? {uri: `bundle-assets://docs/LabReport1.pdf`}
+                        //     : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                        // doc: 'LabReport1.pdf',
+                        {
+                          uri: `${API_IMG_URL}${visit?.prescription_file}`,
+                        },
+                    })
+                  }>
+                  {filePaths[visit.date] && (
+                    <Pdf
+                      source={{uri: `file://${filePaths[visit.date]}`}}
+                      fitPolicy={0}
+                      style={{
+                        height: '100%',
+                        width: '100%',
+                        borderRadius: w * 0.02,
+                      }}
+                    />
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    padding: w * 0.03,
+                    width: w * 0.9,
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderWidth: 0.7,
+                    borderColor: pallette.dark_purple,
+                    borderRadius: w * 0.03,
+                    marginVertical: h * 0.01,
+                  }}
+                  onPress={() =>
+                    navigation.navigate(routes.PDFPreview, {
+                      source:
+                        //   Platform.OS === 'android'
+                        //     ? {uri: `bundle-assets://docs/LabReport1.pdf`}
+                        //     : require('../../../android/app/src/main/assets/docs/DischargeSummary.pdf'),
+                        // doc: 'LabReport1.pdf',
+                        {
+                          uri: `${API_IMG_URL}${visit?.prescription_file}`,
+                        },
+                    })
+                  }>
+                  <Text
+                    style={{
+                      fontSize: adjust(12),
+                      color: pallette.dark_purple,
+                      textTransform: 'capitalize',
+                    }}>
+                    View Complete Report
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </AccordionItem>
+        ))}
+        {/* <AccordionItem
           key={0}
           title={`${moment(startDate).format('DD MMM')}'${moment().format(
             'YY',
@@ -662,7 +845,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     padding: 4,
                     borderRadius: 5,
                   }}>
-                  Lab Report
+                  Prescription
                 </Text>
                 <Text
                   style={{
@@ -674,8 +857,8 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                   Record Date : {moment(startDate).format('DD MMM')}
                   {"'"}
                   {moment().format('YY')}
-                </Text>
-                {/* <View
+                </Text> */}
+        {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -699,7 +882,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-              </View>
+        {/* </View>
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate(routes.DocPreview, {
@@ -751,8 +934,8 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               </TouchableOpacity>
             </View>
           )}
-        </AccordionItem>
-        <AccordionItem
+        </AccordionItem> */}
+        {/* <AccordionItem
           key={1}
           title={`${moment(startDate)
             .add(1, 'day')
@@ -798,13 +981,12 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
-                  {/* }}> */}
                   Record Date :{' '}
                   {moment(startDate).add(1, 'day').format('DD MMM')}
                   {"'"}
                   {moment().format('YY')}
-                </Text>
-                {/* <View
+                </Text> */}
+        {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -828,7 +1010,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-              </View>
+        {/* </View>
               <Text
                 style={{
                   fontSize: adjust(12),
@@ -889,8 +1071,8 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               </TouchableOpacity>
             </View>
           )}
-        </AccordionItem>
-        <AccordionItem
+        </AccordionItem> */}
+        {/* <AccordionItem
           key={2}
           title={`${moment(startDate)
             .add(2, 'day')
@@ -936,13 +1118,12 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
-                  {/* }}> */}
                   Record Date :{' '}
                   {moment(startDate).add(2, 'days').format('DD MMM')}
                   {"'"}
                   {moment().format('YY')}
-                </Text>
-                {/* <View
+                </Text> */}
+        {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -966,7 +1147,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-              </View>
+        {/* </View>
               <Text
                 style={{
                   fontSize: adjust(12),
@@ -1027,8 +1208,8 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               </TouchableOpacity>
             </View>
           )}
-        </AccordionItem>
-        <AccordionItem
+        </AccordionItem> */}
+        {/* <AccordionItem
           key={3}
           title={`${moment(startDate)
             .add(3, 'day')
@@ -1074,13 +1255,12 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
-                  {/* }}> */}
                   Record Date :{' '}
                   {moment(startDate).add(4, 'days').format('DD MMM')}
                   {"'"}
                   {moment().format('YY')}
-                </Text>
-                {/* <View
+                </Text> */}
+        {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -1104,7 +1284,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-              </View>
+        {/* </View>
               <Text
                 style={{
                   fontSize: adjust(12),
@@ -1165,8 +1345,8 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               </TouchableOpacity>
             </View>
           )}
-        </AccordionItem>
-        <AccordionItem
+        </AccordionItem> */}
+        {/* <AccordionItem
           key={4}
           title={`${moment(startDate)
             .add(4, 'day')
@@ -1212,13 +1392,12 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
-                  {/* }}> */}
                   Record Date :{' '}
                   {moment(startDate).add(5, 'days').format('DD MMM')}
                   {"'"}
                   {moment().format('YY')}
-                </Text>
-                {/* <View
+                </Text> */}
+        {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -1242,7 +1421,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-              </View>
+        {/* </View>
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate(routes.DocPreview, {
@@ -1294,8 +1473,8 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               </TouchableOpacity>
             </View>
           )}
-        </AccordionItem>
-        <AccordionItem
+        </AccordionItem> */}
+        {/* <AccordionItem
           key={5}
           title={`${moment(startDate)
             .add(5, 'day')
@@ -1341,13 +1520,12 @@ const PatientRecords: FC = ({navigation, route}: any) => {
                     color: pallette.black,
                     textTransform: 'capitalize',
                   }}>
-                  {/* }}> */}
                   Record Date :{' '}
                   {moment(startDate).add(8, 'days').format('DD MMM')}
                   {"'"}
                   {moment().format('YY')}
-                </Text>
-                {/* <View
+                </Text> */}
+        {/* <View
             style={{
               flexDirection: 'row',
               gap: w * 0.03,
@@ -1371,7 +1549,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               }
             />
           </View> */}
-              </View>
+        {/* </View>
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate(routes.DocPreview, {
@@ -1423,7 +1601,7 @@ const PatientRecords: FC = ({navigation, route}: any) => {
               </TouchableOpacity>
             </View>
           )}
-        </AccordionItem>
+        </AccordionItem> */}
 
         {/* <View
           style={{

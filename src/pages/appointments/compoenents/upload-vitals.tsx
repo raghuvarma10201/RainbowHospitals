@@ -24,8 +24,8 @@ const UploadVitals = ({appointmentData}: {appointmentData: any}) => {
     temperature: appointmentData?.vitals?.temperature || '',
   });
   const vitalFields = [
-    {key: 'height', label: 'Height (in cm) (Normal Range - Based on age)'},
-    {key: 'weight', label: 'Weight (in Kgs) (Normal Range - Based on BMI)'},
+    {key: 'height', label: 'Height (in cm)'},
+    {key: 'weight', label: 'Weight (in Kgs)'},
     {
       key: 'temperature',
       label: 'Temperature (in °F) (Normal Range - 97.5 to 99.5)',

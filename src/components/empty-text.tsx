@@ -1,4 +1,11 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {FC} from 'react';
 import {adjust} from '../utils/common-functions';
 import {h, pallette, w} from '../constants/constants';
@@ -7,7 +14,7 @@ import {NotFoundProps} from '../types/components';
 const NotFound: FC<NotFoundProps> = ({text, margin, change, hideBtn}) => {
   return (
     <View style={[styles.container, {marginTop: margin}]}>
-      <Image
+      {/* <Image
         source={require('../../assets/images/empty.png')}
         style={styles.icon}
       />
@@ -18,7 +25,8 @@ const NotFound: FC<NotFoundProps> = ({text, margin, change, hideBtn}) => {
           style={[styles.formButton, {backgroundColor: pallette.dark_purple}]}>
           <Text style={styles.formButtonText}>Change Location</Text>
         </TouchableOpacity>
-      )}
+      )} */}
+      <ActivityIndicator color={pallette.dark_purple} size={w * 0.1} />
     </View>
   );
 };

@@ -192,7 +192,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
         BookingUID: appointmentData?.BookingUID,
         notifyTo: 'doctor',
       });
-      // startVideoCall();
+      startVideoCall();
     } catch (error: any) {
       console.error('Error fetching visits:', error);
       // ToastService.error(
@@ -201,7 +201,7 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
       //     error?.message ||
       //     'Something went wrong',
       // );
-      // startVideoCall();
+      startVideoCall();
     }
   };
 
