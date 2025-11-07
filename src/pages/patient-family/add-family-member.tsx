@@ -79,7 +79,7 @@ const RegistrationSchema = Yup.object({
 // ---------- Main Component ----------
 const AddFamilyMember: React.FC = ({route}: any) => {
   const navigation = useNavigation<CombinedNavigationProp>();
-  const {onGoBack} = route.params;
+  const {onGoBack} = route?.params;
   const {setLoggedIn} = useAuth();
 
   const [mobileNumber, setMobileNumber] = useState('');
@@ -95,8 +95,10 @@ const AddFamilyMember: React.FC = ({route}: any) => {
 
   useEffect(() => {
     const onBackPress = () => {
-      onGoBack('');
-      return false;
+      if (onGoBack) {
+        onGoBack('');
+        return false;
+      }
     };
 
     const sub = BackHandler.addEventListener('hardwareBackPress', onBackPress);
@@ -142,7 +144,9 @@ const AddFamilyMember: React.FC = ({route}: any) => {
 
         if (response.status === 200 && response.success) {
           ToastService.success('Success', 'Family member added successfully');
-          onGoBack(response?.data?.PatientMRN);
+          if (onGoBack) {
+            onGoBack(response?.data?.PatientMRN);
+          }
           navigation.goBack();
         }
       } catch (error: any) {

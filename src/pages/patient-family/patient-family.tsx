@@ -32,6 +32,7 @@ const PatientFamily: FC = ({navigation}: any) => {
   const [editable, setEditable] = useState<number>();
   const [visible, setVisible] = useState(false);
   const [relation, setRelation] = useState<string>('');
+
   useFocusEffect(
     useCallback(() => {
       getFamilyMembers();
@@ -225,7 +226,10 @@ const PatientFamily: FC = ({navigation}: any) => {
       <WarningModal
         visible={visible}
         onClose={() => {
-          setVisible(false), navigation.navigate('AddFamily');
+          setVisible(false),
+            navigation.navigate('AddFamily', {
+              onGoBack: () => {},
+            });
         }}
         title="Important Notice"
         message={

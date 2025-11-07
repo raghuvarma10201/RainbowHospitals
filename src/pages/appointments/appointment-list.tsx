@@ -38,13 +38,13 @@ const MyAppointments: React.FC = ({route}: any) => {
 
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const {branch, profile, updateProfile} = useApp();
   const [appointments, setAppointments] = useState<any[]>([]);
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<string | undefined>(
-    mrn || '',
+    profile?.PatientID || mrn || '',
   );
   const [loading, setLoading] = useState(false);
-  const {branch} = useApp();
 
   useFocusEffect(
     useCallback(() => {
@@ -131,6 +131,7 @@ const MyAppointments: React.FC = ({route}: any) => {
             iconColor={pallette.black}
             onChange={(item: FamilyMember) => {
               setSelectedPatient(item.PatientID);
+              updateProfile(item);
               loadAppointments(item.PatientID);
             }}
           />
