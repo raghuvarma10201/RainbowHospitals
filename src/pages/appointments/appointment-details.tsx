@@ -103,14 +103,12 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
 
   useEffect(() => {
     if (appointmentData?.join) {
-      setLoading(true);
       startVideoCall();
     }
   }, []);
 
   useEffect(() => {
     if (appointmentData?.chat) {
-      setLoading(true);
       navigation.navigate('AppointmentChat', {
         bookingId: appointmentData.appointmentnumber,
         doctor: appointmentData.CareProviderName,
