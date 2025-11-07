@@ -254,12 +254,22 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
         console.log(response);
 
         if (response?.status === 200) {
-          const fee =
-            response.data.ConsultationFee || response.data.RegistrationFee || 0;
-          const regFee = response.data.RegistrationFee || 0;
-          setConsultationFee(fee);
-          setRegistrationFee(regFee);
-          proceedPayment(paymenttype, slot, time, mrn, fee, regFee);
+          const consultationFee = Number(response.data.ConsultationFee) || 0;
+          const registrationFee = Number(response.data.RegistrationFee) || 0;
+
+          const totalFee = consultationFee + registrationFee;
+
+          setConsultationFee(consultationFee);
+          setRegistrationFee(registrationFee);
+
+          proceedPayment(
+            paymenttype,
+            slot,
+            time,
+            mrn,
+            totalFee,
+            registrationFee,
+          );
         } else {
           ToastService.error(
             'Error',
@@ -697,32 +707,62 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                 Total Charges
               </Text>
             </View>
-            <View
-              style={[
-                styles.paymentBlock,
-                {backgroundColor: pallette.pale_turquoise},
-              ]}>
-              <Text
+            {consultationFee && (
+              <View
                 style={[
-                  styles.paymentTxt,
-                  {
-                    color: pallette.black,
-                    fontFamily: 'ProximaNovaA-Semibold',
-                  },
+                  styles.paymentBlock,
+                  {backgroundColor: pallette.pale_turquoise},
                 ]}>
-                Consultation Fee
-              </Text>
-              <Text
+                <Text
+                  style={[
+                    styles.paymentTxt,
+                    {
+                      color: pallette.black,
+                      fontFamily: 'ProximaNovaA-Semibold',
+                    },
+                  ]}>
+                  Consultation Fee
+                </Text>
+                <Text
+                  style={[
+                    styles.paymentTxt,
+                    {
+                      color: pallette.black,
+                      fontFamily: 'ProximaNovaA-Semibold',
+                    },
+                  ]}>
+                  ₹ {consultationFee}
+                </Text>
+              </View>
+            )}
+            {registrationFee && (
+              <View
                 style={[
-                  styles.paymentTxt,
-                  {
-                    color: pallette.black,
-                    fontFamily: 'ProximaNovaA-Semibold',
-                  },
+                  styles.paymentBlock,
+                  {backgroundColor: pallette.pale_turquoise},
                 ]}>
-                ₹ {consultationFee}
-              </Text>
-            </View>
+                <Text
+                  style={[
+                    styles.paymentTxt,
+                    {
+                      color: pallette.black,
+                      fontFamily: 'ProximaNovaA-Semibold',
+                    },
+                  ]}>
+                  Registration Fee
+                </Text>
+                <Text
+                  style={[
+                    styles.paymentTxt,
+                    {
+                      color: pallette.black,
+                      fontFamily: 'ProximaNovaA-Semibold',
+                    },
+                  ]}>
+                  ₹ {registrationFee}
+                </Text>
+              </View>
+            )}
           </View>
         )}
 

@@ -119,6 +119,16 @@ const MyAppointmentDetails: React.FC<any> = ({route}) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (appointmentData?.prescription) {
+      navigation.navigate(routes.PDFPreview, {
+        source: {
+          uri: `${API_IMG_URL}${appointmentData?.prescription_file}`,
+        },
+      });
+    }
+  }, []);
+
   const cancelAppointment = async () => {
     const obj: AppointmentPayload = {
       status: 'CANCEL',

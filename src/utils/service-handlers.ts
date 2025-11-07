@@ -242,6 +242,22 @@ export const setupNotificationListeners = () => {
       } catch (e) {
         console.error('Error handling press:', e);
       }
+    } else {
+      try {
+        const parsedData = JSON.parse(notification?.data?.appointment);
+        const data = await filterAppointment(
+          parsedData?.mrn,
+          parsedData?.his_booking_id,
+        );
+        console.log('filtered appointment', data);
+
+        navigate('MyAppointmentDetails', {
+          appointmentData: {...data, prescription: true},
+        });
+        // navigate('MyAppointmentDetails', { appointmentData: {...data, join: true} });
+      } catch (e) {
+        console.error('Error handling press:', e);
+      }
     }
   };
 
