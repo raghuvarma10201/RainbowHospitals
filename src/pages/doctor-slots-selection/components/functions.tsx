@@ -70,6 +70,7 @@ export const useDoctorSlots = (
   setSelectedLocation: any,
   appointmentnumber?: any,
   OrganisationID?: any,
+  selectedLocation?: any,
 ) => {
   const {branch, allbranch, updateBranch} = useApp();
   const [doctorDetail, setDoctorDetail] = useState<any>({});
@@ -116,7 +117,7 @@ export const useDoctorSlots = (
     } finally {
       setLoading(false);
     }
-  }, [doctorId, typeOfAppointment]);
+  }, [doctorId, typeOfAppointment, branch]);
 
   const loadSessions = useCallback(
     async (docData: any, locationData: any) => {

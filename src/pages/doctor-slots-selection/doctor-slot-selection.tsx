@@ -77,7 +77,8 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
   const headerRef = useRef<any>();
   const scrollRef = useRef<ScrollView>(null);
 
-  const {branch, profile, updateAppointment} = useApp();
+  const {branch, profile, allbranch, updateBranch, updateAppointment} =
+    useApp();
   const {settings} = useSettings();
   const {startTimer, secondsLeft, clearTimers} = useTimer();
   const [typeOfAppointment, setTypeOfAppointment] = useState<AppointmentType>(
@@ -134,6 +135,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
     setSelectedLocation,
     appointmentnumber,
     OrganisationID,
+    selectedLocation,
   );
 
   const resetState = useCallback(() => {
@@ -172,6 +174,16 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
       resetState();
     }
   }, [secondsLeft]);
+
+  const updateLocation = async (Location: any) => {
+    console.log(Location);
+
+    var match: any = {};
+    match = allbranch.find(
+      obj1 => obj1?.organisation?.organisationid?.toString() == Location?.value,
+    );
+    updateBranch(match);
+  };
 
   // // Reset on unmount (silent reset)
   // useEffect(() => {
@@ -555,6 +567,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                   onChange={(item: FamilyMember) => {
                     setSelectedLocation(item?.value);
                     scrollRef.current?.scrollToEnd();
+                    updateLocation(item);
                     // getConsultationFee(item.PatientID);
                   }}
                 />
@@ -706,8 +719,18 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
               <Text style={[styles.paymentTxt, {color: pallette.white}]}>
                 Total Charges
               </Text>
+              <Text
+                style={[
+                  styles.paymentTxt,
+                  {
+                    color: pallette.white,
+                    fontFamily: 'ProximaNovaA-Semibold',
+                  },
+                ]}>
+                ₹ {consultationFee + registrationFee}
+              </Text>
             </View>
-            {consultationFee && (
+            {consultationFee ? (
               <View
                 style={[
                   styles.paymentBlock,
@@ -734,8 +757,8 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                   ₹ {consultationFee}
                 </Text>
               </View>
-            )}
-            {registrationFee && (
+            ) : null}
+            {registrationFee ? (
               <View
                 style={[
                   styles.paymentBlock,
@@ -762,7 +785,7 @@ const DoctorSlotSelection: React.FC = ({route}: any) => {
                   ₹ {registrationFee}
                 </Text>
               </View>
-            )}
+            ) : null}
           </View>
         )}
 
